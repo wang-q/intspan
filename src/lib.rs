@@ -8,6 +8,10 @@ pub struct IntSpan {
     empty_string: String,
 }
 
+//----------------------------------------------------------
+// Set contents
+//----------------------------------------------------------
+
 impl IntSpan {
     pub fn new() -> IntSpan {
         IntSpan {
@@ -60,6 +64,21 @@ impl IntSpan {
         }
 
         runlist
+    }
+
+    pub fn ranges(&self) -> Vec<i32> {
+        let mut ranges: Vec<i32> = Vec::new();
+
+        for i in 0..self.edges.len() {
+            // odd index means upper
+            if (i & 1) == 1 {
+                ranges.push(self.edges.get(i).unwrap().clone() - 1);
+            } else {
+                ranges.push(self.edges.get(i).unwrap().clone());
+            }
+        }
+
+        ranges
     }
 }
 
@@ -172,6 +191,12 @@ impl IntSpan {
         }
 
         self
+    }
+
+    pub fn merge(&mut self, supplied: IntSpan) -> &IntSpan {
+        let ranges = supplied.ranges();
+
+        self.add_range(ranges)
     }
 }
 

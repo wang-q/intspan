@@ -13,4 +13,5 @@ fn main() {
 
     intspan.add_n(9);
     println!("{}", intspan);
+    println!("{:?}", intspan.ranges());
 }
