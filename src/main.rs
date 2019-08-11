@@ -34,11 +34,34 @@ fn main() {
     intspan.invert();
     println!("{}", intspan);
 
-//    intspan.add_n(9);
-//    intspan.add_vec(&vec![12, 16, 15, 15, 20]);
-//    println!("{}", intspan);
-//    println!("{:?}", intspan.ranges());
-//
-//    intspan.add_runlist(&"-14-2,14-18".to_string());
-//    println!("{}", intspan);
+    intspan.remove_pair(66, 71);
+    println!("{}", intspan);
+
+    intspan.remove_n(85);
+    println!("{}", intspan);
+
+    intspan.remove_vec(&vec![87, 88]);
+    println!("{}", intspan);
+
+    intspan.add_runlist(&"-30--10".to_string());
+    println!("{}", intspan);
+
+    intspan.remove_runlist(&"62-78".to_string());
+    println!("{}", intspan);
+
+    let mut other = IntSpan::new();
+    other.add_runlist(&"-15-5".to_string());
+    println!("{}", other);
+
+    intspan.merge(&other);
+    println!("{}", intspan);
+
+    other.clear();
+    println!("{}", other);
+    other.add_runlist(&"-20--5".to_string());
+    println!("{}", other);
+    intspan.subtract(&other);
+    println!("{}", intspan);
+
+    //    -30--21,-4-9,20-39,60-61,79-84,86,89-90,99'
 }

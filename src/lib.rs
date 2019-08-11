@@ -197,8 +197,8 @@ impl IntSpan {
         self
     }
 
-    pub fn merge(&mut self, supplied: &IntSpan) -> &Self {
-        let ranges = supplied.ranges();
+    pub fn merge(&mut self, other: &IntSpan) -> &Self {
+        let ranges = other.ranges();
 
         self.add_range(&ranges)
     }
@@ -239,6 +239,48 @@ impl IntSpan {
             } else {
                 self.edges.push(self.pos_inf); // push
             }
+        }
+
+        self
+    }
+
+    pub fn remove_pair(&mut self, lower: i32, upper: i32) -> &Self {
+        self.invert();
+        self.add_pair(lower, upper);
+        self.invert()
+    }
+
+    pub fn remove_n(&mut self, n: i32) -> &Self {
+        self.remove_pair(n, n)
+    }
+
+    pub fn remove_range(&mut self, ranges: &Vec<i32>) -> &Self {
+        if ranges.len() % 2 != 0 {
+            panic!("Number of ranges must be even")
+        }
+
+        self.invert();
+        self.add_range(ranges);
+        self.invert()
+    }
+
+    pub fn subtract(&mut self, other: &IntSpan) -> &Self {
+        let ranges = other.ranges();
+
+        self.remove_range(&ranges)
+    }
+
+    pub fn remove_vec(&mut self, ints: &Vec<i32>) -> &Self {
+        let ranges = self.list_to_ranges(ints);
+
+        self.remove_range(&ranges)
+    }
+
+    pub fn remove_runlist(&mut self, runlist: &String) -> &Self {
+        // skip empty set
+        if !runlist.is_empty() && !runlist.eq(&self.empty_string) {
+            let ranges = self.runlist_to_ranges(runlist);
+            self.remove_range(&ranges);
         }
 
         self
