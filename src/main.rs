@@ -12,7 +12,10 @@ fn main() {
     println!("{}", intspan.cardinality());
 
     intspan.add_n(9);
-    intspan.add_vec(vec![12, 16, 15, 15, 20]);
+    intspan.add_vec(&vec![12, 16, 15, 15, 20]);
     println!("{}", intspan);
     println!("{:?}", intspan.ranges());
+
+    intspan.add_runlist(&"-14-2,14-18".to_string());
+    println!("{}", intspan);
 }

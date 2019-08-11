@@ -128,7 +128,6 @@ impl IntSpan {
     }
 }
 
-
 //----------------------------------------------------------
 // Member operations (mutate original set)
 //----------------------------------------------------------
@@ -166,7 +165,7 @@ impl IntSpan {
         self.add_pair(n, n)
     }
 
-    pub fn add_range(&mut self, ranges: Vec<i32>) -> &Self {
+    pub fn add_range(&mut self, ranges: &Vec<i32>) -> &Self {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even")
         }
@@ -193,16 +192,26 @@ impl IntSpan {
         self
     }
 
-    pub fn merge(&mut self, supplied: IntSpan) -> &Self {
+    pub fn merge(&mut self, supplied: &IntSpan) -> &Self {
         let ranges = supplied.ranges();
 
-        self.add_range(ranges)
+        self.add_range(&ranges)
     }
 
-    pub fn add_vec(&mut self, ints: Vec<i32>) -> &Self {
+    pub fn add_vec(&mut self, ints: &Vec<i32>) -> &Self {
         let ranges = self.list_to_ranges(ints);
 
-        self.add_range(ranges)
+        self.add_range(&ranges)
+    }
+
+    pub fn add_runlist(&mut self, runlist: &String) -> &Self {
+        // skip empty set
+        if !runlist.is_empty() && !runlist.eq(&self.empty_string) {
+            let ranges = self.runlist_to_ranges(runlist);
+            self.add_range(&ranges);
+        }
+
+        self
     }
 }
 
@@ -228,11 +237,12 @@ impl IntSpan {
         low
     }
 
-    fn list_to_ranges(&self, mut ints: Vec<i32>) -> Vec<i32> {
+    fn list_to_ranges(&self, ints: &Vec<i32>) -> Vec<i32> {
+        let mut ranges: Vec<i32> = Vec::new();
+
+        let mut ints = ints.clone();
         ints.sort_unstable();
         ints.dedup();
-
-        let mut ranges: Vec<i32> = Vec::new();
 
         let len = ints.len();
         let mut pos: usize = 0;
@@ -246,6 +256,74 @@ impl IntSpan {
             ranges.push(ints[end - 1]);
             pos = end;
         }
+
+        ranges
+    }
+
+    fn runlist_to_ranges(&self, runlist: &String) -> Vec<i32> {
+        let mut ranges: Vec<i32> = Vec::new();
+
+        let bytes = runlist.as_bytes();
+
+        let radix = 10;
+        let mut idx = 0; // index in runlist
+        let len = bytes.len();
+
+        let mut lower_is_neg = false;
+        let mut upper_is_neg = false;
+        let mut in_upper = false;
+
+        while idx < len {
+            let mut i = 0; // index in one run
+            if bytes.get(idx).unwrap().clone() == '-' as u8 {
+                lower_is_neg = true;
+                i += 1;
+            }
+
+            // ported from Java Integer.parseInt()
+            let mut lower: i32 = 0;
+            let mut upper: i32 = 0;
+
+            while idx + i < len {
+                let ch = bytes[idx + i];
+                if ch >= '0' as u8 && ch <= '9' as u8 {
+                    if !in_upper {
+                        lower *= radix;
+                        lower -= (ch as char).to_digit(10).unwrap() as i32;
+                    } else {
+                        upper *= radix;
+                        upper -= (ch as char).to_digit(10).unwrap() as i32;
+                    }
+                } else if ch == '-' as u8 && !in_upper {
+                    in_upper = true;
+                    if bytes.get(idx + i + 1).unwrap().clone() == '-' as u8 {
+                        upper_is_neg = true;
+                    }
+                } else if ch == ',' as u8 {
+                    i = i + 1;
+                    break; // end of run
+                }
+
+                i = i + 1;
+            }
+
+            if !in_upper {
+                ranges.push(if lower_is_neg { lower } else { -lower }); // add lower
+                ranges.push(if lower_is_neg { lower } else { -lower }); // add lower again
+            } else {
+                ranges.push(if lower_is_neg { lower } else { -lower }); // add lower
+                ranges.push(if upper_is_neg { upper } else { -upper }); // add lower
+            }
+
+            // reset boolean flags
+            lower_is_neg = false;
+            upper_is_neg = false;
+            in_upper = false;
+
+            // start next run
+            idx += i;
+        }
+
         ranges
     }
 }
