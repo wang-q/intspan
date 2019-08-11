@@ -10,4 +10,7 @@ fn main() {
     println!("{}", intspan.edge_size());
     println!("{}", intspan.span_size());
     println!("{}", intspan.cardinality());
+
+    intspan.add_n(9);
+    println!("{}", intspan);
 }

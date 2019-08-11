@@ -61,35 +61,6 @@ impl IntSpan {
 
         runlist
     }
-
-    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) -> &IntSpan {
-        if lower > upper {
-            panic!("Bad order: {},{}", lower, upper)
-        }
-
-        upper = upper + 1;
-
-        let mut lower_pos = self.find_pos(lower, 0);
-        let mut upper_pos = self.find_pos(upper + 1, lower_pos);
-
-        if lower_pos & 1 == 1 {
-            lower_pos = lower_pos - 1;
-            lower = self.edges.get(lower_pos).unwrap().clone();
-        }
-
-        if upper_pos & 1 == 1 {
-            upper = self.edges.get(upper_pos).unwrap().clone();
-            upper_pos = upper_pos + 1;
-        }
-
-        for _i in lower_pos..upper_pos {
-            self.edges.remove(lower_pos);
-        }
-        self.edges.insert(lower_pos, lower);
-        self.edges.insert(lower_pos + 1, upper);
-
-        self
-    }
 }
 
 //----------------------------------------------------------
@@ -136,7 +107,72 @@ impl IntSpan {
     pub fn is_universal(&self) -> bool {
         self.edge_size() == 2 && self.is_pos_inf() && self.is_neg_inf()
     }
+}
 
+
+//----------------------------------------------------------
+// Member operations (mutate original set)
+//----------------------------------------------------------
+impl IntSpan {
+    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) -> &IntSpan {
+        if lower > upper {
+            panic!("Bad order: {},{}", lower, upper)
+        }
+
+        upper = upper + 1;
+
+        let mut lower_pos = self.find_pos(lower, 0);
+        let mut upper_pos = self.find_pos(upper + 1, lower_pos);
+
+        if lower_pos & 1 == 1 {
+            lower_pos = lower_pos - 1;
+            lower = self.edges.get(lower_pos).unwrap().clone();
+        }
+
+        if upper_pos & 1 == 1 {
+            upper = self.edges.get(upper_pos).unwrap().clone();
+            upper_pos = upper_pos + 1;
+        }
+
+        for _i in lower_pos..upper_pos {
+            self.edges.remove(lower_pos);
+        }
+        self.edges.insert(lower_pos, lower);
+        self.edges.insert(lower_pos + 1, upper);
+
+        self
+    }
+
+    pub fn add_n(&mut self, n: i32) -> &IntSpan {
+        self.add_pair(n, n)
+    }
+
+    pub fn add_range(&mut self, ranges: Vec<i32>) -> &IntSpan {
+        if ranges.len() % 2 != 0 {
+            panic!("Number of ranges must be even")
+        }
+
+        // When this IntSpan is empty, just convert ranges to edges
+        if self.is_empty() {
+            for i in 0..ranges.len() {
+                // odd index means upper
+                if (i & 1) == 1 {
+                    self.edges.push(ranges.get(i).unwrap().clone() + 1);
+                } else {
+                    self.edges.push(ranges.get(i).unwrap().clone());
+                }
+            }
+        } else {
+            for i in 0..(ranges.len() / 2) {
+                let lower = ranges.get(i * 2).unwrap().clone();
+                let upper = ranges.get(i * 2 + 1).unwrap().clone();
+
+                self.add_pair(lower, upper);
+            }
+        }
+
+        self
+    }
 }
 
 //----------------------------------------------------------
