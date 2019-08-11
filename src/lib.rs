@@ -13,7 +13,7 @@ pub struct IntSpan {
 //----------------------------------------------------------
 
 impl IntSpan {
-    pub fn new() -> IntSpan {
+    pub fn new() -> Self {
         IntSpan {
             edges: Vec::new(),
             pos_inf: 2147483647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
@@ -22,7 +22,7 @@ impl IntSpan {
         }
     }
 
-    pub fn clear(&mut self) -> &IntSpan {
+    pub fn clear(&mut self) -> &Self {
         self.edges.clear();
 
         self
@@ -133,7 +133,7 @@ impl IntSpan {
 // Member operations (mutate original set)
 //----------------------------------------------------------
 impl IntSpan {
-    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) -> &IntSpan {
+    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) -> &Self {
         if lower > upper {
             panic!("Bad order: {},{}", lower, upper)
         }
@@ -162,11 +162,11 @@ impl IntSpan {
         self
     }
 
-    pub fn add_n(&mut self, n: i32) -> &IntSpan {
+    pub fn add_n(&mut self, n: i32) -> &Self {
         self.add_pair(n, n)
     }
 
-    pub fn add_range(&mut self, ranges: Vec<i32>) -> &IntSpan {
+    pub fn add_range(&mut self, ranges: Vec<i32>) -> &Self {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even")
         }
@@ -193,7 +193,7 @@ impl IntSpan {
         self
     }
 
-    pub fn merge(&mut self, supplied: IntSpan) -> &IntSpan {
+    pub fn merge(&mut self, supplied: IntSpan) -> &Self {
         let ranges = supplied.ranges();
 
         self.add_range(ranges)
