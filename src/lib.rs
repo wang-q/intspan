@@ -80,6 +80,11 @@ impl IntSpan {
 
         ranges
     }
+
+    pub fn contains(&self, n: i32) -> bool {
+        let pos = self.find_pos(n + 1, 0);
+        (pos & 1) == 1
+    }
 }
 
 //----------------------------------------------------------
@@ -209,6 +214,31 @@ impl IntSpan {
         if !runlist.is_empty() && !runlist.eq(&self.empty_string) {
             let ranges = self.runlist_to_ranges(runlist);
             self.add_range(&ranges);
+        }
+
+        self
+    }
+
+    pub fn invert(&mut self) -> &Self {
+        if self.is_empty() {
+            // Universal set
+            self.edges.push(self.neg_inf);
+            self.edges.push(self.pos_inf);
+        } else {
+            // Either add or remove infinity from each end. The net effect is always an even number
+            // of additions and deletions
+
+            if self.is_neg_inf() {
+                self.edges.remove(0); // shift
+            } else {
+                self.edges.insert(0, self.neg_inf); // unshift
+            }
+
+            if self.is_pos_inf() {
+                self.edges.pop(); // pop
+            } else {
+                self.edges.push(self.pos_inf); // push
+            }
         }
 
         self
