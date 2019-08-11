@@ -43,10 +43,10 @@ fn main() {
     intspan.remove_vec(&vec![87, 88]);
     println!("{}", intspan);
 
-    intspan.add_runlist(&"-30--10".to_string());
+    intspan.add_runlist("-30--10");
     println!("{}", intspan);
 
-    intspan.remove_runlist(&"62-78".to_string());
+    intspan.remove_runlist("62-78".to_string());
     println!("{}", intspan);
 
     let mut other = IntSpan::new();
@@ -58,7 +58,7 @@ fn main() {
 
     other.clear();
     println!("{}", other);
-    other.add_runlist(&"-20--5".to_string());
+    other.add_runlist("-20--5");
     println!("{}", other);
     intspan.subtract(&other);
     println!("{}", intspan);

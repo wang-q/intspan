@@ -209,10 +209,15 @@ impl IntSpan {
         self.add_range(&ranges)
     }
 
-    pub fn add_runlist(&mut self, runlist: &String) -> &Self {
+    // https://hermanradtke.com/2015/05/06/creating-a-rust-function-that-accepts-string-or-str.html
+    pub fn add_runlist<S>(&mut self, runlist: S) -> &Self
+    where
+        S: Into<String>,
+    {
+        let s = runlist.into();
         // skip empty set
-        if !runlist.is_empty() && !runlist.eq(&self.empty_string) {
-            let ranges = self.runlist_to_ranges(runlist);
+        if !s.is_empty() && !s.eq(&self.empty_string) {
+            let ranges = self.runlist_to_ranges(&s);
             self.add_range(&ranges);
         }
 
@@ -276,10 +281,14 @@ impl IntSpan {
         self.remove_range(&ranges)
     }
 
-    pub fn remove_runlist(&mut self, runlist: &String) -> &Self {
+    pub fn remove_runlist<S>(&mut self, runlist: S) -> &Self
+    where
+        S: Into<String>,
+    {
+        let s = runlist.into();
         // skip empty set
-        if !runlist.is_empty() && !runlist.eq(&self.empty_string) {
-            let ranges = self.runlist_to_ranges(runlist);
+        if !s.is_empty() && !s.eq(&self.empty_string) {
+            let ranges = self.runlist_to_ranges(&s);
             self.remove_range(&ranges);
         }
 
