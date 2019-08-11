@@ -281,8 +281,60 @@ impl IntSpan {
             let ranges = self.runlist_to_ranges(&s);
             self.remove_range(&ranges);
         }
+    }
+}
 
-        self
+//----------------------------------------------------------
+// Set binary operations (create new set)
+//----------------------------------------------------------
+impl IntSpan {
+    pub fn copy(&self) -> Self {
+        IntSpan {
+            edges: self.edges.clone(),
+            pos_inf: 2147483647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
+            neg_inf: -2147483648 + 1, // INT_MIN + 1
+            empty_string: "-".to_string(),
+        }
+    }
+
+    pub fn union(&self, other: &Self) -> Self {
+        let mut new = self.copy();
+        new.merge(&other);
+        new
+    }
+
+    pub fn complement(&self) -> Self {
+        let mut new = self.copy();
+        new.invert();
+        new
+    }
+
+    pub fn diff(&self, other: &Self) -> Self {
+        if self.is_empty() {
+            Self::new()
+        } else {
+            let mut new = self.copy();
+            new.subtract(&other);
+            new
+        }
+    }
+
+    pub fn intersect(&self, other: &Self) -> Self {
+        if self.is_empty() || other.is_empty() {
+            Self::new()
+        } else {
+            let mut new = self.complement();
+            new.merge(&other.complement());
+            new.invert();
+            new
+        }
+    }
+
+    pub fn xor(&self, other: &Self) -> Self {
+        let mut new = self.union(&other);
+        let intersect = self.intersect(&other);
+        new.subtract(&intersect);
+        new
     }
 }
 
