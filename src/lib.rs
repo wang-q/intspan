@@ -83,6 +83,23 @@ impl IntSpan {
         let pos = self.find_pos(n + 1, 0);
         (pos & 1) == 1
     }
+
+    pub fn min(&self) -> i32 {
+        if self.is_empty() {
+            panic!("Can't get extrema for empty IntSpan");
+        }
+
+        self.edges.first().unwrap().clone()
+    }
+
+    pub fn max(&self) -> i32 {
+        if self.is_empty() {
+            panic!("Can't get extrema for empty IntSpan");
+        }
+
+        self.edges.last().unwrap().clone() - 1
+    }
+
 }
 
 //----------------------------------------------------------
