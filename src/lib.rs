@@ -22,10 +22,8 @@ impl IntSpan {
         }
     }
 
-    pub fn clear(&mut self) -> &Self {
+    pub fn clear(&mut self) {
         self.edges.clear();
-
-        self
     }
 
     pub fn edge_size(&self) -> usize {
@@ -137,7 +135,7 @@ impl IntSpan {
 // Member operations (mutate original set)
 //----------------------------------------------------------
 impl IntSpan {
-    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) -> &Self {
+    pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) {
         if lower > upper {
             panic!("Bad order: {},{}", lower, upper)
         }
@@ -162,15 +160,13 @@ impl IntSpan {
         }
         self.edges.insert(lower_pos, lower);
         self.edges.insert(lower_pos + 1, upper);
-
-        self
     }
 
-    pub fn add_n(&mut self, n: i32) -> &Self {
-        self.add_pair(n, n)
+    pub fn add_n(&mut self, n: i32) {
+        self.add_pair(n, n);
     }
 
-    pub fn add_range(&mut self, ranges: &Vec<i32>) -> &Self {
+    pub fn add_range(&mut self, ranges: &Vec<i32>) {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even")
         }
@@ -193,24 +189,22 @@ impl IntSpan {
                 self.add_pair(lower, upper);
             }
         }
-
-        self
     }
 
-    pub fn merge(&mut self, other: &IntSpan) -> &Self {
+    pub fn merge(&mut self, other: &Self) {
         let ranges = other.ranges();
 
-        self.add_range(&ranges)
+        self.add_range(&ranges);
     }
 
-    pub fn add_vec(&mut self, ints: &Vec<i32>) -> &Self {
+    pub fn add_vec(&mut self, ints: &Vec<i32>) {
         let ranges = self.list_to_ranges(ints);
 
-        self.add_range(&ranges)
+        self.add_range(&ranges);
     }
 
     // https://hermanradtke.com/2015/05/06/creating-a-rust-function-that-accepts-string-or-str.html
-    pub fn add_runlist<S>(&mut self, runlist: S) -> &Self
+    pub fn add_runlist<S>(&mut self, runlist: S)
     where
         S: Into<String>,
     {
@@ -220,11 +214,9 @@ impl IntSpan {
             let ranges = self.runlist_to_ranges(&s);
             self.add_range(&ranges);
         }
-
-        self
     }
 
-    pub fn invert(&mut self) -> &Self {
+    pub fn invert(&mut self) {
         if self.is_empty() {
             // Universal set
             self.edges.push(self.neg_inf);
@@ -245,43 +237,41 @@ impl IntSpan {
                 self.edges.push(self.pos_inf); // push
             }
         }
-
-        self
     }
 
-    pub fn remove_pair(&mut self, lower: i32, upper: i32) -> &Self {
+    pub fn remove_pair(&mut self, lower: i32, upper: i32) {
         self.invert();
         self.add_pair(lower, upper);
-        self.invert()
+        self.invert();
     }
 
-    pub fn remove_n(&mut self, n: i32) -> &Self {
-        self.remove_pair(n, n)
+    pub fn remove_n(&mut self, n: i32) {
+        self.remove_pair(n, n);
     }
 
-    pub fn remove_range(&mut self, ranges: &Vec<i32>) -> &Self {
+    pub fn remove_range(&mut self, ranges: &Vec<i32>) {
         if ranges.len() % 2 != 0 {
-            panic!("Number of ranges must be even")
+            panic!("Number of ranges must be even");
         }
 
         self.invert();
         self.add_range(ranges);
-        self.invert()
+        self.invert();
     }
 
-    pub fn subtract(&mut self, other: &IntSpan) -> &Self {
+    pub fn subtract(&mut self, other: &Self) {
         let ranges = other.ranges();
 
-        self.remove_range(&ranges)
+        self.remove_range(&ranges);
     }
 
-    pub fn remove_vec(&mut self, ints: &Vec<i32>) -> &Self {
+    pub fn remove_vec(&mut self, ints: &Vec<i32>) {
         let ranges = self.list_to_ranges(ints);
 
-        self.remove_range(&ranges)
+        self.remove_range(&ranges);
     }
 
-    pub fn remove_runlist<S>(&mut self, runlist: S) -> &Self
+    pub fn remove_runlist<S>(&mut self, runlist: S)
     where
         S: Into<String>,
     {
