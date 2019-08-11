@@ -99,7 +99,6 @@ impl IntSpan {
 
         self.edges.last().unwrap().clone() - 1
     }
-
 }
 
 //----------------------------------------------------------
@@ -364,7 +363,7 @@ impl IntSpan {
         let edges_other = &other.edges;
 
         if edges.len() != edges_other.len() {
-            return false
+            return false;
         }
 
         for i in 0..(edges.len() - 1) {
