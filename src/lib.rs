@@ -339,6 +339,36 @@ impl IntSpan {
 }
 
 //----------------------------------------------------------
+// Set relations
+//----------------------------------------------------------
+impl IntSpan {
+    pub fn equals(&self, other: &Self) -> bool {
+        let edges = &self.edges;
+        let edges_other = &other.edges;
+
+        if edges.len() != edges_other.len() {
+            return false
+        }
+
+        for i in 0..(edges.len() - 1) {
+            if edges.get(i) != edges_other.get(i) {
+                return false;
+            }
+        }
+
+        true
+    }
+
+    pub fn subset(&self, other: &Self) -> bool {
+        self.diff(&other).is_empty()
+    }
+
+    pub fn superset(&self, other: &Self) -> bool {
+        other.diff(&self).is_empty()
+    }
+}
+
+//----------------------------------------------------------
 // Private methods
 //----------------------------------------------------------
 
