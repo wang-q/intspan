@@ -198,6 +198,12 @@ impl IntSpan {
 
         self.add_range(ranges)
     }
+
+    pub fn add_vec(&mut self, ints: Vec<i32>) -> &Self {
+        let ranges = self.list_to_ranges(ints);
+
+        self.add_range(ranges)
+    }
 }
 
 //----------------------------------------------------------
@@ -220,6 +226,27 @@ impl IntSpan {
         }
 
         low
+    }
+
+    fn list_to_ranges(&self, mut ints: Vec<i32>) -> Vec<i32> {
+        ints.sort_unstable();
+        ints.dedup();
+
+        let mut ranges: Vec<i32> = Vec::new();
+
+        let len = ints.len();
+        let mut pos: usize = 0;
+
+        while pos < len {
+            let mut end = pos + 1;
+            while (end < len) && (ints[end] <= ints[end - 1] + 1) {
+                end = end + 1;
+            }
+            ranges.push(ints[pos]);
+            ranges.push(ints[end - 1]);
+            pos = end;
+        }
+        ranges
     }
 }
 
