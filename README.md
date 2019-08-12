@@ -74,23 +74,22 @@ duration 0.561500
 $ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
 $ make
 $ command time -l ./test_c benchmark
- test_add_range
 step 2
-duration 0.022878
+duration 0.022875
 step 3
-duration 0.031702
+duration 0.032172
 step 4
-duration 0.055751
+duration 0.057164
 step 5
-duration 0.289292
+duration 0.294729
 step 6
-duration 2.536171
-        2.93 real         2.93 user         0.00 sys
-   1081344  maximum resident set size
+duration 0.525069
+        0.93 real         0.93 user         0.00 sys
+   1085440  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-       273  page reclaims
+       274  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -99,7 +98,7 @@ duration 2.536171
          0  messages received
          0  signals received
          0  voluntary context switches
-       505  involuntary context switches
+       176  involuntary context switches
 
 ```
 
