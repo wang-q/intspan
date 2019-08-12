@@ -11,15 +11,26 @@ matrix:
   allow_failures:
     - rust: nightly
 
-efore_install:
-  - curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-linux-x86_64.tar.bz2 | tar jxf -
-
-script:
-  - export CARGO_INCREMENTAL=0
-  - export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads"
-  - cargo build --verbose
-  - cargo test --verbose
-  - |
-    zip -0 ccov.zip `find . \( -name "intspan*.gc*" \) -print`;
-    ./grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir "/*" -o lcov.info;
-    bash <(curl -s https://codecov.io/bash) -f lcov.info;
+jobs:
+  include:
+    - stage: test
+      script:
+        - cargo clippy --all-targets --all-features -- -D warnings
+        - cargo test --verbose --all
+      before_script:
+        - rustup component add clippy
+    - stage: coverage
+      rust: nightly
+      before_install:
+        - curl -L https://github.com/mozilla/grcov/releases/latest/download/grcov-linux-x86_64.tar.bz2 | tar jxf -
+      script:
+        - export CARGO_INCREMENTAL=0
+        - export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads"
+        - cargo build --verbose
+        - cargo test --verbose
+        - |
+          zip -0 ccov.zip `find . \( -name "intspan*.gc*" \) -print`;
+          ./grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir "/*" -o lcov.info;
+          bash <(curl -s https://codecov.io/bash) -f lcov.info;
+    - stage: build
+      script: cargo build --verbose --all
