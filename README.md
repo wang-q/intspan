@@ -134,3 +134,36 @@ duration 96.724945
      14911  involuntary context switches
 
 ```
+
+* Perl XS
+
+```text
+$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
+$ command time -l perl test_ai.pl benchmark xs
+step 2
+duration 0.273726
+step 3
+duration 0.296036
+step 4
+duration 0.344481
+step 5
+duration 2.072225
+step 6
+duration 9.789098
+       12.80 real        12.76 user         0.02 sys
+   6475776  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+      1590  page reclaims
+         0  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         0  voluntary context switches
+      3016  involuntary context switches
+
+```
