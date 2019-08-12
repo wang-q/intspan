@@ -107,3 +107,73 @@ fn inset() {
     assert_eq!(IntSpan::from("1-3").trim(1).cardinality(), 1);
     assert_eq!(IntSpan::from("1-3").trim(2).cardinality(), 0);
 }
+
+#[test]
+fn excise_fill() {
+    // runlist n expExcise expFill
+    struct TestData(String, i32, String, String);
+
+    let tests = vec![
+        TestData("1-5".to_string(), 1, "1-5".to_string(), "1-5".to_string()),
+        TestData(
+            "1-5,7".to_string(),
+            1,
+            "1-5,7".to_string(),
+            "1-7".to_string(),
+        ),
+        TestData("1-5,7".to_string(), 2, "1-5".to_string(), "1-7".to_string()),
+        TestData(
+            "1-5,7-8".to_string(),
+            1,
+            "1-5,7-8".to_string(),
+            "1-8".to_string(),
+        ),
+        TestData(
+            "1-5,7-8".to_string(),
+            3,
+            "1-5".to_string(),
+            "1-8".to_string(),
+        ),
+        TestData("1-5,7-8".to_string(), 6, "-".to_string(), "1-8".to_string()),
+        TestData(
+            "1-5,7,9-10".to_string(),
+            0,
+            "1-5,7,9-10".to_string(),
+            "1-5,7,9-10".to_string(),
+        ),
+        TestData(
+            "1-5,9-10".to_string(),
+            2,
+            "1-5,9-10".to_string(),
+            "1-5,9-10".to_string(),
+        ),
+        TestData(
+            "1-5,9-10".to_string(),
+            3,
+            "1-5".to_string(),
+            "1-10".to_string(),
+        ),
+        TestData(
+            "1-5,9-10,12-13,15".to_string(),
+            2,
+            "1-5,9-10,12-13".to_string(),
+            "1-5,9-15".to_string(),
+        ),
+        TestData(
+            "1-5,9-10,12-13,15".to_string(),
+            3,
+            "1-5".to_string(),
+            "1-15".to_string(),
+        ),
+    ];
+
+    for t in tests.iter() {
+        let set = IntSpan::from(&t.0);
+
+        // excise
+        assert_eq!(set.excise(t.1).to_string(), t.2);
+
+        // fill
+        assert_eq!(set.fill(t.1).to_string(), t.3);
+    }
+}

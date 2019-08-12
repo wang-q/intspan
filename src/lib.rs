@@ -483,6 +483,39 @@ impl IntSpan {
     pub fn pad(&self, n: i32) -> Self {
         self.inset(-n)
     }
+
+    pub fn excise(&self, min_len: i32) -> Self {
+        let mut new = IntSpan::new();
+
+        for i in 0..self.span_size() {
+            let lower = self.edges.get(i * 2).unwrap().clone();
+            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+
+            let span_len = upper - lower + 1;
+            if span_len >= min_len {
+                new.add_pair(lower, upper);
+            }
+        }
+
+        new
+    }
+
+    pub fn fill(&self, max_len: i32) -> Self {
+        let mut new = self.copy();
+        let holes = self.holes();
+
+        for i in 0..holes.span_size() {
+            let lower = holes.edges.get(i * 2).unwrap().clone();
+            let upper = holes.edges.get(i * 2 + 1).unwrap().clone() - 1;
+
+            let span_len = upper - lower + 1;
+            if span_len <= max_len {
+                new.add_pair(lower, upper);
+            }
+        }
+
+        new
+    }
 }
 
 //----------------------------------------------------------
