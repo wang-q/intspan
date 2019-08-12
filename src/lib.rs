@@ -22,6 +22,18 @@ impl IntSpan {
         }
     }
 
+    pub fn from<S>(runlist: S) -> Self
+    where
+        S: Into<String>,
+    {
+        let s = runlist.into();
+
+        let mut new = Self::new();
+        new.add_runlist(s);
+
+        new
+    }
+
     pub fn clear(&mut self) {
         self.edges.clear();
     }
@@ -53,7 +65,7 @@ impl IntSpan {
             if lower == upper {
                 buf.push_str(lower.to_string().as_str());
             } else {
-                buf.push_str( format!("{}-{}", lower, upper).as_str() );
+                buf.push_str(format!("{}-{}", lower, upper).as_str());
             }
 
             runlist.push_str(buf.as_str());
@@ -223,7 +235,7 @@ impl IntSpan {
         S: Into<String>,
     {
         let s = runlist.into();
-        // skip empty set
+        // skip empty runlist
         if !s.is_empty() && !s.eq(&self.empty_string) {
             let ranges = self.runlist_to_ranges(&s);
             self.add_range(&ranges);
@@ -290,7 +302,7 @@ impl IntSpan {
         S: Into<String>,
     {
         let s = runlist.into();
-        // skip empty set
+        // skip empty runlist
         if !s.is_empty() && !s.eq(&self.empty_string) {
             let ranges = self.runlist_to_ranges(&s);
             self.remove_range(&ranges);
