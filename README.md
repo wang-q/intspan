@@ -1,3 +1,6 @@
+# intspan
+
+[![Linux build status](https://travis-ci.org/wang-q/intspan.svg)](https://travis-ci.org/wang-q/intspan)
 
 ## Benchmark 1
 
