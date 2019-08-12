@@ -34,6 +34,14 @@ impl IntSpan {
         new
     }
 
+    pub fn get_neg_inf(&self) -> i32 {
+        self.neg_inf.clone()
+    }
+
+    pub fn get_pos_inf(&self) -> i32 {
+        self.pos_inf.clone() - 1
+    }
+
     pub fn clear(&mut self) {
         self.edges.clear();
     }
