@@ -108,8 +108,7 @@ fn run_benchmark() {
             }
             if step >= 6 {
                 for j in 1..201 {
-                    let vec3 = vec![j * 5, j * 10];
-                    set.add_range(&vec3);
+                    set.add_pair(j * 5, j * 10);
                 }
             }
         }

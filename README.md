@@ -7,21 +7,21 @@ $ cargo build --release
 $ command time -l target/release/intspan benchmark
 ["target/release/intspan", "benchmark"]
 step 2
-duration: 0.030005217 s
+duration: 0.0291654 s
 step 3
-duration: 0.035659909 s
+duration: 0.036023309999999996 s
 step 4
-duration: 0.09449890700000001 s
+duration: 0.08761089 s
 step 5
-duration: 0.371066978 s
+duration: 0.36387602199999997 s
 step 6
-duration: 1.430527595 s
-        1.96 real         1.96 user         0.00 sys
-   1036288  maximum resident set size
+duration: 0.639986058 s
+        1.16 real         1.15 user         0.00 sys
+   1032192  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-       262  page reclaims
+       261  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -30,7 +30,7 @@ duration: 1.430527595 s
          0  messages received
          0  signals received
          0  voluntary context switches
-       127  involuntary context switches
+        65  involuntary context switches
 
 ```
 
@@ -41,21 +41,21 @@ $ cd ~/Scripts/java/jintspan
 $ mvn clean verify
 $ command time -l java -jar target/jintspan-*-jar-with-dependencies.jar benchmark
 step 2
-duration 0.021720
+duration 0.023358
 step 3
-duration 0.034677
+duration 0.035295
 step 4
-duration 0.052226
+duration 0.053588
 step 5
-duration 0.286712
+duration 0.316216
 step 6
-duration 0.725323
-        1.27 real         1.56 user         0.10 sys
- 176377856  maximum resident set size
+duration 0.561500
+        1.12 real         1.38 user         0.07 sys
+ 110718976  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     47402  page reclaims
+     30334  page reclaims
          4  page faults
          0  swaps
          0  block input operations
@@ -63,8 +63,8 @@ duration 0.725323
          0  messages sent
          0  messages received
          1  signals received
-        21  voluntary context switches
-      1402  involuntary context switches
+         4  voluntary context switches
+       926  involuntary context switches
 
 ```
 

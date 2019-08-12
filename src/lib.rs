@@ -53,9 +53,7 @@ impl IntSpan {
             if lower == upper {
                 buf.push_str(lower.to_string().as_str());
             } else {
-                buf.push_str(lower.to_string().as_str());
-                buf.push_str("-");
-                buf.push_str(upper.to_string().as_str());
+                buf.push_str( format!("{}-{}", lower, upper).as_str() );
             }
 
             runlist.push_str(buf.as_str());
