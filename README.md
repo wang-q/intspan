@@ -1,4 +1,6 @@
 
+## Benchmark 1
+
 * Rust
 
 ```text
@@ -165,5 +167,158 @@ duration 9.789098
          0  signals received
          0  voluntary context switches
       3016  involuntary context switches
+
+```
+
+## Benchmark 2
+
+* Rust
+
+```text
+$ cd ~/Scripts/rust/intspan
+$ cargo build --release
+$ command time -l target/release/intspan file
+["target/release/intspan", "file"]
+step 1 create
+duration: 0.011473937 s
+step 2 intersect
+duration: 0.7530511599999999 s
+step 3 intersect runlist
+duration: 0.868731264 s
+        1.63 real         1.62 user         0.00 sys
+   2519040  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+       620  page reclaims
+         4  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         0  voluntary context switches
+       637  involuntary context switches
+
+```
+
+* Java
+
+```text
+$ cd ~/Scripts/java/jintspan
+$ mvn clean verify
+$ command time -l java -jar target/jintspan-*-jar-with-dependencies.jar file
+step 1 create
+duration 0.071450
+step 2 intersect
+duration 0.499175
+step 3 intersect runlist
+duration 0.789997
+        1.52 real         1.69 user         0.14 sys
+ 308686848  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+     78554  page reclaims
+         2  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         1  signals received
+         3  voluntary context switches
+      2034  involuntary context switches
+
+```
+
+* C
+
+```text
+$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
+$ make
+$ command time -l ./test_c file
+step 1 create
+duration 0.118375
+step 2 intersect
+duration 2.174462
+step 3 intersect runlist
+duration 18.218233
+       20.51 real        20.42 user         0.05 sys
+   2121728  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+       521  page reclaims
+         6  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         1  voluntary context switches
+      6360  involuntary context switches
+
+```
+
+* Perl
+
+```text
+$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
+$ command time -l perl test_ai.pl file
+==> test against large sets
+step 1 create
+duration 4.548069
+step 2 intersect
+duration 61.313397
+step 3 intersect runlist
+duration 61.335031
+      127.25 real       126.56 user         0.38 sys
+  11943936  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+      2924  page reclaims
+         1  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         6  voluntary context switches
+     45869  involuntary context switches
+
+```
+
+* Perl XS
+
+```text
+$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
+$ command time -l perl test_ai.pl file xs
+==> test against large sets
+step 1 create
+duration 0.116019
+step 2 intersect
+duration 8.530752
+step 3 intersect runlist
+duration 8.677303
+       17.37 real        17.26 user         0.05 sys
+   9822208  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+      2407  page reclaims
+         0  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         0  voluntary context switches
+      7011  involuntary context switches
 
 ```
