@@ -16,8 +16,8 @@ impl IntSpan {
     pub fn new() -> Self {
         IntSpan {
             edges: Vec::new(),
-            pos_inf: 2147483647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
-            neg_inf: -2147483648 + 1, // INT_MIN + 1
+            pos_inf: 2_147_483_647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
+            neg_inf: -2_147_483_648 + 1, // INT_MIN + 1
             empty_string: "-".to_string(),
         }
     }
@@ -341,8 +341,8 @@ impl IntSpan {
     pub fn copy(&self) -> Self {
         IntSpan {
             edges: self.edges.clone(),
-            pos_inf: 2147483647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
-            neg_inf: -2147483648 + 1, // INT_MIN + 1
+            pos_inf: 2_147_483_647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
+            neg_inf: -2_147_483_648 + 1, // INT_MIN + 1
             empty_string: "-".to_string(),
         }
     }
