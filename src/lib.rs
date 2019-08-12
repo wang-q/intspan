@@ -444,7 +444,7 @@ impl IntSpan {
             ranges.remove(0);
             ranges.remove(0);
         }
-        if (complement.is_pos_inf()) {
+        if complement.is_pos_inf() {
             ranges.pop();
             ranges.pop();
         }
@@ -452,6 +452,36 @@ impl IntSpan {
         new.add_range(&ranges);
 
         new
+    }
+
+    pub fn inset(&self, n: i32) -> Self {
+        let mut new = IntSpan::new();
+
+        for i in 0..self.span_size() {
+            let mut lower = self.edges.get(i * 2).unwrap().clone();
+            let mut upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+
+            if lower != self.get_neg_inf() {
+                lower += n;
+            }
+            if upper != self.get_pos_inf() {
+                upper -= n;
+            }
+
+            if lower <= upper {
+                new.add_pair(lower, upper);
+            }
+        }
+
+        new
+    }
+
+    pub fn trim(&self, n: i32) -> Self {
+        self.inset(n)
+    }
+
+    pub fn pad(&self, n: i32) -> Self {
+        self.inset(-n)
     }
 }
 
