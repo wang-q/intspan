@@ -2,18 +2,23 @@ language: rust
 dist: trusty
 sudo: required
 
-rust:
-  - stable
-  - beta
-  - nightly
-
 matrix:
   allow_failures:
     - rust: nightly
 
 jobs:
   include:
+    - stage: build
+      rust:
+        - stable
+        - beta
+        - nightly
+      script: cargo build --verbose --all
     - stage: test
+      rust:
+        - stable
+        - beta
+        - nightly
       script:
         - cargo clippy --all-targets --all-features -- -D warnings
         - cargo test --verbose --all
@@ -32,5 +37,3 @@ jobs:
           zip -0 ccov.zip `find . \( -name "intspan*.gc*" \) -print`;
           ./grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir "/*" -o lcov.info;
           bash <(curl -s https://codecov.io/bash) -f lcov.info;
-    - stage: build
-      script: cargo build --verbose --all
