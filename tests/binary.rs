@@ -88,7 +88,7 @@ fn binary() {
             "8-11".to_string(),
             "4,6".to_string(),
         ),
-   ];
+    ];
 
     for t in tests.iter() {
         let a = IntSpan::from(&t.0);
