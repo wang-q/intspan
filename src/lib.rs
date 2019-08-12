@@ -419,6 +419,43 @@ impl IntSpan {
 }
 
 //----------------------------------------------------------
+// Spans Ops
+//----------------------------------------------------------
+impl IntSpan {
+    pub fn cover(&self) -> Self {
+        let mut new = IntSpan::new();
+        if !self.is_empty() {
+            new.add_pair(self.min(), self.max());
+        }
+        new
+    }
+
+    pub fn holes(&self) -> Self {
+        let mut new = IntSpan::new();
+        if self.is_empty() || self.is_universal() {
+            // empty and universal set have no holes
+            return new;
+        }
+        let complement = self.complement();
+        let mut ranges = complement.ranges();
+
+        // Remove infinite arms of complement set
+        if complement.is_neg_inf() {
+            ranges.remove(0);
+            ranges.remove(0);
+        }
+        if (complement.is_pos_inf()) {
+            ranges.pop();
+            ranges.pop();
+        }
+
+        new.add_range(&ranges);
+
+        new
+    }
+}
+
+//----------------------------------------------------------
 // Private methods
 //----------------------------------------------------------
 
