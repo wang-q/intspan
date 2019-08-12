@@ -14,9 +14,8 @@ fn create() {
         TestData("-2--1".to_string(), "-2--1".to_string(), vec![-2, -1]),
         TestData("-2-1".to_string(), "-2-1".to_string(), vec![-2, -1, 0, 1]),
         TestData("1,3-4".to_string(), "1,3-4".to_string(), vec![1, 3, 4]),
-
-//        TestData("1-1".to_string(), "1".to_string(), vec![1]),
-//        TestData("1,2-4".to_string(), "1-4".to_string(), vec![1,2,3,4]),
+        //        TestData("1-1".to_string(), "1".to_string(), vec![1]),
+        //        TestData("1,2-4".to_string(), "1-4".to_string(), vec![1,2,3,4]),
     ];
 
     fn create_new(tests: &Vec<TestData>) {
