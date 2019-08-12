@@ -366,7 +366,7 @@ impl IntSpan {
             return false;
         }
 
-        for i in 0..(edges.len() - 1) {
+        for i in 0..edges.len() {
             if edges.get(i) != edges_other.get(i) {
                 return false;
             }
