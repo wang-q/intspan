@@ -74,6 +74,22 @@ impl IntSpan {
         runlist
     }
 
+    pub fn to_vec(&self) -> Vec<i32> {
+        let mut elements: Vec<i32> = Vec::new();
+
+        for i in 0..self.span_size() {
+            let lower = self.edges.get(i * 2).unwrap().clone();
+            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+
+            let span_len = upper - lower + 1;
+            for j in 0..span_len {
+                elements.push(lower + j);
+            }
+        }
+
+        elements
+    }
+
     pub fn ranges(&self) -> Vec<i32> {
         let mut ranges: Vec<i32> = Vec::new();
 
