@@ -516,6 +516,97 @@ impl IntSpan {
 }
 
 //----------------------------------------------------------
+// Indexing
+//----------------------------------------------------------
+impl IntSpan {
+    fn at_pos(&self, index: i32) -> i32 {
+        let mut element = self.min();
+        let mut ele_before = 0;
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            let span_len = upper - lower + 1;
+
+            if index > ele_before + span_len {
+                ele_before += span_len;
+            } else {
+                element = index - ele_before - 1 + lower;
+                break;
+            }
+        }
+
+        element
+    }
+
+    fn at_neg(&self, index: i32) -> i32 {
+        let mut element = self.max();
+        let mut ele_after = 0;
+
+        for i in (0..self.span_size()).rev() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            let span_len = upper - lower + 1;
+
+            if index > ele_after + span_len {
+                ele_after += span_len;
+            } else {
+                element = upper - (index - ele_after) + 1;
+                break;
+            }
+        }
+
+        element
+    }
+
+    pub fn at(&self, index: i32) -> i32 {
+        if self.is_empty() {
+            panic!("Indexing on an empty set");
+        }
+        if i32::abs(index) < 1 {
+            panic!("Index can't be 0");
+        }
+        if i32::abs(index) > self.cardinality() {
+            panic!("Out of max index");
+        }
+
+        if index > 0 {
+            self.at_pos(index)
+        } else {
+            self.at_neg(-index)
+        }
+    }
+
+    pub fn index(&self, element: i32) -> i32 {
+        if self.is_empty() {
+            panic!("Indexing on an empty set");
+        }
+        if !self.contains(element) {
+            panic!("Element doesn't exist");
+        }
+
+        let mut index = -1; // not valid
+        let mut ele_before = 0;
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+            let span_len = upper - lower + 1;
+
+            if element >= lower && element <= upper {
+                index = element - lower + 1 + ele_before;
+            } else {
+                ele_before += span_len;
+            }
+        }
+
+        index
+    }
+}
+
+//----------------------------------------------------------
 // Spans Ops
 //----------------------------------------------------------
 impl IntSpan {
