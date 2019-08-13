@@ -10,25 +10,25 @@
 
 ```text
 $ cd ~/Scripts/rust/intspan
-$ cargo build --release
-$ command time -l target/release/intspan-bin benchmark
-["target/release/intspan-bin", "benchmark"]
+$ cargo build --release --examples
+$ command time -l target/release/examples/benchmark
+["target/release/examples/benchmark"]
 step 2
-duration: 0.0291654 s
+duration: 0.04019228699999999 s
 step 3
-duration: 0.036023309999999996 s
+duration: 0.048044463 s
 step 4
-duration: 0.08761089 s
+duration: 0.101135046 s
 step 5
-duration: 0.36387602199999997 s
+duration: 0.378076464 s
 step 6
-duration: 0.639986058 s
-        1.16 real         1.15 user         0.00 sys
-   1032192  maximum resident set size
+duration: 0.6468764170000001 s
+        1.21 real         1.21 user         0.00 sys
+   1024000  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-       261  page reclaims
+       259  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -37,7 +37,7 @@ duration: 0.639986058 s
          0  messages received
          0  signals received
          0  voluntary context switches
-        65  involuntary context switches
+       304  involuntary context switches
 
 ```
 
@@ -181,22 +181,22 @@ duration 9.789098
 
 ```text
 $ cd ~/Scripts/rust/intspan
-$ cargo build --release
-$ command time -l target/release/intspan-bin file
-["target/release/intspan-bin", "file"]
+$ cargo build --release --examples
+$ command time -l target/release/examples/file
+["target/release/examples/file"]
 step 1 create
-duration: 0.011473937 s
+duration: 0.022158192 s
 step 2 intersect
-duration: 0.7530511599999999 s
+duration: 0.846951539 s
 step 3 intersect runlist
-duration: 0.868731264 s
-        1.63 real         1.62 user         0.00 sys
-   2519040  maximum resident set size
+duration: 0.9379064089999999 s
+        1.81 real         1.80 user         0.00 sys
+   2555904  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-       620  page reclaims
-         4  page faults
+       633  page reclaims
+         0  page faults
          0  swaps
          0  block input operations
          0  block output operations
@@ -204,7 +204,7 @@ duration: 0.868731264 s
          0  messages received
          0  signals received
          0  voluntary context switches
-       637  involuntary context switches
+       383  involuntary context switches
 
 ```
 
