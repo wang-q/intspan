@@ -35,8 +35,11 @@ fn create() {
             set.add_runlist(&t.0);
 
             assert_eq!(set.cardinality(), t.2.len() as i32);
+            assert_eq!(set.size(), t.2.len() as i32);
             assert_eq!(set.to_string(), t.1);
+            assert_eq!(set.runlist(), t.1);
             assert_eq!(set.to_vec(), t.2);
+            assert_eq!(set.elements(), t.2);
         }
     }
 

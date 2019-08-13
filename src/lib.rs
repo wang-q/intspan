@@ -536,6 +536,23 @@ impl IntSpan {
 //----------------------------------------------------------
 
 //----------------------------------------------------------
+// Aliases
+//----------------------------------------------------------
+impl IntSpan {
+    pub fn size(&self) -> i32 {
+        self.cardinality()
+    }
+
+    pub fn runlist(&self) -> String {
+        self.to_string()
+    }
+
+    pub fn elements(&self) -> Vec<i32> {
+        self.to_vec()
+    }
+}
+
+//----------------------------------------------------------
 // Private methods
 //----------------------------------------------------------
 
@@ -641,7 +658,7 @@ impl IntSpan {
                 ranges.push(if lower_is_neg { lower } else { -lower }); // add lower again
             } else {
                 ranges.push(if lower_is_neg { lower } else { -lower }); // add lower
-                ranges.push(if upper_is_neg { upper } else { -upper }); // add lower
+                ranges.push(if upper_is_neg { upper } else { -upper }); // add upper
             }
 
             // reset boolean flags
@@ -723,5 +740,4 @@ mod tests {
         assert_eq!(set.is_pos_inf(), true);
         assert_eq!(set.is_neg_inf(), false);
     }
-
 }
