@@ -614,14 +614,23 @@ impl IntSpan {
                         upper *= radix;
                         upper -= (ch as char).to_digit(10).unwrap() as i32;
                     }
-                } else if ch == b'-' && !in_upper {
-                    in_upper = true;
-                    if *bytes.get(idx + i + 1).unwrap() == b'-' {
-                        upper_is_neg = true;
+                } else if ch == b'-' {
+                    if !in_upper {
+                        in_upper = true;
+                        if *bytes.get(idx + i + 1).unwrap() == b'-' {
+                            upper_is_neg = true;
+                        }
                     }
                 } else if ch == b',' {
                     i += 1;
                     break; // end of run
+                } else {
+                    panic!(
+                        "Number format error: {} at {} of {}",
+                        ch as char,
+                        idx + i,
+                        runlist
+                    );
                 }
 
                 i += 1;
