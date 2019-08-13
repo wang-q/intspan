@@ -11,4 +11,10 @@ name = "intspan"
 name = "intspan-bin"
 path = "src/bin.rs"
 
+[[example]]
+name = "benchmark"
+
+[[example]]
+name = "file"
+
 [dependencies]
