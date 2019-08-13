@@ -11,8 +11,8 @@
 ```text
 $ cd ~/Scripts/rust/intspan
 $ cargo build --release
-$ command time -l target/release/intspan benchmark
-["target/release/intspan", "benchmark"]
+$ command time -l target/release/intspan-bin benchmark
+["target/release/intspan-bin", "benchmark"]
 step 2
 duration: 0.0291654 s
 step 3
@@ -182,8 +182,8 @@ duration 9.789098
 ```text
 $ cd ~/Scripts/rust/intspan
 $ cargo build --release
-$ command time -l target/release/intspan file
-["target/release/intspan", "file"]
+$ command time -l target/release/intspan-bin file
+["target/release/intspan-bin", "file"]
 step 1 create
 duration: 0.011473937 s
 step 2 intersect
