@@ -3,7 +3,7 @@ use intspan::IntSpan;
 use std::env;
 use std::time::Instant;
 
-fn run_test() {
+fn run_test() -> String {
     let mut intspan = IntSpan::new();
     intspan.add_pair(1, 9);
     intspan.add_pair(20, 39);
@@ -65,8 +65,11 @@ fn run_test() {
     intspan.subtract(&other);
     println!("{}", intspan);
 
-    //    -30--21,-4-9,20-39,60-61,79-84,86,89-90,99'
+    //    -30--21,-4-9,20-39,60-61,79-84,86,89-90,99
+    intspan.to_string()
 }
+
+
 
 fn run_benchmark() {
     for step in 2..7 {
@@ -186,5 +189,15 @@ fn main() {
         run_file();
     } else {
         eprintln!("Unrecognized command {}", &args[1]);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::run_test;
+
+    #[test]
+    fn run_test_result() {
+        assert_eq!(run_test(), "-30--21,-4-9,20-39,60-61,79-84,86,89-90,99".to_string());
     }
 }
