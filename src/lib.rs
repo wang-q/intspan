@@ -1,3 +1,91 @@
+//! `IntSpan` handles of sets containing integer spans.
+//!
+//! # SYNOPSIS
+//!
+//! ```
+//! use intspan::IntSpan;
+//!
+//! let mut set = IntSpan::new();
+//! for i in vec![1, 2, 3, 5, 7, 9] {
+//!     set.add_n(i);
+//! }
+//! set.add_pair(100, 10000);
+//! set.remove_n(1000);
+//!
+//! let expected = "1-3,5,7,9,100-999,1001-10000";
+//! # assert_eq!(set.to_string(), expected);
+//! # assert_eq!(set.cardinality(), 9906);
+//! # assert_eq!(set.is_empty(), false);
+//! # assert_eq!(set.is_universal(), false);
+//! # assert_eq!(set.is_infinite(), false);
+//! # assert_eq!(set.is_finite(), true);
+//! # assert_eq!(set.is_pos_inf(), false);
+//! # assert_eq!(set.is_neg_inf(), false);
+//! ```
+//!
+//! ```
+//! # use intspan::IntSpan;
+//! let set = IntSpan::from("1-3,5,7,9,100-999,1001-10000");
+//! # assert_eq!(set.to_string(), "1-3,5,7,9,100-999,1001-10000");
+//! # assert_eq!(set.cardinality(), 9906);
+//! ```
+//!
+//! # DESCRIPTION
+//!
+//! `IntSpan` represents sets of integers as a number of inclusive ranges, for example
+//! `1-10,19-23,45-48`. Because many of its operations involve linear searches of the list of ranges its
+//! overall performance tends to be proportional to the number of distinct ranges. This is fine for
+//! small sets but suffers compared to other possible set representations (bit vectors, hash keys) when
+//! the number of ranges grows large.
+//!
+//! This module also represents sets as ranges of values but stores those ranges in order and uses a
+//! binary search for many internal operations so that overall performance tends towards O log N where N
+//! is the number of ranges.
+//!
+//! The internal representation used by this module is extremely simple: a set is represented as a list
+//! of integers. Integers in even numbered positions (0, 2, 4 etc) represent the start of a run of
+//! numbers while those in odd numbered positions represent the ends of runs. As an example the set (1,
+//! 3-7, 9, 11, 12) would be represented internally as (1, 2, 3, 8, 11, 13).
+//!
+//! Sets may be infinite - assuming you're prepared to accept that infinity is actually no more than a
+//! fairly large integer. Specifically the constants `neg_inf` and `pos_inf` are defined to be (-2^31+1)
+//! and (2^31-2) respectively. To create an infinite set invert an empty one:
+//!
+//! ```
+//! # use intspan::IntSpan;
+//! let mut set = IntSpan::new();
+//! set.invert();
+//! # let expected = format!("{}-{}", set.get_neg_inf(), set.get_pos_inf());
+//! # assert_eq!(set.to_string(), expected);
+//! # assert_eq!(set.is_empty(), false);
+//! # assert_eq!(set.is_universal(), true);
+//! # assert_eq!(set.is_infinite(), true);
+//! # assert_eq!(set.is_finite(), false);
+//! # assert_eq!(set.is_pos_inf(), true);
+//! # assert_eq!(set.is_neg_inf(), true);
+//! ```
+//!
+//! Sets need only be bounded in one direction - for example this is the set of all positive integers
+//! (assuming you accept the slightly feeble definition of infinity we're using):
+//!
+//! ```
+//! # use intspan::IntSpan;
+//! let mut set = IntSpan::new();
+//! set.add_pair(1, set.get_pos_inf());
+//! # let expected = format!("{}-{}", 1, set.get_pos_inf());
+//! # assert_eq!(set.to_string(), expected);
+//! # assert_eq!(set.is_empty(), false);
+//! # assert_eq!(set.is_universal(), false);
+//! # assert_eq!(set.is_infinite(), true);
+//! # assert_eq!(set.is_finite(), false);
+//! # assert_eq!(set.is_pos_inf(), true);
+//! # assert_eq!(set.is_neg_inf(), false);
+//! ```
+//!
+//! This Rust crate is ported from the Java class `jintspan` and the Perl module `AlignDB::IntSpan`,
+//! which contains many codes from `Set::IntSpan`, `Set::IntSpan::Fast` and `Set::IntSpan::Island`.
+//!
+
 use std::fmt;
 use std::vec::Vec;
 
@@ -678,66 +766,5 @@ impl fmt::Display for IntSpan {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.to_string())?;
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn snippet_1() {
-        let mut set = IntSpan::new();
-        for i in vec![1, 2, 3, 5, 7, 9] {
-            set.add_n(i);
-        }
-        set.add_pair(100, 10000);
-        set.remove_n(1000);
-
-        let expected = "1-3,5,7,9,100-999,1001-10000".to_string();
-
-        assert_eq!(set.to_string(), expected);
-        assert_eq!(set.cardinality(), 9906);
-
-        assert_eq!(set.is_empty(), false);
-        assert_eq!(set.is_universal(), false);
-        assert_eq!(set.is_infinite(), false);
-        assert_eq!(set.is_finite(), true);
-        assert_eq!(set.is_pos_inf(), false);
-        assert_eq!(set.is_neg_inf(), false);
-    }
-
-    #[test]
-    fn snippet_2() {
-        let mut set = IntSpan::new();
-        set.invert();
-
-        let expected = format!("{}-{}", set.get_neg_inf(), set.get_pos_inf());
-
-        assert_eq!(set.to_string(), expected);
-
-        assert_eq!(set.is_empty(), false);
-        assert_eq!(set.is_universal(), true);
-        assert_eq!(set.is_infinite(), true);
-        assert_eq!(set.is_finite(), false);
-        assert_eq!(set.is_pos_inf(), true);
-        assert_eq!(set.is_neg_inf(), true);
-    }
-
-    #[test]
-    fn snippet_3() {
-        let mut set = IntSpan::new();
-        set.add_pair(1, set.get_pos_inf());
-
-        let expected = format!("{}-{}", 1, set.get_pos_inf());
-
-        assert_eq!(set.to_string(), expected);
-
-        assert_eq!(set.is_empty(), false);
-        assert_eq!(set.is_universal(), false);
-        assert_eq!(set.is_infinite(), true);
-        assert_eq!(set.is_finite(), false);
-        assert_eq!(set.is_pos_inf(), true);
-        assert_eq!(set.is_neg_inf(), false);
     }
 }
