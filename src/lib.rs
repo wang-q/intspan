@@ -222,24 +222,32 @@ impl IntSpan {
             panic!("Number of ranges must be even")
         }
 
-        // When this IntSpan is empty, just convert ranges to edges
-        if self.is_empty() {
-            for i in 0..ranges.len() {
-                // odd index means upper
-                if (i & 1) == 1 {
-                    self.edges.push(*ranges.get(i).unwrap() + 1);
-                } else {
-                    self.edges.push(*ranges.get(i).unwrap());
-                }
-            }
-        } else {
-            for i in 0..(ranges.len() / 2) {
-                let lower = *ranges.get(i * 2).unwrap();
-                let upper = *ranges.get(i * 2 + 1).unwrap();
+        for i in 0..(ranges.len() / 2) {
+            let lower = *ranges.get(i * 2).unwrap();
+            let upper = *ranges.get(i * 2 + 1).unwrap();
 
-                self.add_pair(lower, upper);
-            }
+            self.add_pair(lower, upper);
         }
+
+        // CAUTIONS: can't capture bad orders
+        //        // When this IntSpan is empty, just convert ranges to edges
+        //        if self.is_empty() {
+        //            for i in 0..ranges.len() {
+        //                // odd index means upper
+        //                if (i & 1) == 1 {
+        //                    self.edges.push(*ranges.get(i).unwrap() + 1);
+        //                } else {
+        //                    self.edges.push(*ranges.get(i).unwrap());
+        //                }
+        //            }
+        //        } else {
+        //            for i in 0..(ranges.len() / 2) {
+        //                let lower = *ranges.get(i * 2).unwrap();
+        //                let upper = *ranges.get(i * 2 + 1).unwrap();
+        //
+        //                self.add_pair(lower, upper);
+        //            }
+        //        }
     }
 
     pub fn merge(&mut self, other: &Self) {
