@@ -1,6 +1,7 @@
 use std::fmt;
 use std::vec::Vec;
 
+#[derive(Default)]
 pub struct IntSpan {
     edges: Vec<i32>,
     pos_inf: i32,
@@ -62,8 +63,8 @@ impl IntSpan {
         let mut runlist = "".to_string();
 
         for i in 0..self.span_size() {
-            let lower = self.edges.get(i * 2).unwrap().clone();
-            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
 
             let mut buf = "".to_string();
             if i != 0 {
@@ -86,8 +87,8 @@ impl IntSpan {
         let mut elements: Vec<i32> = Vec::new();
 
         for i in 0..self.span_size() {
-            let lower = self.edges.get(i * 2).unwrap().clone();
-            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
 
             let span_len = upper - lower + 1;
             for j in 0..span_len {
@@ -104,9 +105,9 @@ impl IntSpan {
         for i in 0..self.edges.len() {
             // odd index means upper
             if (i & 1) == 1 {
-                ranges.push(self.edges.get(i).unwrap().clone() - 1);
+                ranges.push(*self.edges.get(i).unwrap() - 1);
             } else {
-                ranges.push(self.edges.get(i).unwrap().clone());
+                ranges.push(*self.edges.get(i).unwrap());
             }
         }
 
@@ -123,7 +124,7 @@ impl IntSpan {
             panic!("Can't get extrema for empty IntSpan");
         }
 
-        self.edges.first().unwrap().clone()
+        *self.edges.first().unwrap()
     }
 
     pub fn max(&self) -> i32 {
@@ -131,7 +132,7 @@ impl IntSpan {
             panic!("Can't get extrema for empty IntSpan");
         }
 
-        self.edges.last().unwrap().clone() - 1
+        *self.edges.last().unwrap() - 1
     }
 }
 
@@ -147,8 +148,8 @@ impl IntSpan {
         }
 
         for i in 0..self.span_size() {
-            let lower = self.edges.get(i * 2).unwrap().clone();
-            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
 
             cardinality += upper - lower + 1;
         }
@@ -161,11 +162,11 @@ impl IntSpan {
     }
 
     pub fn is_neg_inf(&self) -> bool {
-        self.edges.first().unwrap().clone() == self.neg_inf
+        *self.edges.first().unwrap() == self.neg_inf
     }
 
     pub fn is_pos_inf(&self) -> bool {
-        self.edges.last().unwrap().clone() == self.pos_inf
+        *self.edges.last().unwrap() == self.pos_inf
     }
 
     pub fn is_infinite(&self) -> bool {
@@ -190,19 +191,19 @@ impl IntSpan {
             panic!("Bad order: {},{}", lower, upper)
         }
 
-        upper = upper + 1;
+        upper += 1;
 
         let mut lower_pos = self.find_pos(lower, 0);
         let mut upper_pos = self.find_pos(upper + 1, lower_pos);
 
         if lower_pos & 1 == 1 {
-            lower_pos = lower_pos - 1;
-            lower = self.edges.get(lower_pos).unwrap().clone();
+            lower_pos -= 1;
+            lower = *self.edges.get(lower_pos).unwrap();
         }
 
         if upper_pos & 1 == 1 {
-            upper = self.edges.get(upper_pos).unwrap().clone();
-            upper_pos = upper_pos + 1;
+            upper = *self.edges.get(upper_pos).unwrap();
+            upper_pos +=  1;
         }
 
         for _i in lower_pos..upper_pos {
@@ -226,15 +227,15 @@ impl IntSpan {
             for i in 0..ranges.len() {
                 // odd index means upper
                 if (i & 1) == 1 {
-                    self.edges.push(ranges.get(i).unwrap().clone() + 1);
+                    self.edges.push(*ranges.get(i).unwrap() + 1);
                 } else {
-                    self.edges.push(ranges.get(i).unwrap().clone());
+                    self.edges.push(*ranges.get(i).unwrap());
                 }
             }
         } else {
             for i in 0..(ranges.len() / 2) {
-                let lower = ranges.get(i * 2).unwrap().clone();
-                let upper = ranges.get(i * 2 + 1).unwrap().clone();
+                let lower = *ranges.get(i * 2).unwrap();
+                let upper = *ranges.get(i * 2 + 1).unwrap();
 
                 self.add_pair(lower, upper);
             }
@@ -458,8 +459,8 @@ impl IntSpan {
         let mut new = IntSpan::new();
 
         for i in 0..self.span_size() {
-            let mut lower = self.edges.get(i * 2).unwrap().clone();
-            let mut upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let mut lower = *self.edges.get(i * 2).unwrap();
+            let mut upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
 
             if lower != self.get_neg_inf() {
                 lower += n;
@@ -488,8 +489,8 @@ impl IntSpan {
         let mut new = IntSpan::new();
 
         for i in 0..self.span_size() {
-            let lower = self.edges.get(i * 2).unwrap().clone();
-            let upper = self.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
 
             let span_len = upper - lower + 1;
             if span_len >= min_len {
@@ -505,8 +506,8 @@ impl IntSpan {
         let holes = self.holes();
 
         for i in 0..holes.span_size() {
-            let lower = holes.edges.get(i * 2).unwrap().clone();
-            let upper = holes.edges.get(i * 2 + 1).unwrap().clone() - 1;
+            let lower = *holes.edges.get(i * 2).unwrap();
+            let upper = *holes.edges.get(i * 2 + 1).unwrap() - 1;
 
             let span_len = upper - lower + 1;
             if span_len <= max_len {
@@ -536,9 +537,9 @@ impl IntSpan {
 
         while low < high {
             let mid = (low + high) / 2;
-            if val < self.edges.get(mid).unwrap().clone() {
+            if val < *self.edges.get(mid).unwrap() {
                 high = mid;
-            } else if val > self.edges.get(mid).unwrap().clone() {
+            } else if val > *self.edges.get(mid).unwrap() {
                 low = mid + 1;
             } else {
                 return mid;
@@ -561,7 +562,7 @@ impl IntSpan {
         while pos < len {
             let mut end = pos + 1;
             while (end < len) && (ints[end] <= ints[end - 1] + 1) {
-                end = end + 1;
+                end += 1;
             }
             ranges.push(ints[pos]);
             ranges.push(ints[end - 1]);
@@ -586,7 +587,7 @@ impl IntSpan {
 
         while idx < len {
             let mut i = 0; // index in one run
-            if bytes.get(idx).unwrap().clone() == '-' as u8 {
+            if *bytes.get(idx).unwrap() == b'-' {
                 lower_is_neg = true;
                 i += 1;
             }
@@ -597,7 +598,7 @@ impl IntSpan {
 
             while idx + i < len {
                 let ch = bytes[idx + i];
-                if ch >= '0' as u8 && ch <= '9' as u8 {
+                if ch >= b'0' && ch <= b'9' {
                     if !in_upper {
                         lower *= radix;
                         lower -= (ch as char).to_digit(10).unwrap() as i32;
@@ -605,17 +606,17 @@ impl IntSpan {
                         upper *= radix;
                         upper -= (ch as char).to_digit(10).unwrap() as i32;
                     }
-                } else if ch == '-' as u8 && !in_upper {
+                } else if ch == b'-' && !in_upper {
                     in_upper = true;
-                    if bytes.get(idx + i + 1).unwrap().clone() == '-' as u8 {
+                    if *bytes.get(idx + i + 1).unwrap() == b'-' {
                         upper_is_neg = true;
                     }
-                } else if ch == ',' as u8 {
-                    i = i + 1;
+                } else if ch == b',' {
+                    i += 1;
                     break; // end of run
                 }
 
-                i = i + 1;
+                i += 1;
             }
 
             if !in_upper {
