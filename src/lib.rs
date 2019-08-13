@@ -203,7 +203,7 @@ impl IntSpan {
 
         if upper_pos & 1 == 1 {
             upper = *self.edges.get(upper_pos).unwrap();
-            upper_pos +=  1;
+            upper_pos += 1;
         }
 
         for _i in lower_pos..upper_pos {

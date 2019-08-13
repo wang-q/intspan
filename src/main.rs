@@ -69,8 +69,6 @@ fn run_test() -> String {
     intspan.to_string()
 }
 
-
-
 fn run_benchmark() {
     for step in 2..7 {
         println!("step {}", step);
@@ -198,6 +196,9 @@ mod tests {
 
     #[test]
     fn run_test_result() {
-        assert_eq!(run_test(), "-30--21,-4-9,20-39,60-61,79-84,86,89-90,99".to_string());
+        assert_eq!(
+            run_test(),
+            "-30--21,-4-9,20-39,60-61,79-84,86,89-90,99".to_string()
+        );
     }
 }
