@@ -2,9 +2,18 @@
 name = "intspan"
 version = "0.1.0"
 authors = ["wang-q <wang-q@outlook.com>"]
+description = "`IntSpan` handles of sets containing integer spans"
+documentation = "https://github.com/wang-q/intspan"
+homepage = "https://github.com/wang-q/intspan"
+repository = "https://github.com/wang-q/intspan"
+readme = "README.md"
+categories = ["command-line-utilities", "text-processing"]
 license = "MIT"
 edition = "2018"
-description = "`IntSpan` handles of sets containing integer spans"
+
+[badges]
+travis-ci = { repository = "wang-q/intspan" }
+appveyor = { repository = "wang-q/intspan" }
 
 [lib]
 name = "intspan"
