@@ -19,8 +19,8 @@ appveyor = { repository = "wang-q/intspan" }
 name = "intspan"
 
 [[bin]]
-name = "intspan-bin"
-path = "src/bin.rs"
+name = "intspan"
+path = "src/main.rs"
 
 [[example]]
 name = "benchmark"
@@ -29,3 +29,7 @@ name = "benchmark"
 name = "file"
 
 [dependencies]
+clap = "2"
+
+[build-dependencies]
+clap = "2"

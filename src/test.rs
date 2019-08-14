@@ -2,7 +2,7 @@ use intspan;
 use intspan::IntSpan;
 use std::env;
 
-fn run_test() -> String {
+pub fn run_test() -> String {
     let mut intspan = IntSpan::new();
     intspan.add_pair(1, 9);
     intspan.add_pair(20, 39);
@@ -66,19 +66,6 @@ fn run_test() -> String {
 
     //    -30--21,-4-9,20-39,60-61,79-84,86,89-90,99
     intspan.to_string()
-}
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
-
-    if args.len() <= 1 {
-        eprintln!("{} <test>", &args[0]);
-    } else if &args[1] == "test" {
-        run_test();
-    } else {
-        eprintln!("Unrecognized command {}", &args[1]);
-    }
 }
 
 #[cfg(test)]
