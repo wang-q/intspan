@@ -1,6 +1,5 @@
 use intspan;
 use intspan::IntSpan;
-use std::env;
 
 pub fn run_test() -> String {
     let mut intspan = IntSpan::new();
@@ -70,7 +69,7 @@ pub fn run_test() -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::run_test;
+    use super::*;
 
     #[test]
     fn run_test_result() {
