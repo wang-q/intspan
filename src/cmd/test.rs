@@ -1,5 +1,16 @@
+use clap::{App, Arg, ArgMatches, SubCommand};
 use intspan;
 use intspan::IntSpan;
+
+// Create clap subcommand arguments
+pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
+    SubCommand::with_name("test").about("Basic IntSpan library Ops")
+}
+
+// test command implementation
+pub fn execute(args: &ArgMatches) {
+    run_test();
+}
 
 pub fn run_test() -> String {
     let mut intspan = IntSpan::new();
