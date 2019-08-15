@@ -4,6 +4,7 @@ extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 
 mod cmd;
+mod utils;
 
 fn main() {
     let app = App::new(crate_name!())
@@ -19,5 +20,4 @@ fn main() {
         ("test", Some(sub_matches)) => cmd::test::execute(sub_matches),
         (_, _) => unreachable!(),
     };
-
 }
