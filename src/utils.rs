@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Lines, Read, Write};
+use std::collections::BTreeMap;
 
-pub fn reader(input: &String) -> Box<dyn BufRead> {
+pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
         Box::new(BufReader::new(io::stdin()))
     } else {
@@ -12,15 +12,15 @@ pub fn reader(input: &String) -> Box<dyn BufRead> {
     reader
 }
 
-pub fn read_lines(input: &String) -> Vec<String> {
+pub fn read_lines(input: &str) -> Vec<String> {
     let mut reader = reader(input);
     let mut s = String::new();
     reader.read_to_string(&mut s);
     s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
 }
 
-pub fn read_sizes(input: &String) -> HashMap<String, i32> {
-    let mut length_of: HashMap<String, i32> = HashMap::new();
+pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
+    let mut length_of: BTreeMap<String, i32> = BTreeMap::new();
 
     for line in read_lines(input) {
         let fields: Vec<&str> = line.split('\t').collect();
@@ -32,7 +32,7 @@ pub fn read_sizes(input: &String) -> HashMap<String, i32> {
     length_of
 }
 
-pub fn writer(output: &String) -> Box<dyn Write> {
+pub fn writer(output: &str) -> Box<dyn Write> {
     let writer: Box<dyn Write> = if output == "stdout" {
         Box::new(BufWriter::new(io::stdout()))
     } else {
@@ -42,7 +42,7 @@ pub fn writer(output: &String) -> Box<dyn Write> {
     writer
 }
 
-pub fn write_lines(output: &String, lines: Vec<&str>) {
+pub fn write_lines(output: &str, lines: &Vec<&str>) {
     let mut writer = writer(output);
 
     for line in lines {
@@ -57,7 +57,7 @@ mod read_write {
 
     #[test]
     fn test_reader() {
-        let reader = reader(&"tests/resources/S288c.chr.sizes".to_string());
+        let reader = reader("tests/resources/S288c.chr.sizes");
         let mut lines = vec![];
         for line in reader.lines() {
             lines.push(line);
@@ -67,22 +67,22 @@ mod read_write {
 
     #[test]
     fn test_reader_2() {
-        let reader = reader(&"tests/resources/S288c.chr.sizes".to_string());
+        let reader = reader("tests/resources/S288c.chr.sizes");
         let lines: Vec<_> = reader.lines().collect();
         assert_eq!(lines.len(), 16);
     }
 
     #[test]
     fn test_read_lines() {
-        let lines = read_lines(&"tests/resources/S288c.chr.sizes".to_string());
+        let lines = read_lines("tests/resources/S288c.chr.sizes");
         assert_eq!(lines.len(), 16);
     }
 
     #[test]
     fn test_read_sizes() {
-        let length_of = read_sizes(&"tests/resources/S288c.chr.sizes".to_string());
+        let length_of = read_sizes("tests/resources/S288c.chr.sizes");
         assert_eq!(length_of.len(), 16);
-        assert_eq!(length_of.get("II").unwrap(), &813184);
+        assert_eq!(*length_of.get("II").unwrap(), 813184);
     }
 
     #[test]
@@ -94,7 +94,7 @@ mod read_write {
             .into_os_string()
             .into_string()
             .unwrap();
-        write_lines(&filename, vec!["This", "is", "a\ntest"]);
+        write_lines(&filename, &vec!["This", "is", "a\ntest"]);
 
         println!("1");
         let lines = read_lines(&filename);
