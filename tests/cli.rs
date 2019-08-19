@@ -12,14 +12,38 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    cmd.arg("genome");
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("The following required arguments were not provided"));
+
+    Ok(())
+}
+
 #[test]
 fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
     cmd.arg("genome")
-        .arg("test/file/doesnt/exist");
+        .arg("tests/file/doesnt/exist");
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("No such file or directory"));
+
+    Ok(())
+}
+
+#[test]
+fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    cmd.arg("genome")
+        .arg("tests/resources/S288c.chr.sizes");
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("I: 1-230218"));
 
     Ok(())
 }
