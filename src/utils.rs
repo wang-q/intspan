@@ -1,7 +1,8 @@
+use std::collections::HashMap;
 use std::fs;
-use std::io::{self, BufRead, BufReader, Lines};
+use std::io::{self, BufRead, BufReader, Lines, Read};
 
-pub fn reader(input: &String) -> Box<BufRead> {
+pub fn reader(input: &String) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
         Box::new(BufReader::new(io::stdin()))
     } else {
@@ -11,19 +12,35 @@ pub fn reader(input: &String) -> Box<BufRead> {
     reader
 }
 
-//#[cfg(test)]
-//mod tests {
-//    use super::*;
+pub fn read_lines(input: &String) -> Vec<String> {
+    let mut reader = reader(input);
+    let mut s = String::new();
+    reader.read_to_string(&mut s);
+    s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
+}
+
+//pub fn read_sizes(input: &String) -> HashMap<String, i32> {
 //
-//    #[test]
-//    fn test_stdin() {
-//        let cursor = io::Cursor::new(b"lorem\nipsum\ndolor\n");
-//        let mut lines_iter =
-//            reader(&"stdin".to_string()).lines().filter_map(io::Result::ok).collect();
-////        assert_eq!(lines_iter.next(), Some(String::from("lorem")));
-////        assert_eq!(lines_iter.next(), Some(String::from("ipsum")));
-////        assert_eq!(lines_iter.next(), Some(String::from("dolor")));
-////        assert_eq!(lines_iter.next(), None);
-//        println!("{:?}", lines_iter);
-//    }
 //}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_reader() {
+        let reader = reader(&"tests/resources/S288c.chr.sizes".to_string());
+        let mut lines = vec![];
+        for line in reader.lines() {
+            lines.push(line);
+        }
+
+        assert_eq!(lines.len(), 16);
+    }
+
+    #[test]
+    fn test_read_lines() {
+        let lines = read_lines(&"tests/resources/S288c.chr.sizes".to_string());
+        assert_eq!(lines.len(), 16);
+    }
+}
