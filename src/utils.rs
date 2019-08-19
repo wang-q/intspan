@@ -19,9 +19,18 @@ pub fn read_lines(input: &String) -> Vec<String> {
     s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
 }
 
-//pub fn read_sizes(input: &String) -> HashMap<String, i32> {
-//
-//}
+pub fn read_sizes(input: &String) -> HashMap<String, i32> {
+    let mut length_of: HashMap<String, i32> = HashMap::new();
+
+    for line in read_lines(input) {
+        let fields: Vec<&str> = line.split('\t').collect();
+        if fields.len() == 2 {
+            length_of.insert(fields[0].to_string(), fields[1].parse::<i32>().unwrap());
+        }
+    }
+
+    length_of
+}
 
 #[cfg(test)]
 mod tests {
@@ -48,5 +57,12 @@ mod tests {
     fn test_read_lines() {
         let lines = read_lines(&"tests/resources/S288c.chr.sizes".to_string());
         assert_eq!(lines.len(), 16);
+    }
+
+    #[test]
+    fn test_read_sizes() {
+        let length_of = read_sizes(&"tests/resources/S288c.chr.sizes".to_string());
+        assert_eq!(length_of.len(), 16);
+        assert_eq!(length_of.get("II").unwrap(), &813184);
     }
 }
