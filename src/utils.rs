@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
-use std::io::{self, BufRead, BufReader, Lines, Read};
+use std::io::{self, BufRead, BufReader, BufWriter, Lines, Read, Write};
 
 pub fn reader(input: &String) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
@@ -32,9 +32,28 @@ pub fn read_sizes(input: &String) -> HashMap<String, i32> {
     length_of
 }
 
+pub fn writer(output: &String) -> Box<dyn Write> {
+    let writer: Box<dyn Write> = if output == "stdout" {
+        Box::new(BufWriter::new(io::stdout()))
+    } else {
+        Box::new(BufWriter::new(fs::File::create(output).unwrap()))
+    };
+
+    writer
+}
+
+pub fn write_lines(output: &String, lines: Vec<&str>) {
+    let mut writer = writer(output);
+
+    for line in lines {
+        writer.write(format!("{}\n", line).as_ref());
+    }
+}
+
 #[cfg(test)]
-mod tests {
+mod read_write {
     use super::*;
+    use tempfile::{tempdir, Builder, TempDir};
 
     #[test]
     fn test_reader() {
@@ -65,4 +84,21 @@ mod tests {
         assert_eq!(length_of.len(), 16);
         assert_eq!(length_of.get("II").unwrap(), &813184);
     }
+
+    #[test]
+    fn test_write_lines() {
+        let tempdir = TempDir::new().unwrap();
+        let filename = tempdir
+            .path()
+            .join("test.txt")
+            .into_os_string()
+            .into_string()
+            .unwrap();
+        write_lines(&filename, vec!["This", "is", "a\ntest"]);
+
+        println!("1");
+        let lines = read_lines(&filename);
+        assert_eq!(lines.len(), 4);
+    }
+
 }

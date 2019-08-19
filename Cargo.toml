@@ -30,6 +30,6 @@ name = "file"
 
 [dependencies]
 clap = "2"
+tempfile = "3.1.0"
 
 [build-dependencies]
-clap = "2"
