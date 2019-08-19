@@ -34,7 +34,13 @@ mod tests {
         for line in reader.lines() {
             lines.push(line);
         }
+        assert_eq!(lines.len(), 16);
+    }
 
+    #[test]
+    fn test_reader_2() {
+        let reader = reader(&"tests/resources/S288c.chr.sizes".to_string());
+        let lines: Vec<_> = reader.lines().collect();
         assert_eq!(lines.len(), 16);
     }
 
