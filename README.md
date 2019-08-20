@@ -5,6 +5,17 @@
 [![Codecov branch](https://img.shields.io/codecov/c/github/wang-q/intspan/master.svg)](https://codecov.io/github/wang-q/intspan?branch=master)
 [![Crates.io](https://img.shields.io/crates/v/intspan.svg)](https://crates.io/crates/intspan)
 
+# EXAMPLES
+
+```bash
+# cargo build --release
+
+target/release/intspan genome tests/resources/S288c.chr.sizes
+
+target/release/intspan some tests/resources/Atha.yml tests/resources/Atha.list 
+
+```
+
 ## Benchmark 1
 
 * Rust
