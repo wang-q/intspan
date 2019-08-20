@@ -44,21 +44,9 @@ pub fn execute(args: &ArgMatches) {
     let length_of = read_sizes(args.value_of("chr.sizes").unwrap());
 
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
-
     let is_mk: bool = master.values().next().unwrap().is_mapping();
 
-    let mut set_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
-    if is_mk {
-        for (key, value) in &master {
-            let runlist_one: BTreeMap<String, Value> =
-                serde_yaml::from_value(value.clone()).unwrap();
-            let set_one = runlist2set(&runlist_one);
-            set_of.insert(key.to_string(), set_one);
-        }
-    } else {
-        let set_one = runlist2set(&master);
-        set_of.insert("__single".to_string(), set_one);
-    }
+    let mut set_of = to_set_of(&master);
 
     let is_all = args.is_present("all");
 

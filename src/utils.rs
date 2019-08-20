@@ -96,6 +96,25 @@ pub fn set2runlist(set_of: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value
     runlist_of
 }
 
+pub fn to_set_of(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
+    let is_mk: bool = yaml.values().next().unwrap().is_mapping();
+
+    let mut set_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
+    if is_mk {
+        for (key, value) in yaml {
+            let runlist_one: BTreeMap<String, Value> =
+                serde_yaml::from_value(value.clone()).unwrap();
+            let set_one = runlist2set(&runlist_one);
+            set_of.insert(key.to_string(), set_one);
+        }
+    } else {
+        let set_one = runlist2set(&yaml);
+        set_of.insert("__single".to_string(), set_one);
+    }
+
+    set_of
+}
+
 #[cfg(test)]
 mod read_write {
     use super::*;
