@@ -1,9 +1,9 @@
-use crate::utils::{read_sizes, writer, write_runlist};
+use crate::utils::{read_sizes, write_runlist, writer};
 use clap::{App, Arg, ArgMatches, SubCommand};
 use intspan;
 use intspan::IntSpan;
-use std::collections::BTreeMap;
 use serde_yaml::Value;
+use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
