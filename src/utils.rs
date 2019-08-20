@@ -55,7 +55,7 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::e
     let mut writer = writer(output);
 
     for line in lines {
-        writer.write(format!("{}\n", line).as_ref())?;
+        writer.write_all(format!("{}\n", line).as_ref())?;
     }
 
     Ok(())
