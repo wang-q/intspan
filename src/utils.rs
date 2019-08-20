@@ -1,3 +1,4 @@
+use intspan::IntSpan;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::fs;
@@ -73,6 +74,28 @@ pub fn write_runlist(
     Ok(())
 }
 
+pub fn runlist2set(runlist_of: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
+    let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
+
+    for (key, value) in runlist_of {
+        let set = IntSpan::from(value.as_str().unwrap());
+        set_of.insert(key.into(), set);
+    }
+
+    set_of
+}
+
+pub fn set2runlist(set_of: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
+    let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
+
+    for (key, value) in set_of {
+        let runlist = value.to_string();
+        runlist_of.insert(key.into(), serde_yaml::to_value(runlist).unwrap());
+    }
+
+    runlist_of
+}
+
 #[cfg(test)]
 mod read_write {
     use super::*;
@@ -140,4 +163,27 @@ mod read_write {
         assert_eq!(lines.len(), 11);
     }
 
+    #[test]
+    fn test_runlist2set() {
+        let value: Value = serde_yaml::to_value("28547-29194").unwrap();
+        let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
+        runlist_of.insert("I".to_string(), value);
+
+        let set_of = runlist2set(&runlist_of);
+        assert!(set_of.values().next().unwrap().contains(28550));
+    }
+
+    #[test]
+    fn test_set2runlist() {
+        let mut intspan = IntSpan::new();
+        intspan.add_pair(28547, 29194);
+        let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
+        set_of.insert("I".to_string(), intspan);
+
+        let runlist_of = set2runlist(&set_of);
+        assert_eq!(
+            runlist_of.values().next().unwrap(),
+            &Value::String("28547-29194".into())
+        );
+    }
 }
