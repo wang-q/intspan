@@ -1,3 +1,4 @@
+use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Lines, Read, Write};
@@ -32,6 +33,14 @@ pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
     length_of
 }
 
+pub fn read_runlist(input: &str) -> BTreeMap<String, Value> {
+    let mut reader = reader(input);
+    let mut s = String::new();
+    reader.read_to_string(&mut s);
+
+    serde_yaml::from_str(&s).unwrap()
+}
+
 pub fn writer(output: &str) -> Box<dyn Write> {
     let writer: Box<dyn Write> = if output == "stdout" {
         Box::new(BufWriter::new(io::stdout()))
@@ -48,6 +57,13 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) {
     for line in lines {
         writer.write(format!("{}\n", line).as_ref());
     }
+}
+
+pub fn write_runlist(output: &str, yaml: &BTreeMap<String, Value>) {
+    let mut writer = writer(output);
+    let mut s = serde_yaml::to_string(yaml).unwrap();
+    s.push_str("\n");
+    writer.write_all(s.as_bytes());
 }
 
 #[cfg(test)]
@@ -68,8 +84,7 @@ mod read_write {
     #[test]
     fn test_reader_2() {
         let reader = reader("tests/resources/S288c.chr.sizes");
-        let lines: Vec<_> = reader.lines().collect();
-        assert_eq!(lines.len(), 16);
+        assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
     }
 
     #[test]
