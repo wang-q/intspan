@@ -16,6 +16,8 @@ target/release/intspan some tests/resources/Atha.yml tests/resources/Atha.list
 
 target/release/intspan merge tests/resources/I.yml tests/resources/II.yml
 
+target/release/intspan split tests/resources/I.II.yml
+
 ```
 
 ## Benchmark 1

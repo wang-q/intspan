@@ -1,6 +1,7 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
 use std::process::Command; // Run programs
+use tempfile::TempDir;
 
 #[test]
 fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
@@ -101,8 +102,46 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 5);
     assert!(stdout.contains("28547-29194"));
-    assert!(stdout.contains("\nI:"));
-    assert!(stdout.contains("\nII:"));
+    assert!(stdout.contains("\nI:\n"));
+    assert!(stdout.contains("\nII:\n"));
+
+    Ok(())
+}
+
+#[test]
+fn command_split() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("split")
+        .arg("tests/resources/I.II.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 4);
+    assert!(stdout.contains("28547-29194"));
+    assert!(stdout.contains("---\nI: "));
+    assert!(stdout.contains("---\nII: "));
+
+    Ok(())
+}
+
+#[test]
+fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
+    let tempdir = TempDir::new().unwrap();
+    let tempdir_str = tempdir.path().to_str().unwrap();
+
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    cmd.arg("split")
+        .arg("tests/resources/I.II.yml")
+        .arg("-o")
+        .arg(tempdir_str)
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+
+    assert!(&tempdir.path().join("II.yml").is_file());
+    assert!(!&tempdir.path().join("I.II.yml").exists());
 
     Ok(())
 }

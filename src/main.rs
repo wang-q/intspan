@@ -13,7 +13,8 @@ fn main() {
         .subcommand(cmd::test::make_subcommand())
         .subcommand(cmd::genome::make_subcommand())
         .subcommand(cmd::some::make_subcommand())
-        .subcommand(cmd::merge::make_subcommand());
+        .subcommand(cmd::merge::make_subcommand())
+        .subcommand(cmd::split::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let res = match app.get_matches().subcommand() {
@@ -21,6 +22,7 @@ fn main() {
         ("genome", Some(sub_matches)) => cmd::genome::execute(sub_matches),
         ("some", Some(sub_matches)) => cmd::some::execute(sub_matches),
         ("merge", Some(sub_matches)) => cmd::merge::execute(sub_matches),
+        ("split", Some(sub_matches)) => cmd::split::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }
