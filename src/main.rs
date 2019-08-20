@@ -12,13 +12,15 @@ fn main() {
         .about(crate_description!())
         .subcommand(cmd::test::make_subcommand())
         .subcommand(cmd::genome::make_subcommand())
-        .subcommand(cmd::some::make_subcommand());
+        .subcommand(cmd::some::make_subcommand())
+        .subcommand(cmd::merge::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let res = match app.get_matches().subcommand() {
         ("test", Some(sub_matches)) => cmd::test::execute(sub_matches),
         ("genome", Some(sub_matches)) => cmd::genome::execute(sub_matches),
         ("some", Some(sub_matches)) => cmd::some::execute(sub_matches),
+        ("merge", Some(sub_matches)) => cmd::merge::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }

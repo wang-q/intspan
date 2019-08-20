@@ -14,6 +14,8 @@ target/release/intspan genome tests/resources/S288c.chr.sizes
 
 target/release/intspan some tests/resources/Atha.yml tests/resources/Atha.list 
 
+target/release/intspan merge tests/resources/I.yml tests/resources/II.yml
+
 ```
 
 ## Benchmark 1
