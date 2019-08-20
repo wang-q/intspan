@@ -118,9 +118,26 @@ mod read_write {
             .unwrap();
         write_lines(&filename, &vec!["This", "is", "a\ntest"]);
 
-        println!("1");
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 4);
+    }
+
+    #[test]
+    fn test_read_write_runlist() {
+        let tempdir = TempDir::new().unwrap();
+        let filename = tempdir
+            .path()
+            .join("test.yml")
+            .into_os_string()
+            .into_string()
+            .unwrap();
+
+        let yaml = read_runlist("tests/resources/Atha.yml");
+
+        write_runlist(&filename, &yaml);
+
+        let lines = read_lines(&filename);
+        assert_eq!(lines.len(), 11);
     }
 
 }
