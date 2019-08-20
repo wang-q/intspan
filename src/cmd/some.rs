@@ -1,10 +1,5 @@
-use crate::utils::{
-    read_lines, read_runlist, read_sizes, reader, write_lines, write_runlist, writer,
-};
-use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan;
-use intspan::IntSpan;
-use serde::de::Unexpected::Str;
+use crate::utils::*;
+use clap::*;
 use serde_yaml::Value;
 use std::collections::{BTreeMap, BTreeSet};
 

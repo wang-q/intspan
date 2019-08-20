@@ -1,4 +1,4 @@
-use crate::utils::{read_sizes, write_runlist, writer};
+use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use intspan;
 use intspan::IntSpan;

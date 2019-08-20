@@ -1,7 +1,6 @@
-#[macro_use]
 extern crate clap;
 
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::*;
 
 mod cmd;
 mod utils;

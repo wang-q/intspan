@@ -1,4 +1,4 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::*;
 use intspan;
 use intspan::IntSpan;
 

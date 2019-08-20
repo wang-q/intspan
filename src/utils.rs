@@ -1,7 +1,7 @@
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::fs;
-use std::io::{self, BufRead, BufReader, BufWriter, Lines, Read, Write};
+use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
@@ -51,25 +51,32 @@ pub fn writer(output: &str) -> Box<dyn Write> {
     writer
 }
 
-pub fn write_lines(output: &str, lines: &Vec<&str>) {
+pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::error::Error>> {
     let mut writer = writer(output);
 
     for line in lines {
-        writer.write(format!("{}\n", line).as_ref());
+        writer.write(format!("{}\n", line).as_ref())?;
     }
+
+    Ok(())
 }
 
-pub fn write_runlist(output: &str, yaml: &BTreeMap<String, Value>) {
+pub fn write_runlist(
+    output: &str,
+    yaml: &BTreeMap<String, Value>,
+) -> Result<(), Box<dyn std::error::Error>> {
     let mut writer = writer(output);
     let mut s = serde_yaml::to_string(yaml).unwrap();
     s.push_str("\n");
-    writer.write_all(s.as_bytes());
+    writer.write_all(s.as_bytes())?;
+
+    Ok(())
 }
 
 #[cfg(test)]
 mod read_write {
     use super::*;
-    use tempfile::{tempdir, Builder, TempDir};
+    use tempfile::TempDir;
 
     #[test]
     fn test_reader() {
