@@ -1,6 +1,6 @@
+use std::collections::BTreeMap;
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Lines, Read, Write};
-use std::collections::BTreeMap;
 
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
