@@ -18,6 +18,10 @@ target/release/intspan merge tests/resources/I.yml tests/resources/II.yml
 
 target/release/intspan split tests/resources/I.II.yml
 
+target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/intergenic.yml
+
+target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/I.II.yml
+
 ```
 
 ## Benchmark 1

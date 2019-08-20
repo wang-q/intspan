@@ -145,3 +145,60 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("stat")
+        .arg("tests/resources/S288c.chr.sizes")
+        .arg("tests/resources/intergenic.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 18, "line count");
+    assert_eq!(
+        stdout
+            .lines()
+            .next()
+            .unwrap()
+            .split(',')
+            .collect::<Vec<&str>>()
+            .len(),
+        4,
+        "field count"
+    );
+    assert!(stdout.contains("all,12071326,1059702,"));
+
+    Ok(())
+}
+
+#[test]
+fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("stat")
+        .arg("tests/resources/S288c.chr.sizes")
+        .arg("tests/resources/intergenic.yml")
+        .arg("--all")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2, "line count");
+    assert_eq!(
+        stdout
+            .lines()
+            .next()
+            .unwrap()
+            .split(',')
+            .collect::<Vec<&str>>()
+            .len(),
+        3,
+        "field count"
+    );
+    assert!(!stdout.contains("all"));
+
+    Ok(())
+}
