@@ -67,10 +67,10 @@ pub fn execute(args: &ArgMatches) {
 
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile1").unwrap());
     let is_mk: bool = master.values().next().unwrap().is_mapping();
-    let mut set_of = to_set_of(&master);
+    let mut s1_of = to_set_of(&master);
 
     let single: BTreeMap<String, Value> = read_runlist(args.value_of("infile2").unwrap());
-    let mut set_single = runlist2set(&single);
+    let mut s2 = runlist2set(&single);
 
     let is_all = args.is_present("all");
     let base = if args.is_present("base") {
@@ -86,24 +86,18 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Operating
     //----------------------------
-    fill_up(&mut set_of, &length_of);
-    fill_up_s(&mut set_single, &length_of);
+    fill_up(&mut s1_of, &length_of);
+    fill_up_s(&mut s2, &length_of);
 
     let mut op_result_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
-    for (name, set_one) in &set_of {
+    for (name, s1) in &s1_of {
         let mut set_op: BTreeMap<String, IntSpan> = BTreeMap::new();
-        for chr in set_one.keys() {
+        for chr in s1.keys() {
             let intspan_op = match op {
-                "intersect" => set_one
-                    .get(chr)
-                    .unwrap()
-                    .intersect(set_single.get(chr).unwrap()),
-                "diff" => set_one.get(chr).unwrap().diff(set_single.get(chr).unwrap()),
-                "union" => set_one
-                    .get(chr)
-                    .unwrap()
-                    .union(set_single.get(chr).unwrap()),
-                "xor" => set_one.get(chr).unwrap().xor(set_single.get(chr).unwrap()),
+                "intersect" => s1.get(chr).unwrap().intersect(s2.get(chr).unwrap()),
+                "diff" => s1.get(chr).unwrap().diff(s2.get(chr).unwrap()),
+                "union" => s1.get(chr).unwrap().union(s2.get(chr).unwrap()),
+                "xor" => s1.get(chr).unwrap().xor(s2.get(chr).unwrap()),
                 _ => panic!("Invalid IntSpan Op"),
             };
             //            println!("Op {}: {}", op, op_intspan.to_string());
@@ -124,11 +118,11 @@ pub fn execute(args: &ArgMatches) {
         }
         lines.push(header);
 
-        for (name, set_one) in &op_result_of {
+        for name in s1_of.keys() {
             let key_lines = csv_lines(
-                set_one,
+                s1_of.get(name).unwrap(),
                 &length_of,
-                &set_single,
+                &s2,
                 op_result_of.get(name).unwrap(),
                 is_all,
                 Some(name),
@@ -143,9 +137,9 @@ pub fn execute(args: &ArgMatches) {
         lines.push(header);
 
         let key_lines = csv_lines(
-            set_of.get("__single").unwrap(),
+            s1_of.get("__single").unwrap(),
             &length_of,
-            &set_single,
+            &s2,
             op_result_of.get("__single").unwrap(),
             is_all,
             None,

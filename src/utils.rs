@@ -102,8 +102,9 @@ pub fn to_set_of(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<St
     let mut set_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     if is_mk {
         for (key, value) in yaml {
+            let string = serde_yaml::to_string(value).unwrap();
             let runlist_one: BTreeMap<String, Value> =
-                serde_yaml::from_value(value.clone()).unwrap();
+                serde_yaml::from_str(string.as_str()).unwrap();
             let set_one = runlist2set(&runlist_one);
             set_of.insert(key.to_string(), set_one);
         }

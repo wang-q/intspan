@@ -8,25 +8,40 @@
 # EXAMPLES
 
 ```bash
-# cargo build --release
+# cargo install --path . --force
 
-target/release/intspan genome tests/resources/S288c.chr.sizes
+intspan genome tests/resources/S288c.chr.sizes
 
-target/release/intspan some tests/resources/Atha.yml tests/resources/Atha.list 
+intspan some tests/resources/Atha.yml tests/resources/Atha.list 
 
-target/release/intspan merge tests/resources/I.yml tests/resources/II.yml
+intspan merge tests/resources/I.yml tests/resources/II.yml
 
-target/release/intspan split tests/resources/I.II.yml
+intspan split tests/resources/I.II.yml
 
-target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/intergenic.yml
+intspan stat tests/resources/S288c.chr.sizes tests/resources/intergenic.yml
 
-target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/I.II.yml
+intspan stat tests/resources/S288c.chr.sizes tests/resources/I.II.yml
 
-target/release/intspan statop \
+diff <(intspan stat tests/resources/Atha.chr.sizes tests/resources/Atha.yml) \
+    <(jrunlist stat -o stdout tests/resources/Atha.chr.sizes tests/resources/Atha.yml)
+
+intspan statop \
     --op intersect \
     tests/resources/S288c.chr.sizes \
     tests/resources/intergenic.yml \
     tests/resources/repeat.yml
+
+diff <(intspan statop \
+        --op intersect --all\
+        tests/resources/Atha.chr.sizes \
+        tests/resources/Atha.yml \
+        tests/resources/paralog.yml ) \
+    <(jrunlist statop \
+        -o stdout \
+        --op intersect --all \
+        tests/resources/Atha.chr.sizes \
+        tests/resources/Atha.yml \
+        tests/resources/paralog.yml )
 
 ```
 
