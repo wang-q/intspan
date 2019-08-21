@@ -46,7 +46,7 @@ pub fn execute(args: &ArgMatches) {
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
     let is_mk: bool = master.values().next().unwrap().is_mapping();
 
-    let mut set_of = to_set_of(&master);
+    let set_of = to_set_of(&master);
 
     let is_all = args.is_present("all");
 
