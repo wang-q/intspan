@@ -183,7 +183,7 @@ fn csv_lines(
         } else {
             s2_size as f32 / s2_length as f32
         };
-        let ratio = if c1 == 0 as f32 { 0 as f32 } else { c2 / c1 };
+        let ratio = if (c1 - 0 as f32).abs() < 0.00001 { 0 as f32 } else { c2 / c1 };
 
         let line = format!(
             "{},{},{},{},{},{:.4},{:.4},{:.4}\n",
@@ -207,7 +207,7 @@ fn csv_lines(
     } else {
         all_s2_size as f32 / all_s2_length as f32
     };
-    let all_ratio = if all_c1 == 0 as f32 {
+    let all_ratio = if (all_c1 - 0 as f32).abs() < 0.00001 {
         0 as f32
     } else {
         all_c2 / all_c1
