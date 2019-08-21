@@ -7,7 +7,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("test").about("Basic IntSpan library Ops")
 }
 
-// test command implementation
+// command implementation
 pub fn execute(args: &ArgMatches) {
     run_test();
 }

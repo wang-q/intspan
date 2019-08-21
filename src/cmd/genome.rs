@@ -26,7 +26,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         )
 }
 
-// test command implementation
+// command implementation
 pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading

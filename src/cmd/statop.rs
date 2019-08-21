@@ -58,7 +58,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         )
 }
 
-// test command implementation
+// command implementation
 pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
@@ -183,7 +183,11 @@ fn csv_lines(
         } else {
             s2_size as f32 / s2_length as f32
         };
-        let ratio = if (c1 - 0 as f32).abs() < 0.00001 { 0 as f32 } else { c2 / c1 };
+        let ratio = if (c1 - 0 as f32).abs() < 0.00001 {
+            0 as f32
+        } else {
+            c2 / c1
+        };
 
         let line = format!(
             "{},{},{},{},{},{:.4},{:.4},{:.4}\n",
