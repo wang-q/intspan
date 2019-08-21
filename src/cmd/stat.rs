@@ -54,7 +54,7 @@ pub fn execute(args: &ArgMatches) {
     // Operating
     //----------------------------
     let mut lines: Vec<String> = Vec::new(); // Avoid lifetime problems
-    let mut header = "key,chr,chr_length,size,coverage".to_string();
+    let mut header = "key,chr,chrLength,size,coverage".to_string();
 
     if is_mk {
         if is_all {
