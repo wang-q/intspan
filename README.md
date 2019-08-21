@@ -22,6 +22,12 @@ target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/inte
 
 target/release/intspan stat tests/resources/S288c.chr.sizes tests/resources/I.II.yml
 
+target/release/intspan statop \
+    --op intersect \
+    tests/resources/S288c.chr.sizes \
+    tests/resources/intergenic.yml \
+    tests/resources/repeat.yml
+
 ```
 
 ## Benchmark 1

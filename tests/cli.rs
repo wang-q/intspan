@@ -202,3 +202,68 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("statop")
+        .arg("tests/resources/S288c.chr.sizes")
+        .arg("tests/resources/intergenic.yml")
+        .arg("tests/resources/repeat.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 18, "line count");
+    assert_eq!(
+        stdout
+            .lines()
+            .next()
+            .unwrap()
+            .split(',')
+            .collect::<Vec<&str>>()
+            .len(),
+        8,
+        "field count"
+    );
+    assert!(stdout.contains("36721"), "sum exists");
+    assert!(stdout.contains(",repeatLength,"));
+    assert!(stdout.contains("\nI,"));
+    assert!(stdout.contains("\nXVI,"));
+
+    Ok(())
+}
+
+#[test]
+fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("statop")
+        .arg("tests/resources/S288c.chr.sizes")
+        .arg("tests/resources/intergenic.yml")
+        .arg("tests/resources/repeat.yml")
+        .arg("--all")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2, "line count");
+    assert_eq!(
+        stdout
+            .lines()
+            .next()
+            .unwrap()
+            .split(',')
+            .collect::<Vec<&str>>()
+            .len(),
+        7,
+        "field count"
+    );
+    assert!(stdout.contains("36721"), "sum exists");
+    assert!(stdout.contains(",repeatLength,"));
+    assert!(!stdout.contains("\nI,"));
+    assert!(!stdout.contains("\nXVI,"));
+
+    Ok(())
+}

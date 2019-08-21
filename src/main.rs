@@ -15,7 +15,8 @@ fn main() {
         .subcommand(cmd::some::make_subcommand())
         .subcommand(cmd::merge::make_subcommand())
         .subcommand(cmd::split::make_subcommand())
-        .subcommand(cmd::stat::make_subcommand());
+        .subcommand(cmd::stat::make_subcommand())
+        .subcommand(cmd::statop::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let res = match app.get_matches().subcommand() {
@@ -25,6 +26,7 @@ fn main() {
         ("merge", Some(sub_matches)) => cmd::merge::execute(sub_matches),
         ("split", Some(sub_matches)) => cmd::split::execute(sub_matches),
         ("stat", Some(sub_matches)) => cmd::stat::execute(sub_matches),
+        ("statop", Some(sub_matches)) => cmd::statop::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }
