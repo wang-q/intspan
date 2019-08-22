@@ -359,3 +359,106 @@ fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_span_cover() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("cover")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert!(stdout.contains("32316461-32398770"), "cover");
+
+    Ok(())
+}
+
+#[test]
+fn command_span_fill() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("fill")
+        .arg("-n")
+        .arg("1000")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert!(stdout.contains("32325076-32326613"), "newly emerged");
+    assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
+    assert_eq!(stdout.len() - stdout.replace(",", "").len(), 18, "new");
+
+    Ok(())
+}
+
+#[test]
+fn command_span_trim() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("trim")
+        .arg("-n")
+        .arg("200")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
+    assert_eq!(stdout.len() - stdout.replace(",", "").len(), 3, "new");
+
+    Ok(())
+}
+
+#[test]
+fn command_span_pad() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("pad")
+        .arg("-n")
+        .arg("2000")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
+    assert_eq!(stdout.len() - stdout.replace(",", "").len(), 6, "new");
+
+    Ok(())
+}
+
+#[test]
+fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("excise")
+        .arg("-n")
+        .arg("400")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
+    assert_eq!(stdout.len() - stdout.replace(",", "").len(), 3, "new");
+
+    Ok(())
+}

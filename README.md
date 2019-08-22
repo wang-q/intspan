@@ -16,6 +16,8 @@ intspan some tests/resources/Atha.yml tests/resources/Atha.list
 
 intspan merge tests/resources/I.yml tests/resources/II.yml
 
+intspan span --op cover tests/resources/brca2.yml
+
 intspan combine tests/resources/Atha.yml
 jrunlist combine -o stdout tests/resources/Atha.yml
 

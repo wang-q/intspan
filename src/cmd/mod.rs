@@ -5,6 +5,7 @@ pub mod compare;
 pub mod genome;
 pub mod merge;
 pub mod some;
+pub mod span;
 pub mod split;
 pub mod stat;
 pub mod statop;
