@@ -1,5 +1,5 @@
 use regex::Regex;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 #[derive(Default)]
 pub struct Range {
@@ -40,11 +40,11 @@ impl Range {
         }
     }
 
-    /// From chr, start and end
+    /// Constructed from chr, start and end
     ///
     /// ```
     /// # use intspan::Range;
-    /// let mut range = Range::from("I", 1, 100);
+    /// let range = Range::from("I", 1, 100);
     /// # assert_eq!(*range.chr(), "I");
     /// # assert_eq!(*range.start(), 1);
     /// # assert_eq!(*range.end(), 100);
@@ -65,6 +65,20 @@ impl Range {
         }
     }
 
+    /// Constructed from string
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I:1-100");
+    /// # assert_eq!(*range.chr(), "I");
+    /// # assert_eq!(*range.start(), 1);
+    /// # assert_eq!(*range.end(), 100);
+    /// # assert_eq!(range.to_string(), "I:1-100");
+    /// let range = Range::from_str("S288c.I(-):1-100");
+    /// # assert_eq!(*range.name(), "S288c");
+    /// # assert_eq!(*range.strand(), "-");
+    /// # assert_eq!(range.to_string(), "S288c.I(-):1-100");
+    /// ```
     pub fn from_str<S>(range: S) -> Self
     where
         S: Into<String>,
@@ -72,7 +86,95 @@ impl Range {
         let s = range.into();
 
         let mut new = Self::new();
+        new.decode(&s);
 
         new
     }
+
+    /// To string
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from("I", 1, 100);
+    /// assert_eq!(range.to_string(), "I:1-100");
+    /// let range = Range::from("I", 100, 100);
+    /// assert_eq!(range.to_string(), "I:100");
+    /// ```
+    pub fn to_string(&self) -> String {
+        self.encode()
+    }
+
+    fn decode(&mut self, header: &String) {
+        let re = Regex::new(
+            r"(?xi)
+            (?:(?P<name>[\w_]+)\.)?
+            (?P<chr>[\w-]+)
+            (?:\((?P<strand>.+)\))?
+            [:]                    # spacer
+            (?P<start>\d+)
+            [_\-]?                 # spacer
+            (?P<end>\d+)?
+            ",
+        )
+        .unwrap();
+
+        let caps = match re.captures(header.as_str()) {
+            Some(x) => x,
+            None => unimplemented!(),
+        };
+        let dict: HashMap<String, String> = re
+            .capture_names()
+            .flatten()
+            .filter_map(|n| Some((n.to_string(), caps.name(n)?.as_str().to_string())))
+            .collect();
+        for key in dict.keys() {
+            match key.as_str() {
+                "name" => self.name = dict.get(key).unwrap().to_owned(),
+                "chr" => self.chr = dict.get(key).unwrap().to_owned(),
+                "strand" => self.strand = dict.get(key).unwrap().to_owned(),
+                "start" => self.start = dict.get(key).unwrap().parse::<i32>().unwrap(),
+                "end" => self.end = dict.get(key).unwrap().parse::<i32>().unwrap(),
+                _ => {}
+            }
+        }
+        eprintln!("{:#?}", &dict);
+        let mut new = Self::new();
+    }
+
+    fn encode(&self) -> String {
+        let mut header = String::new();
+
+        if !self.name.is_empty() {
+            header += self.name.as_str();
+            if !self.chr.is_empty() {
+                header += ".";
+                header += self.chr.as_str();
+            }
+        } else if !self.chr.is_empty() {
+            header += self.chr.as_str();
+        }
+
+        if !self.strand.is_empty() {
+            header += "(";
+            header += self.strand.as_str();
+            header += ")";
+        }
+
+        if self.start != 0 {
+            header += ":";
+            header += self.start.to_string().as_str();
+            if self.end != self.start {
+                header += "-";
+                header += self.end.to_string().as_str();
+            }
+        }
+
+        header
+    }
+}
+
+#[test]
+fn fa_headers() {
+    let s = "I:1-100";
+    let r = Range::from_str(s);
 }
