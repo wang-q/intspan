@@ -87,8 +87,12 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Operating
     //----------------------------
-    fill_up(&mut s1_of, &length_of);
-    fill_up_s(&mut s2, &length_of);
+    let chrs = length_of
+        .keys()
+        .map(|s| s.to_string())
+        .collect::<BTreeSet<String>>();
+    fill_up(&mut s1_of, &chrs);
+    fill_up_s(&mut s2, &chrs);
 
     let mut op_result_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     for (name, s1) in &s1_of {

@@ -116,12 +116,9 @@ pub fn to_set_of(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<St
     set_of
 }
 
-pub fn fill_up(
-    set_of: &mut BTreeMap<String, BTreeMap<String, IntSpan>>,
-    length_of: &BTreeMap<String, i32>,
-) {
+pub fn fill_up(set_of: &mut BTreeMap<String, BTreeMap<String, IntSpan>>, chrs: &BTreeSet<String>) {
     for (name, set_one) in set_of {
-        for chr in length_of.keys() {
+        for chr in chrs {
             if !set_one.contains_key(chr) {
                 set_one.insert(chr.into(), IntSpan::new());
             }
@@ -129,8 +126,8 @@ pub fn fill_up(
     }
 }
 
-pub fn fill_up_s(set_one: &mut BTreeMap<String, IntSpan>, length_of: &BTreeMap<String, i32>) {
-    for chr in length_of.keys() {
+pub fn fill_up_s(set_one: &mut BTreeMap<String, IntSpan>, chrs: &BTreeSet<String>) {
+    for chr in chrs {
         if !set_one.contains_key(chr) {
             set_one.insert(chr.into(), IntSpan::new());
         }
