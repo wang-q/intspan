@@ -1,6 +1,6 @@
 use intspan::IntSpan;
 use serde_yaml::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
@@ -135,6 +135,18 @@ pub fn fill_up_s(set_one: &mut BTreeMap<String, IntSpan>, length_of: &BTreeMap<S
             set_one.insert(chr.into(), IntSpan::new());
         }
     }
+}
+
+pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeSet<String> {
+    let mut chrs: BTreeSet<String> = BTreeSet::new();
+
+    for key in set_of.keys() {
+        for chr in set_of.get(key).unwrap().keys() {
+            chrs.insert(chr.into());
+        }
+    }
+
+    chrs
 }
 
 #[cfg(test)]
