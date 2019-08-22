@@ -142,7 +142,7 @@ pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTr
 
     for key in set_of.keys() {
         for chr in set_of.get(key).unwrap().keys() {
-            chrs.insert(chr.into());
+            chrs.insert(chr.clone());
         }
     }
 

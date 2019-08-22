@@ -11,8 +11,12 @@ use std::path::Path;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("split")
-        .about("Split a runlist yaml file")
+    SubCommand::with_name("combine")
+        .about("Combine multiple sets of runlists in a yaml file")
+        .after_help(
+            "It's expected that the YAML file contains multiple sets of runlists, \
+             otherwise this command will make no effects",
+        )
         .arg(
             Arg::with_name("infile")
                 .help("Sets the input file to use")
@@ -20,13 +24,13 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
                 .index(1),
         )
         .arg(
-            Arg::with_name("outdir")
+            Arg::with_name("outfile")
                 .short("o")
-                .long("outdir")
+                .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
                 .empty_values(false)
-                .help("Output location. [stdout] for screen"),
+                .help("Output filename. [stdout] for screen"),
         )
 }
 
@@ -36,30 +40,37 @@ pub fn execute(args: &ArgMatches) {
     // Loading
     //----------------------------
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
-
-    let outdir = args.value_of("outdir").unwrap();
-    if outdir != "stdout" {
-        fs::create_dir_all(outdir);
-    }
+    let set_of = to_set_of(&master);
+    let chrs = chrs_in_sets(&set_of);
 
     //----------------------------
     // Operating
     //----------------------------
-    for (key, value) in &master {
-        if !value.is_mapping() {
-            panic!("Not a valid multi-key runlist yaml file");
-        }
+    let mut op_result: BTreeMap<String, IntSpan> = BTreeMap::new();
+    for chr in &chrs {
+        op_result.insert(chr.to_string(), IntSpan::new());
+    }
 
-        let string = serde_yaml::to_string(value).unwrap();
+    for name in set_of.keys() {
+        let set = set_of.get(name.as_str()).unwrap();
+        for chr in set.keys() {
+            let mut intspan = IntSpan::new();
+            let cur_result = op_result.get(chr).unwrap();
+//            println!("cur_result {}", cur_result.to_string());
 
-        //----------------------------
-        // Output
-        //----------------------------
-        if outdir == "stdout" {
-            write_lines("stdout", &vec![string.as_str()]);
-        } else {
-            let path = Path::new(outdir).join(key.to_owned() + ".yml");
-            fs::write(path, string + "\n");
+            let cur_intspan = set.get(chr).unwrap();
+//            println!("cur_intspan {}", cur_intspan.to_string());
+
+            intspan.add_runlist(cur_result.to_string());
+            intspan.add_runlist(cur_intspan.to_string());
+
+            op_result.insert(chr.clone(), intspan);
         }
     }
+
+    //----------------------------
+    // Output
+    //----------------------------
+    let out_runlist = set2runlist(&op_result);
+    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
 }

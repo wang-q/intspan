@@ -267,3 +267,35 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("combine")
+        .arg("tests/resources/Atha.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 3);
+    assert!(!stdout.contains("7232,7384"), "combined");
+
+    Ok(())
+}
+
+#[test]
+fn command_combine_2() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("combine")
+        .arg("tests/resources/II.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert!(stdout.contains("21294-22075,"), "no changes");
+
+    Ok(())
+}
