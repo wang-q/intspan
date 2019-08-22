@@ -1,6 +1,7 @@
 //! Subcommand modules for the `intspan` binary.
 
 pub mod combine;
+pub mod compare;
 pub mod genome;
 pub mod merge;
 pub mod some;

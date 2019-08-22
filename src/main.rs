@@ -17,7 +17,8 @@ fn main() {
         .subcommand(cmd::split::make_subcommand())
         .subcommand(cmd::stat::make_subcommand())
         .subcommand(cmd::statop::make_subcommand())
-        .subcommand(cmd::combine::make_subcommand());
+        .subcommand(cmd::combine::make_subcommand())
+        .subcommand(cmd::compare::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let res = match app.get_matches().subcommand() {
@@ -29,6 +30,7 @@ fn main() {
         ("stat", Some(sub_matches)) => cmd::stat::execute(sub_matches),
         ("statop", Some(sub_matches)) => cmd::statop::execute(sub_matches),
         ("combine", Some(sub_matches)) => cmd::combine::execute(sub_matches),
+        ("compare", Some(sub_matches)) => cmd::compare::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }

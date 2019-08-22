@@ -96,6 +96,19 @@ pub fn set2runlist(set_of: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value
     runlist_of
 }
 
+pub fn set2runlist_m(
+    set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>,
+) -> BTreeMap<String, Value> {
+    let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
+
+    for (key, set) in set_of {
+        let runlist = set2runlist(set);
+        runlist_of.insert(key.to_string(), serde_yaml::to_value(runlist).unwrap());
+    }
+
+    runlist_of
+}
+
 pub fn to_set_of(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
     let is_mk: bool = yaml.values().next().unwrap().is_mapping();
 

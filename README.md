@@ -19,6 +19,11 @@ intspan merge tests/resources/I.yml tests/resources/II.yml
 intspan combine tests/resources/Atha.yml
 jrunlist combine -o stdout tests/resources/Atha.yml
 
+intspan compare \
+    --op intersect \
+    tests/resources/intergenic.yml \
+    tests/resources/repeat.yml
+
 intspan split tests/resources/I.II.yml
 
 intspan stat tests/resources/S288c.chr.sizes tests/resources/intergenic.yml
