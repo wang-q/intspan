@@ -29,23 +29,6 @@ impl Range {
         &self.end
     }
 
-    // Mutable accessors
-    pub fn name_mut(&mut self) -> &mut String {
-        &mut self.name
-    }
-    pub fn chr_mut(&mut self) -> &mut String {
-        &mut self.chr
-    }
-    pub fn strand_mut(&mut self) -> &mut String {
-        &mut self.strand
-    }
-    pub fn start_mut(&mut self) -> &mut i32 {
-        &mut self.start
-    }
-    pub fn end_mut(&mut self) -> &mut i32 {
-        &mut self.end
-    }
-
     pub fn new() -> Self {
         Self {
             name: "".to_string(),
