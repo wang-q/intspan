@@ -56,10 +56,10 @@ pub fn execute(args: &ArgMatches) {
         for chr in set.keys() {
             let mut intspan = IntSpan::new();
             let cur_result = op_result.get(chr).unwrap();
-//            println!("cur_result {}", cur_result.to_string());
+            //            println!("cur_result {}", cur_result.to_string());
 
             let cur_intspan = set.get(chr).unwrap();
-//            println!("cur_intspan {}", cur_intspan.to_string());
+            //            println!("cur_intspan {}", cur_intspan.to_string());
 
             intspan.add_runlist(cur_result.to_string());
             intspan.add_runlist(cur_intspan.to_string());
