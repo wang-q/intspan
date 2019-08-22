@@ -74,10 +74,15 @@ impl Range {
     /// # assert_eq!(*range.start(), 1);
     /// # assert_eq!(*range.end(), 100);
     /// # assert_eq!(range.to_string(), "I:1-100");
-    /// let range = Range::from_str("S288c.I(-):1-100");
+    /// let range = Range::from_str("I:100");
+    /// # assert_eq!(*range.chr(), "I");
+    /// # assert_eq!(*range.start(), 100);
+    /// # assert_eq!(*range.end(), 100);
+    /// # assert_eq!(range.to_string(), "I:100");
+    /// let range = Range::from_str("S288c.I(-):27070-29557");
     /// # assert_eq!(*range.name(), "S288c");
     /// # assert_eq!(*range.strand(), "-");
-    /// # assert_eq!(range.to_string(), "S288c.I(-):1-100");
+    /// # assert_eq!(range.to_string(), "S288c.I(-):27070-29557");
     /// ```
     pub fn from_str<S>(range: S) -> Self
     where
@@ -120,7 +125,10 @@ impl Range {
 
         let caps = match re.captures(header.as_str()) {
             Some(x) => x,
-            None => unimplemented!(),
+            None => {
+                self.chr = header.split(" ").next().unwrap().to_string();
+                return;
+            }
         };
         let dict: HashMap<String, String> = re
             .capture_names()
@@ -137,8 +145,14 @@ impl Range {
                 _ => {}
             }
         }
-        eprintln!("{:#?}", &dict);
-        let mut new = Self::new();
+
+        if self.start != 0 {
+            if self.end == 0 {
+                self.end = self.start;
+            }
+        }
+
+        //        eprintln!("{:#?}", &dict);
     }
 
     fn encode(&self) -> String {
@@ -175,6 +189,14 @@ impl Range {
 
 #[test]
 fn fa_headers() {
-    let s = "I:1-100";
-    let r = Range::from_str(s);
+    let tests = vec![
+        ("S288c", "S288c"),
+        ("S288c The baker's yeast", "S288c"),
+        ("1:-100", "1:-100"),
+    ];
+    for (header, expected) in tests {
+        eprintln!("{:#?}", header);
+        let range = Range::from_str(header);
+        assert_eq!(range.to_string(), expected);
+    }
 }
