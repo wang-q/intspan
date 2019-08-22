@@ -32,6 +32,7 @@ name = "file"
 clap = "2"
 serde = "1.0"
 serde_yaml = "0.8"
+regex = "1"
 
 [build-dependencies]
 
