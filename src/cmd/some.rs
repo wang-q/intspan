@@ -37,23 +37,23 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
 
-    let mut all_names: BTreeSet<String> = BTreeSet::new();
+    let mut names: BTreeSet<String> = BTreeSet::new();
     for line in read_lines(args.value_of("list").unwrap()) {
-        all_names.insert(line);
+        names.insert(line);
     }
 
     //----------------------------
     // Operating
     //----------------------------
-    let mut out_map: BTreeMap<String, Value> = BTreeMap::new();
+    let mut out_runlist: BTreeMap<String, Value> = BTreeMap::new();
     for (key, value) in &master {
-        if all_names.contains(key) {
-            out_map.insert(key.into(), value.clone());
+        if names.contains(key) {
+            out_runlist.insert(key.into(), value.clone());
         }
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_runlist(args.value_of("outfile").unwrap(), &out_map);
+    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
 }
