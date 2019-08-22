@@ -1,11 +1,7 @@
 use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan;
-use intspan::IntSpan;
-use serde::Serialize;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
-use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
 
