@@ -200,3 +200,16 @@ fn fa_headers() {
         assert_eq!(range.to_string(), expected);
     }
 }
+
+/*
+#[test]
+fn from_file() {
+    let lines = read_lines("tests/resources/S288c.chr.sizes");
+    assert_eq!(lines.len(), 16);
+//    for (header, expected) in tests {
+//        eprintln!("{:#?}", header);
+//        let range = Range::from_str(header);
+//        assert_eq!(range.to_string(), expected);
+//    }
+}
+*/

@@ -41,7 +41,7 @@ fn create() {
         assert_eq!(intspan.to_vec(), *exp_elements);
     }
 
-    for (runlist, exp_runlist, exp_elements) in &tests {
+    for (_, exp_runlist, exp_elements) in &tests {
         let mut intspan = IntSpan::new();
         intspan.add_vec(exp_elements);
 
