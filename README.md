@@ -24,6 +24,8 @@ intspan cover tests/resources/dazzname.ranges
 
 intspan gff tests/resources/NC_007942.gff --tag tRNA
 
+intspan range --op overlap tests/resources/intergenic.yml tests/resources/S288c.ranges
+
 intspan span --op cover tests/resources/brca2.yml
 
 intspan combine tests/resources/Atha.yml

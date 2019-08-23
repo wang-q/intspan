@@ -21,7 +21,8 @@ fn main() {
         .subcommand(cmd::span::make_subcommand())
         .subcommand(cmd::cover::make_subcommand())
         .subcommand(cmd::gff::make_subcommand())
-        .subcommand(cmd::convert::make_subcommand());
+        .subcommand(cmd::convert::make_subcommand())
+        .subcommand(cmd::range::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let _res = match app.get_matches().subcommand() {
@@ -38,12 +39,12 @@ fn main() {
         ("cover", Some(sub_matches)) => cmd::cover::execute(sub_matches),
         ("gff", Some(sub_matches)) => cmd::gff::execute(sub_matches),
         ("convert", Some(sub_matches)) => cmd::convert::execute(sub_matches),
+        ("range", Some(sub_matches)) => cmd::range::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }
 
 // TODO: bump_coverage
-// TODO: ranges related commands, filter
 // TODO: CI releases
 // TODO: ovlp.rs
 // TODO: wrap IO with Result
