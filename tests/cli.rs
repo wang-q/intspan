@@ -270,6 +270,24 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("statop")
+        .arg("tests/resources/S288c.chr.sizes")
+        .arg("tests/resources/intergenic.yml")
+        .arg("tests/resources/repeat.yml")
+        .arg("--op")
+        .arg("invalid")
+        .arg("--all");
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("Invalid IntSpan Op"));
+
+    Ok(())
+}
+
+#[test]
 fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
     let output = cmd
@@ -460,6 +478,21 @@ fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
     assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
     assert_eq!(stdout.len() - stdout.replace(",", "").len(), 3, "new");
+
+    Ok(())
+}
+
+#[test]
+fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/resources/brca2.yml")
+        .arg("--op")
+        .arg("invalid");
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("Invalid IntSpan Op"));
 
     Ok(())
 }
