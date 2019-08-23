@@ -224,6 +224,95 @@ impl IntSpan {
     }
 }
 
+#[cfg(test)]
+mod create {
+    use super::*;
+
+    #[test]
+    fn test_create() {
+        let tests = vec![
+            ("", "-", vec![]),
+            ("-", "-", vec![]),
+            ("0", "0", vec![0]),
+            ("0", "0", vec![0]),
+            ("1", "1", vec![1]),
+            ("-1", "-1", vec![-1]),
+            ("1-2", "1-2", vec![1, 2]),
+            ("-2--1", "-2--1", vec![-2, -1]),
+            ("-2-1", "-2-1", vec![-2, -1, 0, 1]),
+            ("1,3-4", "1,3-4", vec![1, 3, 4]),
+            ("1-1", "1", vec![1]),
+            ("1,2-4", "1-4", vec![1, 2, 3, 4]),
+            ("1-3,4", "1-4", vec![1, 2, 3, 4]),
+            ("1-3,4,5-7", "1-7", vec![1, 2, 3, 4, 5, 6, 7]),
+            ("1,2,3,4,5,6,7", "1-7", vec![1, 2, 3, 4, 5, 6, 7]),
+        ];
+
+        // create new
+        for (runlist, exp_runlist, exp_elements) in &tests {
+            let mut intspan = IntSpan::new();
+            intspan.add_runlist(*runlist);
+
+            assert_eq!(intspan.cardinality(), exp_elements.len() as i32);
+            assert_eq!(intspan.size(), exp_elements.len() as i32);
+            assert_eq!(intspan.to_string(), *exp_runlist);
+            assert_eq!(intspan.runlist(), *exp_runlist);
+            assert_eq!(intspan.to_vec(), *exp_elements);
+            assert_eq!(intspan.elements(), *exp_elements);
+        }
+
+        for (runlist, exp_runlist, exp_elements) in &tests {
+            let intspan = IntSpan::from(*runlist);
+
+            assert_eq!(intspan.cardinality(), exp_elements.len() as i32);
+            assert_eq!(intspan.to_string(), *exp_runlist);
+            assert_eq!(intspan.to_vec(), *exp_elements);
+        }
+
+        for (_, exp_runlist, exp_elements) in &tests {
+            let mut intspan = IntSpan::new();
+            intspan.add_vec(exp_elements);
+
+            assert_eq!(intspan.cardinality(), exp_elements.len() as i32);
+            assert_eq!(intspan.to_string(), *exp_runlist);
+            assert_eq!(intspan.to_vec(), *exp_elements);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "Bad order: 1,-1")]
+    fn panic_pair() {
+        let mut set = IntSpan::new();
+        set.add_pair(1, -1);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Bad order: 1,-1")]
+    fn panic_runlist() {
+        let mut set = IntSpan::new();
+        set.add_runlist("1--1");
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Number format error: a at 0 of abc")]
+    fn panic_runlist_2() {
+        let mut set = IntSpan::new();
+        set.add_runlist("abc");
+        println!("{:?}", set.ranges());
+    }
+
+    // Read as 1-11
+    //#[test]
+    //#[should_panic(expected = "Bad order: 1,-1")]
+    //fn panic_runlist_3() {
+    //    let mut set = IntSpan::new();
+    //    set.add_runlist("1-1--1");
+    //    println!("{:?}", set.ranges());
+    //}
+}
+
 //----------------------------------------------------------
 // Set cardinality
 //----------------------------------------------------------
@@ -482,6 +571,55 @@ impl IntSpan {
         let intersect = self.intersect(&other);
         new.subtract(&intersect);
         new
+    }
+}
+
+#[cfg(test)]
+mod binary {
+    use super::*;
+
+    #[test]
+    fn binary() {
+        //   A    B    U    I    X    A-B  B-A
+        let tests = vec![
+            ("-", "-", "-", "-", "-", "-", "-"),
+            ("1", "1", "1", "1", "-", "-", "-"),
+            ("1", "2", "1-2", "-", "1-2", "1", "2"),
+            ("3-9", "1-2", "1-9", "-", "1-9", "3-9", "1-2"),
+            ("3-9", "1-5", "1-9", "3-5", "1-2,6-9", "6-9", "1-2"),
+            ("3-9", "4-8", "3-9", "4-8", "3,9", "3,9", "-"),
+            ("3-9", "5-12", "3-12", "5-9", "3-4,10-12", "3-4", "10-12"),
+            ("3-9", "10-12", "3-12", "-", "3-12", "3-9", "10-12"),
+            (
+                "1-3,5,8-11",
+                "1-6",
+                "1-6,8-11",
+                "1-3,5",
+                "4,6,8-11",
+                "8-11",
+                "4,6",
+            ),
+        ];
+
+        for (a, b, u, i, x, ab, ba) in tests {
+            let ia = IntSpan::from(a);
+            let ib = IntSpan::from(b);
+
+            // union
+            assert_eq!(ia.union(&ib).to_string(), u);
+
+            // intersect
+            assert_eq!(ia.intersect(&ib).to_string(), i);
+
+            // xor
+            assert_eq!(ia.xor(&ib).to_string(), x);
+
+            // diff A-B
+            assert_eq!(ia.diff(&ib).to_string(), ab);
+
+            // diff B-A
+            assert_eq!(ib.diff(&ia).to_string(), ba);
+        }
     }
 }
 
