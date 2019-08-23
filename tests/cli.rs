@@ -462,3 +462,38 @@ fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("cover")
+        .arg("tests/resources/S288c.txt")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 3);
+    assert!(!stdout.contains("S288c"), "species name");
+    assert!(!stdout.contains("1-100"), "merged");
+    assert!(stdout.contains("1-150"), "covered");
+
+    Ok(())
+}
+
+#[test]
+fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("cover")
+        .arg("tests/resources/dazzname.txt")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert!(stdout.contains("infile_0/1/0_514"), "chr name");
+    assert!(stdout.contains("19-499"), "covered");
+
+    Ok(())
+}

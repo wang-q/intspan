@@ -2,6 +2,7 @@
 
 pub mod combine;
 pub mod compare;
+pub mod cover;
 pub mod genome;
 pub mod merge;
 pub mod some;

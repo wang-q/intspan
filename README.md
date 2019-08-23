@@ -16,6 +16,9 @@ intspan some tests/resources/Atha.yml tests/resources/Atha.list
 
 intspan merge tests/resources/I.yml tests/resources/II.yml
 
+intspan cover tests/resources/S288c.txt
+intspan cover tests/resources/dazzname.txt
+
 intspan span --op cover tests/resources/brca2.yml
 
 intspan combine tests/resources/Atha.yml
