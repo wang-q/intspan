@@ -31,7 +31,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
 
     let outdir = args.value_of("outdir").unwrap();
     if outdir != "stdout" {
@@ -41,7 +41,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Operating
     //----------------------------
-    for (key, value) in &master {
+    for (key, value) in &yaml {
         if !value.is_mapping() {
             panic!("Not a valid multi-key runlist yaml file");
         }

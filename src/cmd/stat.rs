@@ -41,12 +41,12 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let length_of = read_sizes(args.value_of("chr.sizes").unwrap());
+    let sizes = read_sizes(args.value_of("chr.sizes").unwrap());
 
-    let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
-    let is_mk: bool = master.values().next().unwrap().is_mapping();
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
 
-    let set_of = to_set_of(&master);
+    let set_of = yaml2set_m(&yaml);
 
     let is_all = args.is_present("all");
 
@@ -56,14 +56,14 @@ pub fn execute(args: &ArgMatches) {
     let mut lines: Vec<String> = Vec::new(); // Avoid lifetime problems
     let mut header = "key,chr,chrLength,size,coverage".to_string();
 
-    if is_mk {
+    if is_multi {
         if is_all {
             header = header.replace("chr,", "");
         }
         lines.push(header);
 
-        for (key, value) in &set_of {
-            let key_lines = csv_lines(value, &length_of, is_all, Some(key));
+        for (name, set) in &set_of {
+            let key_lines = csv_lines(set, &sizes, is_all, Some(name));
             lines.push(key_lines);
         }
     } else {
@@ -73,7 +73,7 @@ pub fn execute(args: &ArgMatches) {
         }
         lines.push(header);
 
-        let key_lines = csv_lines(set_of.get("__single").unwrap(), &length_of, is_all, None);
+        let key_lines = csv_lines(set_of.get("__single").unwrap(), &sizes, is_all, None);
         lines.push(key_lines);
     }
 
@@ -87,8 +87,8 @@ pub fn execute(args: &ArgMatches) {
 }
 
 fn csv_lines(
-    set_of: &BTreeMap<String, IntSpan>,
-    length_of: &BTreeMap<String, i32>,
+    set: &BTreeMap<String, IntSpan>,
+    sizes: &BTreeMap<String, i32>,
     is_all: bool,
     prefix: Option<&str>,
 ) -> String {
@@ -96,9 +96,9 @@ fn csv_lines(
 
     let mut all_length = 0;
     let mut all_size = 0;
-    for chr in set_of.keys() {
-        let length = *length_of.get(chr).unwrap();
-        let size = set_of.get(chr).unwrap().cardinality();
+    for chr in set.keys() {
+        let length = *sizes.get(chr).unwrap();
+        let size = set.get(chr).unwrap().cardinality();
         let line = format!(
             "{},{},{},{:.4}\n",
             chr,

@@ -22,19 +22,19 @@ pub fn read_lines(input: &str) -> Vec<String> {
 }
 
 pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
-    let mut length_of: BTreeMap<String, i32> = BTreeMap::new();
+    let mut sizes: BTreeMap<String, i32> = BTreeMap::new();
 
     for line in read_lines(input) {
         let fields: Vec<&str> = line.split('\t').collect();
         if fields.len() == 2 {
-            length_of.insert(fields[0].to_string(), fields[1].parse::<i32>().unwrap());
+            sizes.insert(fields[0].to_string(), fields[1].parse::<i32>().unwrap());
         }
     }
 
-    length_of
+    sizes
 }
 
-pub fn read_runlist(input: &str) -> BTreeMap<String, Value> {
+pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
     let mut reader = reader(input);
     let mut s = String::new();
     reader.read_to_string(&mut s);
@@ -62,7 +62,7 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
-pub fn write_runlist(
+pub fn write_yaml(
     output: &str,
     yaml: &BTreeMap<String, Value>,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -74,75 +74,76 @@ pub fn write_runlist(
     Ok(())
 }
 
-pub fn runlist2set(runlist_of: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
-    let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
+pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
+    let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
 
-    for (key, value) in runlist_of {
-        let set = IntSpan::from(value.as_str().unwrap());
-        set_of.insert(key.into(), set);
+    for (chr, value) in yaml {
+        let intspan = IntSpan::from(value.as_str().unwrap());
+        set.insert(chr.into(), intspan);
     }
 
-    set_of
+    set
 }
 
-pub fn set2runlist(set_of: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
-    let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2yaml(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
+    let mut yaml: BTreeMap<String, Value> = BTreeMap::new();
 
-    for (key, value) in set_of {
+    for (chr, value) in set {
         let runlist = value.to_string();
-        runlist_of.insert(key.into(), serde_yaml::to_value(runlist).unwrap());
+        yaml.insert(chr.into(), serde_yaml::to_value(runlist).unwrap());
     }
 
-    runlist_of
+    yaml
 }
 
-pub fn set2runlist_m(
-    set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>,
-) -> BTreeMap<String, Value> {
-    let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2yaml_m(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeMap<String, Value> {
+    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
 
-    for (key, set) in set_of {
-        let runlist = set2runlist(set);
-        runlist_of.insert(key.to_string(), serde_yaml::to_value(runlist).unwrap());
+    for (name, set) in set_of {
+        let yaml = set2yaml(set);
+        out_yaml.insert(name.to_string(), serde_yaml::to_value(yaml).unwrap());
     }
 
-    runlist_of
+    out_yaml
 }
 
-pub fn to_set_of(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
-    let is_mk: bool = yaml.values().next().unwrap().is_mapping();
+pub fn yaml2set_m(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
+    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
 
-    let mut set_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
-    if is_mk {
+    let mut s_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
+    if is_multi {
         for (key, value) in yaml {
             let string = serde_yaml::to_string(value).unwrap();
             let runlist_one: BTreeMap<String, Value> =
                 serde_yaml::from_str(string.as_str()).unwrap();
-            let set_one = runlist2set(&runlist_one);
-            set_of.insert(key.to_string(), set_one);
+            let set_one = yaml2set(&runlist_one);
+            s_of.insert(key.to_string(), set_one);
         }
     } else {
-        let set_one = runlist2set(&yaml);
-        set_of.insert("__single".to_string(), set_one);
+        let set_one = yaml2set(&yaml);
+        s_of.insert("__single".to_string(), set_one);
     }
 
-    set_of
+    s_of
 }
 
-pub fn fill_up(set_of: &mut BTreeMap<String, BTreeMap<String, IntSpan>>, chrs: &BTreeSet<String>) {
-    for (name, set_one) in set_of {
+pub fn fill_up_m(
+    set_of: &mut BTreeMap<String, BTreeMap<String, IntSpan>>,
+    chrs: &BTreeSet<String>,
+) {
+    for (_name, set) in set_of {
         for chr in chrs {
-            if !set_one.contains_key(chr) {
-                set_one.insert(chr.into(), IntSpan::new());
+            if !set.contains_key(chr) {
+                set.insert(chr.into(), IntSpan::new());
             }
         }
     }
 }
 
-pub fn fill_up_s(set_one: &mut BTreeMap<String, IntSpan>, chrs: &BTreeSet<String>) {
+pub fn fill_up_s(set: &mut BTreeMap<String, IntSpan>, chrs: &BTreeSet<String>) {
     for chr in chrs {
-        if !set_one.contains_key(chr) {
-            set_one.insert(chr.into(), IntSpan::new());
+        if !set.contains_key(chr) {
+            set.insert(chr.into(), IntSpan::new());
         }
     }
 }
@@ -150,8 +151,8 @@ pub fn fill_up_s(set_one: &mut BTreeMap<String, IntSpan>, chrs: &BTreeSet<String
 pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeSet<String> {
     let mut chrs: BTreeSet<String> = BTreeSet::new();
 
-    for key in set_of.keys() {
-        for chr in set_of.get(key).unwrap().keys() {
+    for name in set_of.keys() {
+        for chr in set_of.get(name).unwrap().keys() {
             chrs.insert(chr.clone());
         }
     }
@@ -188,9 +189,9 @@ mod read_write {
 
     #[test]
     fn test_read_sizes() {
-        let length_of = read_sizes("tests/resources/S288c.chr.sizes");
-        assert_eq!(length_of.len(), 16);
-        assert_eq!(*length_of.get("II").unwrap(), 813184);
+        let sizes = read_sizes("tests/resources/S288c.chr.sizes");
+        assert_eq!(sizes.len(), 16);
+        assert_eq!(*sizes.get("II").unwrap(), 813184);
     }
 
     #[test]
@@ -218,32 +219,32 @@ mod read_write {
             .into_string()
             .unwrap();
 
-        let yaml = read_runlist("tests/resources/Atha.yml");
+        let yaml = read_yaml("tests/resources/Atha.yml");
 
-        write_runlist(&filename, &yaml);
+        write_yaml(&filename, &yaml);
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 11);
     }
 
     #[test]
-    fn test_runlist2set() {
+    fn test_yaml2set() {
         let value: Value = serde_yaml::to_value("28547-29194").unwrap();
         let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
         runlist_of.insert("I".to_string(), value);
 
-        let set_of = runlist2set(&runlist_of);
+        let set_of = yaml2set(&runlist_of);
         assert!(set_of.values().next().unwrap().contains(28550));
     }
 
     #[test]
-    fn test_set2runlist() {
+    fn test_set2yaml() {
         let mut intspan = IntSpan::new();
         intspan.add_pair(28547, 29194);
         let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
         set_of.insert("I".to_string(), intspan);
 
-        let runlist_of = set2runlist(&set_of);
+        let runlist_of = set2yaml(&set_of);
         assert_eq!(
             runlist_of.values().next().unwrap(),
             &Value::String("28547-29194".into())

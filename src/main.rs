@@ -40,10 +40,22 @@ fn main() {
     };
 }
 
-// TODO: 统一变量名称
 // TODO: bump_coverage
 // TODO: ranges related commands, filter, convert
 // TODO: CI releases
 // TODO: ovlp.rs
 // TODO: wrap IO with Result
 // TODO: satisfy clippy
+
+// set, runlists: single name IntSpan set or runlists
+//      set is a set of IntSpans
+//      set: BTreeMap<String, IntSpan>
+//      runlists: BTreeMap<String, String>
+// s_of, r_of: multiple names IntSpan or runlist
+//      name ==> chr ==> IntSpan
+//      name ==> chr ==> String
+// yaml: BTreeMap<String, Value>, single or multiple yaml
+// res: result, single name IntSpan set
+//      BTreeMap<String, IntSpan>
+// res_of: BTreeMap<String, BTreeMap<String, IntSpan>>
+// sizes: chr.sizes, BTreeMap<String, i32>

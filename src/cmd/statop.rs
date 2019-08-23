@@ -64,14 +64,14 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let length_of = read_sizes(args.value_of("chr.sizes").unwrap());
+    let sizes = read_sizes(args.value_of("chr.sizes").unwrap());
 
-    let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile1").unwrap());
-    let is_mk: bool = master.values().next().unwrap().is_mapping();
-    let mut s1_of = to_set_of(&master);
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile1").unwrap());
+    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
+    let mut s1_of = yaml2set_m(&yaml);
 
-    let single: BTreeMap<String, Value> = read_runlist(args.value_of("infile2").unwrap());
-    let mut s2 = runlist2set(&single);
+    let single: BTreeMap<String, Value> = read_yaml(args.value_of("infile2").unwrap());
+    let mut s2 = yaml2set(&single);
 
     let is_all = args.is_present("all");
     let base = if args.is_present("base") {
@@ -87,18 +87,18 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Operating
     //----------------------------
-    let chrs = length_of
+    let chrs = sizes
         .keys()
         .map(|s| s.to_string())
         .collect::<BTreeSet<String>>();
-    fill_up(&mut s1_of, &chrs);
+    fill_up_m(&mut s1_of, &chrs);
     fill_up_s(&mut s2, &chrs);
 
-    let mut op_result_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
+    let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     for (name, s1) in &s1_of {
-        let mut set_op: BTreeMap<String, IntSpan> = BTreeMap::new();
+        let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
         for chr in s1.keys() {
-            let intspan_op = match op {
+            let intspan = match op {
                 "intersect" => s1.get(chr).unwrap().intersect(s2.get(chr).unwrap()),
                 "diff" => s1.get(chr).unwrap().diff(s2.get(chr).unwrap()),
                 "union" => s1.get(chr).unwrap().union(s2.get(chr).unwrap()),
@@ -106,9 +106,9 @@ pub fn execute(args: &ArgMatches) {
                 _ => panic!("Invalid IntSpan Op"),
             };
             //            println!("Op {}: {}", op, op_intspan.to_string());
-            set_op.insert(chr.into(), intspan_op);
+            set.insert(chr.into(), intspan);
         }
-        op_result_of.insert(name.into(), set_op);
+        res_of.insert(name.into(), set);
     }
 
     let mut lines: Vec<String> = Vec::new(); // Avoid lifetime problems
@@ -117,7 +117,7 @@ pub fn execute(args: &ArgMatches) {
         base, base
     );
 
-    if is_mk {
+    if is_multi {
         if is_all {
             header = header.replace("chr,", "");
         }
@@ -126,9 +126,9 @@ pub fn execute(args: &ArgMatches) {
         for name in s1_of.keys() {
             let key_lines = csv_lines(
                 s1_of.get(name).unwrap(),
-                &length_of,
+                &sizes,
                 &s2,
-                op_result_of.get(name).unwrap(),
+                res_of.get(name).unwrap(),
                 is_all,
                 Some(name),
             );
@@ -143,9 +143,9 @@ pub fn execute(args: &ArgMatches) {
 
         let key_lines = csv_lines(
             s1_of.get("__single").unwrap(),
-            &length_of,
+            &sizes,
             &s2,
-            op_result_of.get("__single").unwrap(),
+            res_of.get("__single").unwrap(),
             is_all,
             None,
         );
@@ -162,8 +162,8 @@ pub fn execute(args: &ArgMatches) {
 }
 
 fn csv_lines(
-    set_one: &BTreeMap<String, IntSpan>,
-    length_of: &BTreeMap<String, i32>,
+    s1: &BTreeMap<String, IntSpan>,
+    sizes: &BTreeMap<String, i32>,
     s2: &BTreeMap<String, IntSpan>,
     set_op: &BTreeMap<String, IntSpan>,
     is_all: bool,
@@ -175,9 +175,9 @@ fn csv_lines(
     let mut all_size = 0;
     let mut all_s2_length = 0;
     let mut all_s2_size = 0;
-    for chr in set_one.keys() {
-        let length = *length_of.get(chr).unwrap();
-        let size = set_one.get(chr).unwrap().cardinality();
+    for chr in s1.keys() {
+        let length = *sizes.get(chr).unwrap();
+        let size = s1.get(chr).unwrap().cardinality();
 
         let s2_length = s2.get(chr).unwrap().cardinality();
         let s2_size = set_op.get(chr).unwrap().cardinality();

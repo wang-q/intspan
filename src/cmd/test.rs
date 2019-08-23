@@ -8,7 +8,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(_: &ArgMatches) {
     run_test();
 }
 

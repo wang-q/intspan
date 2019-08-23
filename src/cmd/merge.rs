@@ -32,22 +32,22 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let mut master: BTreeMap<String, Value> = BTreeMap::new();
+    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
 
     for infile in args.values_of("infiles").unwrap() {
-        let map = read_runlist(infile);
-        master.insert(
+        let yaml = read_yaml(infile);
+        out_yaml.insert(
             Path::new(infile)
                 .file_stem()
                 .and_then(OsStr::to_str)
                 .unwrap()
                 .to_string(),
-            serde_yaml::to_value(map).unwrap(),
+            serde_yaml::to_value(yaml).unwrap(),
         );
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_runlist(args.value_of("outfile").unwrap(), &master);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }

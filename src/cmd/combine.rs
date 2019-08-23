@@ -34,24 +34,23 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
-    let set_of = to_set_of(&master);
-    let chrs = chrs_in_sets(&set_of);
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let s_of = yaml2set_m(&yaml);
+    let chrs = chrs_in_sets(&s_of);
 
     //----------------------------
     // Operating
     //----------------------------
-    let mut op_result: BTreeMap<String, IntSpan> = BTreeMap::new();
+    let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
     for chr in &chrs {
-        op_result.insert(chr.to_string(), IntSpan::new());
+        res.insert(chr.to_string(), IntSpan::new());
     }
 
-    for name in set_of.keys() {
-        let set = set_of.get(name.as_str()).unwrap();
+    for name in s_of.keys() {
+        let set = s_of.get(name.as_str()).unwrap();
         for chr in set.keys() {
             let cur_runlist = set.get(chr).unwrap().to_string();
-            op_result
-                .entry(chr.to_string())
+            res.entry(chr.to_string())
                 .and_modify(|e| e.add_runlist(cur_runlist));
         }
     }
@@ -59,6 +58,6 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Output
     //----------------------------
-    let out_runlist = set2runlist(&op_result);
-    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
+    let out_yaml = set2yaml(&res);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }

@@ -40,7 +40,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let mut covered: BTreeMap<String, IntSpan> = BTreeMap::new();
+    let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
@@ -50,12 +50,11 @@ pub fn execute(args: &ArgMatches) {
                 continue;
             }
             let chr = range.chr();
-            if !covered.contains_key(chr) {
+            if !res.contains_key(chr) {
                 let intspan = IntSpan::new();
-                covered.insert(chr.clone(), intspan);
+                res.insert(chr.clone(), intspan);
             }
-            covered
-                .entry(chr.to_string())
+            res.entry(chr.to_string())
                 .and_modify(|e| e.add_pair(range.start().clone(), range.end().clone()));
         }
     }
@@ -63,6 +62,6 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Output
     //----------------------------
-    let out_runlist = set2runlist(&covered);
-    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
+    let out_yaml = set2yaml(&res);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }

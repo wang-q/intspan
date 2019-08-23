@@ -35,7 +35,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
 
     let mut names: BTreeSet<String> = BTreeSet::new();
     for line in read_lines(args.value_of("list").unwrap()) {
@@ -45,15 +45,15 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Operating
     //----------------------------
-    let mut out_runlist: BTreeMap<String, Value> = BTreeMap::new();
-    for (key, value) in &master {
+    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
+    for (key, value) in &yaml {
         if names.contains(key) {
-            out_runlist.insert(key.into(), value.clone());
+            out_yaml.insert(key.into(), value.clone());
         }
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }

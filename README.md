@@ -5,7 +5,7 @@
 [![Codecov branch](https://img.shields.io/codecov/c/github/wang-q/intspan/master.svg)](https://codecov.io/github/wang-q/intspan?branch=master)
 [![Crates.io](https://img.shields.io/crates/v/intspan.svg)](https://crates.io/crates/intspan)
 
-# EXAMPLES
+## EXAMPLES
 
 ```bash
 # cargo install --path . --force

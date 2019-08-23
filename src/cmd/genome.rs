@@ -31,20 +31,20 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let length_of = read_sizes(args.value_of("infile").unwrap());
+    let sizes = read_sizes(args.value_of("infile").unwrap());
 
     //----------------------------
     // Operating
     //----------------------------
-    let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
-    for (key, value) in &length_of {
-        let mut set = IntSpan::new();
-        set.add_pair(1, *value);
-        runlist_of.insert(key.into(), set.to_string().into());
+    let mut yaml: BTreeMap<String, Value> = BTreeMap::new();
+    for (key, value) in sizes {
+        let mut intspan = IntSpan::new();
+        intspan.add_pair(1, value);
+        yaml.insert(key, intspan.to_string().into());
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_runlist(args.value_of("outfile").unwrap(), &runlist_of);
+    write_yaml(args.value_of("outfile").unwrap(), &yaml);
 }

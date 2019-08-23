@@ -37,7 +37,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let mut covered: BTreeMap<String, IntSpan> = BTreeMap::new();
+    let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
     let tag = if args.is_present("tag") {
         args.value_of("tag").unwrap()
     } else {
@@ -58,19 +58,18 @@ pub fn execute(args: &ArgMatches) {
 
             let feature = fields[2];
             if !tag.is_empty() && feature != tag {
-                    continue;
+                continue;
             }
 
             let chr = fields[0];
             let start = fields[3].parse::<i32>().unwrap();
             let end = fields[4].parse::<i32>().unwrap();
 
-            if !covered.contains_key(chr) {
+            if !res.contains_key(chr) {
                 let intspan = IntSpan::new();
-                covered.insert(chr.to_string(), intspan);
+                res.insert(chr.to_string(), intspan);
             }
-            covered
-                .entry(chr.to_string())
+            res.entry(chr.to_string())
                 .and_modify(|e| e.add_pair(start, end));
         }
     }
@@ -78,6 +77,6 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Output
     //----------------------------
-    let out_runlist = set2runlist(&covered);
-    write_runlist(args.value_of("outfile").unwrap(), &out_runlist);
+    let out_yaml = set2yaml(&res);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }
