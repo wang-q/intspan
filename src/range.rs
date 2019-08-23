@@ -1,3 +1,4 @@
+
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
 
@@ -110,27 +111,29 @@ impl Range {
     }
 
     fn decode(&mut self, header: &String) {
-        let re = Regex::new(
-            r"(?xi)
-            (?:(?P<name>[\w_]+)\.)?
-            (?P<chr>[\w/-]+)
-            (?:\((?P<strand>.+)\))?
-            [:]                    # spacer
-            (?P<start>\d+)
-            [_\-]?                 # spacer
-            (?P<end>\d+)?
-            ",
-        )
-        .unwrap();
+        lazy_static! {
+            static ref RE: Regex = Regex::new(
+                r"(?xi)
+                (?:(?P<name>[\w_]+)\.)?
+                (?P<chr>[\w/-]+)
+                (?:\((?P<strand>.+)\))?
+                [:]                    # spacer
+                (?P<start>\d+)
+                [_\-]?                 # spacer
+                (?P<end>\d+)?
+                ",
+            )
+            .unwrap();
+        }
 
-        let caps = match re.captures(header.as_str()) {
+        let caps = match RE.captures(header.as_str()) {
             Some(x) => x,
             None => {
                 self.chr = header.split(" ").next().unwrap().to_string();
                 return;
             }
         };
-        let dict: HashMap<String, String> = re
+        let dict: HashMap<String, String> = RE
             .capture_names()
             .flatten()
             .filter_map(|n| Some((n.to_string(), caps.name(n)?.as_str().to_string())))
