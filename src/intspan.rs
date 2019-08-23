@@ -712,7 +712,6 @@ impl IntSpan {
     }
 }
 
-
 #[cfg(test)]
 mod relation {
     use super::*;
