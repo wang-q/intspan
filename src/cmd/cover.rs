@@ -44,8 +44,8 @@ pub fn execute(args: &ArgMatches) {
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
-        for line in reader.lines() {
-            let range = Range::from_str(line.unwrap());
+        for line in reader.lines().filter_map(|r| r.ok()) {
+            let range = Range::from_str(line);
             if range.start() == &0 {
                 continue;
             }
