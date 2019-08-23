@@ -220,64 +220,45 @@ mod span {
 
     #[test]
     fn inset() {
+        let neg = IntSpan::new().get_neg_inf();
+        let pos = IntSpan::new().get_pos_inf();
+
+        let uni = format!("{}-{}", neg, pos);
+
         // runlist n expected
-        struct TestData(String, i32, String);
-
-        let universal = format!(
-            "{}-{}",
-            IntSpan::new().get_neg_inf(),
-            IntSpan::new().get_pos_inf()
-        );
-
         let tests = vec![
-            TestData("-".to_string(), -2, "-".to_string()),
-            TestData("-".to_string(), -1, "-".to_string()),
-            TestData("-".to_string(), 0, "-".to_string()),
-            TestData("-".to_string(), 1, "-".to_string()),
-            TestData("-".to_string(), 2, "-".to_string()),
-            TestData(universal.clone(), -2, universal.clone()),
-            TestData(universal.clone(), 2, universal.clone()),
-            TestData(
-                format!("{}-0", IntSpan::new().get_neg_inf()),
-                -2,
-                format!("{}-2", IntSpan::new().get_neg_inf()),
-            ),
-            TestData(
-                format!("{}-0", IntSpan::new().get_neg_inf()),
-                2,
-                format!("{}--2", IntSpan::new().get_neg_inf()),
-            ),
-            TestData(
-                format!("0-{}", IntSpan::new().get_pos_inf()),
-                -2,
-                format!("-2-{}", IntSpan::new().get_pos_inf()),
-            ),
-            TestData(
-                format!("0-{}", IntSpan::new().get_pos_inf()),
-                2,
-                format!("2-{}", IntSpan::new().get_pos_inf()),
-            ),
-            TestData(
+            ("-".to_string(), -2, "-".to_string()),
+            ("-".to_string(), -1, "-".to_string()),
+            ("-".to_string(), 0, "-".to_string()),
+            ("-".to_string(), 1, "-".to_string()),
+            ("-".to_string(), 2, "-".to_string()),
+            (uni.clone(), -2, uni.clone()),
+            (uni.clone(), 2, uni.clone()),
+            (format!("{}-0", neg), -2, format!("{}-2", neg)),
+            (format!("{}-0", neg), 2, format!("{}--2", neg)),
+            (format!("0-{}", pos), -2, format!("-2-{}", pos)),
+            (format!("0-{}", pos), 2, format!("2-{}", pos)),
+            (
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
                 -2,
                 "-2-26,28-37".to_string(),
             ),
-            TestData(
+            (
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
                 -1,
                 "-1-9,11-16,19-25,29-36".to_string(),
             ),
-            TestData(
+            (
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
                 0,
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
             ),
-            TestData(
+            (
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
                 1,
                 "7,13-14,21-23,31-34".to_string(),
             ),
-            TestData(
+            (
                 "0,2-3,6-8,12-15,20-24,30-35".to_string(),
                 2,
                 "22,32-33".to_string(),
@@ -285,9 +266,9 @@ mod span {
         ];
 
         // inset
-        for t in tests.iter() {
-            let set = IntSpan::from(&t.0);
-            assert_eq!(set.inset(t.1).to_string(), t.2);
+        for (runlist, n, expected) in tests {
+            let set = IntSpan::from(runlist);
+            assert_eq!(set.inset(n).to_string(), expected);
         }
 
         // trim and pad
