@@ -23,7 +23,7 @@ fn main() {
         .subcommand(cmd::gff::make_subcommand());
 
     // Check which subcomamnd the user ran...
-    let res = match app.get_matches().subcommand() {
+    let _res = match app.get_matches().subcommand() {
         ("test", Some(sub_matches)) => cmd::test::execute(sub_matches),
         ("genome", Some(sub_matches)) => cmd::genome::execute(sub_matches),
         ("some", Some(sub_matches)) => cmd::some::execute(sub_matches),

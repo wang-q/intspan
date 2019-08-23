@@ -469,7 +469,7 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
     let output = cmd
         .arg("cover")
-        .arg("tests/resources/S288c.txt")
+        .arg("tests/resources/S288c.ranges")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -487,7 +487,7 @@ fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
     let output = cmd
         .arg("cover")
-        .arg("tests/resources/dazzname.txt")
+        .arg("tests/resources/dazzname.ranges")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
