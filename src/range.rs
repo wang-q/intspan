@@ -113,7 +113,7 @@ impl Range {
         let re = Regex::new(
             r"(?xi)
             (?:(?P<name>[\w_]+)\.)?
-            (?P<chr>[\w-]+)
+            (?P<chr>[\w/-]+)
             (?:\((?P<strand>.+)\))?
             [:]                    # spacer
             (?P<start>\d+)
@@ -193,6 +193,7 @@ fn fa_headers() {
         ("S288c", "S288c"),
         ("S288c The baker's yeast", "S288c"),
         ("1:-100", "1:-100"),
+        ("infile_0/1/0_514:19-25", "infile_0/1/0_514:19-25"),
     ];
     for (header, expected) in tests {
         eprintln!("{:#?}", header);
@@ -200,16 +201,3 @@ fn fa_headers() {
         assert_eq!(range.to_string(), expected);
     }
 }
-
-/*
-#[test]
-fn from_file() {
-    let lines = read_lines("tests/resources/S288c.chr.sizes");
-    assert_eq!(lines.len(), 16);
-//    for (header, expected) in tests {
-//        eprintln!("{:#?}", header);
-//        let range = Range::from_str(header);
-//        assert_eq!(range.to_string(), expected);
-//    }
-}
-*/
