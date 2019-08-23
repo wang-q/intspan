@@ -1,8 +1,6 @@
 use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use intspan::{IntSpan, Range};
-use serde_yaml::Value;
-use std::borrow::BorrowMut;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 

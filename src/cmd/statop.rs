@@ -198,9 +198,8 @@ fn csv_lines(
             "{},{},{},{},{},{:.4},{:.4},{:.4}\n",
             chr, length, size, s2_length, s2_size, c1, c2, ratio
         );
-        match prefix {
-            Some(s) => lines.push_str(format!("{},", s).as_str()),
-            None => (),
+        if let Some(s) = prefix {
+            lines.push_str(format!("{},", s).as_str())
         };
         lines.push_str(line.as_str());
 
@@ -231,9 +230,8 @@ fn csv_lines(
         lines = String::new();
         all_line = all_line.replace("all,", "");
     }
-    match prefix {
-        Some(s) => all_line.insert_str(0, format!("{},", s).as_str()),
-        None => (),
+    if let Some(s) = prefix {
+        all_line.insert_str(0, format!("{},", s).as_str())
     };
     lines.push_str(all_line.as_str());
 

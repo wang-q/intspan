@@ -2,7 +2,7 @@ use crate::utils::*;
 use clap::*;
 use intspan::IntSpan;
 use serde_yaml::Value;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
@@ -59,7 +59,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     let master: BTreeMap<String, Value> = read_runlist(args.value_of("infile").unwrap());
     let is_mk: bool = master.values().next().unwrap().is_mapping();
-    let mut s1_of = to_set_of(&master);
+    let s1_of = to_set_of(&master);
 
     let op = args.value_of("op").unwrap();
     let number: i32 = value_t!(args.value_of("number"), i32).unwrap_or_else(|e| {

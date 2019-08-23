@@ -23,8 +23,8 @@ pub fn run_test() -> String {
     println!("ranges {:?}", intspan.ranges());
     println!("cardinality {}", intspan.cardinality());
 
-    for n in vec![-5, 29, 40] {
-        println!("val {} is contained {}", n, intspan.contains(n));
+    for n in &[-5, 29, 40] {
+        println!("val {} is contained {}", n, intspan.contains(*n));
     }
 
     intspan.add_range(&vec![60, 70, 80, 90]);
