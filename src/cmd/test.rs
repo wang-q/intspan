@@ -27,10 +27,10 @@ pub fn run_test() -> String {
         println!("val {} is contained {}", n, intspan.contains(*n));
     }
 
-    intspan.add_range(&vec![60, 70, 80, 90]);
+    intspan.add_ranges(&vec![60, 70, 80, 90]);
     println!("{}", intspan);
 
-    intspan.add_range(&vec![68, 75]);
+    intspan.add_ranges(&vec![68, 75]);
     println!("{}", intspan);
 
     intspan.add_n(99);

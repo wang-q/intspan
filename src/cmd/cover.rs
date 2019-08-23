@@ -10,7 +10,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         .about("Output covers on chromosomes")
         .after_help(
             "\
-Like `command combine`, but <infiles> are chromosome positions
+Like command `combine`, but <infiles> are chromosome ranges
 
     I:1-100
     I(+):90-150             # Strand will be omitted

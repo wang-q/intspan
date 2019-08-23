@@ -28,10 +28,10 @@ fn run_benchmark() {
             let mut set = IntSpan::new();
 
             if step >= 2 {
-                set.add_range(&vec1);
+                set.add_ranges(&vec1);
             }
             if step >= 3 {
-                set.add_range(&vec2);
+                set.add_ranges(&vec2);
             }
             if step >= 4 {
                 set.to_string();

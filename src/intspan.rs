@@ -394,7 +394,7 @@ impl IntSpan {
         self.add_pair(n, n);
     }
 
-    pub fn add_range(&mut self, ranges: &Vec<i32>) {
+    pub fn add_ranges(&mut self, ranges: &Vec<i32>) {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even")
         }
@@ -430,13 +430,13 @@ impl IntSpan {
     pub fn merge(&mut self, other: &Self) {
         let ranges = other.ranges();
 
-        self.add_range(&ranges);
+        self.add_ranges(&ranges);
     }
 
     pub fn add_vec(&mut self, ints: &Vec<i32>) {
         let ranges = self.list_to_ranges(ints);
 
-        self.add_range(&ranges);
+        self.add_ranges(&ranges);
     }
 
     // https://hermanradtke.com/2015/05/06/creating-a-rust-function-that-accepts-string-or-str.html
@@ -448,7 +448,7 @@ impl IntSpan {
         // skip empty runlist
         if !s.is_empty() && !s.eq(&self.empty_string) {
             let ranges = self.runlist_to_ranges(&s);
-            self.add_range(&ranges);
+            self.add_ranges(&ranges);
         }
     }
 
@@ -485,26 +485,26 @@ impl IntSpan {
         self.remove_pair(n, n);
     }
 
-    pub fn remove_range(&mut self, ranges: &Vec<i32>) {
+    pub fn remove_ranges(&mut self, ranges: &Vec<i32>) {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even");
         }
 
         self.invert();
-        self.add_range(ranges);
+        self.add_ranges(ranges);
         self.invert();
     }
 
     pub fn subtract(&mut self, other: &Self) {
         let ranges = other.ranges();
 
-        self.remove_range(&ranges);
+        self.remove_ranges(&ranges);
     }
 
     pub fn remove_vec(&mut self, ints: &Vec<i32>) {
         let ranges = self.list_to_ranges(ints);
 
-        self.remove_range(&ranges);
+        self.remove_ranges(&ranges);
     }
 
     pub fn remove_runlist<S>(&mut self, runlist: S)
@@ -515,7 +515,7 @@ impl IntSpan {
         // skip empty runlist
         if !s.is_empty() && !s.eq(&self.empty_string) {
             let ranges = self.runlist_to_ranges(&s);
-            self.remove_range(&ranges);
+            self.remove_ranges(&ranges);
         }
     }
 }
@@ -979,7 +979,7 @@ impl IntSpan {
             ranges.pop();
         }
 
-        new.add_range(&ranges);
+        new.add_ranges(&ranges);
 
         new
     }
