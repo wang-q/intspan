@@ -1,6 +1,6 @@
 use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan::{IntSpan, Range};
+use intspan::IntSpan;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 
@@ -57,10 +57,8 @@ pub fn execute(args: &ArgMatches) {
             }
 
             let feature = fields[2];
-            if tag.len() > 0 {
-                if feature != tag {
+            if !tag.is_empty() && feature != tag {
                     continue;
-                }
             }
 
             let chr = fields[0];
