@@ -19,6 +19,8 @@ intspan merge tests/resources/I.yml tests/resources/II.yml
 intspan cover tests/resources/S288c.txt
 intspan cover tests/resources/dazzname.txt
 
+intspan gff tests/resources/NC_007942.gff --tag tRNA
+
 intspan span --op cover tests/resources/brca2.yml
 
 intspan combine tests/resources/Atha.yml

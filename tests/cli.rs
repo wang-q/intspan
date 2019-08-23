@@ -143,6 +143,7 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
     assert!(&tempdir.path().join("II.yml").is_file());
     assert!(!&tempdir.path().join("I.II.yml").exists());
 
+    tempdir.close()?;
     Ok(())
 }
 
@@ -495,5 +496,67 @@ fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
     assert!(stdout.contains("infile_0/1/0_514"), "chr name");
     assert!(stdout.contains("19-499"), "covered");
 
+    Ok(())
+}
+
+#[test]
+fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("gff")
+        .arg("tests/resources/NC_007942.gff")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert!(stdout.contains("NC_007942"), "chromosomes exists");
+    assert!(stdout.contains("1-152218"), "full chr runlist");
+
+    Ok(())
+}
+
+#[test]
+fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
+    let tempdir = TempDir::new().unwrap();
+
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    cmd.arg("gff")
+        .arg("tests/resources/NC_007942.gff")
+        .arg("--tag")
+        .arg("CDS")
+        .arg("-o")
+        .arg(&tempdir.path().join("cds.yml"))
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+
+    assert!(&tempdir.path().join("cds.yml").is_file());
+
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    cmd.arg("gff")
+        .arg("tests/resources/NC_007942.rm.gff")
+        .arg("-o")
+        .arg(&tempdir.path().join("repeat.yml"))
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+
+    assert!(&tempdir.path().join("repeat.yml").is_file());
+
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("merge")
+        .arg(&tempdir.path().join("cds.yml"))
+        .arg(&tempdir.path().join("repeat.yml"))
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 5);
+    assert!(stdout.contains("cds"));
+    assert!(stdout.contains("repeat"));
+
+    tempdir.close()?;
     Ok(())
 }

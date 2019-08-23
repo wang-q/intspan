@@ -19,7 +19,8 @@ fn main() {
         .subcommand(cmd::combine::make_subcommand())
         .subcommand(cmd::compare::make_subcommand())
         .subcommand(cmd::span::make_subcommand())
-        .subcommand(cmd::cover::make_subcommand());
+        .subcommand(cmd::cover::make_subcommand())
+        .subcommand(cmd::gff::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let res = match app.get_matches().subcommand() {
@@ -34,13 +35,14 @@ fn main() {
         ("compare", Some(sub_matches)) => cmd::compare::execute(sub_matches),
         ("span", Some(sub_matches)) => cmd::span::execute(sub_matches),
         ("cover", Some(sub_matches)) => cmd::cover::execute(sub_matches),
+        ("gff", Some(sub_matches)) => cmd::gff::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }
 
 // TODO: 统一变量名称
 // TODO: bump_coverage
-// TODO: ranges related commands, filter, gff, convert
+// TODO: ranges related commands, filter, convert
 // TODO: CI releases
 // TODO: ovlp.rs
 // TODO: wrap IO with Result
