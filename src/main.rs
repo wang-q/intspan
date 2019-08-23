@@ -42,3 +42,7 @@ fn main() {
 // TODO: bump_coverage
 // TODO: ranges related commands, filter, gff, convert
 // TODO: 合并 tests of intspan
+// TODO: CI releases
+// TODO: ovlp.rs
+// TODO: wrap IO with Result
+// TODO: satisfy clippy
