@@ -329,3 +329,94 @@ mod relation {
         }
     }
 }
+
+mod index {
+    use intspan::IntSpan;
+
+    #[test]
+    fn index() {
+        // runlist, n, exp_index, exp_element
+        let tests = vec![
+            // None
+            ("-", 1, None, None),
+            ("-", -1, None, None),
+            ("1-10,21-30", 25, None, Some(15)),
+            ("1-10,21-30", -25, None, None),
+            // at_pos
+            ("0-9", 1, Some(0), Some(2)),
+            ("0-9", 6, Some(5), Some(7)),
+            ("0-9", 10, Some(9), None),
+            ("0-9", 11, None, None),
+            // at_neg
+            ("0-9", -1, Some(9), None),
+            ("0-9", -5, Some(5), None),
+            ("0-9", -10, Some(0), None),
+            ("0-9", -11, None, None),
+            // at_pos
+            ("1-10,21-30,41-50", 6, Some(6), Some(6)),
+            ("1-10,21-30,41-50", 16, Some(26), None),
+            ("1-10,21-30,41-50", 26, Some(46), Some(16)),
+            ("1-10,21-30,41-50", 31, None, None),
+            // at_neg
+            ("1-10,21-30,41-50", -1, Some(50), None),
+            ("1-10,21-30,41-50", -11, Some(30), None),
+            ("1-10,21-30,41-50", -21, Some(10), None),
+            ("1-10,21-30,41-50", -30, Some(1), None),
+            ("1-10,21-30,41-50", -31, None, None),
+        ];
+
+        for (runlist, n, exp_index, exp_element) in tests {
+            let set = IntSpan::from(runlist);
+
+            // at
+            if exp_index.is_some() {
+                assert_eq!(set.at(n), exp_index.unwrap());
+            }
+
+            // index
+            if exp_element.is_some() {
+                assert_eq!(set.index(n), exp_element.unwrap());
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "Indexing on an empty set")]
+    fn panic_at_1() {
+        let set = IntSpan::new();
+        set.at(1);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Index can't be 0")]
+    fn panic_at_2() {
+        let set = IntSpan::from("0-9");
+        set.at(0);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Out of max index")]
+    fn panic_at_3() {
+        let set = IntSpan::from("0-9");
+        set.at(15);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Indexing on an empty set")]
+    fn panic_index_1() {
+        let set = IntSpan::new();
+        set.index(1);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Element doesn't exist")]
+    fn panic_index_2() {
+        let set = IntSpan::from("0-9");
+        set.index(15);
+        println!("{:?}", set.ranges());
+    }
+}
