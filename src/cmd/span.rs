@@ -59,7 +59,7 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
     let is_multi: bool = yaml.values().next().unwrap().is_mapping();
-    let s1_of = yaml2set_m(&yaml);
+    let set_of = yaml2set_m(&yaml);
 
     let op = args.value_of("op").unwrap();
     let number: i32 = value_t!(args.value_of("number"), i32).unwrap_or_else(|e| {
@@ -71,16 +71,16 @@ pub fn execute(args: &ArgMatches) {
     // Operating
     //----------------------------
     let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
-    for (name, s1) in &s1_of {
+    for (name, set) in &set_of {
         let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
-        for chr in s1.keys() {
+        for chr in set.keys() {
             let intspan = match op {
-                "cover" => s1.get(chr).unwrap().cover(),
-                "holes" => s1.get(chr).unwrap().holes(),
-                "trim" => s1.get(chr).unwrap().trim(number),
-                "pad" => s1.get(chr).unwrap().pad(number),
-                "excise" => s1.get(chr).unwrap().excise(number),
-                "fill" => s1.get(chr).unwrap().fill(number),
+                "cover" => set.get(chr).unwrap().cover(),
+                "holes" => set.get(chr).unwrap().holes(),
+                "trim" => set.get(chr).unwrap().trim(number),
+                "pad" => set.get(chr).unwrap().pad(number),
+                "excise" => set.get(chr).unwrap().excise(number),
+                "fill" => set.get(chr).unwrap().fill(number),
                 _ => panic!("Invalid IntSpan Op"),
             };
             //            println!("Op {}: {}", op, op_intspan.to_string());

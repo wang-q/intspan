@@ -131,7 +131,7 @@ pub fn fill_up_m(
     set_of: &mut BTreeMap<String, BTreeMap<String, IntSpan>>,
     chrs: &BTreeSet<String>,
 ) {
-    for (_name, set) in set_of {
+    for set in set_of.values_mut() {
         for chr in chrs {
             if !set.contains_key(chr) {
                 set.insert(chr.into(), IntSpan::new());

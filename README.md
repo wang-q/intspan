@@ -15,7 +15,7 @@ intspan genome tests/resources/S288c.chr.sizes
 intspan genome tests/resources/S288c.chr.sizes |
     intspan stat tests/resources/S288c.chr.sizes stdin --all
 
-intspan some tests/resources/Atha.yml tests/resources/Atha.list 
+intspan some tests/resources/Atha.yml tests/resources/Atha.list
 
 intspan merge tests/resources/I.yml tests/resources/II.yml
 
@@ -60,6 +60,13 @@ diff <(intspan statop \
         tests/resources/Atha.chr.sizes \
         tests/resources/Atha.yml \
         tests/resources/paralog.yml )
+
+intspan convert tests/resources/repeat.yml tests/resources/intergenic.yml |
+    intspan cover stdin |
+    intspan stat tests/resources/S288c.chr.sizes stdin --all
+intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
+    intspan combine stdin |
+    intspan stat tests/resources/S288c.chr.sizes stdin --all
 
 ```
 

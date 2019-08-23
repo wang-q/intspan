@@ -560,3 +560,19 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
     tempdir.close()?;
     Ok(())
 }
+
+#[test]
+fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let output = cmd
+        .arg("convert")
+        .arg("tests/resources/repeat.yml")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 28);
+    assert!(stdout.contains("II:327069-327703"), "first range");
+
+    Ok(())
+}

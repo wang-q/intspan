@@ -2,6 +2,7 @@
 
 pub mod combine;
 pub mod compare;
+pub mod convert;
 pub mod cover;
 pub mod genome;
 pub mod gff;
