@@ -1,3 +1,4 @@
+#[cfg(test)]
 mod create {
     use intspan::IntSpan;
 
@@ -86,6 +87,7 @@ mod create {
     //}
 }
 
+#[cfg(test)]
 mod binary {
     use intspan::IntSpan;
 
@@ -134,6 +136,7 @@ mod binary {
     }
 }
 
+#[cfg(test)]
 mod membership {
     use intspan::IntSpan;
 
@@ -192,6 +195,7 @@ mod membership {
     }
 }
 
+#[cfg(test)]
 mod span {
     use intspan::IntSpan;
 
@@ -307,6 +311,7 @@ mod span {
     }
 }
 
+#[cfg(test)]
 mod relation {
     use intspan::IntSpan;
 
@@ -359,6 +364,7 @@ mod relation {
     }
 }
 
+#[cfg(test)]
 mod index {
     use intspan::IntSpan;
 

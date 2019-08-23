@@ -12,6 +12,9 @@
 
 intspan genome tests/resources/S288c.chr.sizes
 
+intspan genome tests/resources/S288c.chr.sizes |
+    intspan stat tests/resources/S288c.chr.sizes stdin --all
+
 intspan some tests/resources/Atha.yml tests/resources/Atha.list 
 
 intspan merge tests/resources/I.yml tests/resources/II.yml
