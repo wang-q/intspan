@@ -86,6 +86,54 @@ mod create {
     //}
 }
 
+mod binary {
+    use intspan::IntSpan;
+
+    #[test]
+    fn binary() {
+        //   A    B    U    I    X    A-B  B-A
+        let tests = vec![
+            ("-", "-", "-", "-", "-", "-", "-"),
+            ("1", "1", "1", "1", "-", "-", "-"),
+            ("1", "2", "1-2", "-", "1-2", "1", "2"),
+            ("3-9", "1-2", "1-9", "-", "1-9", "3-9", "1-2"),
+            ("3-9", "1-5", "1-9", "3-5", "1-2,6-9", "6-9", "1-2"),
+            ("3-9", "4-8", "3-9", "4-8", "3,9", "3,9", "-"),
+            ("3-9", "5-12", "3-12", "5-9", "3-4,10-12", "3-4", "10-12"),
+            ("3-9", "10-12", "3-12", "-", "3-12", "3-9", "10-12"),
+            (
+                "1-3,5,8-11",
+                "1-6",
+                "1-6,8-11",
+                "1-3,5",
+                "4,6,8-11",
+                "8-11",
+                "4,6",
+            ),
+        ];
+
+        for (a, b, u, i, x, ab, ba) in tests {
+            let ia = IntSpan::from(a);
+            let ib = IntSpan::from(b);
+
+            // union
+            assert_eq!(ia.union(&ib).to_string(), u);
+
+            // intersect
+            assert_eq!(ia.intersect(&ib).to_string(), i);
+
+            // xor
+            assert_eq!(ia.xor(&ib).to_string(), x);
+
+            // diff A-B
+            assert_eq!(ia.diff(&ib).to_string(), ab);
+
+            // diff B-A
+            assert_eq!(ib.diff(&ia).to_string(), ba);
+        }
+    }
+}
+
 mod membership {
     use intspan::IntSpan;
 
