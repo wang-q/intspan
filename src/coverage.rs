@@ -1,5 +1,5 @@
 use crate::IntSpan;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 #[derive(Default)]
 pub struct Coverage {
@@ -20,7 +20,7 @@ impl Coverage {
         tiers.insert(-1, IntSpan::from("1-1000000000"));
         tiers.insert(0, IntSpan::from("1-1000000000"));
 
-        for i in 1..max + 1 {
+        for i in 1..=max {
             tiers.insert(i, IntSpan::new());
         }
 
@@ -52,7 +52,7 @@ impl Coverage {
         // remove intspan from uncovered regions
         self.tiers.entry(0).and_modify(|e| e.subtract(&intspan));
 
-        for i in 1..self.max + 1 {
+        for i in 1..=self.max {
             let intersect = self.tiers.get(&i).unwrap().intersect(&intspan);
             self.tiers.entry(i).and_modify(|e| e.merge(&intspan));
 

@@ -44,7 +44,6 @@ fn main() {
     };
 }
 
-// TODO: bump_coverage
 // TODO: CI releases
 // TODO: ovlp.rs
 // TODO: wrap IO with Result

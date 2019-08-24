@@ -128,7 +128,7 @@ impl Range {
         let caps = match RE.captures(header.as_str()) {
             Some(x) => x,
             None => {
-                self.chr = header.split(" ").next().unwrap().to_string();
+                self.chr = header.split(' ').next().unwrap().to_string();
                 return;
             }
         };
@@ -148,10 +148,8 @@ impl Range {
             }
         }
 
-        if self.start != 0 {
-            if self.end == 0 {
-                self.end = self.start;
-            }
+        if self.start != 0 && self.end == 0 {
+            self.end = self.start;
         }
 
         //        eprintln!("{:#?}", &dict);
