@@ -1,4 +1,4 @@
-sign-commit = true
+#sign-commit = true
 #upload-doc = true
 pre-release-hook = ["./hook.sh", "一", "два", "Three", "4"]
 pre-release-replacements = [
