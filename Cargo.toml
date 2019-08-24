@@ -1,6 +1,6 @@
 [package]
 name = "intspan"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["wang-q <wang-q@outlook.com>"]
 description = "`IntSpan` handles of sets containing integer spans"
 documentation = "https://github.com/wang-q/intspan"
@@ -12,7 +12,7 @@ license = "MIT"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "wang-q/intspan", branch="0.1.0" }
+travis-ci = { repository = "wang-q/intspan", branch="0.2.0" }
 appveyor = { repository = "wang-q/intspan" }
 
 [lib]
