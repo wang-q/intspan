@@ -1,6 +1,7 @@
 use crate::utils::*;
-use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan::{IntSpan, Range};
+use clap::*;
+use intspan::{Coverage, IntSpan, Range};
+use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 
@@ -25,6 +26,15 @@ Like command `combine`, but <infiles> are chromosome ranges
                 .index(1),
         )
         .arg(
+            Arg::with_name("coverage")
+                .help("minimal coverage")
+                .long("coverage")
+                .short("c")
+                .takes_value(true)
+                .default_value("1")
+                .empty_values(false),
+        )
+        .arg(
             Arg::with_name("outfile")
                 .short("o")
                 .long("outfile")
@@ -40,7 +50,13 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
+    let coverage: i32 = value_t!(args.value_of("coverage"), i32).unwrap_or_else(|e| {
+        eprintln!("Need a integer for --coverage\n{}", e);
+        std::process::exit(1)
+    });
+
+    // seq_name => tier_of => IntSpan
+    let mut res: BTreeMap<String, Coverage> = BTreeMap::new();
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
@@ -51,17 +67,22 @@ pub fn execute(args: &ArgMatches) {
             }
             let chr = range.chr();
             if !res.contains_key(chr) {
-                let intspan = IntSpan::new();
-                res.insert(chr.clone(), intspan);
+                let tiers = Coverage::new(coverage);
+                res.insert(chr.clone(), tiers);
             }
+
             res.entry(chr.to_string())
-                .and_modify(|e| e.add_pair(range.start().clone(), range.end().clone()));
+                .and_modify(|e| e.bump(range.start().clone(), range.end().clone()));
         }
     }
 
     //----------------------------
     // Output
     //----------------------------
-    let out_yaml = set2yaml(&res);
+    let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
+    for chr in res.keys() {
+        set.insert(chr.to_string(), res.get(chr).unwrap().max_tier());
+    }
+    let out_yaml = set2yaml(&set);
     write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
 }
