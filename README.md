@@ -20,6 +20,7 @@ intspan some tests/resources/Atha.yml tests/resources/Atha.list
 intspan merge tests/resources/I.yml tests/resources/II.yml
 
 intspan cover tests/resources/S288c.ranges
+intspan cover tests/resources/S288c.ranges -c 2
 intspan cover tests/resources/dazzname.ranges
 
 intspan gff tests/resources/NC_007942.gff --tag tRNA
