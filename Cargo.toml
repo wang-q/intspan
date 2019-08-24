@@ -1,6 +1,6 @@
 [package]
 name = "intspan"
-version = "0.2.0"
+version = "0.2.1-alpha.0"
 authors = ["wang-q <wang-q@outlook.com>"]
 description = "`IntSpan` handles of sets containing integer spans"
 documentation = "https://github.com/wang-q/intspan"
