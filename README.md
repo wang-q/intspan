@@ -7,7 +7,7 @@
 
 ## Install
 
-Current release: 0.1.0
+Current release: 0.2.0
 
 `cargo install intspan`
 
