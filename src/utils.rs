@@ -4,6 +4,18 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
+/// ```
+/// use std::io::BufRead;
+/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// let mut lines = vec![];
+/// for line in reader.lines() {
+///     lines.push(line);
+/// }
+/// assert_eq!(lines.len(), 16);
+///
+/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
+/// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
         Box::new(BufReader::new(io::stdin()))
@@ -14,6 +26,10 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
     reader
 }
 
+/// ```
+/// let lines = intspan::read_lines("tests/resources/S288c.chr.sizes");
+/// assert_eq!(lines.len(), 16);
+/// ```
 pub fn read_lines(input: &str) -> Vec<String> {
     let mut reader = reader(input);
     let mut s = String::new();
@@ -21,6 +37,11 @@ pub fn read_lines(input: &str) -> Vec<String> {
     s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
 }
 
+/// ```
+/// let sizes = intspan::read_sizes("tests/resources/S288c.chr.sizes");
+/// assert_eq!(sizes.len(), 16);
+/// assert_eq!(*sizes.get("II").unwrap(), 813184);
+/// ```
 pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
     let mut sizes: BTreeMap<String, i32> = BTreeMap::new();
 
@@ -74,6 +95,16 @@ pub fn write_yaml(
     Ok(())
 }
 
+/// ```
+/// use serde_yaml::Value;
+/// use std::collections::BTreeMap;
+/// let value: Value = serde_yaml::to_value("28547-29194").unwrap();
+/// let mut runlists: BTreeMap<String, Value> = BTreeMap::new();
+/// runlists.insert("I".to_string(), value);
+///
+/// let sets = intspan::yaml2set(&runlists);
+/// assert!(sets.values().next().unwrap().contains(28550));
+/// ```
 pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
     let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
 
@@ -85,6 +116,21 @@ pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
     set
 }
 
+/// ```
+/// use serde_yaml::Value;
+/// use std::collections::BTreeMap;
+/// use intspan::IntSpan;
+/// let mut intspan = IntSpan::new();
+/// intspan.add_pair(28547, 29194);
+/// let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
+/// set_of.insert("I".to_string(), intspan);
+///
+/// let runlist_of = intspan::set2yaml(&set_of);
+/// assert_eq!(
+///     runlist_of.values().next().unwrap(),
+///     &Value::String("28547-29194".into())
+/// );
+/// ```
 pub fn set2yaml(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
     let mut yaml: BTreeMap<String, Value> = BTreeMap::new();
 
@@ -166,35 +212,6 @@ mod read_write {
     use tempfile::TempDir;
 
     #[test]
-    fn test_reader() {
-        let reader = reader("tests/resources/S288c.chr.sizes");
-        let mut lines = vec![];
-        for line in reader.lines() {
-            lines.push(line);
-        }
-        assert_eq!(lines.len(), 16);
-    }
-
-    #[test]
-    fn test_reader_2() {
-        let reader = reader("tests/resources/S288c.chr.sizes");
-        assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
-    }
-
-    #[test]
-    fn test_read_lines() {
-        let lines = read_lines("tests/resources/S288c.chr.sizes");
-        assert_eq!(lines.len(), 16);
-    }
-
-    #[test]
-    fn test_read_sizes() {
-        let sizes = read_sizes("tests/resources/S288c.chr.sizes");
-        assert_eq!(sizes.len(), 16);
-        assert_eq!(*sizes.get("II").unwrap(), 813184);
-    }
-
-    #[test]
     fn test_write_lines() {
         let tempdir = TempDir::new().unwrap();
         let filename = tempdir
@@ -227,27 +244,4 @@ mod read_write {
         assert_eq!(lines.len(), 11);
     }
 
-    #[test]
-    fn test_yaml2set() {
-        let value: Value = serde_yaml::to_value("28547-29194").unwrap();
-        let mut runlist_of: BTreeMap<String, Value> = BTreeMap::new();
-        runlist_of.insert("I".to_string(), value);
-
-        let set_of = yaml2set(&runlist_of);
-        assert!(set_of.values().next().unwrap().contains(28550));
-    }
-
-    #[test]
-    fn test_set2yaml() {
-        let mut intspan = IntSpan::new();
-        intspan.add_pair(28547, 29194);
-        let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
-        set_of.insert("I".to_string(), intspan);
-
-        let runlist_of = set2yaml(&set_of);
-        assert_eq!(
-            runlist_of.values().next().unwrap(),
-            &Value::String("28547-29194".into())
-        );
-    }
 }
