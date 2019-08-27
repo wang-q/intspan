@@ -1,5 +1,5 @@
-use intspan::*;
 use clap::*;
+use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments

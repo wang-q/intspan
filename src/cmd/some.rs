@@ -1,5 +1,5 @@
-use intspan::*;
 use clap::*;
+use intspan::*;
 use serde_yaml::Value;
 use std::collections::{BTreeMap, BTreeSet};
 

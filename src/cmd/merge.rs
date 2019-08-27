@@ -1,5 +1,5 @@
-use intspan::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
+use intspan::*;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::ffi::OsStr;

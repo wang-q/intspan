@@ -1,5 +1,5 @@
-use intspan::*;
 use clap::*;
+use intspan::*;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {

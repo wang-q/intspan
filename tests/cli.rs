@@ -272,8 +272,7 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
-    let output = cmd
-        .arg("statop")
+    cmd.arg("statop")
         .arg("tests/resources/S288c.chr.sizes")
         .arg("tests/resources/intergenic.yml")
         .arg("tests/resources/repeat.yml")
@@ -485,8 +484,7 @@ fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
-    let output = cmd
-        .arg("span")
+    cmd.arg("span")
         .arg("tests/resources/brca2.yml")
         .arg("--op")
         .arg("invalid");
@@ -683,8 +681,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn command_range_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
-    let output = cmd
-        .arg("range")
+    cmd.arg("range")
         .arg("tests/resources/intergenic.yml")
         .arg("tests/resources/S288c.ranges")
         .arg("--op")
