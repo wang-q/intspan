@@ -1,6 +1,5 @@
-use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan::IntSpan;
+use intspan::*;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 

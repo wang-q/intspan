@@ -2,7 +2,6 @@ extern crate clap;
 use clap::*;
 
 mod cmd;
-mod utils;
 
 fn main() {
     let app = App::new(crate_name!())

@@ -1,4 +1,4 @@
-use crate::utils::*;
+use intspan::*;
 use clap::*;
 
 // Create clap subcommand arguments

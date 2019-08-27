@@ -1,7 +1,5 @@
-use crate::utils::*;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use intspan;
-use intspan::IntSpan;
+use intspan::*;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 

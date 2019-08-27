@@ -1,6 +1,5 @@
-use crate::utils::*;
 use clap::*;
-use intspan::{Coverage, IntSpan, Range};
+use intspan::*;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::io::BufRead;

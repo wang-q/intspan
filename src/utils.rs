@@ -1,4 +1,4 @@
-use intspan::IntSpan;
+use crate::IntSpan;
 use serde_yaml::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;

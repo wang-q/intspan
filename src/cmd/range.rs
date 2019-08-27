@@ -1,6 +1,5 @@
-use crate::utils::*;
+use intspan::*;
 use clap::*;
-use intspan::{IntSpan, Range};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
