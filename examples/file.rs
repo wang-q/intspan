@@ -11,7 +11,7 @@ fn run_file() {
         println!("step 1 create");
         let start = Instant::now();
 
-        for _i in 1..101 {
+        for _i in 1..=100 {
             IntSpan::from(r1);
             IntSpan::from(r2);
         }
@@ -27,7 +27,7 @@ fn run_file() {
         println!("step 2 intersect");
         let start = Instant::now();
 
-        for _i in 1..1001 {
+        for _i in 1..=1000 {
             let s1 = IntSpan::from(r1);
             let s2 = IntSpan::from(r2);
 
@@ -45,7 +45,7 @@ fn run_file() {
         println!("step 3 intersect runlist");
         let start = Instant::now();
 
-        for _i in 1..1001 {
+        for _i in 1..=1000 {
             let s1 = IntSpan::from(r1);
             let s2 = IntSpan::from(r2);
 

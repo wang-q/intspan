@@ -24,7 +24,7 @@ fn run_benchmark() {
         ];
         let vec2 = vec![100, 1_000_000];
 
-        for _i in 1..50001 {
+        for _i in 1..=50000 {
             let mut set = IntSpan::new();
 
             if step >= 2 {
@@ -37,12 +37,12 @@ fn run_benchmark() {
                 set.to_string();
             }
             if step >= 5 {
-                for j in 1..201 {
+                for j in 1..=200 {
                     set.add_pair(j, j);
                 }
             }
             if step >= 6 {
-                for j in 1..201 {
+                for j in 1..=200 {
                     set.add_pair(j * 5, j * 10);
                 }
             }
