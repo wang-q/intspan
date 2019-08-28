@@ -11,6 +11,40 @@ Current release: 0.2.0
 
 `cargo install intspan`
 
+## SYNOPSIS
+
+```text
+$ intspan help
+intspan 0.2.1-alpha.0
+wang-q <wang-q@outlook.com>
+`IntSpan` handles of sets containing integer spans
+
+USAGE:
+    intspan [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    combine    Combine multiple sets of runlists in a yaml file
+    compare    Compare 2 YAML files
+    convert    Convert runlist file to ranges file
+    cover      Output covers on chromosomes
+    genome     Convert chr.size to runlists
+    gff        Convert gff3 to covers on chromosomes
+    help       Prints this message or the help of the given subcommand(s)
+    merge      Merge runlist yaml files
+    range      Convert runlist file to ranges file
+    some       Extract some records from a runlist yaml file
+    span       Operate spans in a YAML file
+    split      Split a runlist yaml file
+    stat       Coverage on chromosomes for runlists
+    statop     Coverage on chromosomes for one YAML crossed another
+    test       Basic IntSpan library Ops
+
+```
+
 ## EXAMPLES
 
 ```bash
