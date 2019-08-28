@@ -13,4 +13,3 @@ pub mod span;
 pub mod split;
 pub mod stat;
 pub mod statop;
-pub mod test;

@@ -1,17 +1,8 @@
-use clap::*;
-use intspan::*;
+use intspan::IntSpan;
+use std::env;
+use std::time::Instant;
 
-// Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("test").about("Basic IntSpan library Ops")
-}
-
-// command implementation
-pub fn execute(_: &ArgMatches) {
-    run_test();
-}
-
-pub fn run_test() -> String {
+fn run_test() {
     let mut intspan = IntSpan::new();
     intspan.add_pair(1, 9);
     intspan.add_pair(20, 39);
@@ -74,18 +65,11 @@ pub fn run_test() -> String {
     println!("{}", intspan);
 
     //    -30--21,-4-9,20-39,60-61,79-84,86,89-90,99
-    intspan.to_string()
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    println!("{:?}", args);
 
-    #[test]
-    fn run_test_result() {
-        assert_eq!(
-            run_test(),
-            "-30--21,-4-9,20-39,60-61,79-84,86,89-90,99".to_string()
-        );
-    }
+    run_test();
 }

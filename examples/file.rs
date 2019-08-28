@@ -1,4 +1,3 @@
-use intspan;
 use intspan::IntSpan;
 use std::env;
 use std::time::Instant;
