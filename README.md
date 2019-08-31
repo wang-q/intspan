@@ -78,6 +78,8 @@ Types of links:
 
 ## EXAMPLES
 
+### `intspan`
+
 ```bash
 # cargo install --path . --force
 
@@ -141,6 +143,15 @@ intspan convert tests/resources/repeat.yml tests/resources/intergenic.yml |
 intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
     intspan combine stdin |
     intspan stat tests/resources/S288c.chr.sizes stdin --all
+
+```
+ 
+### `linkr`
+
+```bash
+# cargo install --path . --force
+
+target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
 
 ```
 
