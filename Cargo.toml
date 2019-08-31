@@ -2,12 +2,12 @@
 name = "intspan"
 version = "0.2.1-alpha.0"
 authors = ["wang-q <wang-q@outlook.com>"]
-description = "`IntSpan` handles of sets containing integer spans"
+description = "Command line tools for IntSpan related bioinformatics operations"
 documentation = "https://github.com/wang-q/intspan"
 homepage = "https://github.com/wang-q/intspan"
 repository = "https://github.com/wang-q/intspan"
 readme = "README.md"
-categories = ["command-line-utilities", "text-processing"]
+categories = ["command-line-utilities", "text-processing", "bioinformatics"]
 license = "MIT"
 edition = "2018"
 
