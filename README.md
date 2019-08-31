@@ -11,6 +11,21 @@ Current release: 0.2.0
 
 `cargo install intspan`
 
+## Concepts
+
+### IntSpans
+
+An IntSpan represents sets of integers as a number of inclusive ranges, for example '1-10,19,45-48'.
+
+The following picture is the schema of an IntSpan object. Jump lines are above the baseline; loop
+lines are below it.
+
+![intspans](doc/intspans.png)
+
+Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
+[jintspan](https://github.com/egateam/jintspan) are implements of
+IntSpan objects in Perl and Java, respectively.
+
 ## EXAMPLES
 
 ```bash

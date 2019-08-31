@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased] - ReleaseDate
+
+### Added
+
+* Illustrations for some concepts
+    * IntSpans
+
 ## [0.2.0] - 2019-08-24
 
 ### Added
