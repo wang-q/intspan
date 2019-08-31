@@ -47,3 +47,19 @@ fn command_circos_highlight() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/linkr/II.links.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 15);
+    assert!(!stdout.contains("\nVI"), "chromosome II first");
+
+    Ok(())
+}
