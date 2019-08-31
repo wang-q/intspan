@@ -22,6 +22,10 @@ name = "intspan"
 name = "intspan"
 path = "src/main.rs"
 
+[[bin]]
+name = "linkr"
+path = "src/linkr.rs"
+
 [[example]]
 name = "benchmark"
 
