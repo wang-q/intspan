@@ -30,7 +30,6 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
     let mut line_set: BTreeSet<String> = BTreeSet::new();
 
     for infile in args.values_of("infiles").unwrap() {
