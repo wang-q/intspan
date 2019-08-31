@@ -81,7 +81,36 @@ pub fn execute(args: &ArgMatches) {
                 if color_idx > 11 {
                     color_idx = 0;
                 }
+            } else {
+                let count = parts.len();
+
+                // 2-combinations of parts forms a pair
+                for i in 0..count {
+                    'PAIR: for j in i+1..count {
+                        let mut fields: Vec<String> = vec![];
+                        for idx in &[i, j] {
+                            let range = Range::from_str(parts[*idx]);
+                            if range.start() == &0 {
+                                continue 'PAIR;
+                            }
+
+                            fields.push(range.chr().to_string());
+                            if range.strand() == "-" {
+                                fields.push(range.end().to_string());
+                                fields.push(range.start().to_string());
+                            } else {
+                                fields.push(range.start().to_string());
+                                fields.push(range.end().to_string());
+                            }
+                        }
+
+                        //----------------------------
+                        // Output
+                        //----------------------------
+                        writer.write_all(format!("{}\n", fields.join(" ")).as_ref());
+                    }
+                }
             }
-        }
+        } // end of line
     }
 }

@@ -15,6 +15,23 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_circos() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("circos")
+        .arg("tests/linkr/II.connect.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 10);
+    assert!(stdout.contains("XIII 7947 6395"), "negtive strand");
+    assert!(!stdout.contains("fill_color"), "links");
+
+    Ok(())
+}
+
+#[test]
 fn command_circos_highlight() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd

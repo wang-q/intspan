@@ -151,6 +151,7 @@ intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
 ```bash
 # cargo install --path . --force
 
+target/debug/linkr circos tests/linkr/II.connect.tsv
 target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
 
 ```
