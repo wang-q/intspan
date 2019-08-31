@@ -4,10 +4,11 @@ use clap::*;
 mod cmd;
 
 fn main() {
-    let app = App::new(crate_name!())
+    let app = App::new("intspan")
         .version(crate_version!())
         .author(crate_authors!())
-        .about(crate_description!())
+        .about("`intspan` operates chromosome IntSpan files")
+        .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd::genome::make_subcommand())
         .subcommand(cmd::some::make_subcommand())
         .subcommand(cmd::merge::make_subcommand())

@@ -24,9 +24,8 @@ lines are below it.
 ![intspans](doc/intspans.png)
 
 Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
-[jintspan](https://github.com/egateam/jintspan) are implements of
-IntSpan objects in Perl and Java, respectively.
-
+[jintspan](https://github.com/egateam/jintspan) are implements of IntSpan objects in Perl and Java,
+respectively.
 
 ### Ranges
 

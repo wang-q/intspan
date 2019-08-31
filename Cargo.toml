@@ -27,6 +27,9 @@ name = "linkr"
 path = "src/linkr.rs"
 
 [[example]]
+name = "test"
+
+[[example]]
 name = "benchmark"
 
 [[example]]
