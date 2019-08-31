@@ -6,6 +6,7 @@
 
 * Illustrations for some concepts
     * IntSpans
+    * Ranges
 
 ## [0.2.0] - 2019-08-24
 

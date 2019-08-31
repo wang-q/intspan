@@ -26,6 +26,38 @@ Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
 [jintspan](https://github.com/egateam/jintspan) are implements of
 IntSpan objects in Perl and Java, respectively.
 
+
+### Ranges
+
+Examples in [`S288c.ranges`](tests/resources/S288c.ranges)
+
+```text
+I:1-100
+I(+):90-150
+S288c.I(-):190-200
+II:21294-22075
+II:23537-24097
+```
+
+![ranges](doc/ranges.png)
+
+Simple rules:
+
+* `chromosome` and `start` are required
+* `species`, `strand` and `end` are optional
+* `.` to separate `species` and `chromosome`
+* `strand` is one of `+` and `-` and surround by round brackets
+* `:` to separate names and digits
+* `-` to separate `start` and `end`
+* For `species`:
+    * `species` should be alphanumeric and without spaces, one exception char is `/`.
+    * `species` is an identity, you can also treat is as a strain name, a lineage or something else. 
+
+```text
+species.chromosome(strand):start-end
+--------^^^^^^^^^^--------^^^^^^----
+```
+
 ## EXAMPLES
 
 ```bash
