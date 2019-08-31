@@ -9,11 +9,13 @@ fn main() {
         .author(crate_authors!())
         .about("`linkr` operates ranges on chromosomes and links of ranges")
         .setting(AppSettings::ArgRequiredElseHelp)
-        .subcommand(cmd_linkr::circos::make_subcommand());
+        .subcommand(cmd_linkr::circos::make_subcommand())
+        .subcommand(cmd_linkr::sort::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let _res = match app.get_matches().subcommand() {
         ("circos", Some(sub_matches)) => cmd_linkr::circos::execute(sub_matches),
+        ("sort", Some(sub_matches)) => cmd_linkr::sort::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }

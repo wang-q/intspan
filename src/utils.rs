@@ -1,6 +1,6 @@
-use crate::IntSpan;
+use crate::{IntSpan, Range};
 use serde_yaml::Value;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
@@ -206,6 +206,95 @@ pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTr
     chrs
 }
 
+fn build_range_of_str(line: &String, range_of_str: &mut HashMap<String, Range>) {
+    for part in line.split('\t') {
+        let range = Range::from_str(part);
+        if range.start() == &0 {
+            continue;
+        }
+
+        if !range_of_str.contains_key(part) {
+            range_of_str.insert(part.to_string(), range);
+        }
+    }
+}
+
+pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
+    let mut range_of_str: HashMap<String, Range> = HashMap::new();
+
+    //----------------------------
+    // Sort within links
+    //----------------------------
+    let mut within_links: BTreeSet<String> = BTreeSet::new();
+    for line in lines {
+        build_range_of_str(line, &mut range_of_str);
+
+        let mut parts: Vec<&str> = line.split('\t').collect();
+
+        let mut valids: Vec<&str> = parts
+            .clone()
+            .into_iter()
+            .filter(|p| range_of_str.contains_key(*p))
+            .collect();
+
+        let mut invalids: Vec<&str> = parts
+            .clone()
+            .into_iter()
+            .filter(|p| !range_of_str.contains_key(*p))
+            .collect();
+
+        // by chromosome strand
+        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().strand());
+
+        // by start point on chromosomes
+        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().start());
+
+        // by chromosome name
+        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().chr());
+
+        // recreate line
+        valids.append(&mut invalids);
+        let new_line: String = valids.join("\t");
+        within_links.insert(new_line);
+    }
+
+    //----------------------------
+    // Sort by first range's chromosome order among links
+    //----------------------------
+    let mut among_links: Vec<String> = within_links.into_iter().collect();
+    {
+        // by chromosome strand
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_str.get(parts[0]).unwrap().strand()
+        });
+
+        // by start point on chromosomes
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_str.get(parts[0]).unwrap().start()
+        });
+
+        // by chromosome name
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_str.get(parts[0]).unwrap().chr()
+        });
+    }
+
+    //----------------------------
+    // Sort by copy number among links (desc)
+    //----------------------------
+    {
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            parts.len()
+        });
+    }
+
+    among_links
+}
+
 #[cfg(test)]
 mod read_write {
     use super::*;
@@ -213,8 +302,8 @@ mod read_write {
 
     #[test]
     fn test_write_lines() {
-        let tempdir = TempDir::new().unwrap();
-        let filename = tempdir
+        let tmp = TempDir::new().unwrap();
+        let filename = tmp
             .path()
             .join("test.txt")
             .into_os_string()
@@ -228,8 +317,8 @@ mod read_write {
 
     #[test]
     fn test_read_write_runlist() {
-        let tempdir = TempDir::new().unwrap();
-        let filename = tempdir
+        let tmp = TempDir::new().unwrap();
+        let filename = tmp
             .path()
             .join("test.yml")
             .into_os_string()

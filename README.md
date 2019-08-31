@@ -154,7 +154,8 @@ intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
 target/debug/linkr circos tests/linkr/II.connect.tsv
 target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
 
-target/debug/linkr sort tests/linkr/II.links.tsv
+diff <(target/debug/linkr sort tests/linkr/II.links.tsv) \
+    tests/linkr/II.sort.tsv
 
 ```
 
