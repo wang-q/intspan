@@ -15,7 +15,8 @@ Current release: 0.2.0
 
 ### IntSpans
 
-An IntSpan represents sets of integers as a number of inclusive ranges, for example '1-10,19,45-48'.
+An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`
+or `-99--10,1-10,19,45-48`.
 
 The following picture is the schema of an IntSpan object. Jump lines are above the baseline; loop
 lines are below it.
