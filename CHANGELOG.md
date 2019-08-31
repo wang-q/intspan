@@ -4,6 +4,8 @@
 
 ### Added
 
+* New binary `linkr` for commands from `App::Rangeops` and `jrange`
+
 * Illustrations for some concepts
     * IntSpans
     * Ranges

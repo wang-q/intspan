@@ -7,7 +7,7 @@ fn main() {
     let app = App::new("linkr")
         .version(crate_version!())
         .author(crate_authors!())
-        .about("`linkr` operates ranges and links of ranges on chromosomes")
+        .about("`linkr` operates ranges on chromosomes and links of ranges")
         .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd_linkr::circos::make_subcommand());
 
