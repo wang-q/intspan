@@ -1,6 +1,5 @@
 use clap::{App, Arg, ArgMatches, SubCommand};
 use intspan::*;
-use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
@@ -86,7 +85,7 @@ pub fn execute(args: &ArgMatches) {
 
                 // 2-combinations of parts forms a pair
                 for i in 0..count {
-                    'PAIR: for j in i+1..count {
+                    'PAIR: for j in i + 1..count {
                         let mut fields: Vec<String> = vec![];
                         for idx in &[i, j] {
                             let range = Range::from_str(parts[*idx]);
