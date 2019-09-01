@@ -39,7 +39,7 @@ pub fn execute(args: &ArgMatches) {
 
             for part in parts {
                 let range = Range::from_str(part);
-                if range.start() != &0 {
+                if range.is_valid() {
                     line_set.insert(line.clone());
                     continue 'LINE;
                 }

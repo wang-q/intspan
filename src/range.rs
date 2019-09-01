@@ -109,6 +109,21 @@ impl Range {
         self.encode()
     }
 
+    /// Valid or not
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from("I", 1, 100);
+    /// assert!(range.is_valid());
+    /// let range = Range::from_str("I:100");
+    /// assert!(range.is_valid());
+    /// let range = Range::from_str("invalid");
+    /// assert!(!range.is_valid());
+    /// ```
+    pub fn is_valid(&self) -> bool {
+        self.start != 0
+    }
+
     fn decode(&mut self, header: &String) {
         lazy_static! {
             static ref RE: Regex = Regex::new(

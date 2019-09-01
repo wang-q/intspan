@@ -56,7 +56,7 @@ pub fn execute(args: &ArgMatches) {
             if is_highlight {
                 for part in parts {
                     let range = Range::from_str(part);
-                    if range.start() == &0 {
+                    if !range.is_valid() {
                         continue;
                     }
 
@@ -89,7 +89,7 @@ pub fn execute(args: &ArgMatches) {
                         let mut fields: Vec<String> = vec![];
                         for idx in &[i, j] {
                             let range = Range::from_str(parts[*idx]);
-                            if range.start() == &0 {
+                            if !range.is_valid() {
                                 continue 'PAIR;
                             }
 

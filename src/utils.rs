@@ -209,7 +209,7 @@ pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTr
 fn build_range_of_str(line: &String, range_of_str: &mut HashMap<String, Range>) {
     for part in line.split('\t') {
         let range = Range::from_str(part);
-        if range.start() == &0 {
+        if !range.is_valid() {
             continue;
         }
 
@@ -220,6 +220,7 @@ fn build_range_of_str(line: &String, range_of_str: &mut HashMap<String, Range>) 
 }
 
 pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
+    // cache ranges
     let mut range_of_str: HashMap<String, Range> = HashMap::new();
 
     //----------------------------
