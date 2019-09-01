@@ -78,9 +78,11 @@ pub fn execute(args: &ArgMatches) {
             eprintln!("==> Load replaces");
         }
         for line in read_lines(args.value_of("replace").unwrap()) {
-            let fields: Vec<&str> = line.split('\t').collect();
-            if fields.len() == 2 {
-                replaces.insert(fields[0].to_string(), fields[1].to_string());
+            build_range_of_part(&line, &mut range_of_part);
+
+            let parts: Vec<&str> = line.split('\t').collect();
+            if parts.len() == 2 {
+                replaces.insert(parts[0].to_string(), parts[1].to_string());
             }
         }
     }
@@ -97,37 +99,48 @@ pub fn execute(args: &ArgMatches) {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             build_range_of_part(&line, &mut range_of_part);
-            let parts: Vec<&str> = line.split('\t').collect();
+
+            let mut parts: Vec<String> = line.split('\t').map(String::from).collect();
             let count = parts.len();
 
             // make sure that all lines are bilateral links
             if !(count == 2 || count == 3) {
                 continue;
             }
-            if !range_of_part.contains_key(parts[0]) {
+            if !range_of_part.contains_key(&parts[0]) {
                 continue;
             }
-            if !range_of_part.contains_key(parts[1]) {
+            if !range_of_part.contains_key(&parts[1]) {
                 continue;
             }
 
             // replacing
+            for i in 0..count {
+                let original = parts[i].to_string();
+                if replaces.contains_key(&original) {
+                    // create new range, use original strand
+                    let mut new_range = range_of_part[&replaces[&original]].clone();
+                    *new_range.strand_mut() = range_of_part[&original].strand().to_string();
+                    let new_part = new_range.to_string();
 
-            // incorporating strands
-            let mut strands: BTreeSet<String> = BTreeSet::new();
-            if count == 3 {
-                if parts[2] == "+" || parts[2] == "-" {
-                    strands.insert(parts[2].to_string());
+                    build_range_of_part(&new_part, &mut range_of_part);
+                    *parts.get_mut(i).unwrap() = new_part;
                 }
             }
 
+            // incorporating strands
+            let mut strands: BTreeSet<String> = BTreeSet::new();
+            if count == 3 && (parts[2] == "+" || parts[2] == "-") {
+                strands.insert(parts[2].to_string());
+            }
+
             for i in &[0, 1] {
-                strands.insert(range_of_part[parts[*i as usize]].strand().to_string());
+                strands.insert(range_of_part[&parts[*i as usize]].strand().to_string());
             }
             //            eprintln!("strands = {:#?}", strands);
 
-            let mut range_0 = range_of_part[parts[0]].clone();
-            let mut range_1 = range_of_part[parts[1]].clone();
+            let mut range_0 = range_of_part[&parts[0]].clone();
+            let mut range_1 = range_of_part[&parts[1]].clone();
 
             // skip identical ranges
             if range_0.chr() == range_1.chr()
@@ -333,6 +346,43 @@ pub fn execute(args: &ArgMatches) {
         }
 
         lines = sort_links(&lines);
+    }
+
+    //----------------------------
+    // Links of nearly identical ranges escaped from merging
+    //----------------------------
+    if args.is_present("replace") {
+        if is_verbose {
+            eprintln!("==> Remove self links");
+        }
+
+        let same_chr_lines = lines
+            .iter()
+            .filter(|line| {
+                let parts: Vec<&str> = line.split('\t').collect();
+                range_of_part[parts[0]].chr() == range_of_part[parts[1]].chr()
+            })
+            .map(String::to_string)
+            .collect::<Vec<String>>();
+
+        for line in &same_chr_lines {
+            let parts: Vec<&str> = line.split('\t').collect();
+
+            let intspan_0 = range_of_part[parts[0]].intspan();
+            let intspan_1 = range_of_part[parts[1]].intspan();
+
+            let intersect = intspan_0.intersect(&intspan_1);
+            if !intersect.is_empty()
+                && intersect.cardinality() as f32 / intspan_0.cardinality() as f32 > 0.5
+                && intersect.cardinality() as f32 / intspan_1.cardinality() as f32 > 0.5
+            {
+                lines = lines
+                    .iter()
+                    .filter(|key| *key != line)
+                    .map(String::to_string)
+                    .collect::<Vec<String>>();
+            }
+        }
     }
 
     //----------------------------
