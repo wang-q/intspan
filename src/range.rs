@@ -1,6 +1,6 @@
+use crate::IntSpan;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
-use crate::IntSpan;
 
 #[derive(Default)]
 pub struct Range {

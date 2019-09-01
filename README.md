@@ -27,6 +27,14 @@ Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
 [jintspan](https://github.com/egateam/jintspan) are implements of IntSpan objects in Perl and Java,
 respectively.
 
+### IntSpans on chromosomes
+
+* `chr.sizes`
+
+* Single
+
+* Multi
+
 ### Ranges
 
 Examples in [`S288c.ranges`](tests/resources/S288c.ranges)
@@ -156,6 +164,8 @@ target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
 
 diff <(target/debug/linkr sort tests/linkr/II.links.tsv) \
     tests/linkr/II.sort.tsv
+
+target/debug/linkr merge -v tests/linkr/II.links.tsv
 
 ```
 
