@@ -116,3 +116,19 @@ fn command_filter_3() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_clean() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("clean")
+        .arg("tests/linkr/II.sort.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 11);
+    assert!(stdout.contains("892-4684"), "range exists");
+
+    Ok(())
+}

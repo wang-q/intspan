@@ -153,7 +153,7 @@ intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
     intspan stat tests/resources/S288c.chr.sizes stdin --all
 
 ```
- 
+
 ### `linkr`
 
 ```bash
@@ -169,6 +169,8 @@ target/debug/linkr merge -v tests/linkr/II.links.tsv
 
 target/debug/linkr filter tests/linkr/II.connect.tsv -n 2
 target/debug/linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
+
+target/debug/linkr clean -v tests/linkr/II.sort.tsv
 
 ```
 
