@@ -46,6 +46,7 @@ fn main() {
 // TODO: ovlp.rs
 // TODO: wrap IO with Result
 // TODO: satisfy clippy
+// TODO: impl various traits
 
 // set, runlists: single name IntSpan set or runlists
 //      set is a set of IntSpans
