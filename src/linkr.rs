@@ -11,13 +11,15 @@ fn main() {
         .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd_linkr::circos::make_subcommand())
         .subcommand(cmd_linkr::sort::make_subcommand())
-        .subcommand(cmd_linkr::merge::make_subcommand());
+        .subcommand(cmd_linkr::merge::make_subcommand())
+        .subcommand(cmd_linkr::filter::make_subcommand());
 
     // Check which subcomamnd the user ran...
     let _res = match app.get_matches().subcommand() {
         ("circos", Some(sub_matches)) => cmd_linkr::circos::execute(sub_matches),
         ("sort", Some(sub_matches)) => cmd_linkr::sort::execute(sub_matches),
         ("merge", Some(sub_matches)) => cmd_linkr::merge::execute(sub_matches),
+        ("filter", Some(sub_matches)) => cmd_linkr::filter::execute(sub_matches),
         (_, _) => unreachable!(),
     };
 }

@@ -79,3 +79,40 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_filter() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/linkr/II.connect.tsv")
+        .arg("-n")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 4);
+
+    Ok(())
+}
+
+#[test]
+fn command_filter_3() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/linkr/II.connect.tsv")
+        .arg("-n")
+        .arg("3")
+        .arg("-r")
+        .arg("0.99")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 1);
+    assert!(!stdout.contains("VI("), "filtered links");
+
+    Ok(())
+}
