@@ -55,7 +55,7 @@ pub fn execute(args: &ArgMatches) {
 
     // store graph separately by chromosomes
     // petgraph use NodeIndex to store and identify nodes
-    let mut graph_of_chr: HashMap<String, Graph<String, _, Undirected>> = HashMap::new();
+    let mut graph_of_chr: HashMap<String, Graph<String, (), Undirected>> = HashMap::new();
 
     // cache ranges
     let mut range_of_part: HashMap<String, Range> = HashMap::new();
