@@ -171,6 +171,7 @@ target/debug/linkr filter tests/linkr/II.connect.tsv -n 2
 target/debug/linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
 
 target/debug/linkr clean -v tests/linkr/II.sort.tsv
+target/debug/linkr clean -v --bundle 500 tests/linkr/II.sort.tsv
 
 ```
 

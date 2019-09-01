@@ -1,5 +1,7 @@
 use clap::*;
 use intspan::*;
+use petgraph::prelude::NodeIndex;
+use petgraph::*;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::BufRead;
 
@@ -212,6 +214,126 @@ pub fn execute(args: &ArgMatches) {
         is_nested = !to_remove.is_empty();
     }
     lines = sort_links(&lines);
+
+    //----------------------------
+    // Bundle links
+    //----------------------------
+    if bundle != 0 {
+        if is_verbose {
+            eprintln!("==> Bundle overlapped links");
+        }
+
+        let chr_strand_pairs = lines
+            .iter()
+            .map(|line| {
+                let parts: Vec<&str> = line.split('\t').collect();
+                format!(
+                    "{}:{}:{}:{}",
+                    range_of_part[parts[0]].chr(),
+                    range_of_part[parts[0]].strand(),
+                    range_of_part[parts[1]].chr(),
+                    range_of_part[parts[1]].strand(),
+                )
+            })
+            .collect::<Vec<String>>();
+
+        let mut graph: Graph<String, (), Undirected> = Graph::new_undirected();
+        // cache node indices
+        let mut idx_of_line: HashMap<String, NodeIndex> = HashMap::new();
+
+        for i in 0..lines.len() {
+            let cur_pair = &chr_strand_pairs[i];
+            let rest_idx: Vec<usize> = (i + 1..lines.len())
+                .filter(|key| chr_strand_pairs[*key] == *cur_pair)
+                .collect();
+
+            for j in rest_idx {
+                let line_i = &lines[i];
+                let parts_i: Vec<&str> = line_i.split('\t').collect();
+
+                let line_j = &lines[j];
+                let parts_j: Vec<&str> = line_j.split('\t').collect();
+
+                if !idx_of_line.contains_key(line_i) {
+                    let idx = graph.add_node(line_i.to_string());
+                    idx_of_line.insert(line_i.to_string(), idx);
+                }
+                if !idx_of_line.contains_key(line_j) {
+                    let idx = graph.add_node(line_j.to_string());
+                    idx_of_line.insert(line_j.to_string(), idx);
+                }
+
+                let intspan_0_i = range_of_part[parts_i[0]].intspan();
+                let intspan_1_i = range_of_part[parts_i[1]].intspan();
+
+                let intspan_0_j = range_of_part[parts_j[0]].intspan();
+                let intspan_1_j = range_of_part[parts_j[1]].intspan();
+
+                if intspan_0_i.intersect(&intspan_0_j).cardinality() >= bundle
+                    && intspan_1_i.intersect(&intspan_1_j).cardinality() >= bundle
+                {
+                    graph.add_edge(idx_of_line[line_i], idx_of_line[line_j], ());
+                }
+            }
+        }
+
+        // bundle connected lines
+        let scc: Vec<Vec<NodeIndex>> = petgraph::algo::tarjan_scc(&graph);
+        for connected_indices in &scc {
+            if connected_indices.len() < 2 {
+                continue;
+            }
+
+            if is_verbose {
+                eprintln!("Merge {} lines", connected_indices.len());
+            }
+
+            // connected lines
+            let mut line_list = connected_indices
+                .into_iter()
+                .map(|idx| graph.node_weight(*idx).unwrap().clone())
+                .collect::<Vec<String>>();
+            line_list.sort();
+            if is_verbose {
+                eprintln!("line_list = {:#?}", line_list);
+            }
+
+            let mut merged_ranges: Vec<String> = Vec::new();
+            for i in &[0, 1] {
+                let mut chr = "".to_string();
+                let mut strand = "".to_string();
+                let mut intspan = IntSpan::new();
+
+                for line in &line_list {
+                    // remove lines to be merged
+                    lines = lines
+                        .iter()
+                        .filter(|key| *key != line)
+                        .map(String::to_string)
+                        .collect::<Vec<String>>();
+
+                    let parts: Vec<&str> = line.split('\t').collect();
+                    let range = range_of_part.get(parts[*i as usize]).unwrap();
+                    chr = range.chr().to_string();
+                    strand = range.strand().to_string();
+                    intspan.merge(&range.intspan());
+                }
+
+                let merged: String =
+                    format!("{}({}):{}-{}", chr, strand, intspan.min(), intspan.max());
+                merged_ranges.push(merged);
+            }
+
+            let new_line = merged_ranges.join("\t");
+            build_range_of_part(&new_line, &mut range_of_part);
+            if is_verbose {
+                eprintln!("    To {}", new_line);
+            }
+            lines.push(new_line);
+        }
+
+        lines = sort_links(&lines);
+    }
 
     //----------------------------
     // Output
