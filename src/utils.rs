@@ -206,7 +206,7 @@ pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTr
     chrs
 }
 
-fn build_range_of_str(line: &String, range_of_str: &mut HashMap<String, Range>) {
+pub fn build_range_of_part(line: &String, range_of_str: &mut HashMap<String, Range>) {
     for part in line.split('\t') {
         let range = Range::from_str(part);
         if !range.is_valid() {
@@ -221,37 +221,37 @@ fn build_range_of_str(line: &String, range_of_str: &mut HashMap<String, Range>) 
 
 pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
     // cache ranges
-    let mut range_of_str: HashMap<String, Range> = HashMap::new();
+    let mut range_of_part: HashMap<String, Range> = HashMap::new();
 
     //----------------------------
     // Sort within links
     //----------------------------
     let mut within_links: BTreeSet<String> = BTreeSet::new();
     for line in lines {
-        build_range_of_str(line, &mut range_of_str);
+        build_range_of_part(line, &mut range_of_part);
 
         let parts: Vec<&str> = line.split('\t').collect();
 
         let mut valids: Vec<&str> = parts
             .clone()
             .into_iter()
-            .filter(|p| range_of_str.contains_key(*p))
+            .filter(|p| range_of_part.contains_key(*p))
             .collect();
 
         let mut invalids: Vec<&str> = parts
             .clone()
             .into_iter()
-            .filter(|p| !range_of_str.contains_key(*p))
+            .filter(|p| !range_of_part.contains_key(*p))
             .collect();
 
         // by chromosome strand
-        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().strand());
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().strand());
 
         // by start point on chromosomes
-        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().start());
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().start());
 
         // by chromosome name
-        valids.sort_by_key(|k| range_of_str.get(*k).unwrap().chr());
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().chr());
 
         // recreate line
         valids.append(&mut invalids);
@@ -267,19 +267,19 @@ pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
         // by chromosome strand
         among_links.sort_by_cached_key(|k| {
             let parts: Vec<&str> = k.split('\t').collect();
-            range_of_str.get(parts[0]).unwrap().strand()
+            range_of_part.get(parts[0]).unwrap().strand()
         });
 
         // by start point on chromosomes
         among_links.sort_by_cached_key(|k| {
             let parts: Vec<&str> = k.split('\t').collect();
-            range_of_str.get(parts[0]).unwrap().start()
+            range_of_part.get(parts[0]).unwrap().start()
         });
 
         // by chromosome name
         among_links.sort_by_cached_key(|k| {
             let parts: Vec<&str> = k.split('\t').collect();
-            range_of_str.get(parts[0]).unwrap().chr()
+            range_of_part.get(parts[0]).unwrap().chr()
         });
     }
 
