@@ -230,7 +230,7 @@ pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
     for line in lines {
         build_range_of_str(line, &mut range_of_str);
 
-        let mut parts: Vec<&str> = line.split('\t').collect();
+        let parts: Vec<&str> = line.split('\t').collect();
 
         let mut valids: Vec<&str> = parts
             .clone()

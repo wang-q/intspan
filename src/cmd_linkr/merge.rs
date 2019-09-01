@@ -106,7 +106,7 @@ pub fn execute(args: &ArgMatches) {
             eprintln!("Chromosome {}", chr);
         }
 
-        let mut graph = graph_of_chr.get_mut(chr).unwrap();
+        let graph = graph_of_chr.get_mut(chr).unwrap();
         let indices = graph.node_indices().collect::<Vec<NodeIndex>>();
 
         for i in 0..indices.len() {
