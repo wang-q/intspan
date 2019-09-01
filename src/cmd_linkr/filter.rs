@@ -77,7 +77,7 @@ pub fn execute(args: &ArgMatches) {
                 }
             }
 
-            if ratio != -1.0 {
+            if ratio > 0.0 {
                 let mut lengths: Vec<i32> = vec![];
 
                 for part in &parts {
