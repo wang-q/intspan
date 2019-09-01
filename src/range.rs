@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
+use crate::IntSpan;
 
 #[derive(Default)]
 pub struct Range {
@@ -122,6 +123,21 @@ impl Range {
     /// ```
     pub fn is_valid(&self) -> bool {
         self.start != 0
+    }
+
+    /// IntSpan
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from("I", 1, 100);
+    /// assert_eq!(range.intspan().to_string(), "1-100");
+    /// let range = Range::from_str("I:100");
+    /// assert_eq!(range.intspan().to_string(), "100");
+    /// ```
+    pub fn intspan(&self) -> IntSpan {
+        let mut intspan = IntSpan::new();
+        intspan.add_pair(self.start, self.end);
+        intspan
     }
 
     fn decode(&mut self, header: &String) {
