@@ -150,20 +150,25 @@ pub fn execute(args: &ArgMatches) {
     for chr in &chrs {
         let graph = graph_of_chr.get(chr).unwrap();
 
-        let scc : Vec<Vec<NodeIndex>> = petgraph::algo::tarjan_scc(graph);
+        let scc: Vec<Vec<NodeIndex>> = petgraph::algo::tarjan_scc(graph);
         for connected_indices in &scc {
             if connected_indices.len() < 2 {
                 continue;
             }
 
             if is_verbose {
-                eprintln!("Chromosome {}: Merge {} ranges", chr, connected_indices.len());
+                eprintln!(
+                    "Chromosome {}: Merge {} ranges",
+                    chr,
+                    connected_indices.len()
+                );
             }
 
             // connected ranges
-            let mut part_list = connected_indices.into_iter().map(|idx|
-                graph.node_weight(*idx).unwrap().clone()
-            ).collect::<Vec<String>>();
+            let mut part_list = connected_indices
+                .into_iter()
+                .map(|idx| graph.node_weight(*idx).unwrap().clone())
+                .collect::<Vec<String>>();
             part_list.sort();
 
             // collect info for merged range
@@ -174,7 +179,7 @@ pub fn execute(args: &ArgMatches) {
             }
 
             // create merged range
-            let merged : String = format!("{}(+):{}", chr, intspan.to_string());
+            let merged: String = format!("{}(+):{}", chr, intspan.to_string());
 
             for part in &part_list {
                 if *part == merged {
