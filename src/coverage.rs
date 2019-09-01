@@ -1,7 +1,7 @@
 use crate::IntSpan;
 use std::collections::BTreeMap;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Coverage {
     max: i32,
     tiers: BTreeMap<i32, IntSpan>,

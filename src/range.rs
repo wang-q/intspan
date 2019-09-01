@@ -2,7 +2,7 @@ use crate::IntSpan;
 use regex::Regex;
 use std::collections::{BTreeMap, HashMap};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Range {
     name: String,
     chr: String,
@@ -28,6 +28,11 @@ impl Range {
     }
     pub fn end(&self) -> &i32 {
         &self.end
+    }
+
+    // Mutable accessors
+    pub fn strand_mut(&mut self) -> &mut String {
+        &mut self.strand
     }
 
     pub fn new() -> Self {

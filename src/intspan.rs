@@ -89,7 +89,7 @@
 use std::fmt;
 use std::vec::Vec;
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct IntSpan {
     edges: Vec<i32>,
     pos_inf: i32,
