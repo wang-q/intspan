@@ -161,21 +161,60 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ```bash
 # cargo install --path . --force
 
-target/debug/linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
+linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 
-target/debug/linkr merge tests/linkr/II.links.tsv -v
+linkr merge tests/linkr/II.links.tsv -v
 
-target/debug/linkr clean tests/linkr/II.sort.tsv
-target/debug/linkr clean tests/linkr/II.sort.tsv --bundle 500 
-target/debug/linkr clean tests/linkr/II.sort.tsv -r tests/linkr/II.merge.tsv
+linkr clean tests/linkr/II.sort.tsv
+linkr clean tests/linkr/II.sort.tsv --bundle 500 
+linkr clean tests/linkr/II.sort.tsv -r tests/linkr/II.merge.tsv
 
-target/debug/linkr connect tests/linkr/II.clean.tsv -v
+linkr connect tests/linkr/II.clean.tsv -v
 
-target/debug/linkr filter tests/linkr/II.connect.tsv -n 2
-target/debug/linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
+linkr filter tests/linkr/II.connect.tsv -n 2
+linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
 
-target/debug/linkr circos tests/linkr/II.connect.tsv
-target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
+linkr circos tests/linkr/II.connect.tsv
+linkr circos --highlight tests/linkr/II.connect.tsv
+
+```
+
+### S288c
+
+```bash
+linkr sort tests/S288c/links.lastz.tsv tests/S288c/links.blast.tsv \
+    -o tests/S288c/sort.tsv
+
+linkr clean tests/S288c/sort.tsv \
+    -o tests/S288c/sort.clean.tsv
+
+linkr merge tests/S288c/sort.clean.tsv -c 0.95 \
+    -o tests/S288c/merge.tsv
+
+linkr clean tests/S288c/sort.clean.tsv -r tests/S288c/merge.tsv --bundle 500 \
+    -o tests/S288c/clean.tsv
+
+linkr connect tests/S288c/clean.tsv -r 0.8 \
+    -o tests/S288c/connect.tsv
+
+linkr filter tests/S288c/connect.tsv -r 0.8 \
+    -o tests/S288c/filter.tsv
+
+wc -l tests/S288c/*.tsv
+#     229 tests/S288c/clean.tsv
+#     148 tests/S288c/connect.tsv
+#     148 tests/S288c/filter.tsv
+#     566 tests/S288c/links.blast.tsv
+#     346 tests/S288c/links.lastz.tsv
+#      74 tests/S288c/merge.tsv
+#     282 tests/S288c/sort.clean.tsv
+#     626 tests/S288c/sort.tsv
+
+cat tests/S288c/filter.tsv |
+    perl -nla -F"\t" -e 'print for @F' |
+    spanr cover stdin -o tests/S288c/cover.yml
+
+spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 
 ```
 
