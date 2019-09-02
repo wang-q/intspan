@@ -1,6 +1,5 @@
 use clap::*;
 use intspan::*;
-use std::collections::BTreeSet;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
@@ -71,10 +70,8 @@ pub fn execute(args: &ArgMatches) {
         for line in reader.lines().filter_map(|r| r.ok()) {
             let parts: Vec<&str> = line.split('\t').collect();
 
-            if !numbers.is_empty() {
-                if !numbers.contains(parts.len() as i32) {
-                    continue;
-                }
+            if !numbers.is_empty() && !numbers.contains(parts.len() as i32) {
+                continue;
             }
 
             if ratio > 0.0 {

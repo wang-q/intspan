@@ -166,7 +166,7 @@ pub fn execute(args: &ArgMatches) {
 
             // connected ranges
             let mut part_list = connected_indices
-                .into_iter()
+                .iter()
                 .map(|idx| graph.node_weight(*idx).unwrap().clone())
                 .collect::<Vec<String>>();
             part_list.sort();
