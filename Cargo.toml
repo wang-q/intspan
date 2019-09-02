@@ -20,7 +20,7 @@ name = "intspan"
 
 [[bin]]
 name = "spanr"
-path = "src/main.rs"
+path = "src/spanr.rs"
 
 [[bin]]
 name = "linkr"
