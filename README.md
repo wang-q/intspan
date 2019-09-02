@@ -13,6 +13,67 @@ Current release: 0.2.0
 
 `cargo install intspan`
 
+## SYNOPSIS
+
+### `spanr`
+
+```
+$ spanr help
+intspan 0.2.1-alpha.0
+wang-q <wang-q@outlook.com>
+`intspan` operates chromosome IntSpan files
+
+USAGE:
+    spanr [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    combine    Combine multiple sets of runlists in a yaml file
+    compare    Compare 2 YAML files
+    convert    Convert runlist file to ranges file
+    cover      Output covers on chromosomes
+    genome     Convert chr.size to runlists
+    gff        Convert gff3 to covers on chromosomes
+    help       Prints this message or the help of the given subcommand(s)
+    merge      Merge runlist yaml files
+    range      Convert runlist file to ranges file
+    some       Extract some records from a runlist yaml file
+    span       Operate spans in a YAML file
+    split      Split a runlist yaml file
+    stat       Coverage on chromosomes for runlists
+    statop     Coverage on chromosomes for one YAML crossed another
+
+```
+
+### `linkr`
+
+```
+$ linkr help
+linkr 0.2.1-alpha.0
+wang-q <wang-q@outlook.com>
+`linkr` operates ranges on chromosomes and links of ranges
+
+USAGE:
+    linkr [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    circos     Convert links to circos links or highlights
+    clean      Replace ranges within links, incorporate hit strands and remove nested links
+    connect    Connect bilateral links into multilateral ones
+    filter     Filter links by numbers of ranges or length differences
+    help       Prints this message or the help of the given subcommand(s)
+    merge      Merge overlapped ranges via overlapping graph
+    sort       Sort links and ranges within links
+
+```
+
 ## Concepts
 
 ### IntSpans
@@ -178,6 +239,23 @@ linkr circos tests/linkr/II.connect.tsv
 linkr circos --highlight tests/linkr/II.connect.tsv
 
 ```
+
+Steps:
+
+    sort
+      |
+      v
+    clean -> merge
+      |     /
+      |  /
+      v
+    clean
+      |
+      V
+    connect
+      |
+      v
+    filter
 
 ### S288c
 
