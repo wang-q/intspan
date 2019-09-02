@@ -39,7 +39,7 @@ respectively.
 
 ### Ranges
 
-Examples in [`S288c.ranges`](tests/resources/S288c.ranges)
+Examples in [`S288c.ranges`](tests/spanr/S288c.ranges)
 
 ```text
 I:1-100
@@ -88,71 +88,71 @@ Types of links:
 
 ## EXAMPLES
 
-### `intspan`
+### `spanr`
 
 ```bash
 # cargo install --path . --force
 
-intspan genome tests/resources/S288c.chr.sizes
+spanr genome tests/spanr/S288c.chr.sizes
 
-intspan genome tests/resources/S288c.chr.sizes |
-    intspan stat tests/resources/S288c.chr.sizes stdin --all
+spanr genome tests/spanr/S288c.chr.sizes |
+    spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
-intspan some tests/resources/Atha.yml tests/resources/Atha.list
+spanr some tests/spanr/Atha.yml tests/spanr/Atha.list
 
-intspan merge tests/resources/I.yml tests/resources/II.yml
+spanr merge tests/spanr/I.yml tests/spanr/II.yml
 
-intspan cover tests/resources/S288c.ranges
-intspan cover tests/resources/S288c.ranges -c 2
-intspan cover tests/resources/dazzname.ranges
+spanr cover tests/spanr/S288c.ranges
+spanr cover tests/spanr/S288c.ranges -c 2
+spanr cover tests/spanr/dazzname.ranges
 
-intspan gff tests/resources/NC_007942.gff --tag tRNA
+spanr gff tests/spanr/NC_007942.gff --tag tRNA
 
-intspan range --op overlap tests/resources/intergenic.yml tests/resources/S288c.ranges
+spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.ranges
 
-intspan span --op cover tests/resources/brca2.yml
+spanr span --op cover tests/spanr/brca2.yml
 
-intspan combine tests/resources/Atha.yml
-jrunlist combine -o stdout tests/resources/Atha.yml
+spanr combine tests/spanr/Atha.yml
+jrunlist combine -o stdout tests/spanr/Atha.yml
 
-intspan compare \
+spanr compare \
     --op intersect \
-    tests/resources/intergenic.yml \
-    tests/resources/repeat.yml
+    tests/spanr/intergenic.yml \
+    tests/spanr/repeat.yml
 
-intspan split tests/resources/I.II.yml
+spanr split tests/spanr/I.II.yml
 
-intspan stat tests/resources/S288c.chr.sizes tests/resources/intergenic.yml
+spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.yml
 
-intspan stat tests/resources/S288c.chr.sizes tests/resources/I.II.yml
+spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.yml
 
-diff <(intspan stat tests/resources/Atha.chr.sizes tests/resources/Atha.yml) \
-    <(jrunlist stat -o stdout tests/resources/Atha.chr.sizes tests/resources/Atha.yml)
+diff <(spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml) \
+    <(jrunlist stat -o stdout tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml)
 
-intspan statop \
+spanr statop \
     --op intersect \
-    tests/resources/S288c.chr.sizes \
-    tests/resources/intergenic.yml \
-    tests/resources/repeat.yml
+    tests/spanr/S288c.chr.sizes \
+    tests/spanr/intergenic.yml \
+    tests/spanr/repeat.yml
 
-diff <(intspan statop \
+diff <(spanr statop \
         --op intersect --all\
-        tests/resources/Atha.chr.sizes \
-        tests/resources/Atha.yml \
-        tests/resources/paralog.yml ) \
+        tests/spanr/Atha.chr.sizes \
+        tests/spanr/Atha.yml \
+        tests/spanr/paralog.yml ) \
     <(jrunlist statop \
         -o stdout \
         --op intersect --all \
-        tests/resources/Atha.chr.sizes \
-        tests/resources/Atha.yml \
-        tests/resources/paralog.yml )
+        tests/spanr/Atha.chr.sizes \
+        tests/spanr/Atha.yml \
+        tests/spanr/paralog.yml )
 
-intspan convert tests/resources/repeat.yml tests/resources/intergenic.yml |
-    intspan cover stdin |
-    intspan stat tests/resources/S288c.chr.sizes stdin --all
-intspan merge tests/resources/repeat.yml tests/resources/intergenic.yml |
-    intspan combine stdin |
-    intspan stat tests/resources/S288c.chr.sizes stdin --all
+spanr convert tests/spanr/repeat.yml tests/spanr/intergenic.yml |
+    spanr cover stdin |
+    spanr stat tests/spanr/S288c.chr.sizes stdin --all
+spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
+    spanr combine stdin |
+    spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
 ```
 

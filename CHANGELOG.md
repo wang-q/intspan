@@ -5,10 +5,13 @@
 ### Added
 
 * New binary `linkr` for commands ported from `App::Rangeops` and `jrange`
-
 * Illustrations for some concepts
     * IntSpans
     * Ranges
+
+### Changed
+
+* Rename binary `intspan` to `spanr`
 
 ## [0.2.0] - 2019-08-24
 

@@ -6,14 +6,14 @@ use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
 /// ```
 /// use std::io::BufRead;
-/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// let mut lines = vec![];
 /// for line in reader.lines() {
 ///     lines.push(line);
 /// }
 /// assert_eq!(lines.len(), 16);
 ///
-/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
 /// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
@@ -27,7 +27,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
 }
 
 /// ```
-/// let lines = intspan::read_lines("tests/resources/S288c.chr.sizes");
+/// let lines = intspan::read_lines("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(lines.len(), 16);
 /// ```
 pub fn read_lines(input: &str) -> Vec<String> {
@@ -38,7 +38,7 @@ pub fn read_lines(input: &str) -> Vec<String> {
 }
 
 /// ```
-/// let sizes = intspan::read_sizes("tests/resources/S288c.chr.sizes");
+/// let sizes = intspan::read_sizes("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(sizes.len(), 16);
 /// assert_eq!(*sizes.get("II").unwrap(), 813184);
 /// ```
@@ -326,7 +326,7 @@ mod read_write {
             .into_string()
             .unwrap();
 
-        let yaml = read_yaml("tests/resources/Atha.yml");
+        let yaml = read_yaml("tests/spanr/Atha.yml");
 
         write_yaml(&filename, &yaml);
 

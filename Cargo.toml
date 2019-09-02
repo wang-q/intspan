@@ -19,7 +19,7 @@ appveyor = { repository = "wang-q/intspan" }
 name = "intspan"
 
 [[bin]]
-name = "intspan"
+name = "spanr"
 path = "src/main.rs"
 
 [[bin]]

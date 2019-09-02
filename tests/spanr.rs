@@ -5,7 +5,7 @@ use tempfile::TempDir;
 
 #[test]
 fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("foobar");
     cmd.assert().failure().stderr(predicate::str::contains(
         "which wasn't expected, or isn't valid in this context",
@@ -16,8 +16,8 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
-    cmd.arg("test").arg("tests/resources/S288c.chr.sizes");
+    let mut cmd = Command::cargo_bin("spanr")?;
+    cmd.arg("test").arg("tests/spanr/S288c.chr.sizes");
     cmd.assert().failure().stderr(predicate::str::contains(
         "which wasn't expected, or isn't valid in this context",
     ));
@@ -27,7 +27,7 @@ fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("genome");
     cmd.assert().failure().stderr(predicate::str::contains(
         "The following required arguments were not provided",
@@ -38,7 +38,7 @@ fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("genome").arg("tests/file/doesnt/exist");
     cmd.assert()
         .failure()
@@ -51,8 +51,8 @@ fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
-    cmd.arg("genome").arg("tests/resources/S288c.chr.sizes");
+    let mut cmd = Command::cargo_bin("spanr")?;
+    cmd.arg("genome").arg("tests/spanr/S288c.chr.sizes");
     cmd.assert()
         .success()
         .stdout(predicate::str::contains("I: 1-230218"));
@@ -62,11 +62,11 @@ fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_some() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("some")
-        .arg("tests/resources/Atha.yml")
-        .arg("tests/resources/Atha.list")
+        .arg("tests/spanr/Atha.yml")
+        .arg("tests/spanr/Atha.list")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -80,11 +80,11 @@ fn command_some() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
-        .arg("tests/resources/I.yml")
-        .arg("tests/resources/II.yml")
+        .arg("tests/spanr/I.yml")
+        .arg("tests/spanr/II.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -99,10 +99,10 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_split() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("split")
-        .arg("tests/resources/I.II.yml")
+        .arg("tests/spanr/I.II.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -120,9 +120,9 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
     let tempdir = TempDir::new().unwrap();
     let tempdir_str = tempdir.path().to_str().unwrap();
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("split")
-        .arg("tests/resources/I.II.yml")
+        .arg("tests/spanr/I.II.yml")
         .arg("-o")
         .arg(tempdir_str)
         .assert()
@@ -138,11 +138,11 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("stat")
-        .arg("tests/resources/S288c.chr.sizes")
-        .arg("tests/resources/intergenic.yml")
+        .arg("tests/spanr/S288c.chr.sizes")
+        .arg("tests/spanr/intergenic.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -166,11 +166,11 @@ fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("stat")
-        .arg("tests/resources/S288c.chr.sizes")
-        .arg("tests/resources/intergenic.yml")
+        .arg("tests/spanr/S288c.chr.sizes")
+        .arg("tests/spanr/intergenic.yml")
         .arg("--all")
         .output()
         .unwrap();
@@ -195,12 +195,12 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("statop")
-        .arg("tests/resources/S288c.chr.sizes")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/S288c.chr.sizes")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -227,12 +227,12 @@ fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("statop")
-        .arg("tests/resources/S288c.chr.sizes")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/S288c.chr.sizes")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
         .arg("--all")
         .output()
         .unwrap();
@@ -260,11 +260,11 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("statop")
-        .arg("tests/resources/S288c.chr.sizes")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/S288c.chr.sizes")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
         .arg("--op")
         .arg("invalid")
         .arg("--all");
@@ -277,10 +277,10 @@ fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
-        .arg("tests/resources/Atha.yml")
+        .arg("tests/spanr/Atha.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -293,10 +293,10 @@ fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_combine_2() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
-        .arg("tests/resources/II.yml")
+        .arg("tests/spanr/II.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -309,11 +309,11 @@ fn command_combine_2() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
         .arg("--op")
         .arg("intersect")
         .output()
@@ -330,11 +330,11 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_compare_union() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
         .arg("--op")
         .arg("union")
         .output()
@@ -351,11 +351,11 @@ fn command_compare_union() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/resources/I.II.yml")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/I.II.yml")
+        .arg("tests/spanr/repeat.yml")
         .arg("--op")
         .arg("intersect")
         .output()
@@ -369,10 +369,10 @@ fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_cover() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("cover")
         .output()
@@ -387,10 +387,10 @@ fn command_span_cover() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_fill() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("fill")
         .arg("-n")
@@ -409,10 +409,10 @@ fn command_span_fill() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_trim() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("trim")
         .arg("-n")
@@ -430,10 +430,10 @@ fn command_span_trim() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_pad() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("pad")
         .arg("-n")
@@ -451,10 +451,10 @@ fn command_span_pad() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("excise")
         .arg("-n")
@@ -472,9 +472,9 @@ fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("span")
-        .arg("tests/resources/brca2.yml")
+        .arg("tests/spanr/brca2.yml")
         .arg("--op")
         .arg("invalid");
     cmd.assert()
@@ -486,10 +486,10 @@ fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/S288c.ranges")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -504,10 +504,10 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_cover_c2() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/S288c.ranges")
         .arg("-c")
         .arg("2")
         .output()
@@ -524,10 +524,10 @@ fn command_cover_c2() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
-        .arg("tests/resources/dazzname.ranges")
+        .arg("tests/spanr/dazzname.ranges")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -541,10 +541,10 @@ fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("gff")
-        .arg("tests/resources/NC_007942.gff")
+        .arg("tests/spanr/NC_007942.gff")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -560,9 +560,9 @@ fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
 fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
     let tempdir = TempDir::new().unwrap();
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("gff")
-        .arg("tests/resources/NC_007942.gff")
+        .arg("tests/spanr/NC_007942.gff")
         .arg("--tag")
         .arg("CDS")
         .arg("-o")
@@ -573,9 +573,9 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(&tempdir.path().join("cds.yml").is_file());
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("gff")
-        .arg("tests/resources/NC_007942.rm.gff")
+        .arg("tests/spanr/NC_007942.rm.gff")
         .arg("-o")
         .arg(&tempdir.path().join("repeat.yml"))
         .assert()
@@ -584,7 +584,7 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(&tempdir.path().join("repeat.yml").is_file());
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
         .arg(&tempdir.path().join("cds.yml"))
@@ -603,10 +603,10 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("convert")
-        .arg("tests/resources/repeat.yml")
+        .arg("tests/spanr/repeat.yml")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -619,11 +619,11 @@ fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_range() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("range")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/S288c.ranges")
         .arg("--op")
         .arg("overlap")
         .output()
@@ -634,11 +634,11 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
     assert!(!stdout.contains("S288c"));
     assert!(stdout.contains("21294-22075"));
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("range")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/S288c.ranges")
         .arg("--op")
         .arg("non-overlap")
         .output()
@@ -649,11 +649,11 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
     assert!(stdout.contains("S288c"));
     assert!(!stdout.contains("21294-22075"));
 
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("range")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/S288c.ranges")
         .arg("--op")
         .arg("superset")
         .output()
@@ -669,10 +669,10 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
 
 #[test]
 fn command_range_invalid() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin(env!("CARGO_PKG_NAME"))?;
+    let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("range")
-        .arg("tests/resources/intergenic.yml")
-        .arg("tests/resources/S288c.ranges")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/S288c.ranges")
         .arg("--op")
         .arg("invalid");
     cmd.assert()
