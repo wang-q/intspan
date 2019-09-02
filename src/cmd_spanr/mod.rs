@@ -1,4 +1,4 @@
-//! Subcommand modules for the `intspan` binary.
+//! Subcommand modules for the `spanr` binary.
 
 pub mod combine;
 pub mod compare;

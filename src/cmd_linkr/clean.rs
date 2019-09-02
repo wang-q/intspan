@@ -312,7 +312,7 @@ pub fn execute(args: &ArgMatches) {
             }
 
             let mut merged_ranges: Vec<String> = Vec::new();
-            for i in &[0, 1] {
+            for i in 0..=1 {
                 let mut chr = "".to_string();
                 let mut strand = "".to_string();
                 let mut intspan = IntSpan::new();
@@ -326,7 +326,7 @@ pub fn execute(args: &ArgMatches) {
                         .collect::<Vec<String>>();
 
                     let parts: Vec<&str> = line.split('\t').collect();
-                    let range = range_of_part.get(parts[*i as usize]).unwrap();
+                    let range = range_of_part.get(parts[i]).unwrap();
                     chr = range.chr().to_string();
                     strand = range.strand().to_string();
                     intspan.merge(&range.intspan());

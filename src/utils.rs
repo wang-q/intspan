@@ -1,5 +1,6 @@
 use crate::{IntSpan, Range};
 use serde_yaml::Value;
+use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
@@ -289,7 +290,7 @@ pub fn sort_links(lines: &Vec<String>) -> Vec<String> {
     {
         among_links.sort_by_cached_key(|k| {
             let parts: Vec<&str> = k.split('\t').collect();
-            parts.len()
+            Reverse(parts.len())
         });
     }
 
