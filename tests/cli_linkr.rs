@@ -1,7 +1,6 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
 use std::process::Command; // Run programs
-use tempfile::TempDir;
 
 #[test]
 fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
@@ -167,6 +166,32 @@ fn command_clean_merge() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
     assert!(!stdout.contains("892-4684"), "original");
     assert!(stdout.contains("892-4685"), "merged");
+
+    Ok(())
+}
+
+#[test]
+fn command_connect() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("linkr")?;
+    let output = cmd
+        .arg("connect")
+        .arg("tests/linkr/II.clean.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 6);
+    assert_eq!(
+        stdout
+            .lines()
+            .next()
+            .unwrap()
+            .split('\t')
+            .collect::<Vec<&str>>()
+            .len(),
+        3,
+        "multilateral links"
+    );
 
     Ok(())
 }

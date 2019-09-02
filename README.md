@@ -161,20 +161,21 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ```bash
 # cargo install --path . --force
 
-target/debug/linkr circos tests/linkr/II.connect.tsv
-target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
+target/debug/linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 
-diff <(target/debug/linkr sort tests/linkr/II.links.tsv) \
-    tests/linkr/II.sort.tsv
-
-target/debug/linkr merge -v tests/linkr/II.links.tsv
-
-target/debug/linkr filter tests/linkr/II.connect.tsv -n 2
-target/debug/linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
+target/debug/linkr merge tests/linkr/II.links.tsv -v
 
 target/debug/linkr clean tests/linkr/II.sort.tsv
 target/debug/linkr clean tests/linkr/II.sort.tsv --bundle 500 
 target/debug/linkr clean tests/linkr/II.sort.tsv -r tests/linkr/II.merge.tsv
+
+target/debug/linkr connect tests/linkr/II.clean.tsv -v
+
+target/debug/linkr filter tests/linkr/II.connect.tsv -n 2
+target/debug/linkr filter tests/linkr/II.connect.tsv -n 3 -r 0.99
+
+target/debug/linkr circos tests/linkr/II.connect.tsv
+target/debug/linkr circos --highlight tests/linkr/II.connect.tsv
 
 ```
 
