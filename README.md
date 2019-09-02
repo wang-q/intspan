@@ -218,6 +218,42 @@ spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 
 ```
 
+### Atha
+
+```bash
+gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz |
+    linkr sort stdin -o tests/Atha/sort.tsv
+
+linkr clean tests/Atha/sort.tsv \
+    -o tests/Atha/sort.clean.tsv
+
+linkr merge tests/Atha/sort.clean.tsv -c 0.95 \
+    -o tests/Atha/merge.tsv
+
+linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 \
+    -o tests/Atha/clean.tsv
+
+linkr connect tests/Atha/clean.tsv -o tests/Atha/connect.tsv
+
+linkr filter tests/Atha/connect.tsv -r 0.8 \
+    -o tests/Atha/filter.tsv
+
+wc -l tests/Atha/*.tsv
+#    4500 tests/Atha/clean.tsv
+#    3832 tests/Atha/connect.tsv
+#    3832 tests/Atha/filter.tsv
+#     785 tests/Atha/merge.tsv
+#    5416 tests/Atha/sort.clean.tsv
+#    7754 tests/Atha/sort.tsv
+
+cat tests/Atha/filter.tsv |
+    perl -nla -F"\t" -e 'print for @F' |
+    spanr cover stdin -o tests/Atha/cover.yml
+
+spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
+
+```
+
 ## Benchmark 1
 
 * Rust
