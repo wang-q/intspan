@@ -394,7 +394,7 @@ impl IntSpan {
         self.add_pair(n, n);
     }
 
-    pub fn add_ranges(&mut self, ranges: &Vec<i32>) {
+    pub fn add_ranges(&mut self, ranges: &[i32]) {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even")
         }
@@ -433,7 +433,7 @@ impl IntSpan {
         self.add_ranges(&ranges);
     }
 
-    pub fn add_vec(&mut self, ints: &Vec<i32>) {
+    pub fn add_vec(&mut self, ints: &[i32]) {
         let ranges = self.list_to_ranges(ints);
 
         self.add_ranges(&ranges);
@@ -485,7 +485,7 @@ impl IntSpan {
         self.remove_pair(n, n);
     }
 
-    pub fn remove_ranges(&mut self, ranges: &Vec<i32>) {
+    pub fn remove_ranges(&mut self, ranges: &[i32]) {
         if ranges.len() % 2 != 0 {
             panic!("Number of ranges must be even");
         }
@@ -501,7 +501,7 @@ impl IntSpan {
         self.remove_ranges(&ranges);
     }
 
-    pub fn remove_vec(&mut self, ints: &Vec<i32>) {
+    pub fn remove_vec(&mut self, ints: &[i32]) {
         let ranges = self.list_to_ranges(ints);
 
         self.remove_ranges(&ranges);
@@ -1211,10 +1211,10 @@ impl IntSpan {
         low
     }
 
-    fn list_to_ranges(&self, ints: &Vec<i32>) -> Vec<i32> {
+    fn list_to_ranges(&self, ints: &[i32]) -> Vec<i32> {
         let mut ranges: Vec<i32> = Vec::new();
 
-        let mut ints = ints.clone();
+        let mut ints = ints.to_owned();
         ints.sort_unstable();
         ints.dedup();
 
@@ -1234,7 +1234,7 @@ impl IntSpan {
         ranges
     }
 
-    fn runlist_to_ranges(&self, runlist: &String) -> Vec<i32> {
+    fn runlist_to_ranges(&self, runlist: &str) -> Vec<i32> {
         let mut ranges: Vec<i32> = Vec::new();
 
         let bytes = runlist.as_bytes();
