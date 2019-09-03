@@ -41,6 +41,9 @@ pub fn execute(args: &ArgMatches) {
                 .file_stem()
                 .and_then(OsStr::to_str)
                 .unwrap()
+                .split('.')
+                .next()
+                .unwrap()
                 .to_string(),
             serde_yaml::to_value(yaml).unwrap(),
         );
