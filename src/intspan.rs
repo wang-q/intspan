@@ -92,9 +92,12 @@ use std::vec::Vec;
 #[derive(Default, Clone)]
 pub struct IntSpan {
     edges: Vec<i32>,
-    pos_inf: i32,
-    neg_inf: i32,
-    empty_string: String,
+}
+
+lazy_static! {
+    static ref POS_INF: i32 = 2_147_483_647 - 1; // INT_MAX - 1, Real Largest int is POS_INF - 1
+    static ref NEG_INF: i32 = -2_147_483_648 + 1;
+    static ref EMPTY_STRING: String = "-".to_string();
 }
 
 //----------------------------------------------------------
@@ -103,12 +106,7 @@ pub struct IntSpan {
 
 impl IntSpan {
     pub fn new() -> Self {
-        IntSpan {
-            edges: Vec::new(),
-            pos_inf: 2_147_483_647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
-            neg_inf: -2_147_483_648 + 1, // INT_MIN + 1
-            empty_string: "-".to_string(),
-        }
+        IntSpan { edges: Vec::new() }
     }
 
     pub fn from<S>(runlist: S) -> Self
@@ -124,11 +122,11 @@ impl IntSpan {
     }
 
     pub fn get_neg_inf(&self) -> i32 {
-        self.neg_inf.clone()
+        *NEG_INF
     }
 
     pub fn get_pos_inf(&self) -> i32 {
-        self.pos_inf.clone() - 1
+        *POS_INF - 1
     }
 
     pub fn clear(&mut self) {
@@ -145,7 +143,7 @@ impl IntSpan {
 
     pub fn to_string(&self) -> String {
         if self.is_empty() {
-            return self.empty_string.clone();
+            return EMPTY_STRING.clone();
         }
 
         let mut runlist = "".to_string();
@@ -339,11 +337,11 @@ impl IntSpan {
     }
 
     pub fn is_neg_inf(&self) -> bool {
-        *self.edges.first().unwrap() == self.neg_inf
+        *self.edges.first().unwrap() == *NEG_INF
     }
 
     pub fn is_pos_inf(&self) -> bool {
-        *self.edges.last().unwrap() == self.pos_inf
+        *self.edges.last().unwrap() == *POS_INF
     }
 
     pub fn is_infinite(&self) -> bool {
@@ -446,7 +444,7 @@ impl IntSpan {
     {
         let s = runlist.into();
         // skip empty runlist
-        if !s.is_empty() && !s.eq(&self.empty_string) {
+        if !s.is_empty() && !s.eq(&*EMPTY_STRING) {
             let ranges = self.runlist_to_ranges(&s);
             self.add_ranges(&ranges);
         }
@@ -455,8 +453,8 @@ impl IntSpan {
     pub fn invert(&mut self) {
         if self.is_empty() {
             // Universal set
-            self.edges.push(self.neg_inf);
-            self.edges.push(self.pos_inf);
+            self.edges.push(*NEG_INF);
+            self.edges.push(*POS_INF);
         } else {
             // Either add or remove infinity from each end. The net effect is always an even number
             // of additions and deletions
@@ -464,13 +462,13 @@ impl IntSpan {
             if self.is_neg_inf() {
                 self.edges.remove(0); // shift
             } else {
-                self.edges.insert(0, self.neg_inf); // unshift
+                self.edges.insert(0, *NEG_INF); // unshift
             }
 
             if self.is_pos_inf() {
                 self.edges.pop(); // pop
             } else {
-                self.edges.push(self.pos_inf); // push
+                self.edges.push(*POS_INF); // push
             }
         }
     }
@@ -513,7 +511,7 @@ impl IntSpan {
     {
         let s = runlist.into();
         // skip empty runlist
-        if !s.is_empty() && !s.eq(&self.empty_string) {
+        if !s.is_empty() && !s.eq(&*EMPTY_STRING) {
             let ranges = self.runlist_to_ranges(&s);
             self.remove_ranges(&ranges);
         }
@@ -586,9 +584,6 @@ impl IntSpan {
     pub fn copy(&self) -> Self {
         IntSpan {
             edges: self.edges.clone(),
-            pos_inf: 2_147_483_647 - 1, // INT_MAX - 1, Real Largest int is POS_INF - 1
-            neg_inf: -2_147_483_648 + 1, // INT_MIN + 1
-            empty_string: "-".to_string(),
         }
     }
 
