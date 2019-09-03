@@ -372,11 +372,11 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp \
 
 ```
 
-| Command                     |        Mean [s] | Min [s] | Max [s] | Relative |
-|:----------------------------|----------------:|--------:|--------:|---------:|
-| linkr                       |   7.983 ± 0.067 |   7.940 |   8.060 |      1.5 |
-| jrange                      |   5.386 ± 0.165 |   5.197 |   5.503 |      1.0 |
-| rangeops                    | 130.156 ± 0.835 | 129.267 | 130.925 |     24.2 |
+| Command  |        Mean [s] | Min [s] | Max [s] | Relative |
+|:---------|----------------:|--------:|--------:|---------:|
+| linkr    |   5.896 ± 0.045 |   5.864 |   5.948 |      1.2 |
+| jrange   |   4.881 ± 0.049 |   4.831 |   4.929 |      1.0 |
+| rangeops | 122.840 ± 1.813 | 120.871 | 124.442 |     25.2 |
 
 ### merge
 
@@ -390,9 +390,9 @@ hyperfine --min-runs 3 --export-markdown merge.md.tmp \
 
 | Command  |       Mean [s] | Min [s] | Max [s] | Relative |
 |:---------|---------------:|--------:|--------:|---------:|
-| linkr    |  7.793 ± 0.137 |   7.644 |   7.913 |      3.5 |
-| jrange   |  2.245 ± 0.125 |   2.157 |   2.389 |      1.0 |
-| rangeops | 65.885 ± 0.723 |  65.182 |  66.626 |     29.3 |
+| linkr    |  5.278 ± 0.026 |   5.255 |   5.305 |      2.4 |
+| jrange   |  2.228 ± 0.020 |   2.206 |   2.246 |      1.0 |
+| rangeops | 64.090 ± 0.267 |  63.783 |  64.273 |     28.8 |
 
 ### clean2
 
@@ -406,14 +406,14 @@ hyperfine --min-runs 3 --export-markdown clean2.md.tmp \
 
 | Command  |       Mean [s] | Min [s] | Max [s] | Relative |
 |:---------|---------------:|--------:|--------:|---------:|
-| linkr    |  4.110 ± 0.037 |   4.068 |   4.139 |      1.0 |
-| jrange   |  4.332 ± 0.014 |   4.319 |   4.346 |      1.1 |
-| rangeops | 58.369 ± 0.978 |  57.267 |  59.134 |     14.2 |
+| linkr    |  3.208 ± 0.019 |   3.186 |   3.220 |      1.0 |
+| jrange   |  4.170 ± 0.047 |   4.119 |   4.212 |      1.3 |
+| rangeops | 54.888 ± 0.244 |  54.651 |  55.139 |     17.1 |
 
 ### connect
 
 ```bash
-hyperfine --min-runs 3 --export-markdown connect.md.tmp \
+hyperfine --export-markdown connect.md.tmp \
     'linkr    connect tests/Atha/clean.tsv -o /dev/null' \
     'rangeops connect tests/Atha/clean.tsv -o /dev/null'
 
@@ -421,9 +421,8 @@ hyperfine --min-runs 3 --export-markdown connect.md.tmp \
 
 | Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---------|--------------:|---------:|---------:|---------:|
-| linkr    |   206.5 ± 4.1 |    202.4 |    218.2 |      1.0 |
-| rangeops | 2554.5 ± 26.2 |   2532.9 |   2583.6 |     12.4 |
-
+| linkr    |   196.9 ± 1.9 |    194.5 |    200.6 |      1.0 |
+| rangeops | 2497.3 ± 11.5 |   2477.2 |   2513.0 |     12.7 |
 
 ### filter
 
@@ -437,6 +436,6 @@ hyperfine --warmup 1 --export-markdown filter.md.tmp \
 
 | Command  |   Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---------|------------:|---------:|---------:|---------:|
-| linkr    |  32.5 ± 0.9 |     31.0 |     36.4 |      1.0 |
-| jrange   | 110.8 ± 1.3 |    108.6 |    113.8 |      3.4 |
-| rangeops | 422.5 ± 3.4 |    417.8 |    427.4 |     13.0 |
+| linkr    |  31.0 ± 0.6 |     30.1 |     33.0 |      1.0 |
+| jrange   | 109.6 ± 1.9 |    105.4 |    114.2 |      3.5 |
+| rangeops | 415.7 ± 6.4 |    409.3 |    429.2 |     13.4 |
