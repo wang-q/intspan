@@ -2,6 +2,10 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+* Add `--suffix` to `spanr split`
+
 ## [0.3.1] - 2019-09-03
 
 ### Added

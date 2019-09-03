@@ -16,6 +16,15 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
                 .index(1),
         )
         .arg(
+            Arg::with_name("suffix")
+                .long("suffix")
+                .short("s")
+                .takes_value(true)
+                .default_value(".yml")
+                .empty_values(false)
+                .help("Extensions of output files"),
+        )
+        .arg(
             Arg::with_name("outdir")
                 .short("o")
                 .long("outdir")
@@ -38,6 +47,8 @@ pub fn execute(args: &ArgMatches) {
         fs::create_dir_all(outdir);
     }
 
+    let suffix = args.value_of("suffix").unwrap();
+
     //----------------------------
     // Operating
     //----------------------------
@@ -54,7 +65,7 @@ pub fn execute(args: &ArgMatches) {
         if outdir == "stdout" {
             write_lines("stdout", &vec![string.as_str()]);
         } else {
-            let path = Path::new(outdir).join(key.to_owned() + ".yml");
+            let path = Path::new(outdir).join(key.to_owned() + suffix);
             fs::write(path, string + "\n");
         }
     }
