@@ -4,6 +4,10 @@
 
 ## [0.3.1] - 2019-09-03
 
+### Added
+
+* Detailed benchmarks on `linkr`
+
 ### Changed
 
 * Make POS_INF, NEG_INF and EMPTY_STRING as lazy_static
