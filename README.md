@@ -19,7 +19,7 @@ Current release: 0.3.3
 
 ```
 $ spanr help
-intspan 0.2.1-alpha.0
+intspan 0.3.3
 wang-q <wang-q@outlook.com>
 `intspan` operates chromosome IntSpan files
 
@@ -32,7 +32,7 @@ FLAGS:
 
 SUBCOMMANDS:
     combine    Combine multiple sets of runlists in a yaml file
-    compare    Compare 2 YAML files
+    compare    Compare 1 YAML file against others
     convert    Convert runlist file to ranges file
     cover      Output covers on chromosomes
     genome     Convert chr.size to runlists
@@ -52,7 +52,7 @@ SUBCOMMANDS:
 
 ```
 $ linkr help
-linkr 0.2.1-alpha.0
+linkr 0.3.3
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
