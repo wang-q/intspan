@@ -26,7 +26,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
                 .takes_value(true)
                 .default_value("intersect")
                 .empty_values(false)
-                .help("operations: intersect, union, diff or xor"),
+                .help("Operations: intersect, union, diff or xor"),
         )
         .arg(
             Arg::with_name("outfile")
