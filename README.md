@@ -152,7 +152,7 @@ Types of links:
 ### `spanr`
 
 ```bash
-# cargo install --path . --force
+# cargo install --force --git https://github.com/wang-q/intspan
 
 spanr genome tests/spanr/S288c.chr.sizes
 
@@ -179,6 +179,12 @@ spanr compare \
     --op intersect \
     tests/spanr/intergenic.yml \
     tests/spanr/repeat.yml
+
+spanr compare \
+    --op intersect \
+    tests/spanr/I.II.yml \
+    tests/spanr/I.yml \
+    tests/spanr/II.yml
 
 spanr split tests/spanr/I.II.yml
 
@@ -218,8 +224,6 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ### `linkr`
 
 ```bash
-# cargo install --path . --force
-
 linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 
 linkr merge tests/linkr/II.links.tsv -v

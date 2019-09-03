@@ -81,17 +81,18 @@ pub fn execute(args: &ArgMatches) {
     for (name, s1) in &s1_of {
         let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
         for chr in s1.keys() {
+            let mut intspan_op = s1.get(chr).unwrap().copy();
             for s2 in s2s.iter() {
-                let intspan_op = match op {
-                    "intersect" => s1.get(chr).unwrap().intersect(s2.get(chr).unwrap()),
-                    "diff" => s1.get(chr).unwrap().diff(s2.get(chr).unwrap()),
-                    "union" => s1.get(chr).unwrap().union(s2.get(chr).unwrap()),
-                    "xor" => s1.get(chr).unwrap().xor(s2.get(chr).unwrap()),
+                intspan_op = match op {
+                    "intersect" => intspan_op.intersect(s2.get(chr).unwrap()),
+                    "diff" => intspan_op.diff(s2.get(chr).unwrap()),
+                    "union" => intspan_op.union(s2.get(chr).unwrap()),
+                    "xor" => intspan_op.xor(s2.get(chr).unwrap()),
                     _ => panic!("Invalid IntSpan Op"),
                 };
                 //                eprintln!("Op {}: {}", op, intspan_op.to_string());
-                res.insert(chr.into(), intspan_op);
             }
+            res.insert(chr.into(), intspan_op);
         }
         res_of.insert(name.into(), res);
     }

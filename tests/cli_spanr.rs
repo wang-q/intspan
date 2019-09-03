@@ -389,6 +389,26 @@ fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_compare_m3() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("compare")
+        .arg("tests/spanr/I.II.yml")
+        .arg("tests/spanr/I.yml")
+        .arg("tests/spanr/II.yml")
+        .arg("--op")
+        .arg("intersect")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 7);
+    assert!(!stdout.contains("13744-17133"), "all empty");
+
+    Ok(())
+}
+
+#[test]
 fn command_span_cover() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
