@@ -11,21 +11,22 @@
 * Rust
 
 ```text
-$ cd ~/Scripts/rust/intspan
-$ cargo build --release --examples
-$ command time -l target/release/examples/benchmark
+$ pushd ~/Scripts/rust/intspan && 
+    cargo build --release --examples && 
+    command time -l target/release/examples/benchmark && 
+    popd
 ["target/release/examples/benchmark"]
 step 2
-duration: 0.027012275999999998 s
+duration: 0.024120771000000003 s
 step 3
-duration: 0.032694045 s
+duration: 0.028843299 s
 step 4
-duration: 0.070479508 s
+duration: 0.067436723 s
 step 5
-duration: 0.271023933 s
+duration: 0.26832116899999997 s
 step 6
-duration: 0.473653378 s
-        0.87 real         0.87 user         0.00 sys
+duration: 0.470739197 s
+        0.86 real         0.85 user         0.00 sys
    1073152  maximum resident set size
          0  average shared memory size
          0  average unshared data size
@@ -39,16 +40,17 @@ duration: 0.473653378 s
          0  messages received
          0  signals received
          0  voluntary context switches
-        53  involuntary context switches
+        42  involuntary context switches
 
 ```
 
 * Java
 
 ```text
-$ cd ~/Scripts/java/jintspan
-$ mvn clean verify
-$ command time -l java -jar target/jintspan-*-jar-with-dependencies.jar benchmark
+$ pushd ~/Scripts/java/jintspan && 
+    mvn clean verify && 
+    command time -l java -jar target/jintspan-*-jar-with-dependencies.jar benchmark && 
+    popd
 step 2
 duration 0.015188
 step 3
@@ -59,21 +61,21 @@ step 5
 duration 0.212403
 step 6
 duration 0.365264
-        0.76 real         0.91 user         0.06 sys
- 181805056  maximum resident set size
+        0.78 real         0.93 user         0.05 sys
+ 182984704  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     46146  page reclaims
-         0  page faults
+     46445  page reclaims
+         1  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          1  signals received
-         2  voluntary context switches
-       709  involuntary context switches
+         5  voluntary context switches
+       654  involuntary context switches
 
 ```
 
@@ -183,22 +185,23 @@ duration 6.663916
 * Rust
 
 ```text
-$ cd ~/Scripts/rust/intspan
-$ cargo build --release --examples
-$ command time -l target/release/examples/file
+$ pushd ~/Scripts/rust/intspan && 
+    cargo build --release --examples && 
+    command time -l target/release/examples/file && 
+    popd
 ["target/release/examples/file"]
 step 1 create
-duration: 0.014027341 s
+duration: 0.014380602999999999 s
 step 2 intersect
-duration: 0.526601419 s
+duration: 0.523088785 s
 step 3 intersect runlist
-duration: 0.6115194719999999 s
-        1.15 real         1.15 user         0.00 sys
-   2744320  maximum resident set size
+duration: 0.611574268 s
+        1.15 real         1.14 user         0.00 sys
+   2699264  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-       679  page reclaims
+       668  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -207,28 +210,29 @@ duration: 0.6115194719999999 s
          0  messages received
          0  signals received
          0  voluntary context switches
-        78  involuntary context switches
+       243  involuntary context switches
 
 ```
 
 * Java
 
 ```text
-$ cd ~/Scripts/java/jintspan
-$ mvn clean verify
-$ command time -l java -jar target/jintspan-*-jar-with-dependencies.jar file
+$ pushd ~/Scripts/java/jintspan && 
+    mvn clean verify && 
+    command time -l java -jar target/jintspan-*-jar-with-dependencies.jar file && 
+    popd
 step 1 create
-duration 0.053294
+duration 0.053408
 step 2 intersect
-duration 0.355642
+duration 0.347398
 step 3 intersect runlist
-duration 0.563080
-        1.11 real         1.16 user         0.17 sys
- 582508544  maximum resident set size
+duration 0.555934
+        1.06 real         1.17 user         0.12 sys
+ 582258688  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    144034  page reclaims
+    143954  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -237,7 +241,7 @@ duration 0.563080
          0  messages received
          1  signals received
          0  voluntary context switches
-      1269  involuntary context switches
+      1194  involuntary context switches
 
 ```
 
