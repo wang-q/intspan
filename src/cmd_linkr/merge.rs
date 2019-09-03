@@ -151,21 +151,17 @@ pub fn execute(args: &ArgMatches) {
         let graph = graph_of_chr.get(chr).unwrap();
 
         let scc: Vec<Vec<NodeIndex>> = petgraph::algo::tarjan_scc(graph);
-        for connected_indices in &scc {
-            if connected_indices.len() < 2 {
+        for cc_indices in &scc {
+            if cc_indices.len() < 2 {
                 continue;
             }
 
             if is_verbose {
-                eprintln!(
-                    "Chromosome {}: Merge {} ranges",
-                    chr,
-                    connected_indices.len()
-                );
+                eprintln!("Chromosome {}: Merge {} ranges", chr, cc_indices.len());
             }
 
             // connected ranges
-            let mut part_list = connected_indices
+            let mut part_list = cc_indices
                 .iter()
                 .map(|idx| graph.node_weight(*idx).unwrap().clone())
                 .collect::<Vec<String>>();
