@@ -9,7 +9,6 @@ pub struct Range {
     strand: String,
     start: i32,
     end: i32,
-    others: BTreeMap<String, String>,
 }
 
 impl Range {
@@ -42,7 +41,6 @@ impl Range {
             strand: "".to_string(),
             start: 0,
             end: 0,
-            others: BTreeMap::new(),
         }
     }
 
@@ -67,7 +65,6 @@ impl Range {
             strand: "".to_string(),
             start,
             end,
-            others: BTreeMap::new(),
         }
     }
 
