@@ -174,7 +174,6 @@ spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.ranges
 spanr span --op cover tests/spanr/brca2.yml
 
 spanr combine tests/spanr/Atha.yml
-jrunlist combine -o stdout tests/spanr/Atha.yml
 
 spanr compare \
     --op intersect \
@@ -187,8 +186,7 @@ spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.yml
 
 spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.yml
 
-diff <(spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml) \
-    <(jrunlist stat -o stdout tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml)
+spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml
 
 spanr statop \
     --op intersect \

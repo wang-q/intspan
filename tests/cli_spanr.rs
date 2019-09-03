@@ -350,6 +350,27 @@ fn command_compare_union() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_compare_xor() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("compare")
+        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/repeat.yml")
+        .arg("--op")
+        .arg("xor")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 17);
+    assert!(!stdout.contains("\"-\""), "no empty runlists");
+    assert!(stdout.contains("\nI:"));
+    assert!(stdout.contains("\nXVI:"));
+
+    Ok(())
+}
+
+#[test]
 fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd

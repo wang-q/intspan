@@ -6,19 +6,20 @@ use std::collections::BTreeMap;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("compare")
-        .about("Compare 2 YAML files")
+        .about("Compare 1 YAML file against others")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
-            Arg::with_name("infile1")
+            Arg::with_name("infile")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("infile2")
+            Arg::with_name("infiles")
                 .help("Sets the input file to use")
                 .required(true)
-                .index(2),
+                .index(2)
+                .min_values(1),
         )
         .arg(
             Arg::with_name("op")
@@ -44,39 +45,53 @@ pub fn execute(args: &ArgMatches) {
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile1").unwrap());
+    // first file
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
     let is_multi: bool = yaml.values().next().unwrap().is_mapping();
     let mut s1_of = yaml2set_m(&yaml);
 
-    let yaml_s: BTreeMap<String, Value> = read_yaml(args.value_of("infile2").unwrap());
-    let mut s2 = yaml2set(&yaml_s);
+    // second file or more
+    let mut s2s = vec![];
+
+    for infile in args.values_of("infiles").unwrap() {
+        let yaml_s = read_yaml(infile);
+        let s2 = yaml2set(&yaml_s);
+        s2s.push(s2);
+    }
 
     let op = args.value_of("op").unwrap();
 
     //----------------------------
     // Operating
     //----------------------------
+    // give empty intspan to non-existed chrs
     let mut chrs = chrs_in_sets(&s1_of);
-    for chr in s2.keys() {
-        chrs.insert(chr.to_string());
+    for s2 in &s2s {
+        for chr in s2.keys() {
+            chrs.insert(chr.to_string());
+        }
     }
-
     fill_up_m(&mut s1_of, &chrs);
-    fill_up_s(&mut s2, &chrs);
+
+    for mut s2 in s2s.iter_mut() {
+        fill_up_s(&mut s2, &chrs);
+    }
 
     let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     for (name, s1) in &s1_of {
         let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
         for chr in s1.keys() {
-            let intspan_op = match op {
-                "intersect" => s1.get(chr).unwrap().intersect(s2.get(chr).unwrap()),
-                "diff" => s1.get(chr).unwrap().diff(s2.get(chr).unwrap()),
-                "union" => s1.get(chr).unwrap().union(s2.get(chr).unwrap()),
-                "xor" => s1.get(chr).unwrap().xor(s2.get(chr).unwrap()),
-                _ => panic!("Invalid IntSpan Op"),
-            };
-            //            println!("Op {}: {}", op, op_intspan.to_string());
-            res.insert(chr.into(), intspan_op);
+            for s2 in s2s.iter() {
+                let intspan_op = match op {
+                    "intersect" => s1.get(chr).unwrap().intersect(s2.get(chr).unwrap()),
+                    "diff" => s1.get(chr).unwrap().diff(s2.get(chr).unwrap()),
+                    "union" => s1.get(chr).unwrap().union(s2.get(chr).unwrap()),
+                    "xor" => s1.get(chr).unwrap().xor(s2.get(chr).unwrap()),
+                    _ => panic!("Invalid IntSpan Op"),
+                };
+                //                eprintln!("Op {}: {}", op, intspan_op.to_string());
+                res.insert(chr.into(), intspan_op);
+            }
         }
         res_of.insert(name.into(), res);
     }
