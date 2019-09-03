@@ -5,7 +5,7 @@
 ### Changed
 
 * `spanr merge`: take the first part of filename
-* `spanr compare`: more than two infiles
+* `spanr compare`: compare more than two infiles
 
 ## [0.3.2] - 2019-09-03
 
