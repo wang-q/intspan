@@ -1,6 +1,6 @@
 use crate::IntSpan;
 use regex::Regex;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 
 #[derive(Default, Clone)]
 pub struct Range {
@@ -9,6 +9,21 @@ pub struct Range {
     strand: String,
     start: i32,
     end: i32,
+}
+
+lazy_static! {
+    static ref RE: Regex = Regex::new(
+        r"(?xi)
+        (?:(?P<name>[\w_]+)\.)?
+        (?P<chr>[\w/-]+)
+        (?:\((?P<strand>.+)\))?
+        [:]                    # spacer
+        (?P<start>\d+)
+        [_\-]?                 # spacer
+        (?P<end>\d+)?
+        ",
+    )
+    .unwrap();
 }
 
 impl Range {
@@ -143,21 +158,6 @@ impl Range {
     }
 
     fn decode(&mut self, header: &String) {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(
-                r"(?xi)
-                (?:(?P<name>[\w_]+)\.)?
-                (?P<chr>[\w/-]+)
-                (?:\((?P<strand>.+)\))?
-                [:]                    # spacer
-                (?P<start>\d+)
-                [_\-]?                 # spacer
-                (?P<end>\d+)?
-                ",
-            )
-            .unwrap();
-        }
-
         let caps = match RE.captures(header.as_str()) {
             Some(x) => x,
             None => {
