@@ -1,6 +1,13 @@
 # Change Log
 
+## [Unreleased] - ReleaseDate
+
 ## [0.3.1] - 2019-09-03
+
+### Changed
+
+* Make POS_INF, NEG_INF and EMPTY_STRING as lazy_static
+* About 10-20% faster
 
 ## [0.3.0] - 2019-09-03
 
