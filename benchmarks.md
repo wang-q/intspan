@@ -82,9 +82,10 @@ duration 0.365264
 * C
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ make
-$ command time -l ./test_c benchmark
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    make &&
+    command time -l ./test_c benchmark &&
+    popd
 step 2
 duration 0.022875
 step 3
@@ -116,8 +117,9 @@ duration 0.525069
 * Perl
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ command time -l perl test_ai.pl benchmark
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    command time -l perl test_ai.pl benchmark &&
+    popd
 step 2
 duration 1.749132
 step 3
@@ -149,8 +151,9 @@ duration 68.138299
 * Perl XS
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ command time -l perl test_ai.pl benchmark xs
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    command time -l perl test_ai.pl benchmark xs &&
+    popd
 step 2
 step 2
 duration 0.195549
@@ -248,9 +251,10 @@ duration 0.555934
 * C
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ make
-$ command time -l ./test_c file
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    make &&
+    command time -l ./test_c file &&
+    popd
 step 1 create
 duration 0.118375
 step 2 intersect
@@ -278,8 +282,9 @@ duration 18.218233
 * Perl
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ command time -l perl test_ai.pl file
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    command time -l perl test_ai.pl file &&
+    popd
 ==> test against large sets
 step 1 create
 duration 4.548069
@@ -308,8 +313,9 @@ duration 61.335031
 * Perl XS
 
 ```text
-$ cd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark
-$ command time -l perl test_ai.pl file xs
+$ pushd ~/Scripts/cpan/AlignDB-IntSpanXS/benchmark &&
+    command time -l perl test_ai.pl file xs &&
+    popd
 ==> test against large sets
 step 1 create
 duration 0.116019
@@ -353,7 +359,7 @@ hyperfine --warmup 1 --export-markdown sort.md.tmp \
     'gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr    sort stdin -o /dev/null' \
     'gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | jrange   sort stdin -o /dev/null' \
     'gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | rangeops sort stdin -o /dev/null'
-    
+
 ```
 
 | Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
