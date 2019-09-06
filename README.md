@@ -152,6 +152,7 @@ Types of links:
 ### `spanr`
 
 ```bash
+# cargo install --force --path .
 # cargo install --force --git https://github.com/wang-q/intspan
 
 spanr genome tests/spanr/S288c.chr.sizes

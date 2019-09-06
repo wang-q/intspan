@@ -49,8 +49,7 @@ pub fn execute(args: &ArgMatches) {
         let set = s_of.get(name.as_str()).unwrap();
         for chr in set.keys() {
             let intspan = set.get(chr).unwrap();
-            res.entry(chr.to_string())
-                .and_modify(|e| e.merge(intspan));
+            res.entry(chr.to_string()).and_modify(|e| e.merge(intspan));
         }
     }
 
