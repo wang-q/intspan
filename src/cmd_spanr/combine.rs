@@ -48,9 +48,9 @@ pub fn execute(args: &ArgMatches) {
     for name in s_of.keys() {
         let set = s_of.get(name.as_str()).unwrap();
         for chr in set.keys() {
-            let cur_runlist = set.get(chr).unwrap().to_string();
+            let intspan = set.get(chr).unwrap();
             res.entry(chr.to_string())
-                .and_modify(|e| e.add_runlist(cur_runlist));
+                .and_modify(|e| e.merge(intspan));
         }
     }
 

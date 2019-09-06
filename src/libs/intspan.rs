@@ -109,10 +109,7 @@ impl IntSpan {
         IntSpan { edges: Vec::new() }
     }
 
-    pub fn from<S>(runlist: S) -> Self
-    where
-        S: Into<String>,
-    {
+    pub fn from(runlist: &str) -> Self {
         let s = runlist.into();
 
         let mut new = Self::new();
@@ -438,14 +435,10 @@ impl IntSpan {
     }
 
     // https://hermanradtke.com/2015/05/06/creating-a-rust-function-that-accepts-string-or-str.html
-    pub fn add_runlist<S>(&mut self, runlist: S)
-    where
-        S: Into<String>,
-    {
-        let s = runlist.into();
+    pub fn add_runlist(&mut self, runlist: &str) {
         // skip empty runlist
-        if !s.is_empty() && !s.eq(&*EMPTY_STRING) {
-            let ranges = self.runlist_to_ranges(&s);
+        if !runlist.is_empty() && !runlist.eq(&*EMPTY_STRING) {
+            let ranges = self.runlist_to_ranges(runlist);
             self.add_ranges(&ranges);
         }
     }
@@ -505,14 +498,10 @@ impl IntSpan {
         self.remove_ranges(&ranges);
     }
 
-    pub fn remove_runlist<S>(&mut self, runlist: S)
-    where
-        S: Into<String>,
-    {
-        let s = runlist.into();
+    pub fn remove_runlist(&mut self, runlist: &str) {
         // skip empty runlist
-        if !s.is_empty() && !s.eq(&*EMPTY_STRING) {
-            let ranges = self.runlist_to_ranges(&s);
+        if !runlist.is_empty() && !runlist.eq(&*EMPTY_STRING) {
+            let ranges = self.runlist_to_ranges(runlist);
             self.remove_ranges(&ranges);
         }
     }
@@ -1119,7 +1108,7 @@ mod span {
 
         // inset
         for (runlist, n, expected) in tests {
-            let set = IntSpan::from(runlist);
+            let set = IntSpan::from(&runlist);
             assert_eq!(set.inset(n).to_string(), expected);
         }
 

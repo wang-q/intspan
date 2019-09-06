@@ -47,11 +47,11 @@ fn run_test() {
     intspan.add_runlist("-30--10");
     println!("{}", intspan);
 
-    intspan.remove_runlist("62-78".to_string());
+    intspan.remove_runlist("62-78");
     println!("{}", intspan);
 
     let mut other = IntSpan::new();
-    other.add_runlist(&"-15-5".to_string());
+    other.add_runlist("-15-5");
     println!("{}", other);
 
     intspan.merge(&other);

@@ -68,10 +68,7 @@ impl Range {
     /// # assert_eq!(*range.start(), 1);
     /// # assert_eq!(*range.end(), 100);
     /// ```
-    pub fn from<S>(chr: S, start: i32, end: i32) -> Self
-    where
-        S: Into<String>,
-    {
+    pub fn from(chr: &str, start: i32, end: i32) -> Self {
         let s = chr.into();
 
         Self {
@@ -102,10 +99,7 @@ impl Range {
     /// # assert_eq!(*range.strand(), "-");
     /// # assert_eq!(range.to_string(), "S288c.I(-):27070-29557");
     /// ```
-    pub fn from_str<S>(range: S) -> Self
-    where
-        S: Into<String>,
-    {
+    pub fn from_str(range: &str) -> Self {
         let s = range.into();
 
         let mut new = Self::new();

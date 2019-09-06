@@ -52,7 +52,7 @@ pub fn execute(args: &ArgMatches) {
     let mut writer = writer(args.value_of("outfile").unwrap());
 
     let numbers = if args.is_present("number") {
-        IntSpan::from(args.value_of("number").unwrap().to_string())
+        IntSpan::from(args.value_of("number").unwrap())
     } else {
         IntSpan::new()
     };

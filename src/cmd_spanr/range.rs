@@ -54,7 +54,7 @@ pub fn execute(args: &ArgMatches) {
     // Operating
     //----------------------------
     for line in reader.lines().filter_map(|r| r.ok()) {
-        let range = Range::from_str(line.clone());
+        let range = Range::from_str(&line);
         if !range.is_valid() {
             continue;
         }
