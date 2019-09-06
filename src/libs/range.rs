@@ -223,7 +223,6 @@ fn fa_headers() {
         ("infile_0/1/0_514:19-25", "infile_0/1/0_514:19-25"),
     ];
     for (header, expected) in tests {
-        eprintln!("{:#?}", header);
         let range = Range::from_str(header);
         assert_eq!(range.to_string(), expected);
     }

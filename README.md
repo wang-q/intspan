@@ -260,6 +260,13 @@ Steps:
       v
     filter
 
+### `ovlpr`
+
+```bash
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
+
+```
+
 ### S288c
 
 ```bash

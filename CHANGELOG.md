@@ -2,6 +2,16 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+* New binary `ovlpr` 
+* Struct `Overlap`
+
+### Changed
+
+* Move libraries to libs/
+* Passing &str when calling methods
+
 ## [0.3.3] - 2019-09-04
 
 ### Changed

@@ -24,7 +24,7 @@ fn command_circos() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 10);
-    assert!(stdout.contains("XIII 7947 6395"), "negtive strand");
+    assert!(stdout.contains("XIII 7947 6395"), "negative strand");
     assert!(!stdout.contains("fill_color"), "links");
 
     Ok(())

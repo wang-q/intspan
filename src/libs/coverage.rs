@@ -1,4 +1,5 @@
 use crate::IntSpan;
+use std::cmp;
 use std::collections::BTreeMap;
 
 #[derive(Default, Clone)]
@@ -37,7 +38,7 @@ impl Coverage {
     /// ```
     pub fn bump(&mut self, start: i32, end: i32) {
         let mut intspan = IntSpan::new();
-        intspan.add_pair(start, end);
+        intspan.add_pair(cmp::min(start, end), cmp::max(start, end));
 
         // reach max coverage in full sequence
         if self
