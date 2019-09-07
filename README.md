@@ -19,7 +19,7 @@ Current release: 0.4.0
 
 ```
 $ spanr help
-intspan 0.3.3
+spanr 0.4.0
 wang-q <wang-q@outlook.com>
 `intspan` operates chromosome IntSpan files
 
@@ -52,7 +52,7 @@ SUBCOMMANDS:
 
 ```
 $ linkr help
-linkr 0.3.3
+linkr 0.4.0
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
@@ -71,6 +71,27 @@ SUBCOMMANDS:
     help       Prints this message or the help of the given subcommand(s)
     merge      Merge overlapped ranges via overlapping graph
     sort       Sort links and ranges within links
+
+```
+
+### `ovlpr`
+
+```
+$ ovlpr help
+ovlpr 0.4.0
+wang-q <wang-q@outlook.com>
+`ovlpr` operates overlaps between sequences
+
+USAGE:
+    ovlpr [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    covered    Covered regions from .ovlp.tsv files
+    help       Prints this message or the help of the given subcommand(s)
 
 ```
 
