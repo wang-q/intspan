@@ -31,6 +31,16 @@ impl Coverage {
         Self { max, tiers }
     }
 
+    fn begin_end(begin: i32, end: i32) -> (i32, i32) {
+        let mut tup = (begin.min(end), begin.max(end));
+
+        if tup.0 == 0 {
+            tup.0 = 1;
+        }
+
+        tup
+    }
+
     /// ```
     /// # use intspan::Coverage;
     /// let mut cover = Coverage::new(1);
@@ -46,8 +56,9 @@ impl Coverage {
     /// # assert_eq!(cover.tiers().get(&0).unwrap().to_string(), "151-500");
     /// # assert_eq!(cover.tiers().get(&-1).unwrap().to_string(), "1-500");
     /// ```
-    pub fn bump(&mut self, start: i32, end: i32) {
-        let mut intspan = IntSpan::from_pair(start.min(end), start.max(end));
+    pub fn bump(&mut self, begin: i32, end: i32) {
+        let tup = Self::begin_end(begin, end);
+        let mut intspan = IntSpan::from_pair(tup.0, tup.1);
 
         // reach max coverage in full sequence
         if self
