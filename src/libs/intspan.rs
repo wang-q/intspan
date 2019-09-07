@@ -110,10 +110,15 @@ impl IntSpan {
     }
 
     pub fn from(runlist: &str) -> Self {
-        let s = runlist.into();
-
         let mut new = Self::new();
-        new.add_runlist(s);
+        new.add_runlist(runlist);
+
+        new
+    }
+
+    pub fn from_pair(lower: i32, upper: i32) -> Self {
+        let mut new = Self::new();
+        new.add_pair(lower, upper);
 
         new
     }
