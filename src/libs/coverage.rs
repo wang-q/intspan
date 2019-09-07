@@ -17,9 +17,13 @@ impl Coverage {
     }
 
     pub fn new(max: i32) -> Self {
+        Self::new_len(max, 1000000000)
+    }
+
+    pub fn new_len(max: i32, len: i32) -> Self {
         let mut tiers: BTreeMap<i32, IntSpan> = BTreeMap::new();
-        tiers.insert(-1, IntSpan::from("1-1000000000"));
-        tiers.insert(0, IntSpan::from("1-1000000000"));
+        tiers.insert(-1, IntSpan::from_pair(1, len));
+        tiers.insert(0, IntSpan::from_pair(1, len));
 
         for i in 1..=max {
             tiers.insert(i, IntSpan::new());
@@ -79,5 +83,27 @@ impl Coverage {
     /// ```
     pub fn max_tier(&self) -> IntSpan {
         self.tiers().get(self.max()).unwrap().copy()
+    }
+
+    /// ```
+    /// # use intspan::Coverage;
+    /// let mut cover = Coverage::new(2);
+    /// cover.bump(1, 100);
+    /// cover.bump(90, 150);
+    ///
+    /// assert_eq!(cover.uniq_tiers().get(&2).unwrap().to_string(), "90-100");
+    ///
+    /// assert_eq!(cover.tiers().get(&1).unwrap().to_string(), "1-150");
+    /// assert_eq!(cover.uniq_tiers().get(&1).unwrap().to_string(), "1-89,101-150");
+    /// ```
+    pub fn uniq_tiers(&self) -> BTreeMap<i32, IntSpan> {
+        let mut tiers = self.tiers.clone();
+
+        for i in 1..self.max {
+            let intspan_next = tiers[&(i + 1)].copy();
+            tiers.entry(i).and_modify(|e| e.subtract(&intspan_next));
+        }
+
+        tiers
     }
 }
