@@ -34,7 +34,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
 pub fn read_lines(input: &str) -> Vec<String> {
     let mut reader = reader(input);
     let mut s = String::new();
-    reader.read_to_string(&mut s);
+    reader.read_to_string(&mut s).expect("Read error");
     s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
 }
 
@@ -59,7 +59,7 @@ pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
 pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
     let mut reader = reader(input);
     let mut s = String::new();
-    reader.read_to_string(&mut s);
+    reader.read_to_string(&mut s).expect("Read error");
 
     serde_yaml::from_str(&s).unwrap()
 }

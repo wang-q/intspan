@@ -46,7 +46,7 @@ Like command `combine`, but <infiles> are chromosome ranges
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -84,5 +84,7 @@ pub fn execute(args: &ArgMatches) {
         set.insert(chr.to_string(), res.get(chr).unwrap().max_tier());
     }
     let out_yaml = set2yaml(&set);
-    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
+    write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+
+    Ok(())
 }

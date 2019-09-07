@@ -3,7 +3,7 @@ use clap::*;
 
 mod cmd_spanr;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let app = App::new("intspan")
         .version(crate_version!())
         .author(crate_authors!())
@@ -24,7 +24,7 @@ fn main() {
         .subcommand(cmd_spanr::range::make_subcommand());
 
     // Check which subcomamnd the user ran...
-    let _res = match app.get_matches().subcommand() {
+    match app.get_matches().subcommand() {
         ("genome", Some(sub_matches)) => cmd_spanr::genome::execute(sub_matches),
         ("some", Some(sub_matches)) => cmd_spanr::some::execute(sub_matches),
         ("merge", Some(sub_matches)) => cmd_spanr::merge::execute(sub_matches),
@@ -39,7 +39,9 @@ fn main() {
         ("convert", Some(sub_matches)) => cmd_spanr::convert::execute(sub_matches),
         ("range", Some(sub_matches)) => cmd_spanr::range::execute(sub_matches),
         (_, _) => unreachable!(),
-    };
+    }?;
+
+    Ok(())
 }
 
 // TODO: CI releases

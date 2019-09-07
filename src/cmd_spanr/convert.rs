@@ -24,7 +24,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -50,12 +50,14 @@ pub fn execute(args: &ArgMatches) {
                     // Output
                     //----------------------------
                     if lower == upper {
-                        writer.write_all(format!("{}:{}\n", chr, lower).as_ref());
+                        writer.write_all(format!("{}:{}\n", chr, lower).as_ref())?;
                     } else {
-                        writer.write_all(format!("{}:{}-{}\n", chr, lower, upper).as_ref());
+                        writer.write_all(format!("{}:{}-{}\n", chr, lower, upper).as_ref())?;
                     }
                 }
             }
         }
     }
+
+    Ok(())
 }

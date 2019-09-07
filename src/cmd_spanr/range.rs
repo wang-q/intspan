@@ -38,7 +38,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -68,24 +68,26 @@ pub fn execute(args: &ArgMatches) {
         match op {
             "overlap" => {
                 if set.contains_key(chr) && !set.get(chr).unwrap().intersect(&intspan).is_empty() {
-                    writer.write_all((line + "\n").as_ref());
+                    writer.write_all((line + "\n").as_ref())?;
                 }
             }
             "non-overlap" => {
                 if set.contains_key(chr) {
                     if set.get(chr).unwrap().intersect(&intspan).is_empty() {
-                        writer.write_all((line + "\n").as_ref());
+                        writer.write_all((line + "\n").as_ref())?;
                     }
                 } else {
-                    writer.write_all((line + "\n").as_ref());
+                    writer.write_all((line + "\n").as_ref())?;
                 }
             }
             "superset" => {
                 if set.contains_key(chr) && set.get(chr).unwrap().superset(&intspan) {
-                    writer.write_all((line + "\n").as_ref());
+                    writer.write_all((line + "\n").as_ref())?;
                 }
             }
             _ => panic!("Invalid Range Op"),
         };
     }
+
+    Ok(())
 }

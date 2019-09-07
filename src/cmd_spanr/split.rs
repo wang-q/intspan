@@ -36,7 +36,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -44,7 +44,7 @@ pub fn execute(args: &ArgMatches) {
 
     let outdir = args.value_of("outdir").unwrap();
     if outdir != "stdout" {
-        fs::create_dir_all(outdir);
+        fs::create_dir_all(outdir)?;
     }
 
     let suffix = args.value_of("suffix").unwrap();
@@ -63,10 +63,12 @@ pub fn execute(args: &ArgMatches) {
         // Output
         //----------------------------
         if outdir == "stdout" {
-            write_lines("stdout", &vec![string.as_str()]);
+            write_lines("stdout", &vec![string.as_str()])?;
         } else {
             let path = Path::new(outdir).join(key.to_owned() + suffix);
-            fs::write(path, string + "\n");
+            fs::write(path, string + "\n")?;
         }
     }
+
+    Ok(())
 }
