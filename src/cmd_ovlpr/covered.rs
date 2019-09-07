@@ -168,7 +168,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         } else {
             let intspan = res.get(key).unwrap().max_tier();
 
-            if !is_longest || intspan.span_size() <= 1 {
+            if !is_longest {
                 out_line = format!("{}:{}", key, intspan.to_string());
             } else {
                 out_line = longest_line(key, &intspan);
@@ -223,16 +223,16 @@ fn longest_line(key: &str, intspan: &IntSpan) -> String {
         sizes.push(size);
     }
 
-    let mut max_idx = 0;
+    let mut max_i = 0;
     for i in 0..intspan.span_size() {
         let size = sizes[i];
-        if size > sizes[i] {
-            max_idx = i;
+        if size > sizes[max_i] {
+            max_i = i;
         }
     }
 
     let mut longest = IntSpan::new();
-    longest.add_pair(ranges[max_idx * 2], ranges[max_idx * 2 + 1]);
+    longest.add_pair(ranges[max_i * 2], ranges[max_i * 2 + 1]);
 
     format!("{}:{}", key, longest.to_string())
 }
