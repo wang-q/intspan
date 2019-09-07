@@ -180,7 +180,7 @@ pub fn execute(args: &ArgMatches) {
     }
 }
 
-fn base_lines(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
+fn base_lines(key: &str, tiers: &BTreeMap<i32, IntSpan>) -> String {
     let mut basecovs: HashMap<i32, i32> = HashMap::new();
     let max_tier = tiers.keys().max().unwrap();
     for i in 0..=*max_tier {
@@ -201,7 +201,7 @@ fn base_lines(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
     out_lines.join("\n")
 }
 
-fn mean_line(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
+fn mean_line(key: &str, tiers: &BTreeMap<i32, IntSpan>) -> String {
     let total_len = tiers[&-1].cardinality();
     let max_tier = tiers.keys().max().unwrap();
     let mut sum = 0;
@@ -213,7 +213,7 @@ fn mean_line(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
     format!("{}\t{}\t{:.1}", key, total_len, mean_cov)
 }
 
-fn longest_line(key: &String, intspan: &IntSpan) -> String {
+fn longest_line(key: &str, intspan: &IntSpan) -> String {
     let ranges = intspan.ranges();
 
     let mut sizes: Vec<i32> = Vec::new();

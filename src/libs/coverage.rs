@@ -17,7 +17,7 @@ impl Coverage {
     }
 
     pub fn new(max: i32) -> Self {
-        Self::new_len(max, 1000000000)
+        Self::new_len(max, 1_000_000_000)
     }
 
     pub fn new_len(max: i32, len: i32) -> Self {
