@@ -69,6 +69,7 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("merge")
         .arg("tests/linkr/II.links.tsv")
+        .arg("--verbose")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -159,6 +160,7 @@ fn command_clean_merge() -> Result<(), Box<dyn std::error::Error>> {
         .arg("tests/linkr/II.sort.tsv")
         .arg("-r")
         .arg("tests/linkr/II.merge.tsv")
+        .arg("--verbose")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -176,6 +178,7 @@ fn command_connect() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("connect")
         .arg("tests/linkr/II.clean.tsv")
+        .arg("--verbose")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
