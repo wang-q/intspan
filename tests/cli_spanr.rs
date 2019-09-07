@@ -149,12 +149,7 @@ fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().count(), 18, "line count");
     assert_eq!(
-        stdout
-            .lines()
-            .next()
-            .unwrap()
-            .split(',')
-            .count(),
+        stdout.lines().next().unwrap().split(',').count(),
         4,
         "field count"
     );
@@ -177,12 +172,7 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().count(), 2, "line count");
     assert_eq!(
-        stdout
-            .lines()
-            .next()
-            .unwrap()
-            .split(',')
-            .count(),
+        stdout.lines().next().unwrap().split(',').count(),
         3,
         "field count"
     );
@@ -205,12 +195,7 @@ fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().count(), 18, "line count");
     assert_eq!(
-        stdout
-            .lines()
-            .next()
-            .unwrap()
-            .split(',')
-            .count(),
+        stdout.lines().next().unwrap().split(',').count(),
         8,
         "field count"
     );

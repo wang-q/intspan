@@ -1,5 +1,4 @@
 use crate::IntSpan;
-use std::cmp;
 use std::collections::BTreeMap;
 
 #[derive(Default, Clone)]
