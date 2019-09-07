@@ -265,6 +265,14 @@ Steps:
 ```bash
 target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
 
+target/debug/ovlpr covered tests/ovlpr/11_2.long.paf  --paf
+
+jrange covered src/test/resources/--paf -o stdout
+
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
+
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
+
 ```
 
 ### S288c

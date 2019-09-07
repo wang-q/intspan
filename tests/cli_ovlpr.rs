@@ -31,6 +31,24 @@ fn command_covered() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_covered_paf() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("ovlpr")?;
+    let output = cmd
+        .arg("covered")
+        .arg("tests/ovlpr/11_2.long.paf")
+        .arg("--paf")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 15);
+    assert!(stdout.contains("long/13141/0_10011"), "original names");
+    assert!(!stdout.contains("long/13141/0_10011:1"), "uncovered region");
+
+    Ok(())
+}
+
+#[test]
 fn command_covered_longest() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
@@ -44,6 +62,46 @@ fn command_covered_longest() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
     assert!(stdout.contains("pac4745_7148"), "original names");
     assert!(!stdout.contains("pac4745_7148:1"), "uncovered region");
+
+    Ok(())
+}
+
+#[test]
+fn command_covered_base() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("ovlpr")?;
+    let output = cmd
+        .arg("covered")
+        .arg("tests/ovlpr/1_4.pac.paf.ovlp.tsv")
+        .arg("--base")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 98105);
+    assert!(stdout.contains("pac4745_7148"), "original names");
+
+    Ok(())
+}
+
+#[test]
+fn command_covered_mean() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("ovlpr")?;
+    let output = cmd
+        .arg("covered")
+        .arg("tests/ovlpr/1_4.pac.paf.ovlp.tsv")
+        .arg("tests/ovlpr/1_4.pac.paf.ovlp.tsv")
+        .arg("tests/ovlpr/1_4.pac.paf.ovlp.tsv")
+        .arg("--mean")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
+    assert!(stdout.contains("pac4745_7148"), "original names");
+    assert!(
+        stdout.contains("pac1461_9030\t9030\t2.8"),
+        "avoid duplicates"
+    );
 
     Ok(())
 }

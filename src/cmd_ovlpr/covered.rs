@@ -1,6 +1,8 @@
 use clap::*;
+use indexmap::IndexSet;
 use intspan::*;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap, HashSet};
+use std::hash::Hash;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
@@ -40,6 +42,11 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
                 .takes_value(true)
                 .default_value("0.0")
                 .empty_values(false),
+        )
+        .arg(
+            Arg::with_name("paf")
+                .long("paf")
+                .help("PAF as input format"),
         )
         .arg(
             Arg::with_name("longest")
@@ -82,17 +89,24 @@ pub fn execute(args: &ArgMatches) {
         eprintln!("Need a integer for --idt\n{}", e);
         std::process::exit(1)
     });
+    let is_paf = args.is_present("paf");
     let is_longest = args.is_present("longest");
     let is_base = args.is_present("base");
     let is_mean = args.is_present("mean");
 
     // seq_name => tier_of => IntSpan
     let mut res: HashMap<String, Coverage> = HashMap::new();
+    let mut index_of: IndexSet<String> = IndexSet::new();
+    let mut seen: HashSet<(usize, usize)> = HashSet::new();
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
-            let ovlp = Overlap::new(&line);
+            let ovlp = if is_paf {
+                Overlap::from_paf(&line)
+            } else {
+                Overlap::new(&line)
+            };
             let f_id = ovlp.f_id();
             let g_id = ovlp.g_id();
 
@@ -109,25 +123,29 @@ pub fn execute(args: &ArgMatches) {
                 continue;
             }
 
-            //            if !ovlp.is_valid() {
-            //                continue;
-            //            }
+            // skip duplicated overlaps, i.e., f -> g and g -> f
+            let (f_idx, _) = index_of.insert_full(f_id.clone());
+            let (g_idx, _) = index_of.insert_full(g_id.clone());
+            let tup = (f_idx.min(g_idx), f_idx.max(g_idx));
+            // If the set did not have this value present, true is returned.
+            let not_seen = seen.insert(tup);
+            if !not_seen {
+                continue;
+            }
 
             // first
             if !res.contains_key(f_id) {
-                let tiers = Coverage::new(coverage);
+                let tiers = Coverage::new_len(coverage, *ovlp.f_len());
                 res.insert(f_id.clone(), tiers);
             }
-
             res.entry(f_id.to_string())
                 .and_modify(|e| e.bump(ovlp.f_begin().clone(), ovlp.f_end().clone()));
 
             // second
             if !res.contains_key(g_id) {
-                let tiers = Coverage::new(coverage);
+                let tiers = Coverage::new_len(coverage, *ovlp.g_len());
                 res.insert(g_id.clone(), tiers);
             }
-
             res.entry(g_id.to_string())
                 .and_modify(|e| e.bump(ovlp.g_begin().clone(), ovlp.g_end().clone()));
         }
@@ -142,40 +160,78 @@ pub fn execute(args: &ArgMatches) {
     for key in &keys {
         let mut out_line = String::new();
 
-        let intspan = res.get(key).unwrap().max_tier();
-
-        if !is_longest {
-            out_line = format!("{}:{}", key, intspan.to_string());
-        } else if intspan.span_size() <= 1 {
-            out_line = format!("{}:{}", key, intspan.to_string());
+        if is_base {
+            let tiers = res.get(key).unwrap().uniq_tiers();
+            out_line = base_lines(key, &tiers);
+        } else if is_mean {
+            let tiers = res.get(key).unwrap().uniq_tiers();
+            out_line = mean_line(key, &tiers);
         } else {
-            let ranges = intspan.ranges();
+            let intspan = res.get(key).unwrap().max_tier();
 
-            let mut sizes: Vec<i32> = Vec::new();
-            for i in 0..intspan.span_size() {
-                let size = ranges[i * 2 + 1] - ranges[i * 2] + 1;
-                sizes.push(size);
+            if !is_longest || intspan.span_size() <= 1 {
+                out_line = format!("{}:{}", key, intspan.to_string());
+            } else {
+                out_line = longest_line(key, &intspan);
             }
-
-            let mut max_idx = 0;
-            for i in 0..intspan.span_size() {
-                let size = sizes[i];
-                if size > sizes[i] {
-                    max_idx = i;
-                }
-            }
-
-            let mut longest = IntSpan::new();
-            longest.add_pair(ranges[max_idx * 2], ranges[max_idx * 2 + 1]);
-            out_line = format!("{}:{}", key, longest.to_string());
         }
 
         writer.write_all((out_line + "\n").as_ref());
     }
-    //    let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
-    //    for key in res.keys() {
-    //        set.insert(key.to_string(), res.get(key).unwrap().max_tier());
-    //    }
-    //    let out_yaml = set2yaml(&set);
-    //    write_yaml(args.value_of("outfile").unwrap(), &out_yaml);
+}
+
+fn base_lines(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
+    let mut basecovs: HashMap<i32, i32> = HashMap::new();
+    let max_tier = tiers.keys().max().unwrap();
+    for i in 0..=*max_tier {
+        for pos in tiers[&i].elements() {
+            basecovs.insert(pos, i);
+        }
+    }
+
+    let mut sorted: Vec<i32> = basecovs.keys().map(|k| *k).collect();
+    sorted.sort();
+
+    let mut out_lines: Vec<String> = vec![];
+    for pos in sorted {
+        let line = format!("{}\t{}\t{}", key, pos - 1, basecovs[&pos]);
+        out_lines.push(line);
+    }
+
+    out_lines.join("\n")
+}
+
+fn mean_line(key: &String, tiers: &BTreeMap<i32, IntSpan>) -> String {
+    let total_len = tiers[&-1].cardinality();
+    let max_tier = tiers.keys().max().unwrap();
+    let mut sum = 0;
+    for i in 0..=*max_tier {
+        sum += i * tiers[&i].cardinality();
+    }
+    let mean_cov = sum as f32 / total_len as f32;
+
+    format!("{}\t{}\t{:.1}", key, total_len, mean_cov)
+}
+
+fn longest_line(key: &String, intspan: &IntSpan) -> String {
+    let ranges = intspan.ranges();
+
+    let mut sizes: Vec<i32> = Vec::new();
+    for i in 0..intspan.span_size() {
+        let size = ranges[i * 2 + 1] - ranges[i * 2] + 1;
+        sizes.push(size);
+    }
+
+    let mut max_idx = 0;
+    for i in 0..intspan.span_size() {
+        let size = sizes[i];
+        if size > sizes[i] {
+            max_idx = i;
+        }
+    }
+
+    let mut longest = IntSpan::new();
+    longest.add_pair(ranges[max_idx * 2], ranges[max_idx * 2 + 1]);
+
+    format!("{}:{}", key, longest.to_string())
 }

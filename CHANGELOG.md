@@ -10,7 +10,9 @@
 ### Changed
 
 * Move libraries to libs/
-* Passing &str when calling methods
+* Passing `&str` when calling methods
+* Add `new_len()` and `uniq_tiers()` to `Coverage`
+* Add `from_pair()` to `IntSpan`
 
 ## [0.3.3] - 2019-09-04
 
