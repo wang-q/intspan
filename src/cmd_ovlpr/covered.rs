@@ -168,7 +168,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         } else {
             let intspan = res.get(key).unwrap().max_tier();
 
-            if !is_longest {
+            if !is_longest || intspan.span_size() <= 1 {
                 out_line = format!("{}:{}", key, intspan.to_string());
             } else {
                 out_line = longest_line(key, &intspan);
