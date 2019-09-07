@@ -4,10 +4,10 @@ use clap::*;
 mod cmd_spanr;
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("intspan")
+    let app = App::new("spanr")
         .version(crate_version!())
         .author(crate_authors!())
-        .about("`intspan` operates chromosome IntSpan files")
+        .about("`spanr` operates chromosome IntSpan files")
         .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd_spanr::genome::make_subcommand())
         .subcommand(cmd_spanr::some::make_subcommand())
