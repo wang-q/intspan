@@ -13,6 +13,8 @@
 * Passing `&str` when calling methods
 * Add `new_len()` and `uniq_tiers()` to `Coverage`
 * Add `from_pair()` to `IntSpan`
+* Wrap IO functions in utils.rs with Result
+* Satisfy clippy
 
 ## [0.3.3] - 2019-09-04
 
