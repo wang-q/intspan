@@ -2,7 +2,6 @@ use clap::*;
 use indexmap::IndexSet;
 use intspan::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
-use std::hash::Hash;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
@@ -71,7 +70,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -176,8 +175,10 @@ pub fn execute(args: &ArgMatches) {
             }
         }
 
-        writer.write_all((out_line + "\n").as_ref());
+        writer.write_all((out_line + "\n").as_ref())?;
     }
+
+    Ok(())
 }
 
 fn base_lines(key: &str, tiers: &BTreeMap<i32, IntSpan>) -> String {
@@ -189,7 +190,7 @@ fn base_lines(key: &str, tiers: &BTreeMap<i32, IntSpan>) -> String {
         }
     }
 
-    let mut sorted: Vec<i32> = basecovs.keys().map(|k| *k).collect();
+    let mut sorted: Vec<i32> = basecovs.keys().copied().collect();
     sorted.sort();
 
     let mut out_lines: Vec<String> = vec![];

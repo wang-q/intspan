@@ -49,7 +49,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -297,5 +297,7 @@ pub fn execute(args: &ArgMatches) {
     write_lines(
         args.value_of("outfile").unwrap(),
         &out_lines.iter().map(AsRef::as_ref).collect(),
-    );
+    )?;
+
+    Ok(())
 }

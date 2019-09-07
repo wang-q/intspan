@@ -74,7 +74,7 @@ pub fn writer(output: &str) -> Box<dyn Write> {
     writer
 }
 
-pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
 
     for line in lines {
@@ -84,10 +84,7 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
-pub fn write_yaml(
-    output: &str,
-    yaml: &BTreeMap<String, Value>,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_yaml(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
     let mut s = serde_yaml::to_string(yaml).unwrap();
     s.push_str("\n");

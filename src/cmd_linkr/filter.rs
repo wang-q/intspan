@@ -45,7 +45,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
@@ -97,7 +97,9 @@ pub fn execute(args: &ArgMatches) {
             //----------------------------
             // Output
             //----------------------------
-            writer.write_all(format!("{}\n", line).as_ref());
+            writer.write_all(format!("{}\n", line).as_ref())?;
         } // end of line
     }
+
+    Ok(())
 }

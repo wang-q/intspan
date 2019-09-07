@@ -3,7 +3,7 @@ use clap::*;
 
 mod cmd_ovlpr;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let app = App::new("ovlpr")
         .version(crate_version!())
         .author(crate_authors!())
@@ -12,8 +12,10 @@ fn main() {
         .subcommand(cmd_ovlpr::covered::make_subcommand());
 
     // Check which subcomamnd the user ran...
-    let _res = match app.get_matches().subcommand() {
+    match app.get_matches().subcommand() {
         ("covered", Some(sub_matches)) => cmd_ovlpr::covered::execute(sub_matches),
         (_, _) => unreachable!(),
-    };
+    }?;
+
+    Ok(())
 }
