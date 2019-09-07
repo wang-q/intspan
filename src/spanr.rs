@@ -45,8 +45,6 @@ fn main() -> std::io::Result<()> {
 }
 
 // TODO: CI releases
-// TODO: wrap IO with Result
-// TODO: satisfy clippy
 // TODO: impl various traits
 
 // set, runlists: single name IntSpan set or runlists
