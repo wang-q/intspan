@@ -71,7 +71,7 @@ fn command_some() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 7);
+    assert_eq!(stdout.lines().count(), 7);
     assert!(stdout.contains("AT2G01008"));
     assert!(!stdout.contains("AT2G01021"));
 
@@ -89,7 +89,7 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 5);
+    assert_eq!(stdout.lines().count(), 5);
     assert!(stdout.contains("28547-29194"));
     assert!(stdout.contains("\nI:\n"));
     assert!(stdout.contains("\nII:\n"));
@@ -107,7 +107,7 @@ fn command_split() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 4);
+    assert_eq!(stdout.lines().count(), 4);
     assert!(stdout.contains("28547-29194"));
     assert!(stdout.contains("---\nI: "));
     assert!(stdout.contains("---\nII: "));
@@ -147,15 +147,14 @@ fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 18, "line count");
+    assert_eq!(stdout.lines().count(), 18, "line count");
     assert_eq!(
         stdout
             .lines()
             .next()
             .unwrap()
             .split(',')
-            .collect::<Vec<&str>>()
-            .len(),
+            .count(),
         4,
         "field count"
     );
@@ -176,15 +175,14 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2, "line count");
+    assert_eq!(stdout.lines().count(), 2, "line count");
     assert_eq!(
         stdout
             .lines()
             .next()
             .unwrap()
             .split(',')
-            .collect::<Vec<&str>>()
-            .len(),
+            .count(),
         3,
         "field count"
     );
@@ -205,15 +203,14 @@ fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 18, "line count");
+    assert_eq!(stdout.lines().count(), 18, "line count");
     assert_eq!(
         stdout
             .lines()
             .next()
             .unwrap()
             .split(',')
-            .collect::<Vec<&str>>()
-            .len(),
+            .count(),
         8,
         "field count"
     );
@@ -238,7 +235,7 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2, "line count");
+    assert_eq!(stdout.lines().count(), 2, "line count");
     assert_eq!(
         stdout
             .lines()
@@ -285,7 +282,7 @@ fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 3);
+    assert_eq!(stdout.lines().count(), 3);
     assert!(!stdout.contains("7232,7384"), "combined");
 
     Ok(())
@@ -301,7 +298,7 @@ fn command_combine_2() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("21294-22075,"), "no changes");
 
     Ok(())
@@ -320,7 +317,7 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 17);
+    assert_eq!(stdout.lines().count(), 17);
     assert!(stdout.contains("878539-878709"), "runlist exists");
     assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
@@ -341,7 +338,7 @@ fn command_compare_union() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 17);
+    assert_eq!(stdout.lines().count(), 17);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
     assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
@@ -362,7 +359,7 @@ fn command_compare_xor() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 17);
+    assert_eq!(stdout.lines().count(), 17);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
     assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
@@ -383,7 +380,7 @@ fn command_compare_m() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 35);
+    assert_eq!(stdout.lines().count(), 35);
 
     Ok(())
 }
@@ -402,7 +399,7 @@ fn command_compare_m3() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 7);
+    assert_eq!(stdout.lines().count(), 7);
     assert!(!stdout.contains("13744-17133"), "all empty");
 
     Ok(())
@@ -420,7 +417,7 @@ fn command_span_cover() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("32316461-32398770"), "cover");
 
     Ok(())
@@ -440,7 +437,7 @@ fn command_span_fill() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("32325076-32326613"), "newly emerged");
     assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
     assert_eq!(stdout.len() - stdout.replace(",", "").len(), 18, "new");
@@ -462,7 +459,7 @@ fn command_span_trim() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
     assert_eq!(stdout.len() - stdout.replace(",", "").len(), 3, "new");
 
@@ -483,7 +480,7 @@ fn command_span_pad() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
     assert_eq!(stdout.len() - stdout.replace(",", "").len(), 6, "new");
 
@@ -504,7 +501,7 @@ fn command_span_excise() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert_ne!(stdout.len() - stdout.replace(",", "").len(), 25, "original");
     assert_eq!(stdout.len() - stdout.replace(",", "").len(), 3, "new");
 
@@ -535,7 +532,7 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 3);
+    assert_eq!(stdout.lines().count(), 3);
     assert!(!stdout.contains("S288c"), "species name");
     assert!(!stdout.contains("1-100"), "merged");
     assert!(stdout.contains("1-150"), "covered");
@@ -555,7 +552,7 @@ fn command_cover_c2() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 3);
+    assert_eq!(stdout.lines().count(), 3);
     assert!(!stdout.contains("S288c"), "species name");
     assert!(!stdout.contains("1-150"), "coverage 1");
     assert!(stdout.contains("90-100"), "coverage 2");
@@ -573,7 +570,7 @@ fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("infile_0/1/0_514"), "chr name");
     assert!(stdout.contains("19-499"), "covered");
 
@@ -590,7 +587,7 @@ fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("NC_007942"), "chromosomes exists");
     assert!(stdout.contains("1-152218"), "full chr runlist");
 
@@ -634,7 +631,7 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 5);
+    assert_eq!(stdout.lines().count(), 5);
     assert!(stdout.contains("cds"));
     assert!(stdout.contains("repeat"));
 
@@ -652,7 +649,7 @@ fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 28);
+    assert_eq!(stdout.lines().count(), 28);
     assert!(stdout.contains("II:327069-327703"), "first range");
 
     Ok(())
@@ -671,7 +668,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(!stdout.contains("S288c"));
     assert!(stdout.contains("21294-22075"));
 
@@ -686,7 +683,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 4);
+    assert_eq!(stdout.lines().count(), 4);
     assert!(stdout.contains("S288c"));
     assert!(!stdout.contains("21294-22075"));
 
@@ -701,7 +698,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 2);
+    assert_eq!(stdout.lines().count(), 2);
     assert!(!stdout.contains("S288c"));
     assert!(stdout.contains("21294-22075"));
 

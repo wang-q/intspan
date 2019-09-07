@@ -23,7 +23,7 @@ fn command_circos() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 10);
+    assert_eq!(stdout.lines().count(), 10);
     assert!(stdout.contains("XIII 7947 6395"), "negative strand");
     assert!(!stdout.contains("fill_color"), "links");
 
@@ -41,7 +41,7 @@ fn command_circos_highlight() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 14);
+    assert_eq!(stdout.lines().count(), 14);
     assert!(stdout.contains("fill_color"), "highlights");
 
     Ok(())
@@ -57,7 +57,7 @@ fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 15);
+    assert_eq!(stdout.lines().count(), 15);
     assert!(!stdout.contains("\nVI"), "chromosome II first");
 
     Ok(())
@@ -73,7 +73,7 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 6);
+    assert_eq!(stdout.lines().count(), 6);
     assert!(stdout.contains("892-4685"), "merged");
 
     Ok(())
@@ -91,7 +91,7 @@ fn command_filter() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 4);
+    assert_eq!(stdout.lines().count(), 4);
 
     Ok(())
 }
@@ -110,7 +110,7 @@ fn command_filter_3() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 1);
+    assert_eq!(stdout.lines().count(), 1);
     assert!(!stdout.contains("VI("), "filtered links");
 
     Ok(())
@@ -126,7 +126,7 @@ fn command_clean() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 11);
+    assert_eq!(stdout.lines().count(), 11);
     assert!(stdout.contains("892-4684"), "range exists");
 
     Ok(())
@@ -144,7 +144,7 @@ fn command_clean_bundle() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 10);
+    assert_eq!(stdout.lines().count(), 10);
     assert!(!stdout.contains("892-4684"), "original");
     assert!(stdout.contains("892-4685"), "bundled");
 
@@ -163,7 +163,7 @@ fn command_clean_merge() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
+    assert_eq!(stdout.lines().count(), 8);
     assert!(!stdout.contains("892-4684"), "original");
     assert!(stdout.contains("892-4685"), "merged");
 
@@ -180,7 +180,7 @@ fn command_connect() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 6);
+    assert_eq!(stdout.lines().count(), 6);
     assert_eq!(
         stdout
             .lines()

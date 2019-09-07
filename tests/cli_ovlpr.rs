@@ -23,7 +23,7 @@ fn command_covered() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
+    assert_eq!(stdout.lines().count(), 8);
     assert!(stdout.contains("pac4745_7148"), "original names");
     assert!(!stdout.contains("pac4745_7148:1"), "uncovered region");
 
@@ -41,7 +41,7 @@ fn command_covered_paf() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 15);
+    assert_eq!(stdout.lines().count(), 15);
     assert!(stdout.contains("long/13141/0_10011"), "original names");
     assert!(!stdout.contains("long/13141/0_10011:1"), "uncovered region");
 
@@ -59,7 +59,7 @@ fn command_covered_longest() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
+    assert_eq!(stdout.lines().count(), 8);
     assert!(stdout.contains("pac4745_7148"), "original names");
     assert!(!stdout.contains("pac4745_7148:1"), "uncovered region");
 
@@ -77,7 +77,7 @@ fn command_covered_base() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 98105);
+    assert_eq!(stdout.lines().count(), 98105);
     assert!(stdout.contains("pac4745_7148"), "original names");
 
     Ok(())
@@ -96,7 +96,7 @@ fn command_covered_mean() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().collect::<Vec<_>>().len(), 8);
+    assert_eq!(stdout.lines().count(), 8);
     assert!(stdout.contains("pac4745_7148"), "original names");
     assert!(
         stdout.contains("pac1461_9030\t9030\t2.8"),
