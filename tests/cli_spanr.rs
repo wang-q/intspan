@@ -222,13 +222,7 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().count(), 2, "line count");
     assert_eq!(
-        stdout
-            .lines()
-            .next()
-            .unwrap()
-            .split(',')
-            .collect::<Vec<&str>>()
-            .len(),
+        stdout.lines().next().unwrap().split(',').count(),
         7,
         "field count"
     );

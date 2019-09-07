@@ -308,7 +308,7 @@ mod read_write {
             .into_os_string()
             .into_string()
             .unwrap();
-        write_lines(&filename, &vec!["This", "is", "a\ntest"]);
+        write_lines(&filename, &vec!["This", "is", "a\ntest"]).expect("Write error");
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 4);
@@ -326,7 +326,7 @@ mod read_write {
 
         let yaml = read_yaml("tests/spanr/Atha.yml");
 
-        write_yaml(&filename, &yaml);
+        write_yaml(&filename, &yaml).expect("Write error");
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 11);

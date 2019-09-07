@@ -182,13 +182,7 @@ fn command_connect() -> Result<(), Box<dyn std::error::Error>> {
 
     assert_eq!(stdout.lines().count(), 6);
     assert_eq!(
-        stdout
-            .lines()
-            .next()
-            .unwrap()
-            .split('\t')
-            .collect::<Vec<&str>>()
-            .len(),
+        stdout.lines().next().unwrap().split('\t').count(),
         3,
         "multilateral links"
     );

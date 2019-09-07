@@ -208,7 +208,7 @@ fn ovlp_line() {
         assert_eq!(ovlp.f_id(), expected.0);
         assert_eq!(ovlp.g_id(), expected.1);
         assert_eq!(*ovlp.len(), expected.2);
-        assert_eq!(*ovlp.idt(), expected.3);
+        assert!((*ovlp.idt() - expected.3).abs() < 0.001);
         assert_eq!(*ovlp.f_strand(), expected.4);
         assert_eq!(*ovlp.f_begin(), expected.5);
         assert_eq!(*ovlp.f_end(), expected.6);
