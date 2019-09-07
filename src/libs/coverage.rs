@@ -39,10 +39,16 @@ impl Coverage {
     /// cover.bump(90, 150);
     /// assert_eq!(cover.tiers().get(&1).unwrap().to_string(), "1-150");
     /// # assert_eq!(cover.tiers().get(&0).unwrap().to_string(), "151-1000000000");
+    ///
+    /// let mut cover = Coverage::new_len(1, 500);
+    /// cover.bump(1, 100);
+    /// cover.bump(90, 150);
+    /// assert_eq!(cover.tiers().get(&1).unwrap().to_string(), "1-150");
+    /// # assert_eq!(cover.tiers().get(&0).unwrap().to_string(), "151-500");
+    /// # assert_eq!(cover.tiers().get(&-1).unwrap().to_string(), "1-500");
     /// ```
     pub fn bump(&mut self, start: i32, end: i32) {
-        let mut intspan = IntSpan::new();
-        intspan.add_pair(cmp::min(start, end), cmp::max(start, end));
+        let mut intspan = IntSpan::from_pair(start.min(end), start.max(end));
 
         // reach max coverage in full sequence
         if self

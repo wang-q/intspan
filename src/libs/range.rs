@@ -146,9 +146,7 @@ impl Range {
     /// assert_eq!(range.intspan().to_string(), "100");
     /// ```
     pub fn intspan(&self) -> IntSpan {
-        let mut intspan = IntSpan::new();
-        intspan.add_pair(self.start, self.end);
-        intspan
+        IntSpan::from_pair(self.start, self.end)
     }
 
     fn decode(&mut self, header: &String) {
