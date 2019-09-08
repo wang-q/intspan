@@ -294,6 +294,8 @@ target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
 
 target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
 
+target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
+
 ```
 
 ### S288c
