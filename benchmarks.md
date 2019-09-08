@@ -1,11 +1,5 @@
 # Benchmarks of different implementations
 
-* macOS 10.14
-* i7-8700k 
-* oracleJDK8
-* rustc 1.37.0
-* Perl 5.30.0
-
 ## IntSpan 1
 
 * Rust
@@ -341,14 +335,20 @@ duration 8.677303
 
 ```
 
-## linkr
+## `linkr` on macOS
+
+* macOS 10.14
+* i7-8700k 
+* oracleJDK8
+* rustc 1.37.0
+* Perl 5.30.0
 
 ```bash
 brew install jrange
 cargo install intspan
 cpanm App::Rangeops
 
-brew install hyperfine
+cargo install hyperfine
 
 ```
 
@@ -363,7 +363,7 @@ hyperfine --warmup 1 --export-markdown sort.md.tmp \
 ```
 
 | Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---------|--------------:|---------:|---------:|---------:|
+| :------- | ------------: | -------: | -------: | -------: |
 | linkr    |   143.4 ± 1.4 |    141.5 |    147.2 |      1.0 |
 | jrange   |   604.3 ± 4.0 |    599.9 |    613.2 |      4.2 |
 | rangeops | 1399.3 ± 14.6 |   1380.5 |   1423.1 |      9.8 |
@@ -379,7 +379,7 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp \
 ```
 
 | Command  |        Mean [s] | Min [s] | Max [s] | Relative |
-|:---------|----------------:|--------:|--------:|---------:|
+| :------- | --------------: | ------: | ------: | -------: |
 | linkr    |   5.896 ± 0.045 |   5.864 |   5.948 |      1.2 |
 | jrange   |   4.881 ± 0.049 |   4.831 |   4.929 |      1.0 |
 | rangeops | 122.840 ± 1.813 | 120.871 | 124.442 |     25.2 |
@@ -395,7 +395,7 @@ hyperfine --min-runs 3 --export-markdown merge.md.tmp \
 ```
 
 | Command  |       Mean [s] | Min [s] | Max [s] | Relative |
-|:---------|---------------:|--------:|--------:|---------:|
+| :------- | -------------: | ------: | ------: | -------: |
 | linkr    |  5.278 ± 0.026 |   5.255 |   5.305 |      2.4 |
 | jrange   |  2.228 ± 0.020 |   2.206 |   2.246 |      1.0 |
 | rangeops | 64.090 ± 0.267 |  63.783 |  64.273 |     28.8 |
@@ -411,7 +411,7 @@ hyperfine --min-runs 3 --export-markdown clean2.md.tmp \
 ```
 
 | Command  |       Mean [s] | Min [s] | Max [s] | Relative |
-|:---------|---------------:|--------:|--------:|---------:|
+| :------- | -------------: | ------: | ------: | -------: |
 | linkr    |  3.208 ± 0.019 |   3.186 |   3.220 |      1.0 |
 | jrange   |  4.170 ± 0.047 |   4.119 |   4.212 |      1.3 |
 | rangeops | 54.888 ± 0.244 |  54.651 |  55.139 |     17.1 |
@@ -426,7 +426,7 @@ hyperfine --export-markdown connect.md.tmp \
 ```
 
 | Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---------|--------------:|---------:|---------:|---------:|
+| :------- | ------------: | -------: | -------: | -------: |
 | linkr    |   196.9 ± 1.9 |    194.5 |    200.6 |      1.0 |
 | rangeops | 2497.3 ± 11.5 |   2477.2 |   2513.0 |     12.7 |
 
@@ -441,7 +441,86 @@ hyperfine --warmup 1 --export-markdown filter.md.tmp \
 ```
 
 | Command  |   Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---------|------------:|---------:|---------:|---------:|
+| :------- | ----------: | -------: | -------: | -------: |
 | linkr    |  31.0 ± 0.6 |     30.1 |     33.0 |      1.0 |
 | jrange   | 109.6 ± 1.9 |    105.4 |    114.2 |      3.5 |
 | rangeops | 415.7 ± 6.4 |    409.3 |    429.2 |     13.4 |
+
+## `linkr` on Windows
+
+* E3-1245 V2
+* Windows 10 18950
+* strawberry-perl-5.30.0.1-64bit
+* rust-1.37.0-x86_64-pc-windows-gnu
+
+### sort
+
+```cmd
+hyperfine --warmup 1 --export-markdown sort.md.tmp "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin > NUL" "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | rangeops sort stdin -o stdout > NUL"
+
+```
+
+| Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
+| :------- | ------------: | -------: | -------: | -------: |
+| linkr    |  298.2 ± 12.6 |    279.3 |    319.7 |      1.0 |
+| rangeops | 3818.2 ± 85.7 |   3642.8 |   3918.2 |     12.8 |
+
+### clean
+
+```cmd
+hyperfine --min-runs 3 --export-markdown clean.md.tmp "linkr clean tests/Atha/sort.tsv > NUL" "rangeops clean tests/Atha/sort.tsv -o stdout > NUL"
+
+```
+
+| Command  |        Mean [s] | Min [s] | Max [s] | Relative |
+| :------- | --------------: | ------: | ------: | -------: |
+| linkr    |  10.254 ± 0.240 |  10.061 |  10.522 |      1.0 |
+| rangeops | 238.339 ± 4.120 | 235.504 | 243.065 |     23.2 |
+
+### merge
+
+```cmd
+hyperfine --min-runs 3 --export-markdown merge.md.tmp "linkr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" "rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o stdout > NUL"
+
+```
+
+| Command  |         Mean [s] | Min [s] | Max [s] | Relative |
+| :------- | ---------------: | ------: | ------: | -------: |
+| linkr    |    9.749 ± 0.379 |   9.499 |  10.185 |      1.0 |
+| rangeops | 166.274 ± 10.915 | 153.870 | 174.408 |     17.1 |
+
+### clean2
+
+```cmd
+hyperfine --min-runs 3 --export-markdown clean2.md.tmp "linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL" "rangeops clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL"
+
+```
+
+| Command  |        Mean [s] | Min [s] | Max [s] | Relative |
+| :------- | --------------: | ------: | ------: | -------: |
+| linkr    |   5.101 ± 0.184 |   4.941 |   5.302 |      1.0 |
+| rangeops | 115.055 ± 7.302 | 107.261 | 121.737 |     22.6 |
+
+### connect
+
+```cmd
+hyperfine --warmup 1 --export-markdown connect.md.tmp "linkr connect tests/Atha/clean.tsv > NUL" "rangeops connect tests/Atha/clean.tsv > NUL"
+
+```
+
+| Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
+| :------- | ------------: | -------: | -------: | -------: |
+| linkr    |  320.8 ± 17.5 |    293.7 |    351.3 |      1.0 |
+| rangeops | 5842.8 ± 63.4 |   5728.9 |   5930.4 |     18.2 |
+
+### filter
+
+```cmd
+hyperfine --warmup 1 --export-markdown filter.md.tmp "linkr filter tests/Atha/connect.tsv -r 0.8 > NUL" "rangeops filter tests/Atha/connect.tsv -r 0.8 -o stdout > NUL"
+
+```
+
+| Command  |     Mean [ms] | Min [ms] | Max [ms] | Relative |
+| :------- | ------------: | -------: | -------: | -------: |
+| linkr    |    63.5 ± 5.7 |     55.2 |     78.1 |      1.0 |
+| rangeops | 1423.2 ± 34.1 |   1385.7 |   1488.3 |     22.4 |

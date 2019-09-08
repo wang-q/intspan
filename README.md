@@ -340,21 +340,17 @@ spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 ### Atha
 
 ```bash
-gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz |
-    linkr sort stdin -o tests/Atha/sort.tsv
+gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin -o tests/Atha/sort.tsv
 
 linkr clean tests/Atha/sort.tsv -o tests/Atha/sort.clean.tsv
 
-linkr merge tests/Atha/sort.clean.tsv -c 0.95 \
-    -o tests/Atha/merge.tsv
+linkr merge tests/Atha/sort.clean.tsv -c 0.95 -o tests/Atha/merge.tsv
 
-linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 \
-    -o tests/Atha/clean.tsv
+linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 -o tests/Atha/clean.tsv
 
 linkr connect tests/Atha/clean.tsv -o tests/Atha/connect.tsv
 
-linkr filter tests/Atha/connect.tsv -r 0.8 \
-    -o tests/Atha/filter.tsv
+linkr filter tests/Atha/connect.tsv -r 0.8 -o tests/Atha/filter.tsv
 
 wc -l tests/Atha/*.tsv
 #    4500 tests/Atha/clean.tsv
