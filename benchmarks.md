@@ -451,7 +451,7 @@ hyperfine --warmup 1 --export-markdown filter.md.tmp \
 * E3-1245 V2
 * Windows 10 18950
 * strawberry-perl-5.30.0.1-64bit
-* rust-1.37.0-x86_64-pc-windows-gnu
+* rustc 1.39.0-nightly (c6e9c76c5 2019-09-04) msvc
 
 ### sort
 
