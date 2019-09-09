@@ -16,14 +16,14 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
-            artifact_name: intspan.zip
-            release_name: intspan-linux-x64.zip
+            artifact_name: intspan.tar.gz
+            release_name: intspan-linux-x64.tar.gz
           - os: windows-latest
-            artifact_name: intspan.zip
-            release_name: intspan-windows-x64.zip
+            artifact_name: intspan.tar.gz
+            release_name: intspan-windows-x64.tar.gz
           - os: macos-latest
-            artifact_name: intspan.zip
-            release_name: intspan-macos-x64.zip
+            artifact_name: intspan.tar.gz
+            release_name: intspan-macos-x64.tar.gz
 
     steps:
       - uses: hecrj/setup-rust-action@master
