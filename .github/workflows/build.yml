@@ -1,9 +1,10 @@
-name: Test Rust project
+name: Build
 
 on: [push]
 
 jobs:
-  test:
+  build:
+    name: Build ${{ matrix.rust }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -15,5 +16,7 @@ jobs:
         with:
           rust-version: ${{ matrix.rust }}
       - uses: actions/checkout@master
+      - name: Build
+        run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
