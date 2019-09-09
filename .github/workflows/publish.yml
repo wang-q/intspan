@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # This should work with only the `include`s but it currently doesn't because of this bug:
+        # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: intspan.zip
+            release_name: intspan-linux-x64.zip
+          - os: windows-latest
+            artifact_name: intspan.zip
+            release_name: intspan-windows-x64.zip
+          - os: macos-latest
+            artifact_name: intspan.zip
+            release_name: intspan-macos-x64.zip
+
+    steps:
+      - uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+      - uses: actions/checkout@v1
+      - name: Build
+        run: cargo build --release --locked
+      - name: Archive using zip or tar
+        uses: juankaram/archive-action@v1.0.0
+        with:
+          args: zip -r intspan.zip arget/release/spanr arget/release/linkr arget/release/ovlpr
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.release_name }}
+          tag: ${{ github.ref }}
