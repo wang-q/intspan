@@ -17,13 +17,13 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_name: intspan.zip
-            release_name: intspan-linux-x64.zip
+            release_name: intspan-${{ github.ref }}-linux-x64.zip
           - os: windows-latest
             artifact_name: intspan.zip
-            release_name: intspan-windows-x64.zip
+            release_name: intspan-${{ github.ref }}-windows-x64.zip
           - os: macos-latest
             artifact_name: intspan.zip
-            release_name: intspan-macos-x64.zip
+            release_name: intspan-${{ github.ref }}-macos-x64.zip
 
     steps:
       - uses: hecrj/setup-rust-action@master
@@ -32,10 +32,9 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build
         run: cargo build --release
-      - name: Archive using zip or tar
-        uses: juankaram/archive-action@v1.0.0
-        with:
-          args: zip -r intspan.zip arget/release/spanr arget/release/linkr arget/release/ovlpr
+      - name: Create tarball
+        run: tar cvfz intspan.tar.gz target/release/spanr target/release/linkr target/release/ovlpr
+        shell: bash
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
