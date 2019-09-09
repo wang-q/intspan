@@ -31,7 +31,7 @@ jobs:
           rust-version: stable
       - uses: actions/checkout@v1
       - name: Build
-        run: cargo build --release --locked
+        run: cargo build --release
       - name: Archive using zip or tar
         uses: juankaram/archive-action@v1.0.0
         with:
