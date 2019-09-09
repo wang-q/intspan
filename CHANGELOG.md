@@ -2,6 +2,15 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+* Add benchmarks.md
+* Add `ovlpr paf2ovlp`
+
+### Changed
+
+* Binary releases by Github Actions
+
 ## [0.4.0] - 2019-09-07
 
 ### Added
