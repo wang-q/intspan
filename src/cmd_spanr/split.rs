@@ -1,0 +1,74 @@
+use clap::{App, Arg, ArgMatches, SubCommand};
+use intspan::*;
+use serde_yaml::Value;
+use std::collections::BTreeMap;
+use std::fs;
+use std::path::Path;
+
+// Create clap subcommand arguments
+pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
+    SubCommand::with_name("split")
+        .about("Split a runlist yaml file")
+        .arg(
+            Arg::with_name("infile")
+                .help("Sets the input file to use")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::with_name("suffix")
+                .long("suffix")
+                .short("s")
+                .takes_value(true)
+                .default_value(".yml")
+                .empty_values(false)
+                .help("Extensions of output files"),
+        )
+        .arg(
+            Arg::with_name("outdir")
+                .short("o")
+                .long("outdir")
+                .takes_value(true)
+                .default_value("stdout")
+                .empty_values(false)
+                .help("Output location. [stdout] for screen"),
+        )
+}
+
+// command implementation
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
+    //----------------------------
+    // Loading
+    //----------------------------
+    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+
+    let outdir = args.value_of("outdir").unwrap();
+    if outdir != "stdout" {
+        fs::create_dir_all(outdir)?;
+    }
+
+    let suffix = args.value_of("suffix").unwrap();
+
+    //----------------------------
+    // Operating
+    //----------------------------
+    for (key, value) in &yaml {
+        if !value.is_mapping() {
+            panic!("Not a valid multi-key runlist yaml file");
+        }
+
+        let string = serde_yaml::to_string(value).unwrap();
+
+        //----------------------------
+        // Output
+        //----------------------------
+        if outdir == "stdout" {
+            write_lines("stdout", &vec![string.as_str()])?;
+        } else {
+            let path = Path::new(outdir).join(key.to_owned() + suffix);
+            fs::write(path, string + "\n")?;
+        }
+    }
+
+    Ok(())
+}

@@ -1,19 +1,20 @@
-use crate::IntSpan;
+use crate::{IntSpan, Range};
 use serde_yaml::Value;
-use std::collections::{BTreeMap, BTreeSet};
+use std::cmp::Reverse;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 
 /// ```
 /// use std::io::BufRead;
-/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// let mut lines = vec![];
 /// for line in reader.lines() {
 ///     lines.push(line);
 /// }
 /// assert_eq!(lines.len(), 16);
 ///
-/// let reader = intspan::reader("tests/resources/S288c.chr.sizes");
+/// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
 /// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
@@ -27,18 +28,18 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
 }
 
 /// ```
-/// let lines = intspan::read_lines("tests/resources/S288c.chr.sizes");
+/// let lines = intspan::read_lines("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(lines.len(), 16);
 /// ```
 pub fn read_lines(input: &str) -> Vec<String> {
     let mut reader = reader(input);
     let mut s = String::new();
-    reader.read_to_string(&mut s);
+    reader.read_to_string(&mut s).expect("Read error");
     s.lines().map(|s| s.to_string()).collect::<Vec<String>>()
 }
 
 /// ```
-/// let sizes = intspan::read_sizes("tests/resources/S288c.chr.sizes");
+/// let sizes = intspan::read_sizes("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(sizes.len(), 16);
 /// assert_eq!(*sizes.get("II").unwrap(), 813184);
 /// ```
@@ -58,7 +59,7 @@ pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
 pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
     let mut reader = reader(input);
     let mut s = String::new();
-    reader.read_to_string(&mut s);
+    reader.read_to_string(&mut s).expect("Read error");
 
     serde_yaml::from_str(&s).unwrap()
 }
@@ -73,7 +74,7 @@ pub fn writer(output: &str) -> Box<dyn Write> {
     writer
 }
 
-pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
 
     for line in lines {
@@ -83,10 +84,7 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), Box<dyn std::e
     Ok(())
 }
 
-pub fn write_yaml(
-    output: &str,
-    yaml: &BTreeMap<String, Value>,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write_yaml(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
     let mut s = serde_yaml::to_string(yaml).unwrap();
     s.push_str("\n");
@@ -206,6 +204,96 @@ pub fn chrs_in_sets(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTr
     chrs
 }
 
+pub fn build_range_of_part(line: &str, range_of_str: &mut HashMap<String, Range>) {
+    for part in line.split('\t') {
+        let range = Range::from_str(part);
+        if !range.is_valid() {
+            continue;
+        }
+
+        if !range_of_str.contains_key(part) {
+            range_of_str.insert(part.to_string(), range);
+        }
+    }
+}
+
+pub fn sort_links(lines: &[String]) -> Vec<String> {
+    // cache ranges
+    let mut range_of_part: HashMap<String, Range> = HashMap::new();
+
+    //----------------------------
+    // Sort within links
+    //----------------------------
+    let mut within_links: BTreeSet<String> = BTreeSet::new();
+    for line in lines {
+        build_range_of_part(line, &mut range_of_part);
+
+        let parts: Vec<&str> = line.split('\t').collect();
+
+        let mut valids: Vec<&str> = parts
+            .clone()
+            .into_iter()
+            .filter(|p| range_of_part.contains_key(*p))
+            .collect();
+
+        let mut invalids: Vec<&str> = parts
+            .clone()
+            .into_iter()
+            .filter(|p| !range_of_part.contains_key(*p))
+            .collect();
+
+        // by chromosome strand
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().strand());
+
+        // by start point on chromosomes
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().start());
+
+        // by chromosome name
+        valids.sort_by_key(|k| range_of_part.get(*k).unwrap().chr());
+
+        // recreate line
+        valids.append(&mut invalids);
+        let new_line: String = valids.join("\t");
+        within_links.insert(new_line);
+    }
+
+    //----------------------------
+    // Sort by first range's chromosome order among links
+    //----------------------------
+    let mut among_links: Vec<String> = within_links.into_iter().collect();
+    {
+        // by chromosome strand
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_part.get(parts[0]).unwrap().strand()
+        });
+
+        // by start point on chromosomes
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_part.get(parts[0]).unwrap().start()
+        });
+
+        // by chromosome name
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            range_of_part.get(parts[0]).unwrap().chr()
+        });
+    }
+
+    //----------------------------
+    // Sort by copy number among links (desc)
+    //----------------------------
+    {
+        among_links.sort_by_cached_key(|k| {
+            let parts: Vec<&str> = k.split('\t').collect();
+            Reverse(parts.len())
+        });
+    }
+
+    among_links
+}
+
 #[cfg(test)]
 mod read_write {
     use super::*;
@@ -213,14 +301,14 @@ mod read_write {
 
     #[test]
     fn test_write_lines() {
-        let tempdir = TempDir::new().unwrap();
-        let filename = tempdir
+        let tmp = TempDir::new().unwrap();
+        let filename = tmp
             .path()
             .join("test.txt")
             .into_os_string()
             .into_string()
             .unwrap();
-        write_lines(&filename, &vec!["This", "is", "a\ntest"]);
+        write_lines(&filename, &vec!["This", "is", "a\ntest"]).expect("Write error");
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 4);
@@ -228,17 +316,17 @@ mod read_write {
 
     #[test]
     fn test_read_write_runlist() {
-        let tempdir = TempDir::new().unwrap();
-        let filename = tempdir
+        let tmp = TempDir::new().unwrap();
+        let filename = tmp
             .path()
             .join("test.yml")
             .into_os_string()
             .into_string()
             .unwrap();
 
-        let yaml = read_yaml("tests/resources/Atha.yml");
+        let yaml = read_yaml("tests/spanr/Atha.yml");
 
-        write_yaml(&filename, &yaml);
+        write_yaml(&filename, &yaml).expect("Write error");
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 11);

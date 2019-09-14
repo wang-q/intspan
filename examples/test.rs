@@ -1,6 +1,5 @@
 use intspan::IntSpan;
 use std::env;
-use std::time::Instant;
 
 fn run_test() {
     let mut intspan = IntSpan::new();
@@ -17,16 +16,16 @@ fn run_test() {
         println!("val {} is contained {}", n, intspan.contains(*n));
     }
 
-    intspan.add_ranges(&vec![60, 70, 80, 90]);
+    intspan.add_ranges(&[60, 70, 80, 90]);
     println!("{}", intspan);
 
-    intspan.add_ranges(&vec![68, 75]);
+    intspan.add_ranges(&[68, 75]);
     println!("{}", intspan);
 
     intspan.add_n(99);
     println!("{}", intspan);
 
-    intspan.add_vec(&vec![77, 79]);
+    intspan.add_vec(&[77, 79]);
     println!("{}", intspan);
 
     intspan.invert();
@@ -41,17 +40,17 @@ fn run_test() {
     intspan.remove_n(85);
     println!("{}", intspan);
 
-    intspan.remove_vec(&vec![87, 88]);
+    intspan.remove_vec(&[87, 88]);
     println!("{}", intspan);
 
     intspan.add_runlist("-30--10");
     println!("{}", intspan);
 
-    intspan.remove_runlist("62-78".to_string());
+    intspan.remove_runlist("62-78");
     println!("{}", intspan);
 
     let mut other = IntSpan::new();
-    other.add_runlist(&"-15-5".to_string());
+    other.add_runlist("-15-5");
     println!("{}", other);
 
     intspan.merge(&other);
