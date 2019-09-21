@@ -91,8 +91,10 @@ FLAGS:
     -V, --version    Prints version information
 
 SUBCOMMANDS:
-    covered    Covered regions from .ovlp.tsv files
-    help       Prints this message or the help of the given subcommand(s)
+    covered     Covered regions from .ovlp.tsv files
+    help        Prints this message or the help of the given subcommand(s)
+    paf2ovlp    Convert minimap .paf to overlaps
+    replace     Replace IDs in .ovlp.tsv
 
 ```
 
@@ -297,6 +299,9 @@ target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
 target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
 
 target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
+
+target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
+target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
 
 ```
 

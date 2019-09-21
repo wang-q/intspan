@@ -2,6 +2,10 @@
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+* Add `ovlpr replace`
+
 ## [0.4.1] - 2019-09-10
 
 ### Added
