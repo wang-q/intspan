@@ -175,7 +175,9 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
             }
         }
 
-        writer.write_all((out_line + "\n").as_ref())?;
+        if !out_line.is_empty() {
+            writer.write_all((out_line + "\n").as_ref())?;
+        }
     }
 
     Ok(())

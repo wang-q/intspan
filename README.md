@@ -171,7 +171,6 @@ Types of links:
 
         II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
 
->>>>>>> origin/master
 ## EXAMPLES
 
 ### `spanr`
