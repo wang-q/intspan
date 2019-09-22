@@ -61,8 +61,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
 
         // f_id and g_id
         let mut pair = vec![];
-        pair.push(fields[0].clone());
-        pair.push(fields[1].clone());
+        pair.push(fields[0].to_string());
+        pair.push(fields[1].to_string());
         pair.sort();
 
         if restricts.contains(pair.join("\t").as_str()) {
