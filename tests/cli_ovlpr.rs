@@ -158,3 +158,20 @@ fn command_replace_reverse() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_restrict() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("ovlpr")?;
+    let output = cmd
+        .arg("restrict")
+        .arg("tests/ovlpr/1_4.ovlp.tsv")
+        .arg("tests/ovlpr/1_4.restrict.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 36);
+    assert!(!stdout.contains("pac1461_9030\tpac8852_20444"), "no long-long overlaps");
+
+    Ok(())
+}

@@ -302,6 +302,8 @@ target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
 target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
 target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
 
+target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
+
 ```
 
 ### S288c
