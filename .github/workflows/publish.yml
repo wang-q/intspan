@@ -6,36 +6,82 @@ on:
       - '*'
 
 jobs:
-  publish:
-    name: Publish for ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        # This should work with only the `include`s but it currently doesn't because of this bug:
-        # https://github.community/t5/How-to-use-Git-and-GitHub/GitHub-Actions-Matrix-options-dont-work-as-documented/td-p/29558
-        os: [ubuntu-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            artifact_name: intspan.tar.gz
-            release_name: intspan-linux-x64.tar.gz
-          - os: macos-latest
-            artifact_name: intspan.tar.gz
-            release_name: intspan-macos-x64.tar.gz
-
+  linux-gnu:
+    runs-on: ubuntu-latest
     steps:
-      - uses: hecrj/setup-rust-action@master
+      - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: stable
       - uses: actions/checkout@v1
+      - name: Enable Link Time Optimizations
+        run: |
+          echo "[profile.release]" >> Cargo.toml
+          echo "lto = true" >> Cargo.toml
       - name: Build
-        run: cargo build --release
+        run: cargo build --verbose --release
       - name: Create tarball
         run: tar cvfz intspan.tar.gz target/release/spanr target/release/linkr target/release/ovlpr
         shell: bash
-      - name: Upload binaries to release
+      - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ matrix.artifact_name }}
-          asset_name: ${{ matrix.release_name }}
+          file: intspan.tar.gz
+          asset_name: intspan-x86_64-unknown-linux-gnu.tar.gz
           tag: ${{ github.ref }}
+  macos:
+    runs-on: macOS-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: stable
+      - uses: actions/checkout@v1
+      - name: Enable Link Time Optimizations
+        run: |
+          echo "[profile.release]" >> Cargo.toml
+          echo "lto = true" >> Cargo.toml
+      - name: Build
+        env:
+          MACOSX_DEPLOYMENT_TARGET: 10.12
+        run: cargo build --verbose --release
+      - name: Create tarball
+        run: tar cvfz intspan.tar.gz target/release/spanr target/release/linkr target/release/ovlpr
+        shell: bash
+      - name: Upload binaries to releases
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: intspan.tar.gz
+          asset_name: intspan-x86_64-apple-darwin.tar.gz
+          tag: ${{ github.ref }}
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: stable
+      - uses: actions/checkout@v1
+      - name: Enable Link Time Optimizations
+        run: |
+          echo "[profile.release]" >> Cargo.toml
+          echo "lto = true" >> Cargo.toml
+      - name: Enable static CRT linkage
+        run: |
+          mkdir .cargo
+          echo '[target.x86_64-pc-windows-msvc]' >> .cargo/config
+          echo 'rustflags = ["-Ctarget-feature=+crt-static"]' >> .cargo/config
+      - name: Build
+        run: cargo build --verbose --release
+      - name: Create zip
+        run: zip -r intspan.zip target/release/spanr target/release/linkr target/release/ovlpr
+        shell: bash
+      - name: Upload binaries to releases
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: intspan.zip
+          asset_name: intspan-x86_64-pc-windows-msvc.zip
+          tag: ${{ github.ref }}
+
+#TODO: https://github.com/hecrj/iced/blob/master/.github/workflows/build.yml
+#  x86_64-unknown-linux-musl
