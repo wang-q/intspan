@@ -29,6 +29,30 @@ jobs:
           file: intspan.tar.gz
           asset_name: intspan-x86_64-unknown-linux-gnu.tar.gz
           tag: ${{ github.ref }}
+  linux-musl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: stable
+          targets: x86_64-unknown-linux-musl
+      - uses: actions/checkout@v1
+      - name: Enable Link Time Optimizations
+        run: |
+          echo "[profile.release]" >> Cargo.toml
+          echo "lto = true" >> Cargo.toml
+      - name: Build
+        run: cargo build --verbose --release --target x86_64-unknown-linux-musl
+      - name: Create tarball
+        run: tar cvfz intspan.tar.gz target/release/spanr target/release/linkr target/release/ovlpr
+        shell: bash
+      - name: Upload binaries to releases
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: intspan.tar.gz
+          asset_name: intspan-x86_64-unknown-linux-musl.tar.gz
+          tag: ${{ github.ref }}
   macos:
     runs-on: macOS-latest
     steps:
