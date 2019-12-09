@@ -44,7 +44,7 @@ jobs:
       - name: Build
         run: cargo build --verbose --release --target x86_64-unknown-linux-musl
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/release/spanr target/release/linkr target/release/ovlpr
+        run: tar cvfz intspan.tar.gz target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/linkr target/x86_64-unknown-linux-musl/release/ovlpr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
