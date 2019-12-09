@@ -44,7 +44,6 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// TODO: CI releases
 // TODO: impl various traits
 
 // set, runlists: single name IntSpan set or runlists
