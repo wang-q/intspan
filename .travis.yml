@@ -13,14 +13,10 @@ matrix:
 
 jobs:
   include:
+    - stage: test
+      script: cargo test --verbose --all
     - stage: build
       script: cargo build --verbose --all --examples
-    - stage: test
-      script:
-        - cargo clippy --all-targets --all-features # -- -D warnings
-        - cargo test --verbose --all
-      before_script:
-        - rustup component add clippy
     - stage: coverage
       rust: nightly
       before_install:
