@@ -143,34 +143,6 @@ impl IntSpan {
         self.edge_size() / 2
     }
 
-    pub fn to_string(&self) -> String {
-        if self.is_empty() {
-            return EMPTY_STRING.clone();
-        }
-
-        let mut runlist = "".to_string();
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            let mut buf = "".to_string();
-            if i != 0 {
-                buf.push_str(",");
-            }
-
-            if lower == upper {
-                buf.push_str(lower.to_string().as_str());
-            } else {
-                buf.push_str(format!("{}-{}", lower, upper).as_str());
-            }
-
-            runlist.push_str(buf.as_str());
-        }
-
-        runlist
-    }
-
     pub fn to_vec(&self) -> Vec<i32> {
         let mut elements: Vec<i32> = Vec::new();
 
@@ -1302,7 +1274,32 @@ impl IntSpan {
 
 impl fmt::Display for IntSpan {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_string())?;
+        if self.is_empty() {
+            write!(f, "{}", EMPTY_STRING.to_string())?;
+        } else {
+            let mut runlist = "".to_string();
+
+            for i in 0..self.span_size() {
+                let lower = *self.edges.get(i * 2).unwrap();
+                let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+                let mut buf = "".to_string();
+                if i != 0 {
+                    buf.push_str(",");
+                }
+
+                if lower == upper {
+                    buf.push_str(lower.to_string().as_str());
+                } else {
+                    buf.push_str(format!("{}-{}", lower, upper).as_str());
+                }
+
+                runlist.push_str(buf.as_str());
+            }
+
+            write!(f, "{}", runlist)?;
+        }
+
         Ok(())
     }
 }

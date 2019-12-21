@@ -43,7 +43,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     let is_highlight = args.is_present("highlight");
 
     let mut colors = (1..=12)
-        .map(|n| format!("paired-12-qual-{}", n).to_string())
+        .map(|n| format!("paired-12-qual-{}", n))
         .collect::<Vec<String>>();
     colors.reverse();
     let mut color_idx = 0;

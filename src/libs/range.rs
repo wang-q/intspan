@@ -1,6 +1,7 @@
 use crate::IntSpan;
 use regex::Regex;
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Default, Clone)]
 pub struct Range {
@@ -108,19 +109,6 @@ impl Range {
         new
     }
 
-    /// To string
-    ///
-    /// ```
-    /// # use intspan::Range;
-    /// let range = Range::from("I", 1, 100);
-    /// assert_eq!(range.to_string(), "I:1-100");
-    /// let range = Range::from("I", 100, 100);
-    /// assert_eq!(range.to_string(), "I:100");
-    /// ```
-    pub fn to_string(&self) -> String {
-        self.encode()
-    }
-
     /// Valid or not
     ///
     /// ```
@@ -209,6 +197,22 @@ impl Range {
         }
 
         header
+    }
+}
+
+/// To string
+///
+/// ```
+/// # use intspan::Range;
+/// let range = Range::from("I", 1, 100);
+/// assert_eq!(range.to_string(), "I:1-100");
+/// let range = Range::from("I", 100, 100);
+/// assert_eq!(range.to_string(), "I:100");
+/// ```
+impl fmt::Display for Range {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.encode())?;
+        Ok(())
     }
 }
 
