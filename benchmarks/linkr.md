@@ -1,8 +1,8 @@
 # `linkr`, `jrange` and `rangeops`
 
 ```bash
-brew install jrange
 brew install intspan
+brew install jrange
 cpanm App::Rangeops
 
 brew install hyperfine
@@ -11,14 +11,14 @@ brew install hyperfine
 
 ## `bash benchmarks/linkr/run.sh`
 
-* OSX 10.14 i7-8700k oracleJDK8
-
 ```bash
 bash ~/Scripts/rust/intspan/benchmarks/linkr/run.sh
 
 rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
 
 ```
+
+* OSX 10.14 i7-8700k oracleJDK8
 
 ```text
 ==> merge <==
