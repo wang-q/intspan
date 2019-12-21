@@ -345,10 +345,10 @@ duration 8.677303
 
 ```bash
 brew install jrange
-cargo install intspan
+brew install intspan
 cpanm App::Rangeops
 
-cargo install hyperfine
+brew install hyperfine
 
 ```
 
