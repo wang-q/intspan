@@ -1,0 +1,153 @@
+# `spanr`, `jrunlist` and `rangeops`
+
+```bash
+brew install intspan
+brew install jrunlist
+cpanm App::RL
+
+brew install hyperfine
+
+```
+
+## `bash benchmarks/spanr/run.sh`
+
+```bash
+bash ~/Scripts/rust/intspan/benchmarks/spanr/run.sh
+
+rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
+
+```
+
+* OSX 10.14 i7-8700k oracleJDK8
+
+```text
+==> jrunlist
+        3.30 real         9.21 user         1.35 sys
+1060646912  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+    264999  page reclaims
+        10  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         2  signals received
+        39  voluntary context switches
+     76018  involuntary context switches
+==> spanr
+        1.99 real         1.92 user         0.05 sys
+ 109604864  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+     26721  page reclaims
+        52  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+         0  voluntary context switches
+       865  involuntary context switches
+==> App::RL
+      243.11 real       241.32 user         0.95 sys
+ 116346880  maximum resident set size
+         0  average shared memory size
+         0  average unshared data size
+         0  average unshared stack size
+     28387  page reclaims
+        28  page faults
+         0  swaps
+         0  block input operations
+         0  block output operations
+         0  messages sent
+         0  messages received
+         0  signals received
+       136  voluntary context switches
+    148340  involuntary context switches
+
+
+```
+
+* Ubuntu 14.04 E5-2690 v3 openJDK9
+
+```text
+==> jrunlist
+        Command being timed: "jrunlist statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+        User time (seconds): 14.33
+        System time (seconds): 1.03
+        Percent of CPU this job got: 406%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.78
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 1649228
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 104173
+        Voluntary context switches: 12854
+        Involuntary context switches: 1149
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 3552
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+==> spanr
+        Command being timed: "spanr statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+        User time (seconds): 5.31
+        System time (seconds): 0.07
+        Percent of CPU this job got: 100%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.38
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 83524
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 46893
+        Voluntary context switches: 1
+        Involuntary context switches: 7
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 3488
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+==> App::RL
+        Command being timed: "runlist stat2 -s chr.sizes sep-gene.yml paralog.yml --op intersect --all --mk -o stdout"
+        User time (seconds): 281.31
+        System time (seconds): 0.12
+        Percent of CPU this job got: 100%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 4:41.33
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 116732
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 134101
+        Voluntary context switches: 1
+        Involuntary context switches: 1162
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 3488
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+
+```
