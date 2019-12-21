@@ -331,5 +331,4 @@ mod read_write {
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 11);
     }
-
 }

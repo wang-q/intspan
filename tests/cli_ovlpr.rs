@@ -171,7 +171,10 @@ fn command_restrict() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 36);
-    assert!(!stdout.contains("pac1461_9030\tpac8852_20444"), "no long-long overlaps");
+    assert!(
+        !stdout.contains("pac1461_9030\tpac8852_20444"),
+        "no long-long overlaps"
+    );
 
     Ok(())
 }
