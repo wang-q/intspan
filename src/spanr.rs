@@ -44,8 +44,6 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// TODO: impl various traits
-
 // set, runlists: single name IntSpan set or runlists
 //      set is a set of IntSpans
 //      set: BTreeMap<String, IntSpan>
