@@ -86,6 +86,7 @@
 //! which contains many codes from `Set::IntSpan`, `Set::IntSpan::Fast` and `Set::IntSpan::Island`.
 //!
 
+use std::cmp::min;
 use std::fmt;
 use std::vec::Vec;
 
@@ -101,9 +102,8 @@ lazy_static! {
 }
 
 //----------------------------------------------------------
-// Set contents
+/// INTERFACE: Set creation and contents
 //----------------------------------------------------------
-
 impl IntSpan {
     pub fn new() -> Self {
         IntSpan { edges: Vec::new() }
@@ -286,7 +286,7 @@ mod create {
 }
 
 //----------------------------------------------------------
-// Set cardinality
+/// INTERFACE: Set cardinality
 //----------------------------------------------------------
 impl IntSpan {
     pub fn cardinality(&self) -> i32 {
@@ -332,7 +332,7 @@ impl IntSpan {
 }
 
 //----------------------------------------------------------
-// Member operations (mutate original set)
+/// INTERFACE: Member operations (mutate original set)
 //----------------------------------------------------------
 impl IntSpan {
     pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) {
@@ -544,7 +544,7 @@ mod mutate {
 }
 
 //----------------------------------------------------------
-// Set binary operations (create new set)
+/// INTERFACE: Set binary operations (create new set)
 //----------------------------------------------------------
 impl IntSpan {
     pub fn copy(&self) -> Self {
@@ -644,7 +644,7 @@ mod binary {
 }
 
 //----------------------------------------------------------
-// Set relations
+/// INTERFACE: Set relations
 //----------------------------------------------------------
 impl IntSpan {
     pub fn equals(&self, other: &Self) -> bool {
@@ -727,7 +727,7 @@ mod relation {
 }
 
 //----------------------------------------------------------
-// Indexing
+/// INTERFACE: Indexing
 //----------------------------------------------------------
 impl IntSpan {
     fn at_pos(&self, index: i32) -> i32 {
@@ -910,7 +910,7 @@ mod index {
 }
 
 //----------------------------------------------------------
-// Spans Ops
+/// INTERFACE: Spans Ops
 //----------------------------------------------------------
 impl IntSpan {
     pub fn cover(&self) -> Self {
@@ -1126,15 +1126,112 @@ mod span {
 }
 
 //----------------------------------------------------------
-// TODO: Inter-set operations
+/// INTERFACE: Inter-set OPs
 //----------------------------------------------------------
+impl IntSpan {
+    /// `overlap`
+    ///
+    /// Returns the size of intersection of two sets.
+    ///
+    /// `set.overlap(&other)` equivalent to `set.intersect(&other).cardinality()`
+    ///
+    /// ```
+    /// # use intspan::IntSpan;
+    /// let set = IntSpan::from("1");
+    /// let other = IntSpan::from("1");
+    /// assert_eq!(set.overlap(&other), 1);
+    /// let other = IntSpan::from("2");
+    /// assert_eq!(set.overlap(&other), 0);
+    /// let set = IntSpan::from("1-5");
+    /// let other = IntSpan::from("1-10");
+    /// assert_eq!(set.overlap(&other), 5);
+    /// let set = IntSpan::from("1-5,6");
+    /// let other = IntSpan::from("6-10");
+    /// assert_eq!(set.overlap(&other), 1);
+    /// ```
+    pub fn overlap(&self, other: &Self) -> i32 {
+        self.intersect(other).cardinality()
+    }
+
+    /// Returns the distance between sets, measured as follows.
+    ///
+    /// * If the sets overlap, then the distance is negative and given by `- set.overlap(&other)`
+    ///
+    /// * If the sets do not overlap, $d is positive and given by the distance on the integer line
+    ///   between the two closest islands of the sets.
+    ///
+    /// ```
+    /// # use intspan::IntSpan;
+    /// let set = IntSpan::from("1");
+    /// let other = IntSpan::from("1");
+    /// assert_eq!(set.distance(&other), -1);
+    /// let other = IntSpan::from("");
+    /// assert_eq!(set.distance(&other), 0);
+    /// let other = IntSpan::from("2");
+    /// assert_eq!(set.distance(&other), 1);
+    ///
+    /// let set = IntSpan::from("1-5");
+    /// let other = IntSpan::from("1-10");
+    /// assert_eq!(set.distance(&other), -5);
+    /// let other = IntSpan::from("10-15");
+    /// assert_eq!(set.distance(&other), 5);
+    /// let set = IntSpan::from("1-5,6");
+    /// let other = IntSpan::from("6-10");
+    /// assert_eq!(set.distance(&other), -1);
+    ///
+    /// let set = IntSpan::from("1-5,10-15");
+    /// let other = IntSpan::from("5-9");
+    /// assert_eq!(set.distance(&other), -1);
+    /// let other = IntSpan::from("6");
+    /// assert_eq!(set.distance(&other), 1);
+    /// let other = IntSpan::from("7");
+    /// assert_eq!(set.distance(&other), 2);
+    /// let other = IntSpan::from("7-9");
+    /// assert_eq!(set.distance(&other), 1);
+    /// let other = IntSpan::from("16-20");
+    /// assert_eq!(set.distance(&other), 1);
+    /// let other = IntSpan::from("17-20");
+    /// assert_eq!(set.distance(&other), 2);
+    /// ```
+    pub fn distance(&self, other: &Self) -> i32 {
+        if self.is_empty() || other.is_empty() {
+            return 0;
+        } else {
+            let overlap = self.overlap(other);
+
+            if overlap > 0 {
+                return -overlap;
+            } else {
+                let mut min_d = 0;
+
+                for i in 0..self.span_size() {
+                    let lower1 = *self.edges.get(i * 2).unwrap();
+                    let upper1 = *self.edges.get(i * 2 + 1).unwrap() - 1;
+                    for j in 0..other.span_size() {
+                        let lower2 = *other.edges.get(j * 2).unwrap();
+                        let upper2 = *other.edges.get(j * 2 + 1).unwrap() - 1;
+
+                        let d1 = (lower1 - upper2).abs();
+                        let d2 = (upper1 - lower2).abs();
+                        let d = min(d1, d2);
+
+                        if min_d == 0 || d < min_d {
+                            min_d = d;
+                        }
+                    }
+                }
+                return min_d;
+            }
+        }
+    }
+}
 
 //----------------------------------------------------------
 // TODO: Islands
 //----------------------------------------------------------
 
 //----------------------------------------------------------
-// Aliases
+/// INTERFACE: Aliases
 //----------------------------------------------------------
 impl IntSpan {
     pub fn size(&self) -> i32 {
