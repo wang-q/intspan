@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Default, Clone)]
 pub struct Overlap {
     f_id: String,
@@ -142,9 +144,12 @@ impl Overlap {
 
         this
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!(
+impl fmt::Display for Overlap {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
             "{}\t{}\t{}\t{:.3}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
             self.f_id,
             self.g_id,
@@ -158,8 +163,9 @@ impl Overlap {
             self.g_begin,
             self.g_end,
             self.g_len,
-            self.contained,
-        )
+            self.contained
+        )?;
+        Ok(())
     }
 }
 
