@@ -101,10 +101,8 @@ impl Range {
     /// # assert_eq!(range.to_string(), "S288c.I(-):27070-29557");
     /// ```
     pub fn from_str(range: &str) -> Self {
-        let s = range.into();
-
         let mut new = Self::new();
-        new.decode(&s);
+        new.decode(range);
 
         new
     }
@@ -137,8 +135,8 @@ impl Range {
         IntSpan::from_pair(self.start, self.end)
     }
 
-    fn decode(&mut self, header: &String) {
-        let caps = match RE.captures(header.as_str()) {
+    fn decode(&mut self, header: &str) {
+        let caps = match RE.captures(header) {
             Some(x) => x,
             None => {
                 self.chr = header.split(' ').next().unwrap().to_string();
