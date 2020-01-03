@@ -20,7 +20,7 @@ Current release: 0.4.9
 
 ```
 $ spanr help
-spanr 0.4.0
+spanr 0.4.9
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
@@ -53,7 +53,7 @@ SUBCOMMANDS:
 
 ```
 $ linkr help
-linkr 0.4.0
+linkr 0.4.9
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
@@ -79,7 +79,7 @@ SUBCOMMANDS:
 
 ```
 $ ovlpr help
-ovlpr 0.4.0
+ovlpr 0.4.9
 wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
@@ -95,6 +95,7 @@ SUBCOMMANDS:
     help        Prints this message or the help of the given subcommand(s)
     paf2ovlp    Convert minimap .paf to overlaps
     replace     Replace IDs in .ovlp.tsv
+    restrict    Restrict overlaps to known pairs
 
 ```
 
