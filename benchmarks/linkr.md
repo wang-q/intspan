@@ -289,10 +289,10 @@ hyperfine --warmup 1 --export-markdown sort.md.tmp "gzip -dcf tests/Atha/links.l
 
 ```
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr | 248.5 ± 12.5 | 230.9 | 277.6 | 1.00 |
-| rangeops | 3472.4 ± 39.9 | 3420.0 | 3532.1 | 13.97 ± 0.72 |
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:---------|--------------:|---------:|---------:|-------------:|
+| linkr    |  248.5 ± 12.5 |    230.9 |    277.6 |         1.00 |
+| rangeops | 3472.4 ± 39.9 |   3420.0 |   3532.1 | 13.97 ± 0.72 |
 
 ### clean
 
@@ -301,9 +301,9 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp "linkr clean tests/Atha/so
 
 ```
 
-| Command | Mean [s] | Min [s] | Max [s] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr | 9.062 ± 0.179 | 8.856 | 9.175 | 1.00 |
+| Command  |        Mean [s] | Min [s] | Max [s] |     Relative |
+|:---------|----------------:|--------:|--------:|-------------:|
+| linkr    |   9.062 ± 0.179 |   8.856 |   9.175 |         1.00 |
 | rangeops | 244.335 ± 2.320 | 242.105 | 246.736 | 26.96 ± 0.59 |
 
 ### merge
@@ -313,10 +313,10 @@ hyperfine --min-runs 3 --export-markdown merge.md.tmp "linkr merge tests/Atha/so
 
 ```
 
-| Command | Mean [s] | Min [s] | Max [s] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr  | 9.356 ± 0.237 | 9.092 | 9.551 | 1.00 |
-| rangeops  | 156.579 ± 1.006 | 155.680 | 157.665 | 16.74 ± 0.44 |
+| Command  |        Mean [s] | Min [s] | Max [s] |     Relative |
+|:---------|----------------:|--------:|--------:|-------------:|
+| linkr    |   9.356 ± 0.237 |   9.092 |   9.551 |         1.00 |
+| rangeops | 156.579 ± 1.006 | 155.680 | 157.665 | 16.74 ± 0.44 |
 
 ### clean2
 
@@ -325,9 +325,9 @@ hyperfine --min-runs 3 --export-markdown clean2.md.tmp "linkr clean tests/Atha/s
 
 ```
 
-| Command | Mean [s] | Min [s] | Max [s] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr  | 4.466 ± 0.040 | 4.443 | 4.512 | 1.00 |
+| Command  |        Mean [s] | Min [s] | Max [s] |     Relative |
+|:---------|----------------:|--------:|--------:|-------------:|
+| linkr    |   4.466 ± 0.040 |   4.443 |   4.512 |         1.00 |
 | rangeops | 109.768 ± 0.774 | 108.875 | 110.243 | 24.58 ± 0.28 |
 
 ### connect
@@ -337,10 +337,10 @@ hyperfine --warmup 1 --export-markdown connect.md.tmp "linkr connect tests/Atha/
 
 ```
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr  | 284.1 ± 9.2 | 272.6 | 303.1 | 1.00 |
-| rangeops  | 5578.0 ± 46.4 | 5524.2 | 5692.2 | 19.63 ± 0.65 |
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:---------|--------------:|---------:|---------:|-------------:|
+| linkr    |   284.1 ± 9.2 |    272.6 |    303.1 |         1.00 |
+| rangeops | 5578.0 ± 46.4 |   5524.2 |   5692.2 | 19.63 ± 0.65 |
 
 ### filter
 
@@ -349,7 +349,7 @@ hyperfine --warmup 1 --export-markdown filter.md.tmp "linkr filter tests/Atha/co
 
 ```
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| linkr  | 56.7 ± 7.5 | 48.6 | 80.4 | 1.00 |
-| rangeops  | 1366.2 ± 26.4 | 1315.2 | 1413.9 | 24.12 ± 3.24 |
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:---------|--------------:|---------:|---------:|-------------:|
+| linkr    |    56.7 ± 7.5 |     48.6 |     80.4 |         1.00 |
+| rangeops | 1366.2 ± 26.4 |   1315.2 |   1413.9 | 24.12 ± 3.24 |
