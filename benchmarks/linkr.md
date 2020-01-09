@@ -23,79 +23,79 @@ rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
 ```text
 ==> merge <==
 ==> jrange merge lastz blast
-        3.53 real         4.39 user         0.41 sys
-1161953280  maximum resident set size
+        3.93 real         4.34 user         0.71 sys
+2232537088  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    285816  page reclaims
-         2  page faults
+    546795  page reclaims
+       302  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          1  signals received
-       116  voluntary context switches
-      5458  involuntary context switches
+       390  voluntary context switches
+      5457  involuntary context switches
 ==> linkr merge lastz blast
-        8.21 real         8.14 user         0.03 sys
-  10682368  maximum resident set size
+        8.13 real         8.08 user         0.02 sys
+  10190848  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-      2617  page reclaims
-         0  page faults
+      2205  page reclaims
+       293  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          0  signals received
-         0  voluntary context switches
-      7349  involuntary context switches
+         4  voluntary context switches
+      3448  involuntary context switches
 ==> rangeops merge lastz blast
-      114.75 real       317.46 user         1.76 sys
-  81735680  maximum resident set size
+      109.38 real       303.42 user         0.76 sys
+  81293312  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    194485  page reclaims
-         0  page faults
+    193419  page reclaims
+       537  page faults
          0  swaps
          0  block input operations
          0  block output operations
        140  messages sent
        131  messages received
          0  signals received
-       144  voluntary context switches
-    371802  involuntary context switches
+       579  voluntary context switches
+    109887  involuntary context switches
 
 ==> clean <==
 ==> jrange clean sort.clean
-        2.51 real         3.75 user         0.43 sys
-1152802816  maximum resident set size
+        2.37 real         3.46 user         0.39 sys
+1152528384  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    283479  page reclaims
-         0  page faults
+    283193  page reclaims
+       224  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          1  signals received
-        16  voluntary context switches
-      6481  involuntary context switches
+       159  voluntary context switches
+      4389  involuntary context switches
 ==> linkr clean sort.clean
-        2.59 real         2.56 user         0.01 sys
-  17092608  maximum resident set size
+        2.48 real         2.47 user         0.00 sys
+  17862656  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-      4182  page reclaims
-         0  page faults
+      4352  page reclaims
+        18  page faults
          0  swaps
          0  block input operations
          0  block output operations
@@ -103,14 +103,14 @@ rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
          0  messages received
          0  signals received
          0  voluntary context switches
-      1077  involuntary context switches
+        84  involuntary context switches
 ==> rangeops clean sort.clean
-       54.43 real        54.09 user         0.20 sys
-  84979712  maximum resident set size
+       49.96 real        49.88 user         0.05 sys
+  86474752  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     25085  page reclaims
+     25658  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -118,17 +118,17 @@ rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
          0  messages sent
          0  messages received
          0  signals received
-         5  voluntary context switches
-     24855  involuntary context switches
+         4  voluntary context switches
+      1759  involuntary context switches
 
 ==> clean bundle <==
 ==> jrange clean bundle sort.clean
-        4.80 real         6.57 user         0.46 sys
-1163481088  maximum resident set size
+        4.55 real         6.13 user         0.55 sys
+1812459520  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    286496  page reclaims
+    444689  page reclaims
          0  page faults
          0  swaps
          0  block input operations
@@ -136,40 +136,40 @@ rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
          0  messages sent
          0  messages received
          3  signals received
-         2  voluntary context switches
-      9727  involuntary context switches
+         0  voluntary context switches
+      5293  involuntary context switches
 ==> linkr clean bundle sort.clean
-        5.17 real         5.11 user         0.02 sys
-  26021888  maximum resident set size
+        4.95 real         4.94 user         0.00 sys
+  26411008  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-      6058  page reclaims
-       304  page faults
+      6456  page reclaims
+         1  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          0  signals received
-         2  voluntary context switches
-      3377  involuntary context switches
+         0  voluntary context switches
+       194  involuntary context switches
 ==> rangeops clean bundle sort.clean
-       85.37 real        84.86 user         0.27 sys
-  89972736  maximum resident set size
+       78.40 real        78.23 user         0.10 sys
+  90353664  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     26372  page reclaims
-        44  page faults
+     26996  page reclaims
+         0  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          0  signals received
-       251  voluntary context switches
-     31324  involuntary context switches
+         4  voluntary context switches
+     10379  involuntary context switches
 
 ```
 

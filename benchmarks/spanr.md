@@ -22,54 +22,53 @@ rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
 
 ```text
 ==> jrunlist
-        3.30 real         9.21 user         1.35 sys
-1060646912  maximum resident set size
+        3.23 real         8.72 user         1.35 sys
+1051443200  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-    264999  page reclaims
-        10  page faults
+    262964  page reclaims
+        68  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          2  signals received
-        39  voluntary context switches
-     76018  involuntary context switches
+       415  voluntary context switches
+     70319  involuntary context switches
 ==> spanr
-        1.99 real         1.92 user         0.05 sys
- 109604864  maximum resident set size
+        1.96 real         1.89 user         0.04 sys
+ 109182976  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     26721  page reclaims
-        52  page faults
+     26425  page reclaims
+       246  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          0  signals received
-         0  voluntary context switches
-       865  involuntary context switches
+         1  voluntary context switches
+       238  involuntary context switches
 ==> App::RL
-      243.11 real       241.32 user         0.95 sys
- 116346880  maximum resident set size
+      217.36 real       216.89 user         0.25 sys
+ 118370304  maximum resident set size
          0  average shared memory size
          0  average unshared data size
          0  average unshared stack size
-     28387  page reclaims
-        28  page faults
+     28895  page reclaims
+        13  page faults
          0  swaps
          0  block input operations
          0  block output operations
          0  messages sent
          0  messages received
          0  signals received
-       136  voluntary context switches
-    148340  involuntary context switches
-
+        18  voluntary context switches
+     37340  involuntary context switches
 
 ```
 
