@@ -146,8 +146,8 @@ Simple rules:
 * `:` to separate names and digits
 * `-` to separate `start` and `end`
 * For `species`:
-    * `species` should be alphanumeric and without spaces, one exception char is `/`.
-    * `species` is an identity, you can also treat is as a strain name, a lineage or something else. 
+  * `species` should be alphanumeric and without spaces, one exception char is `/`.
+  * `species` is an identity, you can also treat is as a strain name, a lineage or something else.
 
 ```text
 species.chromosome(strand):start-end
@@ -378,4 +378,5 @@ spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
 ```
 
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fwang-q%2Fintspan.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fwang-q%2Fintspan?ref=badge_large)
