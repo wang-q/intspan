@@ -17,6 +17,11 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
                 .index(1),
         )
         .arg(
+            Arg::with_name("all")
+                .long("all")
+                .help("All parts of file_stem, except the last one"),
+        )
+        .arg(
             Arg::with_name("outfile")
                 .short("o")
                 .long("outfile")
@@ -34,9 +39,18 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
 
+    let is_all = args.is_present("all");
+
     for infile in args.values_of("infiles").unwrap() {
         let yaml = read_yaml(infile);
-        out_yaml.insert(
+
+        let key = if is_all {
+            Path::new(infile)
+                .file_stem()
+                .and_then(OsStr::to_str)
+                .unwrap()
+                .to_string()
+        } else {
             Path::new(infile)
                 .file_stem()
                 .and_then(OsStr::to_str)
@@ -44,9 +58,9 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
                 .split('.')
                 .next()
                 .unwrap()
-                .to_string(),
-            serde_yaml::to_value(yaml).unwrap(),
-        );
+                .to_string()
+        };
+        out_yaml.insert(key, serde_yaml::to_value(yaml).unwrap());
     }
 
     //----------------------------

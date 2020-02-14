@@ -1,6 +1,10 @@
 # Change Log
 
-Unreleased ReleaseDate
+## [Unreleased] - ReleaseDate
+
+### Added
+
+* Add `--all` to `spanr merge`
 
 ## [0.4.10] - 2020-02-15
 

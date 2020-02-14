@@ -98,6 +98,27 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_merge_all() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("merge")
+        .arg("tests/spanr/I.yml")
+        .arg("tests/spanr/II.other.yml")
+        .arg("--all")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 5);
+    assert!(stdout.contains("28547-29194"));
+    assert!(stdout.contains("\nI:\n"));
+    assert!(!stdout.contains("\nII:\n"));
+    assert!(stdout.contains("\nII.other:\n"));
+
+    Ok(())
+}
+
+#[test]
 fn command_split() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
