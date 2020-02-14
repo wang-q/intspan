@@ -1,6 +1,10 @@
 # Change Log
 
-Unreleased ReleaseDate
+## [Unreleased] - ReleaseDate
+
+### Added
+
+* Add `--op` to `spanr combine`
 
 ## [0.4.9] - 2019-12-09
 

@@ -268,6 +268,24 @@ fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn command_combine_op() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("combine")
+        .arg("tests/spanr/Atha.yml")
+        .arg("--op")
+        .arg("xor")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert!(stdout.contains("7233-7383"), "xor");
+
+    Ok(())
+}
+
+#[test]
 fn command_combine_2() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
