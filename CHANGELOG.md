@@ -1,6 +1,8 @@
 # Change Log
 
-## [Unreleased] - ReleaseDate
+Unreleased ReleaseDate
+
+## [0.4.11] - 2020-02-15
 
 ### Added
 
