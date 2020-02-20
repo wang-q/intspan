@@ -1195,12 +1195,12 @@ impl IntSpan {
     /// ```
     pub fn distance(&self, other: &Self) -> i32 {
         if self.is_empty() || other.is_empty() {
-            return 0;
+            0
         } else {
             let overlap = self.overlap(other);
 
             if overlap > 0 {
-                return -overlap;
+                -overlap
             } else {
                 let mut min_d = 0;
 
@@ -1220,7 +1220,7 @@ impl IntSpan {
                         }
                     }
                 }
-                return min_d;
+                min_d
             }
         }
     }

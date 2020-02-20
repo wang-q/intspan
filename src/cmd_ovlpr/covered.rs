@@ -157,26 +157,26 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     keys.sort();
 
     for key in &keys {
-        let mut out_line = String::new();
+        let mut _out_line = String::new();
 
         if is_base {
             let tiers = res.get(key).unwrap().uniq_tiers();
-            out_line = base_lines(key, &tiers);
+            _out_line = base_lines(key, &tiers);
         } else if is_mean {
             let tiers = res.get(key).unwrap().uniq_tiers();
-            out_line = mean_line(key, &tiers);
+            _out_line = mean_line(key, &tiers);
         } else {
             let intspan = res.get(key).unwrap().max_tier();
 
             if !is_longest || intspan.span_size() <= 1 {
-                out_line = format!("{}:{}", key, intspan.to_string());
+                _out_line = format!("{}:{}", key, intspan.to_string());
             } else {
-                out_line = longest_line(key, &intspan);
+                _out_line = longest_line(key, &intspan);
             }
         }
 
-        if !out_line.is_empty() {
-            writer.write_all((out_line + "\n").as_ref())?;
+        if !_out_line.is_empty() {
+            writer.write_all((_out_line + "\n").as_ref())?;
         }
     }
 
