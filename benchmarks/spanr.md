@@ -150,3 +150,31 @@ rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
 
 
 ```
+
+## `spanr cover`
+
+```bash
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | spanr    cover stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | jrunlist cover stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | runlist  cover stdin -o /dev/null'
+
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | spanr    cover stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | jrunlist cover stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | runlist  cover stdin -o /dev/null'
+
+```
+
+| Command  |   Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:---------|------------:|---------:|---------:|------------:|
+| spanr    | 186.0 ± 0.9 |    184.5 |    187.5 |        1.00 |
+| jrunlist | 466.4 ± 2.4 |    462.8 |    470.0 | 2.51 ± 0.02 |
+| runlist  | 379.1 ± 1.8 |    376.5 |    382.2 | 2.04 ± 0.01 |
+
+| Command  |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:---------|---------------:|--------:|--------:|-------------:|
+| spanr    | 21.592 ± 0.150 |  21.407 |  21.862 | 35.54 ± 0.82 |
+| jrunlist |  1.524 ± 0.022 |   1.509 |   1.577 |  2.51 ± 0.07 |
+| runlist  |  0.608 ± 0.013 |   0.594 |   0.635 |         1.00 |
+
