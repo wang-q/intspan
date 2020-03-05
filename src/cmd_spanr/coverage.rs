@@ -5,6 +5,8 @@ use std::io::BufRead;
 
 // TODO: optional chr.sizes to be passed to Coverage::new()
 
+// TODO: improve speeds on large files
+
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("coverage")
