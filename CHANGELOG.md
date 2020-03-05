@@ -1,6 +1,8 @@
 # Change Log
 
-## [Unreleased] -  ReleaseDate
+Unreleased ReleaseDate
+
+## [0.4.12] -  2020-03-05
 
 ### Changed
 
