@@ -166,15 +166,42 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
 
 ```
 
-| Command  |   Mean [ms] | Min [ms] | Max [ms] |    Relative |
-|:---------|------------:|---------:|---------:|------------:|
-| spanr    | 186.0 ± 0.9 |    184.5 |    187.5 |        1.00 |
-| jrunlist | 466.4 ± 2.4 |    462.8 |    470.0 | 2.51 ± 0.02 |
-| runlist  | 379.1 ± 1.8 |    376.5 |    382.2 | 2.04 ± 0.01 |
+| Command  |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:---------|-------------:|---------:|---------:|------------:|
+| spanr    |   47.3 ± 1.1 |     45.6 |     51.7 |        1.00 |
+| jrunlist | 470.2 ± 13.5 |    457.1 |    505.2 | 9.94 ± 0.36 |
+| runlist  |  365.6 ± 2.3 |    362.5 |    370.1 | 7.73 ± 0.18 |
+
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:---------|--------------:|---------:|---------:|-------------:|
+| spanr    |    59.3 ± 1.0 |     57.9 |     62.6 |         1.00 |
+| jrunlist | 1549.3 ± 18.4 |   1525.7 |   1597.6 | 26.14 ± 0.53 |
+| runlist  |   596.5 ± 8.0 |    591.5 |    618.3 | 10.06 ± 0.21 |
+
+## `spanr coverage`
+
+```bash
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | spanr    coverage stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | jrunlist cover    stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/S288c/chr.sizes'
+
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | spanr    coverage stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | jrunlist cover    stdin -o /dev/null' \
+    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/Spom/chr.sizes'
+
+```
+
+| Command  |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:---------|-------------:|---------:|---------:|------------:|
+| spanr    |  171.5 ± 1.7 |    169.8 |    176.1 |        1.00 |
+| jrunlist |  462.0 ± 3.6 |    457.1 |    467.3 | 2.69 ± 0.03 |
+| runlist  | 1494.1 ± 8.0 |   1484.2 |   1508.9 | 8.71 ± 0.10 |
 
 | Command  |       Mean [s] | Min [s] | Max [s] |     Relative |
 |:---------|---------------:|--------:|--------:|-------------:|
-| spanr    | 21.592 ± 0.150 |  21.407 |  21.862 | 35.54 ± 0.82 |
-| jrunlist |  1.524 ± 0.022 |   1.509 |   1.577 |  2.51 ± 0.07 |
-| runlist  |  0.608 ± 0.013 |   0.594 |   0.635 |         1.00 |
+| spanr    | 21.520 ± 0.230 |  21.242 |  21.929 | 13.49 ± 0.37 |
+| jrunlist |  1.595 ± 0.040 |   1.544 |   1.662 |         1.00 |
+| runlist  |  8.936 ± 0.342 |   8.502 |   9.340 |  5.60 ± 0.26 |
 
