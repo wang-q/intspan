@@ -4,6 +4,7 @@ pub mod combine;
 pub mod compare;
 pub mod convert;
 pub mod cover;
+pub mod coverage;
 pub mod genome;
 pub mod gff;
 pub mod merge;

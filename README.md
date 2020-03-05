@@ -190,8 +190,9 @@ spanr some tests/spanr/Atha.yml tests/spanr/Atha.list
 spanr merge tests/spanr/I.yml tests/spanr/II.yml
 
 spanr cover tests/spanr/S288c.ranges
-spanr cover tests/spanr/S288c.ranges -c 2
 spanr cover tests/spanr/dazzname.ranges
+
+spanr coverage tests/spanr/S288c.ranges -c 2
 
 spanr gff tests/spanr/NC_007942.gff --tag tRNA
 

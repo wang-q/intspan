@@ -559,26 +559,6 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_cover_c2() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("spanr")?;
-    let output = cmd
-        .arg("cover")
-        .arg("tests/spanr/S288c.ranges")
-        .arg("-c")
-        .arg("2")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 3);
-    assert!(!stdout.contains("S288c"), "species name");
-    assert!(!stdout.contains("1-150"), "coverage 1");
-    assert!(stdout.contains("90-100"), "coverage 2");
-
-    Ok(())
-}
-
-#[test]
 fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
@@ -591,6 +571,26 @@ fn command_cover_dazz() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("infile_0/1/0_514"), "chr name");
     assert!(stdout.contains("19-499"), "covered");
+
+    Ok(())
+}
+
+#[test]
+fn command_coverage() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("coverage")
+        .arg("tests/spanr/S288c.ranges")
+        .arg("-c")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert!(!stdout.contains("S288c"), "species name");
+    assert!(!stdout.contains("1-150"), "coverage 1");
+    assert!(stdout.contains("90-100"), "coverage 2");
 
     Ok(())
 }

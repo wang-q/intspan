@@ -19,6 +19,7 @@ fn main() -> std::io::Result<()> {
         .subcommand(cmd_spanr::compare::make_subcommand())
         .subcommand(cmd_spanr::span::make_subcommand())
         .subcommand(cmd_spanr::cover::make_subcommand())
+        .subcommand(cmd_spanr::coverage::make_subcommand())
         .subcommand(cmd_spanr::gff::make_subcommand())
         .subcommand(cmd_spanr::convert::make_subcommand())
         .subcommand(cmd_spanr::range::make_subcommand());
@@ -35,6 +36,7 @@ fn main() -> std::io::Result<()> {
         ("compare", Some(sub_matches)) => cmd_spanr::compare::execute(sub_matches),
         ("span", Some(sub_matches)) => cmd_spanr::span::execute(sub_matches),
         ("cover", Some(sub_matches)) => cmd_spanr::cover::execute(sub_matches),
+        ("coverage", Some(sub_matches)) => cmd_spanr::coverage::execute(sub_matches),
         ("gff", Some(sub_matches)) => cmd_spanr::gff::execute(sub_matches),
         ("convert", Some(sub_matches)) => cmd_spanr::convert::execute(sub_matches),
         ("range", Some(sub_matches)) => cmd_spanr::range::execute(sub_matches),
