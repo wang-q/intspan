@@ -9,8 +9,8 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         .about("Extract regions from a FA file")
         .after_help(
             "\
-             region.txt contains fake runlists.
-             There might be overlaps, e.g. I:17221-25234,21428-25459\
+* region.txt contains fake runlists.
+  There might be overlaps, e.g. I:17221-25234,21428-25459\
              ",
         )
         .arg(
@@ -38,6 +38,5 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 
 // command implementation
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
-
     Ok(())
 }
