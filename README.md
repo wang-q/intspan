@@ -161,17 +161,17 @@ Types of links:
 
 * Bilateral links
 
-        I(+):13063-17220    I(-):215091-219225
-        I(+):139501-141431  XII(+):95564-97485
+            I(+):13063-17220    I(-):215091-219225
+            I(+):139501-141431  XII(+):95564-97485
 
 * Bilateral links with hit strand
 
-        I(+):13327-17227    I(+):215084-218967  -
-        I(+):139501-141431  XII(+):95564-97485  +
+            I(+):13327-17227    I(+):215084-218967  -
+            I(+):139501-141431  XII(+):95564-97485  +
 
 * Multilateral links
 
-        II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
+            II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
 
 ## EXAMPLES
 
@@ -272,44 +272,22 @@ linkr circos --highlight tests/linkr/II.connect.tsv
 
 Steps:
 
-    sort
-      |
-      v
-    clean -> merge
-      |     /
-      |  /
-      v
-    clean
-      |
-      V
-    connect
-      |
-      v
-    filter
+            sort
+              |
+              v
+            clean -> merge
+              |     /
+              |  /
+              v
+            clean
+              |
+              V
+            connect
+              |
+              v
+            filter
 
-### `ovlpr`
-
-```bash
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
-
-target/debug/ovlpr covered tests/ovlpr/11_2.long.paf  --paf
-
-jrange covered src/test/resources/--paf -o stdout
-
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
-
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
-
-target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
-
-target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
-target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
-
-target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
-
-```
-
-### S288c
+#### S288c
 
 ```bash
 linkr sort tests/S288c/links.lastz.tsv tests/S288c/links.blast.tsv \
@@ -348,7 +326,7 @@ spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 
 ```
 
-### Atha
+#### Atha
 
 ```bash
 gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin -o tests/Atha/sort.tsv
@@ -376,6 +354,36 @@ cat tests/Atha/filter.tsv |
     spanr cover stdin -o tests/Atha/cover.yml
 
 spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
+
+```
+
+### `ovlpr`
+
+```bash
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
+
+target/debug/ovlpr covered tests/ovlpr/11_2.long.paf  --paf
+
+jrange covered src/test/resources/--paf -o stdout
+
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
+
+target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
+
+target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
+
+target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
+target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
+
+target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
+
+```
+
+### `far`
+
+```bash
+target/debug/far region tests/far/ufasta.fa
+
 
 ```
 

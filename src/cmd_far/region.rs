@@ -1,7 +1,7 @@
 use clap::*;
 use intspan::*;
 use std::collections::HashSet;
-use std::io::BufRead;
+use seq_io::fasta;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
@@ -22,7 +22,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         .arg(
             Arg::with_name("region.txt")
                 .help("seq_name:begin-end[,begin-end]")
-                .required(true)
+                .required(false)
                 .index(2),
         )
         .arg(
@@ -38,5 +38,24 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 
 // command implementation
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
+    let reader = reader(args.value_of("infile").unwrap());
+
+    let mut fa_in = fasta::Reader::new(reader);
+
+    let mut n = 0;
+    let mut sum = 0;
+    while let Some(record) = fa_in.next() {
+        let record = record.expect("Error reading record");
+        for s in record.seq_lines() {
+            sum += s.len();
+        }
+        n += 1;
+    }
+    println!(
+        "mean sequence length of {} records: {:.1} bp",
+        n,
+        sum as f32 / n as f32
+    );
+
     Ok(())
 }
