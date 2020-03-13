@@ -11,7 +11,13 @@
 
 Current release: 0.4.12
 
-`cargo install intspan`
+```bash
+cargo install intspan
+
+# or
+brew install intspan
+
+```
 
 ## SYNOPSIS
 
@@ -54,7 +60,7 @@ SUBCOMMANDS:
 
 ```
 $ linkr help
-linkr 0.4.9
+linkr 0.4.12
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
@@ -80,7 +86,7 @@ SUBCOMMANDS:
 
 ```
 $ ovlpr help
-ovlpr 0.4.9
+ovlpr 0.4.12
 wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
@@ -382,6 +388,7 @@ target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.ts
 ### `far`
 
 ```bash
+target/debug/far size tests/far/ufasta.fa
 target/debug/far region tests/far/ufasta.fa
 
 
