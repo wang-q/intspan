@@ -1,9 +1,13 @@
 use crate::{IntSpan, Range};
+use flate2::read::GzDecoder;
 use serde_yaml::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::fs;
+use std::error::Error;
+use std::ffi::OsStr;
+use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
+use std::path::Path;
 
 /// ```
 /// use std::io::BufRead;
@@ -16,12 +20,25 @@ use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 ///
 /// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
+///
+/// let reader = intspan::reader("tests/far/ufasta.fa.gz");
+/// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 256);
 /// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
         Box::new(BufReader::new(io::stdin()))
     } else {
-        Box::new(BufReader::new(fs::File::open(input).unwrap()))
+        let path = Path::new(input);
+        let file = match File::open(&path) {
+            Err(why) => panic!("could not open {}: {}", path.display(), why.description()),
+            Ok(file) => file,
+        };
+
+        if path.extension() == Some(OsStr::new("gz")) {
+            Box::new(BufReader::new(GzDecoder::new(file)))
+        } else {
+            Box::new(BufReader::new(file))
+        }
     };
 
     reader
@@ -68,7 +85,7 @@ pub fn writer(output: &str) -> Box<dyn Write> {
     let writer: Box<dyn Write> = if output == "stdout" {
         Box::new(BufWriter::new(io::stdout()))
     } else {
-        Box::new(BufWriter::new(fs::File::create(output).unwrap()))
+        Box::new(BufWriter::new(File::create(output).unwrap()))
     };
 
     writer

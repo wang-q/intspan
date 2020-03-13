@@ -42,9 +42,7 @@ fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("genome").arg("tests/file/doesnt/exist");
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("No such file or directory").or(
-            predicate::str::contains("The system cannot find the path specified"),
-        ));
+        .stderr(predicate::str::contains("could not open"));
 
     Ok(())
 }
