@@ -1,7 +1,7 @@
 use clap::*;
 use intspan::*;
-use std::collections::HashSet;
 use seq_io::fasta;
+use std::collections::HashSet;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
