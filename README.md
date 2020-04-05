@@ -388,9 +388,11 @@ target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.ts
 ### `far`
 
 ```bash
-target/debug/far size tests/far/ufasta.fa
-target/debug/far region tests/far/ufasta.fa
+diff \
+    <(target/debug/far size tests/far/ufasta.fa) \
+    <(faops size tests/far/ufasta.fa)
 
+target/debug/far region tests/far/ufasta.fa
 
 ```
 

@@ -1,6 +1,6 @@
+use bio::io::fasta;
 use clap::*;
 use intspan::*;
-use seq_io::fasta;
 use std::collections::HashSet;
 
 // Create clap subcommand arguments
@@ -40,15 +40,16 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     let reader = reader(args.value_of("infile").unwrap());
 
-    let mut fa_in = fasta::Reader::new(reader);
+    let fa_in = fasta::Reader::new(reader);
 
     let mut n = 0;
     let mut sum = 0;
-    while let Some(record) = fa_in.next() {
-        let record = record.expect("Error reading record");
-        for s in record.seq_lines() {
-            sum += s.len();
-        }
+    for result in fa_in.records() {
+        // obtain record or fail with error
+        let record = result.unwrap();
+        // obtain sequence
+        let seq = record.seq();
+        sum += seq.len();
         n += 1;
     }
     println!(

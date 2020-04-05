@@ -1,7 +1,6 @@
+use bio::io::fasta;
 use clap::*;
 use intspan::*;
-use seq_io::fasta;
-use seq_io::fasta::Record;
 use std::collections::HashSet;
 
 // Create clap subcommand arguments
@@ -32,16 +31,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
-        let mut fa = fasta::Reader::new(reader);
+        let fa_in = fasta::Reader::new(reader);
 
-        while let Some(record) = fa.next() {
-            let record = record.expect("Error reading record");
+        for result in fa_in.records() {
+            // obtain record or fail with error
+            let record = result.unwrap();
 
-            writer.write_fmt(format_args!(
-                "{}\t{}\n",
-                record.id().unwrap(),
-                record.seq().len()
-            ))?;
+            writer.write_fmt(format_args!("{}\t{}\n", record.id(), record.seq().len()))?;
         }
     }
 
