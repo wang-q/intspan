@@ -277,15 +277,17 @@ hyperfine --warmup 1 --export-markdown filter.md.tmp \
 
 ## `linkr` on Windows
 
-* E3-1245 V2
-* Windows 10 18950
-* strawberry-perl-5.30.0.1-64bit
-* rustc 1.40.0 msvc
+* Ryzen 7 PRO 3700U
+* Windows 10 19041
+* Strawberry Perl 5.30.2.1
+* rustc 1.42.0 msvc
 
 ### sort
 
-```cmd
-hyperfine --warmup 1 --export-markdown sort.md.tmp "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin > NUL" "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | rangeops sort stdin -o stdout > NUL"
+```ps1
+hyperfine --warmup 1 --export-markdown sort.md.tmp `
+    "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin > nul " `
+    "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | rangeops sort stdin -o stdout > nul "
 
 ```
 
@@ -332,8 +334,10 @@ hyperfine --min-runs 3 --export-markdown clean2.md.tmp "linkr clean tests/Atha/s
 
 ### connect
 
-```cmd
-hyperfine --warmup 1 --export-markdown connect.md.tmp "linkr connect tests/Atha/clean.tsv > NUL" "rangeops connect tests/Atha/clean.tsv > NUL"
+```ps1
+hyperfine --warmup 1 --export-markdown connect.md.tmp `
+    "linkr connect tests/Atha/clean.tsv > NUL" `
+    "rangeops connect tests/Atha/clean.tsv > NUL"
 
 ```
 
@@ -345,7 +349,9 @@ hyperfine --warmup 1 --export-markdown connect.md.tmp "linkr connect tests/Atha/
 ### filter
 
 ```cmd
-hyperfine --warmup 1 --export-markdown filter.md.tmp "linkr filter tests/Atha/connect.tsv -r 0.8 > NUL" "rangeops filter tests/Atha/connect.tsv -r 0.8 -o stdout > NUL"
+hyperfine --warmup 1 --export-markdown filter.md.tmp `
+    "linkr filter tests/Atha/connect.tsv -r 0.8 > NUL" `
+    "rangeops filter tests/Atha/connect.tsv -r 0.8 -o stdout > NUL"
 
 ```
 
