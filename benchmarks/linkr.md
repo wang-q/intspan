@@ -298,8 +298,10 @@ hyperfine --warmup 1 --export-markdown sort.md.tmp `
 
 ### clean
 
-```cmd
-hyperfine --min-runs 3 --export-markdown clean.md.tmp "linkr clean tests/Atha/sort.tsv > NUL" "rangeops clean tests/Atha/sort.tsv -o stdout > NUL"
+```ps1
+hyperfine --min-runs 3 --export-markdown clean.md.tmp `
+    "linkr clean tests/Atha/sort.tsv > NUL" `
+    "rangeops clean tests/Atha/sort.tsv -o stdout > NUL"
 
 ```
 
@@ -310,8 +312,10 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp "linkr clean tests/Atha/so
 
 ### merge
 
-```cmd
-hyperfine --min-runs 3 --export-markdown merge.md.tmp "linkr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" "rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o stdout > NUL"
+```ps1
+hyperfine --min-runs 3 --export-markdown merge.md.tmp `
+    "linkr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" `
+    "rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o stdout > NUL"
 
 ```
 
@@ -322,8 +326,10 @@ hyperfine --min-runs 3 --export-markdown merge.md.tmp "linkr merge tests/Atha/so
 
 ### clean2
 
-```cmd
-hyperfine --min-runs 3 --export-markdown clean2.md.tmp "linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL" "rangeops clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL"
+```ps1
+hyperfine --min-runs 3 --export-markdown clean2.md.tmp `
+    "linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL" `
+    "rangeops clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL"
 
 ```
 
