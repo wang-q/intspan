@@ -73,6 +73,24 @@ pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
     sizes
 }
 
+/// ```
+/// let sizes = intspan::read_first_column("tests/spanr/S288c.chr.sizes");
+/// assert_eq!(sizes.len(), 16);
+/// assert_eq!(*sizes.get(1).unwrap(), "II");
+/// assert_eq!(*sizes.get(15).unwrap(), "XVI");
+/// ```
+pub fn read_first_column(input: &str) -> Vec<String> {
+    let reader = reader(input);
+    let mut rows: Vec<String> = Vec::new();
+
+    for line in reader.lines() {
+        let field = line.unwrap().split('\t').next().unwrap().to_string();
+        rows.push(field);
+    }
+
+    rows
+}
+
 pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
     let mut reader = reader(input);
     let mut s = String::new();

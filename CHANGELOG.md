@@ -1,6 +1,10 @@
 # Change Log
 
-Unreleased ReleaseDate
+## [Unreleased] - ReleaseDate
+
+### Added
+
+* New binary `far`
 
 ## [0.4.12] -  2020-03-05
 
