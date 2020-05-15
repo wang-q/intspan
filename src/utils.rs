@@ -3,7 +3,6 @@ use flate2::read::GzDecoder;
 use serde_yaml::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::error::Error;
 use std::ffi::OsStr;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
@@ -30,7 +29,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
     } else {
         let path = Path::new(input);
         let file = match File::open(&path) {
-            Err(why) => panic!("could not open {}: {}", path.display(), why.description()),
+            Err(why) => panic!("could not open {}: {}", path.display(), why.to_string()),
             Ok(file) => file,
         };
 
@@ -89,6 +88,28 @@ pub fn read_first_column(input: &str) -> Vec<String> {
     }
 
     rows
+}
+
+/// ```
+/// let replaces = intspan::read_replaces("tests/spanr/S288c.chr.sizes");
+/// assert_eq!(replaces.len(), 16);
+/// assert_eq!(*replaces.get("II").unwrap().get(0).unwrap(), "813184");
+/// ```
+pub fn read_replaces(input: &str) -> BTreeMap<String, Vec<String>> {
+    let mut replaces: BTreeMap<String, Vec<String>> = BTreeMap::new();
+
+    for line in read_lines(input) {
+        let mut fields: Vec<&str> = line.split('\t').collect();
+
+        let left = fields.split_off(1);
+
+        replaces.insert(
+            fields[0].to_string(),
+            left.iter().map(|s| (*s).to_string()).collect(),
+        );
+    }
+
+    replaces
 }
 
 pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
