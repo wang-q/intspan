@@ -22,7 +22,7 @@ brew install intspan
 ## SYNOPSIS
 
 
-### `spanr`
+* `spanr`
 
 ```
 $ spanr help
@@ -56,7 +56,7 @@ SUBCOMMANDS:
 
 ```
 
-### `linkr`
+* `linkr`
 
 ```
 $ linkr help
@@ -82,7 +82,7 @@ SUBCOMMANDS:
 
 ```
 
-### `ovlpr`
+* `ovlpr`
 
 ```
 $ ovlpr help
@@ -167,17 +167,17 @@ Types of links:
 
 * Bilateral links
 
-            I(+):13063-17220    I(-):215091-219225
-            I(+):139501-141431  XII(+):95564-97485
+                I(+):13063-17220    I(-):215091-219225
+                I(+):139501-141431  XII(+):95564-97485
 
 * Bilateral links with hit strand
 
-            I(+):13327-17227    I(+):215084-218967  -
-            I(+):139501-141431  XII(+):95564-97485  +
+                I(+):13327-17227    I(+):215084-218967  -
+                I(+):139501-141431  XII(+):95564-97485  +
 
 * Multilateral links
 
-            II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
+                II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
 
 ## EXAMPLES
 
@@ -278,20 +278,20 @@ linkr circos --highlight tests/linkr/II.connect.tsv
 
 Steps:
 
-            sort
-              |
-              v
-            clean -> merge
-              |     /
-              |  /
-              v
-            clean
-              |
-              V
-            connect
-              |
-              v
-            filter
+                    sort
+                      |
+                      v
+                    clean -> merge
+                      |     /
+                      |  /
+                      v
+                    clean
+                      |
+                      V
+                    connect
+                      |
+                      v
+                    filter
 
 #### S288c
 
@@ -365,23 +365,32 @@ spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
 
 ### `ovlpr`
 
-```bash
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
+```shell script
+echo "tests/ovlpr/1_4.anchor.fasta;tests/ovlpr/1_4.pac.fasta" |
+    parallel --colsep ";" -j 1 "
+        minimap2 -cx asm20 {1} {2} |
+            ovlpr paf2ovlp stdin |
+            tsv-sort
+        minimap2 -cx asm20 {2} {1} |
+            ovlpr paf2ovlp stdin |
+            tsv-sort
+    " |
+    ovlpr covered stdin --mean
 
-target/debug/ovlpr covered tests/ovlpr/11_2.long.paf  --paf
+ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
 
-jrange covered src/test/resources/--paf -o stdout
+ovlpr covered tests/ovlpr/11_2.long.paf --paf
 
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
+ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
 
-target/debug/ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
+ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
 
-target/debug/ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
+ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
 
-target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
-target/debug/ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
+ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
+ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
 
-target/debug/ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
+ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 
 ```
 
