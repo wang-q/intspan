@@ -772,6 +772,9 @@ impl IntSpan {
         element
     }
 
+    /// Returns the index-th element of set, indices start from `1`.
+    ///
+    /// Negative indices count backwards from the end of the set.
     pub fn at(&self, index: i32) -> i32 {
         if self.is_empty() {
             panic!("Indexing on an empty set");
@@ -790,6 +793,7 @@ impl IntSpan {
         }
     }
 
+    /// Returns the index of an element in the set, indices start from `1`
     pub fn index(&self, element: i32) -> i32 {
         if self.is_empty() {
             panic!("Indexing on an empty set");
@@ -815,6 +819,28 @@ impl IntSpan {
 
         index
     }
+
+    pub fn slice(&self, from: i32, to: i32) -> IntSpan {
+        if self.is_empty() {
+            panic!("Indexing on an empty set");
+        }
+        if from < 1 {
+            panic!("Index can't be 0 or negative");
+        }
+        if to > self.cardinality() {
+            panic!("Out of max index");
+        }
+        if from > to {
+            panic!("Bad order: {},{}", from, to)
+        }
+
+        let lower = self.at(from);
+        let upper = self.at(to);
+
+        let new = IntSpan::from_pair(lower, upper);
+        new.intersect(self)
+    }
+
 }
 
 #[cfg(test)]
@@ -869,6 +895,23 @@ mod index {
     }
 
     #[test]
+    fn test_slice() {
+        // runlist, from, to, exp
+        let tests = vec![
+            ("1-10,21-30,41-50", 1, 3, "1-3"),
+            ("1-10,21-30,41-50", 6, 8, "6-8"),
+            ("1-10,21-30,41-50", 8, 10, "8-10"),
+            ("1-10,21-30,41-50", 10, 10, "10"),
+        ];
+
+        for (runlist, from, to, exp) in tests {
+            let set = IntSpan::from(runlist);
+
+            assert_eq!(set.slice(from, to).to_string(), exp);
+        }
+    }
+
+    #[test]
     #[should_panic(expected = "Indexing on an empty set")]
     fn panic_at_1() {
         let set = IntSpan::new();
@@ -905,6 +948,14 @@ mod index {
     fn panic_index_2() {
         let set = IntSpan::from("0-9");
         set.index(15);
+        println!("{:?}", set.ranges());
+    }
+
+    #[test]
+    #[should_panic(expected = "Indexing on an empty set")]
+    fn panic_slice_1() {
+        let set = IntSpan::new();
+        set.slice(1, 2);
         println!("{:?}", set.ranges());
     }
 }

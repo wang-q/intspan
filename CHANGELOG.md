@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Add `far some`
+* Add `slice()` to `IntSpan`
 
 ## 0.4.14 - 2020-05-15
 
