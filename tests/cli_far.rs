@@ -52,3 +52,35 @@ fn command_size_gz() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_some() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("far")?;
+    let output = cmd
+        .arg("some")
+        .arg("tests/far/ufasta.fa")
+        .arg("tests/far/lst.txt")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert!(stdout.contains("read0\n"), "read0");
+    assert!(stdout.contains("read12\n"), "read12");
+
+    let mut cmd = Command::cargo_bin("far")?;
+    let output = cmd
+        .arg("some")
+        .arg("tests/far/ufasta.fa")
+        .arg("tests/far/lst.txt")
+        .arg("-i")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 96);
+    assert!(!stdout.contains("read0\n"), "read0");
+    assert!(!stdout.contains("read12\n"), "read12");
+
+    Ok(())
+}

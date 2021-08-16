@@ -403,6 +403,8 @@ diff \
 
 target/debug/far region tests/far/ufasta.fa
 
+target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
+
 ```
 
 ## License
