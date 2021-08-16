@@ -385,6 +385,6 @@ mod read_write {
         write_yaml(&filename, &yaml).expect("Write error");
 
         let lines = read_lines(&filename);
-        assert_eq!(lines.len(), 11);
+        assert!(lines.len() == 11 || lines.len() == 12);
     }
 }
