@@ -840,7 +840,6 @@ impl IntSpan {
         let new = IntSpan::from_pair(lower, upper);
         new.intersect(self)
     }
-
 }
 
 #[cfg(test)]

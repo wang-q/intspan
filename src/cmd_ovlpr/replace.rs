@@ -6,7 +6,7 @@ use std::io::BufRead;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("replace")
-        .about("Replace IDs in .ovlp.tsv")
+        .about("Replace fields in *.tsv")
         .arg(
             Arg::with_name("infile")
                 .help("Sets the input file to use")
@@ -15,7 +15,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
         )
         .arg(
             Arg::with_name("replace")
-                .help("Two-column tsv file, From-To")
+                .help("Two-column tsv file, From--To")
                 .required(true)
                 .index(2),
         )
@@ -23,7 +23,7 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
             Arg::with_name("reverse")
                 .long("reverse")
                 .short("r")
-                .help("To-From instead of From-To in .replace.tsv"),
+                .help("To--From instead in .replace.tsv"),
         )
         .arg(
             Arg::with_name("outfile")
@@ -64,17 +64,11 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     for line in reader.lines().filter_map(|r| r.ok()) {
         let mut fields: Vec<&str> = line.split('\t').collect();
-        if fields.len() != 13 {
-            continue;
-        }
 
-        // f_id
-        if replaces.contains_key(fields[0]) {
-            fields[0] = replaces.get(fields[0]).unwrap();
-        }
-        // g_id
-        if replaces.contains_key(fields[1]) {
-            fields[1] = replaces.get(fields[1]).unwrap();
+        for i in 0..fields.len() {
+            if replaces.contains_key(fields[i]) {
+                fields[i] = replaces.get(fields[i]).unwrap();
+            }
         }
 
         writer.write_all((fields.join("\t") + "\n").as_ref())?;
