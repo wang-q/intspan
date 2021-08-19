@@ -4,6 +4,7 @@
 
 * Add `far some`
 * Add `slice()` to `IntSpan`
+* `ovlpr replace` now processes any .tsv files
 
 ## 0.4.14 - 2020-05-15
 
