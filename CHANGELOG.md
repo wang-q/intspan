@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.4.15 - 2021-08-19
+
 * Add `far some`
 * Add `slice()` to `IntSpan`
 * `ovlpr replace` now processes any .tsv files
