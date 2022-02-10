@@ -34,6 +34,10 @@ path = "src/ovlpr.rs"
 name = "far"
 path = "src/far.rs"
 
+[[bin]]
+name = "nwr"
+path = "src/nwr.rs"
+
 [[example]]
 name = "test"
 
@@ -44,7 +48,7 @@ name = "benchmark"
 name = "file"
 
 [dependencies]
-clap = "2"
+clap = { version = "3.0.14", features = ["derive", "cargo"] }
 serde = "1.0"
 serde_yaml = "0.8"
 regex = "1"
