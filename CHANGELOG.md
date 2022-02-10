@@ -2,6 +2,9 @@
 
 ## Unreleased - ReleaseDate
 
+* Switch to `clap` v3
+* New binary `nwr`
+
 ## 0.4.15 - 2021-08-19
 
 * Add `far some`
