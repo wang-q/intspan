@@ -21,10 +21,9 @@ brew install intspan
 
 ## SYNOPSIS
 
-
 * `spanr`
 
-```
+```text
 $ spanr help
 spanr 0.4.12
 wang-q <wang-q@outlook.com>
@@ -58,7 +57,7 @@ SUBCOMMANDS:
 
 * `linkr`
 
-```
+```text
 $ linkr help
 linkr 0.4.12
 wang-q <wang-q@outlook.com>
@@ -84,7 +83,7 @@ SUBCOMMANDS:
 
 * `ovlpr`
 
-```
+```text
 $ ovlpr help
 ovlpr 0.4.12
 wang-q <wang-q@outlook.com>
@@ -153,8 +152,8 @@ Simple rules:
 * `:` to separate names and digits
 * `-` to separate `start` and `end`
 * For `species`:
-  * `species` should be alphanumeric and without spaces, one exception char is `/`.
-  * `species` is an identity, you can also treat is as a strain name, a lineage or something else.
+    * `species` should be alphanumeric and without spaces, one exception char is `/`.
+    * `species` is an identity, you can also treat is as a strain name, a lineage or something else.
 
 ```text
 species.chromosome(strand):start-end
@@ -278,20 +277,22 @@ linkr circos --highlight tests/linkr/II.connect.tsv
 
 Steps:
 
-                    sort
-                      |
-                      v
-                    clean -> merge
-                      |     /
-                      |  /
-                      v
-                    clean
-                      |
-                      V
-                    connect
-                      |
-                      v
-                    filter
+```text
+        sort
+          |
+          v
+        clean -> merge
+          |     /
+          |  /
+          v
+        clean
+          |
+          V
+        connect
+          |
+          v
+        filter
+```
 
 #### S288c
 
@@ -365,7 +366,7 @@ spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
 
 ### `ovlpr`
 
-```shell script
+```bash
 echo "tests/ovlpr/1_4.anchor.fasta;tests/ovlpr/1_4.pac.fasta" |
     parallel --colsep ";" -j 1 "
         minimap2 -cx asm20 {1} {2} |
