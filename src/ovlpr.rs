@@ -8,7 +8,8 @@ fn main() -> std::io::Result<()> {
         .version(crate_version!())
         .author(crate_authors!())
         .about("`ovlpr` operates overlaps between sequences")
-        .setting(AppSettings::ArgRequiredElseHelp)
+        .global_setting(AppSettings::PropagateVersion)
+        .global_setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd_ovlpr::covered::make_subcommand())
         .subcommand(cmd_ovlpr::paf2ovlp::make_subcommand())
         .subcommand(cmd_ovlpr::replace::make_subcommand())
@@ -16,11 +17,11 @@ fn main() -> std::io::Result<()> {
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
-        ("covered", Some(sub_matches)) => cmd_ovlpr::covered::execute(sub_matches),
-        ("paf2ovlp", Some(sub_matches)) => cmd_ovlpr::paf2ovlp::execute(sub_matches),
-        ("replace", Some(sub_matches)) => cmd_ovlpr::replace::execute(sub_matches),
-        ("restrict", Some(sub_matches)) => cmd_ovlpr::restrict::execute(sub_matches),
-        (_, _) => unreachable!(),
+        Some(("covered", sub_matches)) => cmd_ovlpr::covered::execute(sub_matches),
+        Some(("paf2ovlp", sub_matches)) => cmd_ovlpr::paf2ovlp::execute(sub_matches),
+        Some(("replace", sub_matches)) => cmd_ovlpr::replace::execute(sub_matches),
+        Some(("restrict", sub_matches)) => cmd_ovlpr::restrict::execute(sub_matches),
+        _ => unreachable!(),
     }?;
 
     Ok(())

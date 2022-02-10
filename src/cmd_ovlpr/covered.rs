@@ -5,66 +5,66 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("covered")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("covered")
         .about("Covered regions from .ovlp.tsv files")
         .arg(
-            Arg::with_name("infiles")
+            Arg::new("infiles")
                 .help("Sets the input file to use")
                 .required(true)
                 .min_values(1)
                 .index(1),
         )
         .arg(
-            Arg::with_name("coverage")
+            Arg::new("coverage")
                 .help("minimal coverage")
                 .long("coverage")
-                .short("c")
+                .short('c')
                 .takes_value(true)
                 .default_value("3")
-                .empty_values(false),
+                .forbid_empty_values(true)
         )
         .arg(
-            Arg::with_name("len")
+            Arg::new("len")
                 .help("minimal length of overlaps")
                 .long("len")
-                .short("l")
+                .short('l')
                 .takes_value(true)
                 .default_value("1000")
-                .empty_values(false),
+                .forbid_empty_values(true)
         )
         .arg(
-            Arg::with_name("idt")
+            Arg::new("idt")
                 .help("minimal identities of overlaps")
                 .long("idt")
-                .short("i")
+                .short('i')
                 .takes_value(true)
                 .default_value("0.0")
-                .empty_values(false),
+                .forbid_empty_values(true)
         )
         .arg(
-            Arg::with_name("paf")
+            Arg::new("paf")
                 .long("paf")
                 .help("PAF as input format"),
         )
         .arg(
-            Arg::with_name("longest")
+            Arg::new("longest")
                 .long("longest")
                 .help("only keep the longest span"),
         )
         .arg(
-            Arg::with_name("base")
+            Arg::new("base")
                 .long("base")
                 .help("per base coverage"),
         )
-        .arg(Arg::with_name("mean").long("mean").help("mean coverage"))
+        .arg(Arg::new("mean").long("mean").help("mean coverage"))
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

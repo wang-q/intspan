@@ -4,34 +4,34 @@ use std::collections::HashMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("replace")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("replace")
         .about("Replace fields in *.tsv")
         .arg(
-            Arg::with_name("infile")
+            Arg::new("infile")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("replace")
+            Arg::new("replace")
                 .help("Two-column tsv file, From--To")
                 .required(true)
                 .index(2),
         )
         .arg(
-            Arg::with_name("reverse")
+            Arg::new("reverse")
                 .long("reverse")
-                .short("r")
+                .short('r')
                 .help("To--From instead in .replace.tsv"),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }
