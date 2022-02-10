@@ -6,38 +6,38 @@ use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("merge")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("merge")
         .about("Merge overlapped ranges via overlapping graph")
         .arg(
-            Arg::with_name("infiles")
+            Arg::new("infiles")
                 .help("Sets the input file to use")
                 .required(true)
                 .min_values(1)
                 .index(1),
         )
         .arg(
-            Arg::with_name("coverage")
+            Arg::new("coverage")
                 .long("coverage")
-                .short("c")
+                .short('c')
                 .takes_value(true)
                 .default_value("0.95")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("When larger than this ratio, merge ranges"),
         )
         .arg(
-            Arg::with_name("verbose")
+            Arg::new("verbose")
                 .long("verbose")
-                .short("v")
+                .short('v')
                 .help("Verbose mode"),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

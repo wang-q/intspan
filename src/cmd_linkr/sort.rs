@@ -1,26 +1,26 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::*;
 use intspan::*;
 use std::collections::BTreeSet;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("sort")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("sort")
         .about("Sort links and ranges within links")
         .arg(
-            Arg::with_name("infiles")
+            Arg::new("infiles")
                 .help("Sets the input file to use")
                 .required(true)
                 .min_values(1)
                 .index(1),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

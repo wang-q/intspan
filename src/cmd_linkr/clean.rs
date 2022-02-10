@@ -6,8 +6,8 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("clean")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("clean")
         .about("Replace ranges within links, incorporate hit strands and remove nested links")
         .after_help(
             "\
@@ -15,42 +15,42 @@ pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
              ",
         )
         .arg(
-            Arg::with_name("infiles")
+            Arg::new("infiles")
                 .help("Sets the input file to use")
                 .required(true)
                 .min_values(1)
                 .index(1),
         )
         .arg(
-            Arg::with_name("replace")
+            Arg::new("replace")
                 .long("replace")
-                .short("r")
+                .short('r')
                 .takes_value(true)
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Two-column tsv file, normally produced by command merge"),
         )
         .arg(
-            Arg::with_name("bundle")
+            Arg::new("bundle")
                 .long("bundle")
-                .short("b")
+                .short('b')
                 .takes_value(true)
                 .default_value("0")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Bundle overlapped links. This value is the overlapping size. Suggested value is [500]"),
         )
         .arg(
-            Arg::with_name("verbose")
+            Arg::new("verbose")
                 .long("verbose")
-                .short("v")
+                .short('v')
                 .help("Verbose mode"),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }
