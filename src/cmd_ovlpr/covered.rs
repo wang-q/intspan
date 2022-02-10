@@ -68,15 +68,15 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     let mut writer = writer(args.value_of("outfile").unwrap());
 
-    let coverage: i32 = value_t!(args.value_of("coverage"), i32).unwrap_or_else(|e| {
+    let coverage: i32 = args.value_of_t("coverage").unwrap_or_else(|e| {
         eprintln!("Need a integer for --coverage\n{}", e);
         std::process::exit(1)
     });
-    let min_len: i32 = value_t!(args.value_of("len"), i32).unwrap_or_else(|e| {
+    let min_len: i32 = args.value_of_t("len").unwrap_or_else(|e| {
         eprintln!("Need a integer for --len\n{}", e);
         std::process::exit(1)
     });
-    let min_idt: f32 = value_t!(args.value_of("idt"), f32).unwrap_or_else(|e| {
+    let min_idt: f32 = args.value_of_t("idt").unwrap_or_else(|e| {
         eprintln!("Need a integer for --idt\n{}", e);
         std::process::exit(1)
     });

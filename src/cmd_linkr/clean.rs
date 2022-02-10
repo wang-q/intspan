@@ -60,8 +60,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
-    let bundle: i32 = value_t!(args.value_of("bundle"), i32).unwrap_or_else(|e| {
-        eprintln!("Need a integer for --bundle\n{}", e);
+    let bundle: i32 = args.value_of_t("bundle").unwrap_or_else(|e| {
+        eprintln!("Need an integer for --bundle\n{}", e);
         std::process::exit(1)
     });
     let is_verbose = args.is_present("verbose");

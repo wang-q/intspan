@@ -57,7 +57,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         IntSpan::new()
     };
     let ratio: f32 = if args.is_present("ratio") {
-        value_t!(args.value_of("ratio"), f32).unwrap_or_else(|e| {
+        args.value_of_t("ratio").unwrap_or_else(|e| {
             eprintln!("Need a float for --ratio\n{}", e);
             std::process::exit(1)
         })

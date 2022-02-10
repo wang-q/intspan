@@ -61,7 +61,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     let set_of = yaml2set_m(&yaml);
 
     let op = args.value_of("op").unwrap();
-    let number: i32 = value_t!(args.value_of("number"), i32).unwrap_or_else(|e| {
+    let number: i32 = args.value_of_t("number").unwrap_or_else(|e| {
         eprintln!("Need a integer for --number\n{}", e);
         std::process::exit(1)
     });

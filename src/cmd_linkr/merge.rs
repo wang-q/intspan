@@ -47,7 +47,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
-    let coverage: f32 = value_t!(args.value_of("coverage"), f32).unwrap_or_else(|e| {
+    let coverage: f32 = args.value_of_t("coverage").unwrap_or_else(|e| {
         eprintln!("Need a float for --coverage\n{}", e);
         std::process::exit(1)
     });

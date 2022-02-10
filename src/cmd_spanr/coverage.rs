@@ -43,7 +43,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
-    let coverage: i32 = value_t!(args.value_of("coverage"), i32).unwrap_or_else(|e| {
+    let coverage: i32 = args.value_of_t("coverage").unwrap_or_else(|e| {
         eprintln!("Need a integer for --coverage\n{}", e);
         std::process::exit(1)
     });

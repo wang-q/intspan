@@ -53,7 +53,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     // Loading
     //----------------------------
-    let ratio: f32 = value_t!(args.value_of("ratio"), f32).unwrap_or_else(|e| {
+    let ratio: f32 = args.value_of_t("ratio").unwrap_or_else(|e| {
         eprintln!("Need a float for --ratio\n{}", e);
         std::process::exit(1)
     });
