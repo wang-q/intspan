@@ -1,4 +1,4 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::*;
 use intspan::*;
 use serde_yaml::Value;
 use std::collections::BTreeMap;
@@ -6,31 +6,31 @@ use std::fs;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("split")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("split")
         .about("Split a runlist yaml file")
         .arg(
-            Arg::with_name("infile")
+            Arg::new("infile")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("suffix")
+            Arg::new("suffix")
                 .long("suffix")
-                .short("s")
+                .short('s')
                 .takes_value(true)
                 .default_value(".yml")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Extensions of output files"),
         )
         .arg(
-            Arg::with_name("outdir")
-                .short("o")
+            Arg::new("outdir")
+                .short('o')
                 .long("outdir")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output location. [stdout] for screen"),
         )
 }

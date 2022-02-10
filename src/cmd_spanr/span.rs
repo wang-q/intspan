@@ -4,8 +4,8 @@ use serde_yaml::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("span")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("span")
         .about("Operate spans in a YAML file")
         .after_help(
             "\
@@ -19,34 +19,34 @@ List of operations
             ",
         )
         .arg(
-            Arg::with_name("infile")
+            Arg::new("infile")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("op")
+            Arg::new("op")
                 .long("op")
                 .takes_value(true)
                 .default_value("cover")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("operations: cover, holes, trim, pad, excise or fill"),
         )
         .arg(
-            Arg::with_name("number")
+            Arg::new("number")
                 .long("number")
-                .short("n")
+                .short('n')
                 .takes_value(true)
                 .default_value("0")
-                .empty_values(false),
+                .forbid_empty_values(true),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

@@ -8,7 +8,8 @@ fn main() -> std::io::Result<()> {
         .version(crate_version!())
         .author(crate_authors!())
         .about("`spanr` operates chromosome IntSpan files")
-        .setting(AppSettings::ArgRequiredElseHelp)
+        .global_setting(AppSettings::PropagateVersion)
+        .global_setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(cmd_spanr::genome::make_subcommand())
         .subcommand(cmd_spanr::some::make_subcommand())
         .subcommand(cmd_spanr::merge::make_subcommand())
@@ -26,21 +27,21 @@ fn main() -> std::io::Result<()> {
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
-        ("genome", Some(sub_matches)) => cmd_spanr::genome::execute(sub_matches),
-        ("some", Some(sub_matches)) => cmd_spanr::some::execute(sub_matches),
-        ("merge", Some(sub_matches)) => cmd_spanr::merge::execute(sub_matches),
-        ("split", Some(sub_matches)) => cmd_spanr::split::execute(sub_matches),
-        ("stat", Some(sub_matches)) => cmd_spanr::stat::execute(sub_matches),
-        ("statop", Some(sub_matches)) => cmd_spanr::statop::execute(sub_matches),
-        ("combine", Some(sub_matches)) => cmd_spanr::combine::execute(sub_matches),
-        ("compare", Some(sub_matches)) => cmd_spanr::compare::execute(sub_matches),
-        ("span", Some(sub_matches)) => cmd_spanr::span::execute(sub_matches),
-        ("cover", Some(sub_matches)) => cmd_spanr::cover::execute(sub_matches),
-        ("coverage", Some(sub_matches)) => cmd_spanr::coverage::execute(sub_matches),
-        ("gff", Some(sub_matches)) => cmd_spanr::gff::execute(sub_matches),
-        ("convert", Some(sub_matches)) => cmd_spanr::convert::execute(sub_matches),
-        ("range", Some(sub_matches)) => cmd_spanr::range::execute(sub_matches),
-        (_, _) => unreachable!(),
+        Some(("genome", sub_matches)) => cmd_spanr::genome::execute(sub_matches),
+        Some(("some", sub_matches)) => cmd_spanr::some::execute(sub_matches),
+        Some(("merge", sub_matches)) => cmd_spanr::merge::execute(sub_matches),
+        Some(("split", sub_matches)) => cmd_spanr::split::execute(sub_matches),
+        Some(("stat", sub_matches)) => cmd_spanr::stat::execute(sub_matches),
+        Some(("statop", sub_matches)) => cmd_spanr::statop::execute(sub_matches),
+        Some(("combine", sub_matches)) => cmd_spanr::combine::execute(sub_matches),
+        Some(("compare", sub_matches)) => cmd_spanr::compare::execute(sub_matches),
+        Some(("span", sub_matches)) => cmd_spanr::span::execute(sub_matches),
+        Some(("cover", sub_matches)) => cmd_spanr::cover::execute(sub_matches),
+        Some(("coverage", sub_matches)) => cmd_spanr::coverage::execute(sub_matches),
+        Some(("gff", sub_matches)) => cmd_spanr::gff::execute(sub_matches),
+        Some(("convert", sub_matches)) => cmd_spanr::convert::execute(sub_matches),
+        Some(("range", sub_matches)) => cmd_spanr::range::execute(sub_matches),
+        _ => unreachable!(),
     }?;
 
     Ok(())

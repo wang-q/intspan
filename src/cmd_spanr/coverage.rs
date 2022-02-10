@@ -8,32 +8,32 @@ use std::io::BufRead;
 // TODO: improve speeds on large files
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("coverage")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("coverage")
         .about("Output detailed depths of coverages on chromosomes")
         .arg(
-            Arg::with_name("infiles")
+            Arg::new("infiles")
                 .help("Sets the input file to use")
                 .required(true)
                 .min_values(1)
                 .index(1),
         )
         .arg(
-            Arg::with_name("coverage")
+            Arg::new("coverage")
                 .help("minimal coverage")
                 .long("coverage")
-                .short("c")
+                .short('c')
                 .takes_value(true)
                 .default_value("1")
-                .empty_values(false),
+                .forbid_empty_values(true),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

@@ -3,36 +3,36 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("range")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("range")
         .about("Convert runlist file to ranges file")
         .arg(
-            Arg::with_name("runlist")
+            Arg::new("runlist")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("ranges")
+            Arg::new("ranges")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(2),
         )
         .arg(
-            Arg::with_name("op")
+            Arg::new("op")
                 .long("op")
                 .takes_value(true)
                 .default_value("overlap")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("operations: overlap, non-overlap or superset"),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }

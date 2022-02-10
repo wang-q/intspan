@@ -22,7 +22,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .short('c')
                 .takes_value(true)
                 .default_value("3")
-                .forbid_empty_values(true)
+                .forbid_empty_values(true),
         )
         .arg(
             Arg::new("len")
@@ -31,7 +31,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .short('l')
                 .takes_value(true)
                 .default_value("1000")
-                .forbid_empty_values(true)
+                .forbid_empty_values(true),
         )
         .arg(
             Arg::new("idt")
@@ -40,23 +40,15 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .short('i')
                 .takes_value(true)
                 .default_value("0.0")
-                .forbid_empty_values(true)
+                .forbid_empty_values(true),
         )
-        .arg(
-            Arg::new("paf")
-                .long("paf")
-                .help("PAF as input format"),
-        )
+        .arg(Arg::new("paf").long("paf").help("PAF as input format"))
         .arg(
             Arg::new("longest")
                 .long("longest")
                 .help("only keep the longest span"),
         )
-        .arg(
-            Arg::new("base")
-                .long("base")
-                .help("per base coverage"),
-        )
+        .arg(Arg::new("base").long("base").help("per base coverage"))
         .arg(Arg::new("mean").long("mean").help("mean coverage"))
         .arg(
             Arg::new("outfile")

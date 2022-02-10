@@ -6,54 +6,54 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("statop")
+pub fn make_subcommand<'a>() -> App<'a> {
+    App::new("statop")
         .about("Coverage on chromosomes for one YAML crossed another")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
-            Arg::with_name("chr.sizes")
+            Arg::new("chr.sizes")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(1),
         )
         .arg(
-            Arg::with_name("infile1")
+            Arg::new("infile1")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(2),
         )
         .arg(
-            Arg::with_name("infile2")
+            Arg::new("infile2")
                 .help("Sets the input file to use")
                 .required(true)
                 .index(3),
         )
         .arg(
-            Arg::with_name("all")
+            Arg::new("all")
                 .long("all")
                 .help("Only write whole genome stats"),
         )
         .arg(
-            Arg::with_name("op")
+            Arg::new("op")
                 .long("op")
                 .takes_value(true)
                 .default_value("intersect")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("operations: intersect, union, diff or xor"),
         )
         .arg(
-            Arg::with_name("base")
+            Arg::new("base")
                 .long("base")
                 .takes_value(true)
                 .help("basename of infile2"),
         )
         .arg(
-            Arg::with_name("outfile")
-                .short("o")
+            Arg::new("outfile")
+                .short('o')
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .empty_values(false)
+                .forbid_empty_values(true)
                 .help("Output filename. [stdout] for screen"),
         )
 }
