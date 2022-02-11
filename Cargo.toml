@@ -57,6 +57,7 @@ petgraph = "0.4.13"
 indexmap = "1.1.0"
 flate2 = "1.0"
 bio = "0.30.0"
+taxonomy = "0.7.1"
 
 [build-dependencies]
 
