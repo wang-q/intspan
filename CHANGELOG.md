@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.4.16 - 2022-02-12
+
 * Switch to `clap` v3
 * New binary `nwr`
 
