@@ -214,8 +214,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
                         if is_verbose {
                             eprint!(
                                 "    Based on {}, change strand from {}",
-                                ranges[i].to_string(),
-                                ranges[j].to_string()
+                                ranges[i], ranges[j]
                             );
                         }
                         if ranges[i].strand() == "-" {
@@ -224,7 +223,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
                             *ranges[j].strand_mut() = "-".to_string();
                         }
                         if is_verbose {
-                            eprintln!(" to {}", ranges[j].to_string());
+                            eprintln!(" to {}", ranges[j]);
                         }
                     } else {
                         *ranges[j].strand_mut() = ranges[i].strand().to_string();

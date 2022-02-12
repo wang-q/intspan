@@ -158,7 +158,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
                 *range_1.strand_mut() = "-".to_string();
             }
 
-            let new_line = format!("{}\t{}", range_0.to_string(), range_1.to_string());
+            let new_line = format!("{}\t{}", range_0, range_1);
             build_range_of_part(&new_line, &mut range_of_part);
             line_set.insert(new_line);
         }

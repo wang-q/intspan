@@ -175,7 +175,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
             }
 
             // create merged range
-            let merged: String = format!("{}(+):{}", chr, intspan.to_string());
+            let merged: String = format!("{}(+):{}", chr, intspan);
 
             for part in &part_list {
                 if *part == merged {

@@ -55,10 +55,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         let record = result.unwrap();
 
         if set_lst.contains(record.id()) != is_invert {
-            fa_out
-                .write_record(&record)
-                .ok()
-                .expect("Error writing record.");
+            fa_out.write_record(&record).expect("Error writing record.");
         }
     }
 
