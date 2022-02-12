@@ -12,7 +12,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
         .about("Connect bilateral links into multilateral ones")
         .after_help(
             "\
-             <infiles> are bilateral links files without hit strands\
+             <infiles> are bilateral link files without hit strands\
              ",
         )
         .arg(
