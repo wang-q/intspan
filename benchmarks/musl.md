@@ -1,9 +1,11 @@
 # `gcc` vs `musl`
 
 * Ubuntu 14.04 E5-2690 v3
-* rustc 1.40
-* gcc with lto
-* musl with lto
+    * rustc 1.40
+    * gcc with lto
+    * musl with lto
+* WSL under Windows 11, Ryzen 7 5800
+    * rustc 1.58.1
 
 ## `bash benchmarks/musl/run.sh`
 
@@ -20,6 +22,9 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 
 ## Results
 
+* Above - Ubuntu 14.04
+* Below - WSL
+
 * sort
 
 | Command |    Mean [ms] | Min [ms] | Max [ms] | Relative |
@@ -28,18 +33,25 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 | gcc     | 107.9 ± 21.6 |     92.2 |    142.5 |      1.0 |
 | musl    | 132.9 ± 23.2 |    102.2 |    151.4 |      1.2 |
 
-* clean
+| Command |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:--------|-------------:|---------:|---------:|------------:|
+| cargo   |   36.2 ± 0.5 |     35.5 |     37.6 |        1.00 |
+| gcc     |   61.7 ± 1.0 |     59.3 |     64.3 | 1.70 ± 0.04 |
+| musl    |   70.3 ± 1.2 |     66.8 |     72.5 | 1.94 ± 0.04 |
 
-| Command |      Mean [s] | Min [s] | Max [s] | Relative |
-|:--------|--------------:|--------:|--------:|---------:|
-| gcc     | 3.811 ± 0.012 |   3.791 |   3.827 |      1.0 |
-| musl    | 4.898 ± 0.063 |   4.784 |   4.985 |      1.3 |
+* clean
 
 | Command |      Mean [s] | Min [s] | Max [s] | Relative |
 |:--------|--------------:|--------:|--------:|---------:|
 | cargo   | 4.266 ± 0.075 |   4.224 |   4.478 |      1.0 |
 | gcc     | 6.090 ± 2.789 |   3.824 |   9.361 |      1.4 |
 | musl    | 7.869 ± 3.102 |   4.839 |  11.355 |      1.8 |
+
+| Command |      Mean [s] | Min [s] | Max [s] |    Relative |
+|:--------|--------------:|--------:|--------:|------------:|
+| cargo   | 1.583 ± 0.020 |   1.569 |   1.630 |        1.00 |
+| gcc     | 1.639 ± 0.044 |   1.597 |   1.747 | 1.04 ± 0.03 |
+| musl    | 2.953 ± 0.020 |   2.934 |   2.988 | 1.87 ± 0.03 |
 
 * merge
 
@@ -49,6 +61,12 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 | gcc     | 2.712 ± 0.003 |   2.707 |   2.716 |      1.0 |
 | musl    | 4.527 ± 0.086 |   4.492 |   4.770 |      1.7 |
 
+| Command |      Mean [s] | Min [s] | Max [s] |    Relative |
+|:--------|--------------:|--------:|--------:|------------:|
+| cargo   | 1.256 ± 0.018 |   1.229 |   1.293 |        1.00 |
+| gcc     | 1.286 ± 0.017 |   1.267 |   1.321 | 1.02 ± 0.02 |
+| musl    | 2.872 ± 0.017 |   2.846 |   2.902 | 2.29 ± 0.04 |
+
 * clean2
 
 | Command |      Mean [s] | Min [s] | Max [s] | Relative |
@@ -56,6 +74,12 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 | cargo   | 5.152 ± 0.026 |   5.132 |   5.221 |      1.1 |
 | gcc     | 4.821 ± 0.003 |   4.817 |   4.826 |      1.0 |
 | musl    | 5.983 ± 0.924 |   3.370 |   6.544 |      1.2 |
+
+| Command |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:--------|-------------:|---------:|---------:|------------:|
+| cargo   |  946.3 ± 6.9 |    932.0 |    953.8 |        1.00 |
+| gcc     |  968.5 ± 8.8 |    956.3 |    984.9 | 1.02 ± 0.01 |
+| musl    | 1618.4 ± 6.5 |   1612.3 |   1629.9 | 1.71 ± 0.01 |
 
 * connect
 
@@ -65,6 +89,12 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 | gcc     | 374.5 ± 74.3 |    247.8 |    532.1 |      1.0 |
 | musl    |  383.0 ± 0.6 |    382.0 |    384.2 |      1.0 |
 
+| Command |   Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:--------|------------:|---------:|---------:|------------:|
+| cargo   |  76.9 ± 2.2 |     74.6 |     84.2 |        1.00 |
+| gcc     | 103.4 ± 1.4 |    101.8 |    107.2 | 1.35 ± 0.04 |
+| musl    | 120.6 ± 1.2 |    119.0 |    123.1 | 1.57 ± 0.05 |
+
 * filter
 
 | Command |   Mean [ms] | Min [ms] | Max [ms] | Relative |
@@ -72,3 +102,9 @@ find ~/Scripts/rust/intspan/benchmarks/musl/* |
 | cargo   |  59.2 ± 1.1 |     58.4 |     66.2 |      1.1 |
 | gcc     |  54.7 ± 0.3 |     54.2 |     55.7 |      1.0 |
 | musl    | 55.6 ± 22.3 |     30.9 |    126.5 |      1.0 |
+
+| Command |  Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:--------|-----------:|---------:|---------:|------------:|
+| cargo   | 13.5 ± 0.3 |     12.9 |     14.7 |        1.00 |
+| gcc     | 39.6 ± 0.8 |     37.1 |     41.0 | 2.93 ± 0.09 |
+| musl    | 43.1 ± 1.4 |     40.8 |     51.6 | 3.18 ± 0.12 |
