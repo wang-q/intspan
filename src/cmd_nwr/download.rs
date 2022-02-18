@@ -37,10 +37,10 @@ pub fn make_subcommand<'a>() -> App<'a> {
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let _ = SimpleLogger::init(LevelFilter::Info, Config::default());
 
-    // download
     let nwrdir = intspan::nwr_path();
     let path = nwrdir.join("taxdmp.zip");
 
+    // download
     info!(
         "==> Downloading from {} ...",
         args.value_of("host").unwrap()
