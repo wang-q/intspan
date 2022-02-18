@@ -64,6 +64,8 @@ dirs = "4.0.0"
 log = "0.4"
 simplelog = "^0.10.0"
 md5 = "^0.7.0"
+rusqlite = { version = "0.26.3", features = ["bundled", "csvtab"] }
+csv = "1.1"
 
 [build-dependencies]
 

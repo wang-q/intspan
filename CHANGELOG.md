@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Add `nwr download`
+* Add `nwr txdb`
 
 ## 0.4.16 - 2022-02-12
 
