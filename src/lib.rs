@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
+extern crate log;
 
 mod libs;
 mod utils;

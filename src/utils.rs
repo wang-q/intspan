@@ -350,6 +350,22 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
     among_links
 }
 
+/// nwr working path
+///
+/// ```
+/// let path = intspan::nwr_path();
+///
+/// assert!(std::path::Path::new(&path).exists());
+/// ```
+pub fn nwr_path() -> std::path::PathBuf {
+    let path = dirs::home_dir().unwrap().join(".nwr/");
+    if !std::path::Path::new(&path).exists() {
+        std::fs::create_dir_all(&path).unwrap();
+    }
+
+    path
+}
+
 #[cfg(test)]
 mod read_write {
     use super::*;

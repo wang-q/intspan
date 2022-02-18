@@ -58,6 +58,12 @@ indexmap = "1.1.0"
 flate2 = "1.0"
 bio = "0.30.0"
 taxonomy = "0.7.1"
+ftp = "3"
+zip = "0.5"
+dirs = "4.0.0"
+log = "0.4"
+simplelog = "^0.10.0"
+md5 = "^0.7.0"
 
 [build-dependencies]
 
