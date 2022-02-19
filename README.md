@@ -413,6 +413,8 @@ target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
 ```bash
 cargo run --bin nwr txdb -d tests/nwr/
 
+# cargo run --bin nwr txdb
+
 ```
 
 

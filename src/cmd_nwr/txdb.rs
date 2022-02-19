@@ -27,24 +27,30 @@ DROP TABLE IF EXISTS node;
 DROP TABLE IF EXISTS name;
 
 CREATE TABLE IF NOT EXISTS division (
-    id INTEGER NOT NULL PRIMARY KEY,
-    division TEXT NOT NULL
+    id       INTEGER      NOT NULL
+                          PRIMARY KEY,
+    division VARCHAR (50) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS node (
-    tax_id INTEGER NOT NULL PRIMARY KEY,
+    tax_id        INTEGER      NOT NULL
+                               PRIMARY KEY,
     parent_tax_id INTEGER,
-    rank TEXT NOT NULL,
-    division_id INTEGER NOT NULL,
-    comment TEXT,
-    FOREIGN KEY(division_id) REFERENCES division(id)
+    rank          VARCHAR (25) NOT NULL,
+    division_id   INTEGER      NOT NULL,
+    comment       TEXT,
+    FOREIGN KEY (
+        division_id
+    )
+    REFERENCES division (id)
 );
 
 CREATE TABLE IF NOT EXISTS name (
-    id         INTEGER NOT NULL PRIMARY KEY,
-    tax_id     INTEGER NOT NULL,
-    name       TEXT NOT NULL,
-    name_class TEXT NOT NULL
+    id         INTEGER      NOT NULL
+                            PRIMARY KEY,
+    tax_id     INTEGER      NOT NULL,
+    name       VARCHAR (50) NOT NULL,
+    name_class VARCHAR (50) NOT NULL
 );
 "###;
 
@@ -163,11 +169,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             .delimiter(b'|')
             .from_reader(dmp);
 
-        let mut stmts: Vec<String> = vec![
-            String::from("BEGIN;"),
-            // Special case: the root
-            // String::from("INSERT INTO node VALUES (1, 1, 'no rank', 8, '');")
-        ];
+        let mut stmts: Vec<String> = vec![String::from("BEGIN;")];
 
         for (i, result) in csv.records().enumerate() {
             if i > 1 && i % 1000 == 0 {
