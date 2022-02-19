@@ -13,24 +13,14 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-// #[test]
-// fn command_size() -> Result<(), Box<dyn std::error::Error>> {
-//     let mut cmd = Command::cargo_bin("nwr")?;
-//     let output = cmd.arg("size").arg("tests/nwr/ufasta.fa").output().unwrap();
-//     let stdout = String::from_utf8(output.stdout).unwrap();
-//
-//     assert_eq!(stdout.lines().count(), 50);
-//     assert!(stdout.contains("read0\t359"), "read0");
-//     assert!(stdout.contains("read1\t106"), "read1");
-//
-//     let mut sum = 0;
-//     for line in stdout.lines() {
-//         let fields: Vec<&str> = line.split('\t').collect();
-//         if fields.len() == 2 {
-//             sum += fields[1].parse::<i32>().unwrap();
-//         }
-//     }
-//     assert_eq!(sum, 9317, "sum length");
-//
-//     Ok(())
-// }
+#[test]
+fn command_txdb() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd.arg("txdb").arg("--dir").arg("tests/nwr/").output().unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert!(std::path::Path::new("tests/nwr/taxonomy.sqlite").exists());
+    assert_eq!(stdout.lines().count(), 8);
+
+    Ok(())
+}
