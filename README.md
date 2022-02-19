@@ -408,6 +408,14 @@ target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
 
 ```
 
+### `nwr`
+
+```bash
+cargo run --bin nwr txdb -d tests/nwr/
+
+```
+
+
 ## License
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fwang-q%2Fintspan.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fwang-q%2Fintspan?ref=badge_large)

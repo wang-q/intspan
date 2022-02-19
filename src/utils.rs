@@ -359,7 +359,7 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
 /// ```
 pub fn nwr_path() -> std::path::PathBuf {
     let path = dirs::home_dir().unwrap().join(".nwr/");
-    if !std::path::Path::new(&path).exists() {
+    if !path.exists() {
         std::fs::create_dir_all(&path).unwrap();
     }
 

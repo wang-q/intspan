@@ -2,7 +2,6 @@ use clap::*;
 use log::{debug, info, warn};
 use simplelog::*;
 use std::fs::File;
-use std::io;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> App<'a> {
@@ -12,6 +11,13 @@ pub fn make_subcommand<'a>() -> App<'a> {
             "\
              ~/.nwr/taxonomy.sqlite\n\
              ",
+        )
+        .arg(
+            Arg::new("dir")
+                .long("dir")
+                .short('d')
+                .takes_value(true)
+                .help("Change working directory"),
         )
 }
 
@@ -46,8 +52,15 @@ CREATE TABLE IF NOT EXISTS name (
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let _ = SimpleLogger::init(LevelFilter::Debug, Config::default());
 
-    let nwrdir = intspan::nwr_path();
+    let nwrdir = if args.is_present("dir") {
+        std::path::Path::new(args.value_of("dir").unwrap()).to_path_buf()
+    } else {
+        intspan::nwr_path()
+    };
     let file = nwrdir.join("taxonomy.sqlite");
+    if file.exists() {
+        std::fs::remove_file(&file).unwrap();
+    }
 
     info!("==> Opening database");
     let conn = rusqlite::Connection::open(file)?;
@@ -192,7 +205,10 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         conn.execute_batch(stmt)?;
 
         debug!("Creating indexes for node");
-        conn.execute("CREATE INDEX idx_nodes_parent_id ON node(parent_tax_id);", [])?;
+        conn.execute(
+            "CREATE INDEX idx_node_parent_id ON node(parent_tax_id);",
+            [],
+        )?;
     }
 
     Ok(())
