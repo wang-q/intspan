@@ -49,3 +49,21 @@ fn command_info() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_lineage() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd
+        .arg("lineage")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .arg("Bacillus phage bg1")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert!(stdout.contains("Viruses\t10239"), "super kingdom");
+
+    Ok(())
+}

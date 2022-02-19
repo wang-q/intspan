@@ -6,13 +6,12 @@ use std::io;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("info")
-        .about("Information of Taxonomy ID(s) or scientific name(s)")
+    App::new("lineage")
+        .about("Output the lineage of the term")
         .arg(
-            Arg::new("terms")
+            Arg::new("term")
                 .help("The NCBI Taxonomy ID(s) or scientific name(s)")
                 .required(true)
-                .min_values(1)
                 .index(1),
         )
         .arg(
@@ -51,33 +50,18 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
 
     let conn = intspan::connect_txdb(&nwrdir).unwrap();
 
-    let mut ids = vec![];
-    for term in args.values_of("terms").unwrap() {
-        let id = intspan::term_to_tax_id(&conn, term.to_string()).unwrap();
-        ids.push(id);
-    }
+    let term = args.value_of("term").unwrap().to_string();
+    let id = intspan::term_to_tax_id(&conn, term).unwrap();
 
-    let nodes = intspan::get_node(&conn, ids).unwrap();
+    let lineage = intspan::get_lineage(&conn, id).unwrap();
 
-    if args.is_present("tsv") {
-        let mut wtr = csv::WriterBuilder::new()
-            .delimiter(b'\t')
-            .from_writer(writer);
-
-        wtr.write_record(&["#tax_id", "scientific_name", "rank", "division"])?;
-        for node in nodes.iter() {
-            wtr.serialize((
-                node.tax_id,
-                &node.names.get("scientific name").unwrap()[0],
-                &node.rank,
-                &node.division,
-            ))?;
-        }
-        wtr.flush()?;
-    } else {
-        for node in nodes.iter() {
-            writer.write_fmt(format_args!("{}", node))?;
-        }
+    for node in lineage.iter() {
+        writer.write_fmt(format_args!(
+            "{}\t{}\t{}\n",
+            node.rank,
+            node.names.get("scientific name").unwrap()[0],
+            node.tax_id
+        ))?;
     }
 
     Ok(())

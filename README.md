@@ -412,12 +412,13 @@ target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
 
 ```bash
 cargo run --bin nwr txdb -d tests/nwr/
-
 # cargo run --bin nwr txdb
 
 cargo run --bin nwr info -d tests/nwr/ --tsv Viruses "Actinophage JHJ-1" "Bacillus phage bg1"
-
 # cargo run --bin nwr info "Homo sapiens" 4932
+
+cargo run --bin nwr lineage -d tests/nwr/ --tsv "Actinophage JHJ-1"
+# cargo run --bin nwr lineage "Homo sapiens"
 
 ```
 
