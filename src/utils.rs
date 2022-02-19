@@ -435,6 +435,67 @@ pub struct Node {
     pub format_string: Option<String>,
 }
 
+impl std::fmt::Display for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        if let Some(format_string) = &self.format_string {
+            // Format the Node according to its format string.
+            return write!(
+                f,
+                "{}",
+                format_string
+                    .replace("%taxid", &self.tax_id.to_string())
+                    .replace("%name", &self.names.get("scientific name").unwrap()[0])
+                    .replace("%rank", &self.rank)
+            );
+        }
+
+        let mut lines = String::new();
+
+        let sciname = &self.names.get("scientific name").unwrap()[0];
+        let l1 = format!("{} - {}\n", sciname, self.rank);
+        let l2 = std::iter::repeat("-")
+            .take(l1.len() - 1)
+            .collect::<String>();
+        lines.push_str(&l1);
+        lines.push_str(&l2);
+        lines.push_str(&format!("\nNCBI Taxonomy ID: {}\n", self.tax_id));
+
+        if self.names.contains_key("synonym") {
+            lines.push_str("Same as:\n");
+            for synonym in self.names.get("synonym").unwrap() {
+                lines.push_str(&format!("* {}\n", synonym));
+            }
+        }
+
+        if self.names.contains_key("genbank common name") {
+            let genbank = &self.names.get("genbank common name").unwrap()[0];
+            lines.push_str(&format!("Commonly named {}.\n", genbank));
+        }
+
+        if self.names.contains_key("common name") {
+            lines.push_str("Also known as:\n");
+            for name in self.names.get("common name").unwrap() {
+                lines.push_str(&format!("* {}\n", name));
+            }
+        }
+
+        if self.names.contains_key("authority") {
+            lines.push_str("First description:\n");
+            for authority in self.names.get("authority").unwrap() {
+                lines.push_str(&format!("* {}\n", authority));
+            }
+        }
+
+        lines.push_str(&format!("Part of the {}.\n", self.division));
+
+        if let Some(ref comments) = self.comments {
+            lines.push_str(&format!("\nComments: {}", comments));
+        }
+
+        write!(f, "{}", lines)
+    }
+}
+
 /// IDs to Nodes
 ///
 /// ```
@@ -618,6 +679,43 @@ pub fn get_descendent(
 
     let nodes = get_node(conn, ids)?;
     Ok(nodes)
+}
+
+/// Convert terms to Taxonomy IDs
+/// Accepted forms: ID; "scientific name"; scientific_name
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_txdb(&path).unwrap();
+///
+/// let id = intspan::term_to_tax_id(&conn, "10239".to_string()).unwrap();
+/// assert_eq!(id, 10239);
+///
+/// let id = intspan::term_to_tax_id(&conn, "Viruses".to_string()).unwrap();
+/// assert_eq!(id, 10239);
+///
+/// let id = intspan::term_to_tax_id(&conn, "Lactobacillus phage mv4".to_string()).unwrap();
+/// assert_eq!(id, 12392);
+///
+/// let id = intspan::term_to_tax_id(&conn, "Lactobacillus_phage_mv4".to_string()).unwrap();
+/// assert_eq!(id, 12392);
+///
+/// ```
+pub fn term_to_tax_id(
+    conn: &rusqlite::Connection,
+    term: String,
+) -> Result<i64, Box<dyn std::error::Error>> {
+    let term = term.trim().replace("_", " ");
+
+    let id: i64 = match term.parse::<i64>() {
+        Ok(n) => n,
+        Err(_) => {
+            let name_id = get_tax_id(conn, vec![term]).unwrap().pop().unwrap();
+            name_id
+        }
+    };
+
+    Ok(id)
 }
 
 #[cfg(test)]

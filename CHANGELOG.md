@@ -4,6 +4,7 @@
 
 * Add `nwr download`
 * Add `nwr txdb`
+* Add `nwr info`
 
 ## 0.4.16 - 2022-02-12
 
