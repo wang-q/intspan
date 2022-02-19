@@ -1,8 +1,4 @@
 use clap::*;
-use log::{info, warn};
-use simplelog::*;
-use std::fs::File;
-use std::io;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> App<'a> {

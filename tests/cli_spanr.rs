@@ -25,16 +25,16 @@ fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[test]
-fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("spanr")?;
-    cmd.arg("genome");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "The following required arguments were not provided",
-    ));
-
-    Ok(())
-}
+// #[test]
+// fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
+//     let mut cmd = Command::cargo_bin("spanr")?;
+//     cmd.arg("genome");
+//     cmd.assert().failure().stderr(predicate::str::contains(
+//         "The following required arguments were not provided",
+//     ));
+//
+//     Ok(())
+// }
 
 #[test]
 fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {

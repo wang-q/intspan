@@ -411,6 +411,8 @@ target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
 ### `nwr`
 
 ```bash
+cargo test -- --test-threads=1
+
 cargo run --bin nwr txdb -d tests/nwr/
 # cargo run --bin nwr txdb
 
