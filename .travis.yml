@@ -14,7 +14,7 @@ matrix:
 jobs:
   include:
     - stage: test
-      script: cargo test --verbose --all
+      script: cargo test --verbose --all -- --test-threads=1
     - stage: build
       script: cargo build --verbose --all --examples
     - stage: coverage
@@ -25,7 +25,7 @@ jobs:
         - export CARGO_INCREMENTAL=0
         - export RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads"
         - cargo build --verbose
-        - cargo test --verbose
+        - cargo test --verbose -- --test-threads=1
         - |
           zip -0 ccov.zip `find . \( -name "intspan*.gc*" -o -name "linkr*.gc*" -o -name "spanr*.gc*" -o -name "ovlpr*.gc*" -o -name "far*.gc*" -o -name "nwr*.gc*" \) -print`;
           ./grcov ccov.zip -s . -t lcov --llvm --branch --ignore-not-existing --ignore-dir "/*" -o lcov.info;
