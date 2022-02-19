@@ -29,3 +29,23 @@ fn command_txdb() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_info() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd
+        .arg("info")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .arg("--tsv")
+        .arg("Viruses")
+        .arg("Bacillus phage bg1")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert!(stdout.contains("10239\tViruses"), "first record");
+
+    Ok(())
+}
