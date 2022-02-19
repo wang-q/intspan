@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsStr;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// ```
 /// use std::io::BufRead;
@@ -364,6 +364,63 @@ pub fn nwr_path() -> std::path::PathBuf {
     }
 
     path
+}
+
+/// Connect taxonomy.sqlite in this dir
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_db(&path).unwrap();
+///
+/// assert_eq!(conn.path().unwrap().to_str().unwrap(), "tests/nwr/taxonomy.sqlite");
+/// ```
+pub fn connect_db(dir: &PathBuf) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
+    let dbfile = dir.join("taxonomy.sqlite");
+    let conn = rusqlite::Connection::open(dbfile)?;
+
+    Ok(conn)
+}
+
+/// Names to Taxonomy IDs
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_db(&path).unwrap();
+///
+/// let names = vec![
+///     "Enterobacteria phage 933J".to_string(),
+///     "Actinophage JHJ-1".to_string(),
+/// ];
+/// let tax_ids = intspan::get_tax_id(&conn, names).unwrap();
+///
+/// assert_eq!(tax_ids, vec![12340, 12347]);
+/// ```
+pub fn get_tax_id(
+    conn: &rusqlite::Connection,
+    names: Vec<String>,
+) -> Result<Vec<i64>, Box<dyn std::error::Error>> {
+    let mut tax_ids = vec![];
+
+    let mut stmt = conn.prepare(
+        "
+        SELECT tax_id FROM name
+        WHERE 1=1
+        AND name_class IN ('scientific name', 'synonym', 'genbank synonym')
+        AND name=?
+        ",
+    )?;
+
+    for name in names.iter() {
+        let mut rows = stmt.query(&[name])?;
+
+        if let Some(row) = rows.next().unwrap() {
+            tax_ids.push(row.get(0)?);
+        } else {
+            return Err(From::from(format!("No such name: {}", name)));
+        }
+    }
+
+    Ok(tax_ids)
 }
 
 #[cfg(test)]
