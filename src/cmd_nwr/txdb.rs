@@ -1,5 +1,5 @@
 use clap::*;
-use log::{debug, info, warn};
+use log::{debug, info};
 use simplelog::*;
 use std::fs::File;
 
