@@ -98,6 +98,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             let record = result?;
             let id: i64 = record[0].trim().parse()?;
             let name: String = record[2].trim().parse()?;
+
             stmts.push(format!(
                 "INSERT INTO division VALUES ({}, '{}');",
                 id,
@@ -135,6 +136,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
 
             let record = result?;
 
+            // tax_id, name, unique_name, name_class
             let tax_id: i64 = record[0].trim().parse()?;
             let name: String = record[1].parse()?;
             let name_class: String = record[3].parse()?;
@@ -185,6 +187,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
 
             let record = result?;
 
+            // tax_id, parent, rank, code, divid, undef, gen_code, undef, mito
             let tax_id: i64 = record[0].trim().parse()?;
             let parent_tax_id: i64 = record[1].trim().parse()?;
             let rank: String = record[2].trim().parse()?;

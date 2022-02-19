@@ -16,7 +16,12 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn command_txdb() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("nwr")?;
-    let output = cmd.arg("txdb").arg("--dir").arg("tests/nwr/").output().unwrap();
+    let output = cmd
+        .arg("txdb")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .output()
+        .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert!(std::path::Path::new("tests/nwr/taxonomy.sqlite").exists());

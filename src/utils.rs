@@ -1,5 +1,6 @@
 use crate::{IntSpan, Range};
 use flate2::read::GzDecoder;
+use itertools::Itertools;
 use serde_yaml::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -370,11 +371,11 @@ pub fn nwr_path() -> std::path::PathBuf {
 ///
 /// ```
 /// let path = std::path::PathBuf::from("tests/nwr/");
-/// let conn = intspan::connect_db(&path).unwrap();
+/// let conn = intspan::connect_txdb(&path).unwrap();
 ///
 /// assert_eq!(conn.path().unwrap().to_str().unwrap(), "tests/nwr/taxonomy.sqlite");
 /// ```
-pub fn connect_db(dir: &PathBuf) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
+pub fn connect_txdb(dir: &PathBuf) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
     let dbfile = dir.join("taxonomy.sqlite");
     let conn = rusqlite::Connection::open(dbfile)?;
 
@@ -385,7 +386,7 @@ pub fn connect_db(dir: &PathBuf) -> Result<rusqlite::Connection, Box<dyn std::er
 ///
 /// ```
 /// let path = std::path::PathBuf::from("tests/nwr/");
-/// let conn = intspan::connect_db(&path).unwrap();
+/// let conn = intspan::connect_txdb(&path).unwrap();
 ///
 /// let names = vec![
 ///     "Enterobacteria phage 933J".to_string(),
@@ -421,6 +422,202 @@ pub fn get_tax_id(
     }
 
     Ok(tax_ids)
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct Node {
+    pub tax_id: i64,
+    pub parent_tax_id: i64,
+    pub rank: String,
+    pub division: String,
+    pub names: HashMap<String, Vec<String>>, // many synonym or common names
+    pub comments: Option<String>,
+    pub format_string: Option<String>,
+}
+
+/// IDs to Nodes
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_txdb(&path).unwrap();
+///
+/// let ids = vec![12340, 12347];
+/// let nodes = intspan::get_node(&conn, ids).unwrap();
+///
+/// assert_eq!(nodes.get(0).unwrap().tax_id, 12340);
+/// assert_eq!(nodes.get(0).unwrap().parent_tax_id, 12333);
+/// assert_eq!(nodes.get(0).unwrap().rank, "species");
+/// assert_eq!(nodes.get(0).unwrap().division, "Phages");
+/// assert_eq!(nodes.get(1).unwrap().tax_id, 12347);
+/// ```
+pub fn get_node(
+    conn: &rusqlite::Connection,
+    ids: Vec<i64>,
+) -> Result<Vec<Node>, Box<dyn std::error::Error>> {
+    let mut nodes = vec![];
+
+    let mut stmt = conn.prepare(
+        "
+        SELECT
+            node.tax_id,
+            node.parent_tax_id,
+            node.rank,
+            division.division,
+            name.name_class,
+            name.name,
+            node.comment
+        FROM node
+            INNER JOIN name ON node.tax_id = name.tax_id
+            INNER JOIN division ON node.division_id = division.id
+        WHERE node.tax_id=?
+        ",
+    )?;
+
+    for id in ids.iter() {
+        let mut rows = stmt.query(&[id])?;
+
+        let mut node: Node = Default::default();
+        // Here, row.get has no reason to return an error
+        // so row.get_unwrap should be safe
+        if let Some(row) = rows.next().unwrap() {
+            node.tax_id = row.get(0)?;
+            node.parent_tax_id = row.get(1)?;
+            node.rank = row.get(2)?;
+            node.division = row.get(3)?;
+
+            let comments: String = row.get(6)?;
+            if !comments.is_empty() {
+                node.comments = Some(comments);
+            }
+
+            node.names
+                .entry(row.get(4)?)
+                .or_insert_with(|| vec![row.get(5).unwrap()]);
+        } else {
+            return Err(From::from(format!("No such ID: {}", id)));
+        }
+
+        while let Some(row) = rows.next().unwrap() {
+            node.names
+                .entry(row.get(4).unwrap())
+                .and_modify(|n| n.push(row.get(5).unwrap()))
+                .or_insert_with(|| vec![row.get(5).unwrap()]);
+        }
+
+        nodes.push(node);
+    }
+
+    Ok(nodes)
+}
+
+/// Retrieve the ancestor
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_txdb(&path).unwrap();
+///
+/// let ancestor = intspan::get_ancestor(&conn, 12340).unwrap();
+///
+/// assert_eq!(ancestor.tax_id, 12333);
+/// ```
+pub fn get_ancestor(
+    conn: &rusqlite::Connection,
+    id: i64,
+) -> Result<Node, Box<dyn std::error::Error>> {
+    let mut stmt = conn.prepare(
+        "
+        SELECT parent_tax_id
+        FROM node
+        WHERE tax_id=?
+        ",
+    )?;
+    let parent_id = stmt.query_row([id], |row| row.get(0))?;
+
+    let ancestor = get_node(conn, vec![parent_id])?.pop().unwrap();
+
+    Ok(ancestor)
+}
+
+/// All Nodes to the root (with ID 1)
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_txdb(&path).unwrap();
+///
+/// let lineage = intspan::get_lineage(&conn, 12340).unwrap();
+///
+/// assert_eq!(lineage.get(0).unwrap().tax_id, 1);
+/// assert_eq!(lineage.last().unwrap().tax_id, 12340);
+/// assert_eq!(lineage.len(), 4);
+/// ```
+pub fn get_lineage(
+    conn: &rusqlite::Connection,
+    id: i64,
+) -> Result<Vec<Node>, Box<dyn std::error::Error>> {
+    let mut id = id;
+    let mut ids = vec![id];
+
+    let mut stmt = conn.prepare(
+        "
+        SELECT parent_tax_id
+        FROM node
+        WHERE tax_id=?
+        ",
+    )?;
+
+    loop {
+        let parent_id = stmt.query_row([id], |row| row.get(0))?;
+        ids.push(parent_id);
+
+        // the root or one of the roots
+        if id == 1 || parent_id == id {
+            break;
+        }
+
+        id = parent_id;
+    }
+
+    let ids: Vec<_> = ids.into_iter().unique().collect();
+    let mut lineage = get_node(conn, ids)?;
+    lineage.reverse();
+
+    Ok(lineage)
+}
+
+/// All descendents of the Node, not a recursive fetchall
+///
+/// ```
+/// let path = std::path::PathBuf::from("tests/nwr/");
+/// let conn = intspan::connect_txdb(&path).unwrap();
+///
+/// // Synechococcus phage S
+/// let descendents = intspan::get_descendent(&conn, 375032).unwrap();
+///
+/// assert_eq!(descendents.get(0).unwrap().tax_id, 375033);
+/// assert_eq!(descendents.get(0).unwrap().rank, "no rank");
+/// assert_eq!(descendents.len(), 34);
+/// ```
+pub fn get_descendent(
+    conn: &rusqlite::Connection,
+    id: i64,
+) -> Result<Vec<Node>, Box<dyn std::error::Error>> {
+    let mut ids: Vec<i64> = vec![];
+
+    let mut stmt = conn.prepare(
+        "
+        SELECT tax_id
+        FROM node
+        WHERE parent_tax_id=?
+        ",
+    )?;
+
+    let mut rows = stmt.query([id])?;
+    while let Some(row) = rows.next().unwrap() {
+        ids.push(row.get(0).unwrap());
+    }
+
+    let nodes = get_node(conn, ids)?;
+    Ok(nodes)
 }
 
 #[cfg(test)]
