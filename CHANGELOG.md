@@ -6,6 +6,7 @@
 * Add `nwr txdb`
 * Add `nwr info`
 * Add `nwr lineage`
+* Add `nwr restrict`
 
 ## 0.4.16 - 2022-02-12
 

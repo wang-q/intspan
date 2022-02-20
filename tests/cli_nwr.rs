@@ -67,3 +67,25 @@ fn command_lineage() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_restrict() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd
+        .arg("restrict")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .arg("Viruses")
+        .arg("-c")
+        .arg("2")
+        .arg("-f")
+        .arg("tests/nwr/taxon.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 2);
+    assert!(stdout.contains("Actinophage JHJ-1\t12347"), "virus");
+
+    Ok(())
+}

@@ -413,14 +413,29 @@ target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
 ```bash
 cargo test -- --test-threads=1
 
+# tests/nwr/
 cargo run --bin nwr txdb -d tests/nwr/
-# cargo run --bin nwr txdb
 
 cargo run --bin nwr info -d tests/nwr/ --tsv Viruses "Actinophage JHJ-1" "Bacillus phage bg1"
-# cargo run --bin nwr info "Homo sapiens" 4932
 
 cargo run --bin nwr lineage -d tests/nwr/ --tsv "Actinophage JHJ-1"
-# cargo run --bin nwr lineage "Homo sapiens"
+
+echo -e '#ID\n9606\n12347' |
+    cargo run --bin nwr restrict -d tests/nwr/ "Viruses"
+cargo run --bin nwr restrict -d tests/nwr/ "Viruses" -c 2 -f tests/nwr/taxon.tsv
+
+# The real one
+cargo run --bin nwr txdb
+
+cargo run --bin nwr info "Homo sapiens" 4932
+
+cargo run --bin nwr lineage "Homo sapiens"
+cargo run --bin nwr lineage 4932
+
+echo -e '#Name\tID\nHuman\t9606\nYeast\t559292' |
+    cargo run --bin nwr restrict -c 2 "Vertebrata"
+##Name   ID
+#Human   9606
 
 ```
 

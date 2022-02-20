@@ -6,7 +6,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
         .about("Output the lineage of the term")
         .arg(
             Arg::new("term")
-                .help("The NCBI Taxonomy ID(s) or scientific name(s)")
+                .help("The NCBI Taxonomy ID or scientific name")
                 .required(true)
                 .index(1),
         )
