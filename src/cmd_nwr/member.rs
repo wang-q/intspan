@@ -39,6 +39,11 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .help("Which rank to list"),
         )
         .arg(
+            Arg::new("env")
+                .long("env")
+                .help("Include division Environmental samples"),
+        )
+        .arg(
             Arg::new("outfile")
                 .short('o')
                 .long("outfile")
@@ -72,6 +77,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             rank_set.insert(rank.to_string());
         }
     }
+    let is_env = args.is_present("env");
 
     for term in args.values_of("terms").unwrap() {
         let id = intspan::term_to_tax_id(&conn, term.to_string()).unwrap();
@@ -81,6 +87,9 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
 
         for node in nodes.iter() {
             if !rank_set.is_empty() && !rank_set.contains(&node.rank) {
+                continue;
+            }
+            if !is_env && node.division == "Environmental samples" {
                 continue;
             }
 
