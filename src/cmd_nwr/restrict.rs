@@ -12,6 +12,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
   are in the form of a Taxonomy ID or scientific name.
 
 * Input files should be TSV.
+  * `tests/nwr/taxon.tsv` as an example.
 
 * Lines start with `#` will always be outputted.\
             ",
@@ -35,7 +36,7 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .long("file")
                 .short('f')
                 .takes_value(true)
-                .min_values(1)
+                .multiple_occurrences(true)
                 .default_value("stdin")
                 .forbid_empty_values(true)
                 .help("Input filename. [stdin] for standard input"),
@@ -107,20 +108,6 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             }
         }
     }
-
-    // let term = args.value_of("term").unwrap().to_string();
-    // let id = intspan::term_to_tax_id(&conn, term).unwrap();
-    //
-    // let lineage = intspan::get_lineage(&conn, id).unwrap();
-    //
-    // for node in lineage.iter() {
-    //     writer.write_fmt(format_args!(
-    //         "{}\t{}\t{}\n",
-    //         node.rank,
-    //         node.names.get("scientific name").unwrap()[0],
-    //         node.tax_id
-    //     ))?;
-    // }
 
     Ok(())
 }
