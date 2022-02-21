@@ -8,6 +8,7 @@
 * Add `nwr lineage`
 * Add `nwr restrict`
 * Add `nwr member`
+* Add `nwr append`
 
 ## 0.4.16 - 2022-02-12
 

@@ -428,6 +428,10 @@ cargo run --bin nwr restrict -d tests/nwr/ "Viruses" -c 2 -f tests/nwr/taxon.tsv
 cargo run --bin nwr member -d tests/nwr/ "Synechococcus phage S" -r "no rank" -r species
 cargo run --bin nwr member -d tests/nwr/ "Synechococcus phage S"
 
+echo -e '#tax_id\n12347' |
+    cargo run --bin nwr append -d tests/nwr/ stdin -r species -r family --id
+cargo run --bin nwr append -d tests/nwr/ tests/nwr/taxon-valid.tsv -c 2 -r species -r family --id
+
 # The real one
 nwr txdb
 
@@ -441,6 +445,8 @@ nwr restrict "Vertebrata" -c 2 -f tests/nwr/taxon.tsv
 #Human   9606
 
 nwr member "Homo"
+
+nwr append tests/nwr/taxon.tsv -c 2 -r species -r family --id
 
 
 ```

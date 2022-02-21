@@ -111,3 +111,73 @@ fn command_member() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_append() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd
+        .arg("append")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .arg("-c")
+        .arg("2")
+        .arg("tests/nwr/taxon-valid.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 2);
+    assert_eq!(
+        stdout.lines().next().unwrap(),
+        "#sci_name\ttax_id\tsci_name"
+    );
+    assert!(
+        stdout.contains("Actinophage JHJ-1\t12347\tActinophage JHJ-1"),
+        "sci_name"
+    );
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "fields"
+    );
+
+    Ok(())
+}
+
+#[test]
+fn command_append_rank() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("nwr")?;
+    let output = cmd
+        .arg("append")
+        .arg("--dir")
+        .arg("tests/nwr/")
+        .arg("-c")
+        .arg("2")
+        .arg("-r")
+        .arg("species")
+        .arg("-r")
+        .arg("family")
+        .arg("--id")
+        .arg("tests/nwr/taxon-valid.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 2);
+    assert_eq!(
+        stdout.lines().next().unwrap(),
+        "#sci_name\ttax_id\tspecies\tspecies id\tfamily\tfamily id"
+    );
+    assert!(
+        stdout.contains("\t12347\tActinophage JHJ-1\t12347"),
+        "species"
+    );
+    assert!(stdout.contains("\tNA\t0"), "family");
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        6,
+        "fields"
+    );
+
+    Ok(())
+}
