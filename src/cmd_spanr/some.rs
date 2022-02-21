@@ -4,8 +4,8 @@ use serde_yaml::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("some")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("some")
         .about("Extract some records from a runlist yaml file")
         .arg(
             Arg::new("infile")

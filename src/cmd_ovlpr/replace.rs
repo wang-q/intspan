@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("replace")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("replace")
         .about("Replace fields in *.tsv")
         .arg(
             Arg::new("infile")

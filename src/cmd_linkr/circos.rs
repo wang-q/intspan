@@ -3,8 +3,8 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("circos")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("circos")
         .about("Convert links to circos links or highlights")
         .after_help(
             "\

@@ -7,8 +7,8 @@ use std::collections::{BTreeSet, HashMap};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("connect")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("connect")
         .about("Connect bilateral links into multilateral ones")
         .after_help(
             "\

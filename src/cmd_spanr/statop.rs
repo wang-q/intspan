@@ -6,8 +6,8 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("statop")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("statop")
         .about("Coverage on chromosomes for one YAML crossed another")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(

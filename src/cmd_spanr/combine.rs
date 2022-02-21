@@ -4,8 +4,8 @@ use serde_yaml::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("combine")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("combine")
         .about("Combine multiple sets of runlists in a yaml file")
         .after_help(
             "It's expected that the YAML file contains multiple sets of runlists, \

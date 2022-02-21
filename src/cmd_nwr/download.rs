@@ -5,8 +5,8 @@ use std::fs::File;
 use std::io;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("download")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("download")
         .about("Download the latest release of `taxdmp`")
         .after_help(
             "\

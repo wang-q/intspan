@@ -3,8 +3,8 @@ use clap::*;
 use intspan::*;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("size")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("size")
         .about("Count total bases in FA file(s)")
         .arg(
             Arg::new("infiles")

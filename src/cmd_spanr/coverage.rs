@@ -8,8 +8,8 @@ use std::io::BufRead;
 // TODO: improve speeds on large files
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("coverage")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("coverage")
         .about("Output detailed depths of coverages on chromosomes")
         .arg(
             Arg::new("infiles")

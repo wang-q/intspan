@@ -5,8 +5,8 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("covered")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("covered")
         .about("Covered regions from .ovlp.tsv files")
         .arg(
             Arg::new("infiles")

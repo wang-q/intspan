@@ -3,8 +3,8 @@ use intspan::IntSpan;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("restrict")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("restrict")
         .about("Restrict taxonomy terms to ancestral descendants")
         .after_help(
             "\

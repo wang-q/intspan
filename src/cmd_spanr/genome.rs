@@ -4,8 +4,8 @@ use serde_yaml::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("genome")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("genome")
         .about("Convert chr.size to runlists")
         .arg(
             Arg::new("infile")

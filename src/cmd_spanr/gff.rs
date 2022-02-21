@@ -4,8 +4,8 @@ use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("gff")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("gff")
         .about("Convert gff3 to covers on chromosomes")
         .arg(
             Arg::new("infiles")

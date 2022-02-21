@@ -4,11 +4,11 @@ use clap::*;
 mod cmd_nwr;
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("nwr")
+    let app = Command::new("nwr")
         .version(crate_version!())
         .author(crate_authors!())
         .about("`nwr` is a lightweight tool for newick and taxonomy")
-        .global_setting(AppSettings::PropagateVersion)
+        .propagate_version(true)
         .subcommand(cmd_nwr::append::make_subcommand())
         .subcommand(cmd_nwr::download::make_subcommand())
         .subcommand(cmd_nwr::info::make_subcommand())

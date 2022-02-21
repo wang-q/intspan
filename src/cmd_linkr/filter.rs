@@ -3,8 +3,8 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("filter")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("filter")
         .about("Filter links by numbers of ranges or length differences")
         .after_help(
             "\

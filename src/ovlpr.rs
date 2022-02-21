@@ -4,12 +4,12 @@ use clap::*;
 mod cmd_ovlpr;
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("ovlpr")
+    let app = Command::new("ovlpr")
         .version(crate_version!())
         .author(crate_authors!())
         .about("`ovlpr` operates overlaps between sequences")
-        .global_setting(AppSettings::PropagateVersion)
-        .global_setting(AppSettings::ArgRequiredElseHelp)
+        .propagate_version(true)
+        .arg_required_else_help(true)
         .subcommand(cmd_ovlpr::covered::make_subcommand())
         .subcommand(cmd_ovlpr::paf2ovlp::make_subcommand())
         .subcommand(cmd_ovlpr::replace::make_subcommand())

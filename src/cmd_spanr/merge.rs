@@ -6,8 +6,8 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("merge")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("merge")
         .about("Merge runlist yaml files")
         .arg(
             Arg::new("infiles")

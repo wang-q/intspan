@@ -4,8 +4,8 @@ use simplelog::*;
 use std::fs::File;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("txdb")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("txdb")
         .about("Init the taxonomy database")
         .after_help(
             "\

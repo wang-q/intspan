@@ -2,8 +2,8 @@ use clap::*;
 use std::collections::HashSet;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("member")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("member")
         .about("List members (of certain ranks) under ancestral term(s)")
         .after_help(
             r###"

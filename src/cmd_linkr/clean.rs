@@ -6,8 +6,8 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("clean")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("clean")
         .about("Replace ranges within links, incorporate hit strands and remove nested links")
         .after_help(
             "\

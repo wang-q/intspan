@@ -3,8 +3,8 @@ use intspan::Node;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("append")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("append")
         .about("Append fields of higher ranks to a TSV file")
         .after_help(
             r###"

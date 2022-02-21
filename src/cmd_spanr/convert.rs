@@ -2,8 +2,8 @@ use clap::*;
 use intspan::*;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("convert")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("convert")
         .about("Convert runlist file to ranges file")
         .arg(
             Arg::new("infiles")

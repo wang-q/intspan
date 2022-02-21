@@ -3,8 +3,8 @@ use clap::*;
 use intspan::*;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("region")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("region")
         .about("Extract regions from a FA file")
         .after_help(
             "\

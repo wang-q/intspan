@@ -4,8 +4,8 @@ use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("cover")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("cover")
         .about("Output covers on chromosomes")
         .after_help(
             "\

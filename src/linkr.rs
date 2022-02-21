@@ -4,12 +4,12 @@ use clap::*;
 mod cmd_linkr;
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("linkr")
+    let app = Command::new("linkr")
         .version(crate_version!())
         .author(crate_authors!())
         .about("`linkr` operates ranges on chromosomes and links of ranges")
-        .global_setting(AppSettings::PropagateVersion)
-        .global_setting(AppSettings::ArgRequiredElseHelp)
+        .propagate_version(true)
+        .arg_required_else_help(true)
         .subcommand(cmd_linkr::circos::make_subcommand())
         .subcommand(cmd_linkr::sort::make_subcommand())
         .subcommand(cmd_linkr::merge::make_subcommand())

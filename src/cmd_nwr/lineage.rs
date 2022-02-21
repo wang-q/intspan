@@ -1,8 +1,8 @@
 use clap::*;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("lineage")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("lineage")
         .about("Output the lineage of the term")
         .arg(
             Arg::new("term")

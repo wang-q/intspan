@@ -1,8 +1,8 @@
 use clap::*;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("info")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("info")
         .about("Information of Taxonomy ID(s) or scientific name(s)")
         .arg(
             Arg::new("terms")

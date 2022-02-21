@@ -3,8 +3,8 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("paf2ovlp")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("paf2ovlp")
         .about("Convert minimap .paf to overlaps")
         .arg(
             Arg::new("infiles")

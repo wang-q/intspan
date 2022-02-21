@@ -4,8 +4,8 @@ use serde_yaml::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("span")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("span")
         .about("Operate spans in a YAML file")
         .after_help(
             "\

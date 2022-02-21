@@ -4,12 +4,12 @@ use clap::*;
 mod cmd_spanr;
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("spanr")
+    let app = Command::new("spanr")
         .version(crate_version!())
         .author(crate_authors!())
         .about("`spanr` operates chromosome IntSpan files")
-        .global_setting(AppSettings::PropagateVersion)
-        .global_setting(AppSettings::ArgRequiredElseHelp)
+        .propagate_version(true)
+        .arg_required_else_help(true)
         .subcommand(cmd_spanr::genome::make_subcommand())
         .subcommand(cmd_spanr::some::make_subcommand())
         .subcommand(cmd_spanr::merge::make_subcommand())

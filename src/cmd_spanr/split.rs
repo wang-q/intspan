@@ -6,8 +6,8 @@ use std::fs;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> App<'a> {
-    App::new("split")
+pub fn make_subcommand<'a>() -> Command<'a> {
+    Command::new("split")
         .about("Split a runlist yaml file")
         .arg(
             Arg::new("infile")
