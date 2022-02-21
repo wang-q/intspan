@@ -34,10 +34,6 @@ path = "src/ovlpr.rs"
 name = "far"
 path = "src/far.rs"
 
-[[bin]]
-name = "nwr"
-path = "src/nwr.rs"
-
 [[example]]
 name = "test"
 
@@ -65,7 +61,6 @@ dirs = "4.0.0"
 log = "0.4"
 simplelog = "^0.10.0"
 md5 = "^0.7.0"
-libsqlite3-sys = { version = "^0", features = ["bundled"] }
 rusqlite = { version = "0.26.3", features = ["bundled", "csvtab"] }
 csv = "1.1"
 

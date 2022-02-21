@@ -14,7 +14,7 @@ matrix:
 jobs:
   include:
     - stage: test
-      script: cargo test --verbose --all -- --test-threads=1
+      script: cargo test --verbose --all
     - stage: build
       script: cargo build --verbose --all --examples
     - stage: coverage
