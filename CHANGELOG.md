@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.4.17 - 2022-02-21
+
 * Add `nwr download`
 * Add `nwr txdb`
 * Add `nwr info`
