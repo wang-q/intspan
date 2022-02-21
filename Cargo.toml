@@ -60,7 +60,7 @@ itertools = "0.10.3"
 bio = "0.30.0"
 
 ftp = "3"
-zip = "0.5"
+tar = "0.4"
 dirs = "4.0.0"
 log = "0.4"
 simplelog = "^0.10.0"

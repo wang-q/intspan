@@ -9,11 +9,13 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("download")
         .about("Download the latest release of `taxdmp`")
         .after_help(
-            "\
-             curl -LO https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdmp.zip\n\
-             curl -LO https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdmp.zip.md5\n\
-             mv taxdump.* ~/.nwr/\n\
-             ",
+            r###"
+You can download the tarball manually.
+
+curl -LO https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+curl -LO https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz.md5
+mv taxdump.* ~/.nwr/
+"###,
         )
         .arg(
             Arg::new("host")
@@ -38,14 +40,14 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let _ = SimpleLogger::init(LevelFilter::Info, Config::default());
 
     let nwrdir = intspan::nwr_path();
-    let path = nwrdir.join("taxdmp.zip");
+    let tarball = nwrdir.join("taxdump.tar.gz");
 
     // download
     info!(
         "==> Downloading from {} ...",
         args.value_of("host").unwrap()
     );
-    if std::path::Path::new(&path).exists() {
+    if std::path::Path::new(&tarball).exists() {
         info!("Skipping, dump file exists");
     } else {
         info!("Connecting...");
@@ -56,13 +58,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         info!("Remote directory: {}", conn.pwd().unwrap());
 
         info!("Retrieving MD5 file...");
-        let mut file = File::create(nwrdir.join("taxdmp.zip.md5"))?;
-        let mut cursor = conn.simple_retr("taxdmp.zip.md5")?;
+        let mut file = File::create(nwrdir.join("taxdump.tar.gz.md5"))?;
+        let mut cursor = conn.simple_retr("taxdump.tar.gz.md5")?;
         io::copy(&mut cursor, &mut file)?;
 
         info!("Retrieving dump file...");
-        conn.retr("taxdmp.zip", |stream| {
-            let mut file = match File::create(&path) {
+        conn.retr("taxdump.tar.gz", |stream| {
+            let mut file = match File::create(&tarball) {
                 Err(e) => return Err(ftp::FtpError::ConnectionError(e)),
                 Ok(f) => f,
             };
@@ -76,13 +78,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // check
     info!("==> Checking...");
     {
-        let mut file = File::open(&path)?;
+        let mut file = File::open(&tarball)?;
         let mut hasher = md5::Context::new();
         info!("Computing MD5 sum...");
         io::copy(&mut file, &mut hasher)?;
         let digest = format!("{:x}", hasher.compute());
 
-        let mut ncbi_digest = std::fs::read_to_string(nwrdir.join("taxdmp.zip.md5"))?;
+        let mut ncbi_digest = std::fs::read_to_string(nwrdir.join("taxdump.tar.gz.md5"))?;
         ncbi_digest.truncate(32);
 
         if digest != ncbi_digest {
@@ -97,17 +99,11 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // extract
     info!("==> Extracting...");
     {
-        let file = File::open(&path)?;
-        let mut archive = zip::ZipArchive::new(file)?;
+        let tar_gz = File::open(&tarball)?;
+        let tar = flate2::read::GzDecoder::new(tar_gz);
 
-        for i in 0..archive.len() {
-            let mut file = archive.by_index(i)?;
-            let outpath = nwrdir.join(file.mangled_name());
-
-            info!("Extracted {}", outpath.as_path().display());
-            let mut outfile = File::create(&outpath)?;
-            io::copy(&mut file, &mut outfile)?;
-        }
+        let mut archive = tar::Archive::new(tar);
+        archive.unpack(nwrdir)?;
     }
 
     Ok(())

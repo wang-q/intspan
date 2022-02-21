@@ -433,6 +433,8 @@ echo -e '#tax_id\n12347' |
 cargo run --bin nwr append -d tests/nwr/ tests/nwr/taxon-valid.tsv -c 2 -r species -r family --id
 
 # The real one
+nwr download
+
 nwr txdb
 
 nwr info "Homo sapiens" 4932
@@ -441,7 +443,7 @@ nwr lineage "Homo sapiens"
 nwr lineage 4932
 
 nwr restrict "Vertebrata" -c 2 -f tests/nwr/taxon.tsv
-##Name   ID
+##sci_name       tax_id
 #Human   9606
 
 nwr member "Homo"

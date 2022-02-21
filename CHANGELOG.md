@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Use `taxdump.tar.gz` instead of `taxdmp.zip` to avoid the `zip` crate
+
 ## 0.4.17 - 2022-02-21
 
 * Add `nwr download`
