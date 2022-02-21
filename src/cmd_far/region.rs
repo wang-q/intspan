@@ -1,7 +1,6 @@
 use bio::io::fasta;
 use clap::*;
 use intspan::*;
-use std::collections::HashSet;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> App<'a> {
