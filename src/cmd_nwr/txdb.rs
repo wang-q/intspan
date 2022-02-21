@@ -87,14 +87,14 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     info!("==> Loading division.dmp");
     {
         let dmp = File::open(nwrdir.join("division.dmp"))?;
-        let mut csv = csv::ReaderBuilder::new()
+        let mut tsv_rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'|')
             .from_reader(dmp);
 
         let mut stmts: Vec<String> = vec![String::from("BEGIN;")];
 
-        for result in csv.records() {
+        for result in tsv_rdr.records() {
             let record = result?;
             let id: i64 = record[0].trim().parse()?;
             let name: String = record[2].trim().parse()?;
@@ -116,13 +116,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     info!("==> Loading names.dmp");
     {
         let dmp = File::open(nwrdir.join("names.dmp"))?;
-        let mut csv = csv::ReaderBuilder::new()
+        let mut tsv_rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'|')
             .from_reader(dmp);
 
         let mut stmts: Vec<String> = vec![String::from("BEGIN;")];
-        for (i, result) in csv.records().enumerate() {
+        for (i, result) in tsv_rdr.records().enumerate() {
             if i > 1 && i % 1000 == 0 {
                 stmts.push(String::from("COMMIT;"));
                 let stmt = &stmts.join("\n");
@@ -166,14 +166,14 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     info!("==> Loading nodes.dmp");
     {
         let dmp = File::open(nwrdir.join("nodes.dmp"))?;
-        let mut csv = csv::ReaderBuilder::new()
+        let mut tsv_rdr = csv::ReaderBuilder::new()
             .has_headers(false)
             .delimiter(b'|')
             .from_reader(dmp);
 
         let mut stmts: Vec<String> = vec![String::from("BEGIN;")];
 
-        for (i, result) in csv.records().enumerate() {
+        for (i, result) in tsv_rdr.records().enumerate() {
             if i > 1 && i % 1000 == 0 {
                 stmts.push(String::from("COMMIT;"));
                 let stmt = &stmts.join("\n");

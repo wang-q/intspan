@@ -36,12 +36,12 @@ pub fn make_subcommand<'a>() -> App<'a> {
                 .short('r')
                 .takes_value(true)
                 .multiple_occurrences(true)
-                .help("Which rank to list"),
+                .help("To list which rank(s)"),
         )
         .arg(
             Arg::new("env")
                 .long("env")
-                .help("Include division Environmental samples"),
+                .help("Include division `Environmental samples`"),
         )
         .arg(
             Arg::new("outfile")
@@ -69,7 +69,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let mut tsv_wtr = csv::WriterBuilder::new()
         .delimiter(b'\t')
         .from_writer(writer);
-    tsv_wtr.write_record(&["#tax_id", "scientific_name", "rank", "division"])?;
+    tsv_wtr.write_record(&["#tax_id", "sci_name", "rank", "division"])?;
 
     let mut rank_set: HashSet<String> = HashSet::new();
     if args.is_present("rank") {

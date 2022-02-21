@@ -60,7 +60,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             .delimiter(b'\t')
             .from_writer(writer);
 
-        wtr.write_record(&["#tax_id", "scientific_name", "rank", "division"])?;
+        wtr.write_record(&["#tax_id", "sci_name", "rank", "division"])?;
         for node in nodes.iter() {
             wtr.serialize((
                 node.tax_id,
