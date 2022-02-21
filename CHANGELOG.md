@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.5.0 - 2022-02-22
+
 * Move `nwr` out
 
 ## 0.4.17 - 2022-02-21
