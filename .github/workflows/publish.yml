@@ -8,11 +8,22 @@ on:
 jobs:
   linux-gnu:
     runs-on: ubuntu-latest
+    # Use a container with GLIBC 2.17
+    container: quay.io/pypa/manylinux2014_x86_64
     steps:
-      - uses: hecrj/setup-rust-action@v1
+      - name: Show GLIBC
+        run: ldd --version
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          rust-version: stable
-      - uses: actions/checkout@v1
+          profile: minimal
+          toolchain: stable
+          override: true
+
       - name: Build
         run: cargo build --verbose --release
       - name: Create tarball
