@@ -1,6 +1,7 @@
 # intspan
 
-[![Linux build status](https://app.travis-ci.com/wang-q/intspan.svg)](https://app.travis-ci.com/wang-q/intspan)
+[![Publish](https://github.com/wang-q/intspan/actions/workflows/publish.yml/badge.svg)](https://github.com/wang-q/intspan/actions)
+[![Build](https://github.com/wang-q/intspan/actions/workflows/build.yml/badge.svg)](https://github.com/wang-q/intspan/actions)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/github/wang-q/intspan?svg=true)](https://ci.appveyor.com/project/wang-q/intspan)
 [![Codecov branch](https://img.shields.io/codecov/c/github/wang-q/intspan/master.svg)](https://codecov.io/github/wang-q/intspan?branch=master)
 [![Crates.io](https://img.shields.io/crates/v/intspan.svg)](https://crates.io/crates/intspan)
@@ -262,7 +263,7 @@ linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 linkr merge tests/linkr/II.links.tsv -v
 
 linkr clean tests/linkr/II.sort.tsv
-linkr clean tests/linkr/II.sort.tsv --bundle 500 
+linkr clean tests/linkr/II.sort.tsv --bundle 500
 linkr clean tests/linkr/II.sort.tsv -r tests/linkr/II.merge.tsv
 
 linkr connect tests/linkr/II.clean.tsv -v
