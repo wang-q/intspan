@@ -139,6 +139,7 @@ I(+):90-150
 S288c.I(-):190-200
 II:21294-22075
 II:23537-24097
+
 ```
 
 ![ranges](doc/ranges.png)
@@ -158,6 +159,7 @@ Simple rules:
 ```text
 species.chromosome(strand):start-end
 --------^^^^^^^^^^--------^^^^^^----
+
 ```
 
 ### Links of ranges
@@ -394,20 +396,6 @@ ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
 ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 
 ```
-
-### `far`
-
-```bash
-diff \
-    <(target/debug/far size tests/far/ufasta.fa) \
-    <(faops size tests/far/ufasta.fa)
-
-target/debug/far region tests/far/ufasta.fa
-
-target/debug/far some tests/far/ufasta.fa tests/far/lst.txt
-
-```
-
 
 ## License
 

@@ -19,9 +19,6 @@ use std::path::Path;
 ///
 /// let reader = intspan::reader("tests/spanr/S288c.chr.sizes");
 /// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 16);
-///
-/// let reader = intspan::reader("tests/far/ufasta.fa.gz");
-/// assert_eq!(reader.lines().collect::<Vec<_>>().len(), 256);
 /// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {

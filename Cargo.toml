@@ -30,10 +30,6 @@ path = "src/linkr.rs"
 name = "ovlpr"
 path = "src/ovlpr.rs"
 
-[[bin]]
-name = "far"
-path = "src/far.rs"
-
 [[example]]
 name = "test"
 

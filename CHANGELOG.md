@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Move `far` out
+
 ## 0.6.1 - 2022-02-22
 
 ## 0.6.0 - 2022-02-22
@@ -63,7 +65,7 @@
 
 ## 0.4.0 - 2019-09-07
 
-* New binary `ovlpr` 
+* New binary `ovlpr`
 * Struct `Overlap`
 
 * Move libraries to libs/
