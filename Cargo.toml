@@ -7,7 +7,7 @@ documentation = "https://github.com/wang-q/intspan"
 homepage = "https://github.com/wang-q/intspan"
 repository = "https://github.com/wang-q/intspan"
 readme = "README.md"
-categories = ["command-line-utilities", "text-processing", "bioinformatics"]
+categories = ["command-line-utilities", "science"]
 license = "MIT"
 edition = "2018"
 
