@@ -1,6 +1,6 @@
 # `spanr`, `jrunlist` and `rangeops`
 
-```bash
+```shell
 brew install intspan
 brew install jrunlist
 cpanm App::RL
@@ -11,7 +11,7 @@ brew install hyperfine
 
 ## `bash benchmarks/spanr/run.sh`
 
-```bash
+```shell
 bash ~/Scripts/rust/intspan/benchmarks/spanr/run.sh
 
 rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
@@ -153,16 +153,27 @@ rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
 
 ## `spanr cover`
 
-```bash
+```shell
+mkdir -p ~/data
+
+curl -o ~/data/S288c.fa.gz \
+    -L http://ftp.ensemblgenomes.org/pub/fungi/release-53/fasta/saccharomyces_cerevisiae/dna/Saccharomyces_cerevisiae.R64-1-1.dna_sm.toplevel.fa.gz
+
+curl -o ~/data/Spom.fa.gz \
+    -L http://ftp.ensemblgenomes.org/pub/fungi/release-53/fasta/schizosaccharomyces_pombe/dna/Schizosaccharomyces_pombe.ASM294v2.dna_sm.toplevel.fa.gz
+
+```
+
+```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | spanr    cover stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | jrunlist cover stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | runlist  cover stdin -o /dev/null'
+    'faops masked ~/data/S288c.fa.gz | spanr    cover stdin -o /dev/null' \
+    'faops masked ~/data/S288c.fa.gz | jrunlist cover stdin -o /dev/null' \
+    'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | spanr    cover stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | jrunlist cover stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | runlist  cover stdin -o /dev/null'
+    'faops masked ~/data/Spom.fa.gz | spanr    cover stdin -o /dev/null' \
+    'faops masked ~/data/Spom.fa.gz | jrunlist cover stdin -o /dev/null' \
+    'faops masked ~/data/Spom.fa.gz | runlist  cover stdin -o /dev/null'
 
 ```
 
@@ -180,16 +191,16 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
 
 ## `spanr coverage`
 
-```bash
+```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | spanr    coverage stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | jrunlist cover    stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/S288c/*.fa | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/S288c/chr.sizes'
+    'faops masked ~/data/S288c.fa.gz | spanr    coverage stdin -o /dev/null' \
+    'faops masked ~/data/S288c.fa.gz | jrunlist cover    stdin -o /dev/null' \
+    'faops masked ~/data/S288c.fa.gz | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/S288c/chr.sizes'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | spanr    coverage stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | jrunlist cover    stdin -o /dev/null' \
-    'faops masked ~/data/alignment/Ensembl/Spom/*.fa | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/Spom/chr.sizes'
+    'faops masked ~/data/Spom.fa.gz | spanr    coverage stdin -o /dev/null' \
+    'faops masked ~/data/Spom.fa.gz | jrunlist cover    stdin -o /dev/null' \
+    'faops masked ~/data/Spom.fa.gz | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/Spom/chr.sizes'
 
 ```
 
