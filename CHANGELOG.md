@@ -4,8 +4,9 @@
 
 * Move `far` out
 * `spanr stat` use i64 in the `all` lines
-
-## 0.6.1 - 2022-02-22
+* Update Github actions
+    * Use a container with GLIBC 2.17 to build linux-gnu binary
+    * Codecov with cargo-tarpaulin
 
 ## 0.6.0 - 2022-02-22
 
@@ -38,7 +39,7 @@
 
 * New binary `far`
 
-## 0.4.12 -  2020-03-05
+## 0.4.12 - 2020-03-05
 
 * Split `spanr cover` into `cover` and `coverage`
 
