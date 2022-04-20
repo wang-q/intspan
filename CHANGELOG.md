@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.6.4 - 2022-04-21
+
 ## 0.6.3 - 2022-04-21
 
 * Move `far` out
