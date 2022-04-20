@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.6.3 - 2022-04-21
+
 * Move `far` out
 * `spanr stat` use i64 in the `all` lines
 * Update Github actions
