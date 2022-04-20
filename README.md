@@ -25,16 +25,16 @@ brew install intspan
 
 ```text
 $ spanr help
-spanr 0.4.12
+spanr 0.6.1
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
 USAGE:
     spanr [SUBCOMMAND]
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
 
 SUBCOMMANDS:
     combine     Combine multiple sets of runlists in a yaml file
@@ -44,7 +44,7 @@ SUBCOMMANDS:
     coverage    Output detailed depths of coverages on chromosomes
     genome      Convert chr.size to runlists
     gff         Convert gff3 to covers on chromosomes
-    help        Prints this message or the help of the given subcommand(s)
+    help        Print this message or the help of the given subcommand(s)
     merge       Merge runlist yaml files
     range       Convert runlist file to ranges file
     some        Extract some records from a runlist yaml file
@@ -59,23 +59,23 @@ SUBCOMMANDS:
 
 ```text
 $ linkr help
-linkr 0.4.12
+linkr 0.6.1
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
 USAGE:
     linkr [SUBCOMMAND]
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
 
 SUBCOMMANDS:
     circos     Convert links to circos links or highlights
     clean      Replace ranges within links, incorporate hit strands and remove nested links
     connect    Connect bilateral links into multilateral ones
     filter     Filter links by numbers of ranges or length differences
-    help       Prints this message or the help of the given subcommand(s)
+    help       Print this message or the help of the given subcommand(s)
     merge      Merge overlapped ranges via overlapping graph
     sort       Sort links and ranges within links
 
@@ -85,22 +85,22 @@ SUBCOMMANDS:
 
 ```text
 $ ovlpr help
-ovlpr 0.4.12
+ovlpr 0.6.1
 wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
 USAGE:
     ovlpr [SUBCOMMAND]
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
 
 SUBCOMMANDS:
     covered     Covered regions from .ovlp.tsv files
-    help        Prints this message or the help of the given subcommand(s)
+    help        Print this message or the help of the given subcommand(s)
     paf2ovlp    Convert minimap .paf to overlaps
-    replace     Replace IDs in .ovlp.tsv
+    replace     Replace fields in *.tsv
     restrict    Restrict overlaps to known pairs
 
 ```
