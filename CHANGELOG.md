@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Move `far` out
+* `spanr stat` use i64 in the `all` lines
 
 ## 0.6.1 - 2022-02-22
 

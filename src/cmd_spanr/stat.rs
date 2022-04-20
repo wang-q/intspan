@@ -95,8 +95,8 @@ fn csv_lines(
 ) -> String {
     let mut lines = String::new();
 
-    let mut all_length = 0;
-    let mut all_size = 0;
+    let mut all_length: i64 = 0;
+    let mut all_size: i64 = 0;
     for chr in set.keys() {
         let length = *sizes.get(chr).unwrap();
         let size = set.get(chr).unwrap().cardinality();
@@ -112,8 +112,8 @@ fn csv_lines(
         };
         lines.push_str(line.as_str());
 
-        all_length += length;
-        all_size += size;
+        all_length += length as i64;
+        all_size += size as i64;
     }
 
     let mut all_line = format!(
@@ -121,7 +121,7 @@ fn csv_lines(
         "all",
         all_length,
         all_size,
-        all_size as f32 / all_length as f32
+        all_size as f64 / all_length as f64
     );
     // only keep whole genome
     if is_all {

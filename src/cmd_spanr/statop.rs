@@ -172,10 +172,10 @@ fn csv_lines(
 ) -> String {
     let mut lines = String::new();
 
-    let mut all_length = 0;
-    let mut all_size = 0;
-    let mut all_s2_length = 0;
-    let mut all_s2_size = 0;
+    let mut all_length: i64 = 0;
+    let mut all_size: i64 = 0;
+    let mut all_s2_length: i64 = 0;
+    let mut all_s2_size: i64 = 0;
     for chr in s1.keys() {
         let length = *sizes.get(chr).unwrap();
         let size = s1.get(chr).unwrap().cardinality();
@@ -183,14 +183,14 @@ fn csv_lines(
         let s2_length = s2.get(chr).unwrap().cardinality();
         let s2_size = set_op.get(chr).unwrap().cardinality();
 
-        let c1 = size as f32 / length as f32;
+        let c1 = size as f64 / length as f64;
         let c2 = if s2_length == 0 {
-            0 as f32
+            0 as f64
         } else {
-            s2_size as f32 / s2_length as f32
+            s2_size as f64 / s2_length as f64
         };
-        let ratio = if (c1 - 0 as f32).abs() < 0.00001 {
-            0 as f32
+        let ratio = if (c1 - 0 as f64).abs() < 0.00001 {
+            0 as f64
         } else {
             c2 / c1
         };
@@ -204,20 +204,20 @@ fn csv_lines(
         };
         lines.push_str(line.as_str());
 
-        all_length += length;
-        all_size += size;
-        all_s2_length += s2_length;
-        all_s2_size += s2_size;
+        all_length += length as i64;
+        all_size += size as i64;
+        all_s2_length += s2_length as i64;
+        all_s2_size += s2_size as i64;
     }
 
-    let all_c1 = all_size as f32 / all_length as f32;
+    let all_c1 = all_size as f64 / all_length as f64;
     let all_c2 = if all_s2_length == 0 {
-        0 as f32
+        0 as f64
     } else {
-        all_s2_size as f32 / all_s2_length as f32
+        all_s2_size as f64 / all_s2_length as f64
     };
-    let all_ratio = if (all_c1 - 0 as f32).abs() < 0.00001 {
-        0 as f32
+    let all_ratio = if (all_c1 - 0 as f64).abs() < 0.00001 {
+        0 as f64
     } else {
         all_c2 / all_c1
     };
