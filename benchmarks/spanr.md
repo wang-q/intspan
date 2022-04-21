@@ -162,6 +162,12 @@ curl -o ~/data/S288c.fa.gz \
 curl -o ~/data/Spom.fa.gz \
     -L http://ftp.ensemblgenomes.org/pub/fungi/release-53/fasta/schizosaccharomyces_pombe/dna/Schizosaccharomyces_pombe.ASM294v2.dna_sm.toplevel.fa.gz
 
+faops masked ~/data/S288c.fa.gz > ~/data/S288c.ranges
+faops masked ~/data/Spom.fa.gz > ~/data/Spom.ranges
+
+faops size ~/data/S288c.fa.gz > ~/data/S288c.chr.sizes
+faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
+
 ```
 
 ```shell
@@ -171,9 +177,14 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/Spom.fa.gz | spanr    cover stdin -o /dev/null' \
-    'faops masked ~/data/Spom.fa.gz | jrunlist cover stdin -o /dev/null' \
-    'faops masked ~/data/Spom.fa.gz | runlist  cover stdin -o /dev/null'
+    'spanr    cover ~/data/S288c.ranges -o /dev/null' \
+    'jrunlist cover ~/data/S288c.ranges -o /dev/null' \
+    'runlist  cover ~/data/S288c.ranges -o /dev/null'
+
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    'spanr    cover ~/data/Spom.ranges -o /dev/null' \
+    'jrunlist cover ~/data/Spom.ranges -o /dev/null' \
+    'runlist  cover ~/data/Spom.ranges -o /dev/null'
 
 ```
 
@@ -183,32 +194,39 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
 | jrunlist | 470.2 ± 13.5 |    457.1 |    505.2 | 9.94 ± 0.36 |
 | runlist  |  365.6 ± 2.3 |    362.5 |    370.1 | 7.73 ± 0.18 |
 
-| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:---------|--------------:|---------:|---------:|-------------:|
-| spanr    |    59.3 ± 1.0 |     57.9 |     62.6 |         1.00 |
-| jrunlist | 1549.3 ± 18.4 |   1525.7 |   1597.6 | 26.14 ± 0.53 |
-| runlist  |   596.5 ± 8.0 |    591.5 |    618.3 | 10.06 ± 0.21 |
+| Command                                           |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:--------------------------------------------------|-------------:|---------:|---------:|-------------:|
+| `spanr    cover ~/data/S288c.ranges -o /dev/null` |   13.3 ± 0.6 |     12.5 |     16.8 |         1.00 |
+| `jrunlist cover ~/data/S288c.ranges -o /dev/null` | 371.8 ± 15.4 |    356.0 |    404.2 | 27.91 ± 1.65 |
+| `runlist  cover ~/data/S288c.ranges -o /dev/null` |  284.5 ± 2.7 |    281.4 |    288.8 | 21.35 ± 0.93 |
+
+| Command                                          |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-------------------------------------------------|-------------:|---------:|---------:|-------------:|
+| `spanr    cover ~/data/Spom.ranges -o /dev/null` |   20.7 ± 1.3 |     19.2 |     26.9 |         1.00 |
+| `jrunlist cover ~/data/Spom.ranges -o /dev/null` | 824.9 ± 51.5 |    764.1 |    896.3 | 39.77 ± 3.56 |
+| `runlist  cover ~/data/Spom.ranges -o /dev/null` |  473.9 ± 8.9 |    460.6 |    486.7 | 22.85 ± 1.53 |
 
 ## `spanr coverage`
 
 ```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/S288c.fa.gz | spanr    coverage stdin -o /dev/null' \
-    'faops masked ~/data/S288c.fa.gz | jrunlist cover    stdin -o /dev/null' \
-    'faops masked ~/data/S288c.fa.gz | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/S288c/chr.sizes'
+    'spanr    coverage ~/data/S288c.ranges -o /dev/null' \
+    'jrunlist cover    ~/data/S288c.ranges -c 2 -o /dev/null' \
+    'runlist  coverage ~/data/S288c.ranges -s ~/data/S288c.chr.sizes -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'faops masked ~/data/Spom.fa.gz | spanr    coverage stdin -o /dev/null' \
-    'faops masked ~/data/Spom.fa.gz | jrunlist cover    stdin -o /dev/null' \
-    'faops masked ~/data/Spom.fa.gz | runlist  coverage stdin -o /dev/null -s ~/data/alignment/Ensembl/Spom/chr.sizes'
+    'spanr    coverage ~/data/Spom.ranges -o /dev/null' \
+    'jrunlist cover    ~/data/Spom.ranges -c 2 -o /dev/null' \
+    'runlist  coverage ~/data/Spom.ranges -s ~/data/Spom.chr.sizes -o /dev/null'
+
 
 ```
 
-| Command  |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
-|:---------|-------------:|---------:|---------:|------------:|
-| spanr    |  171.5 ± 1.7 |    169.8 |    176.1 |        1.00 |
-| jrunlist |  462.0 ± 3.6 |    457.1 |    467.3 | 2.69 ± 0.03 |
-| runlist  | 1494.1 ± 8.0 |   1484.2 |   1508.9 | 8.71 ± 0.10 |
+| Command                                                                        |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-------------------------------------------------------------------------------|-------------:|---------:|---------:|------------:|
+| `spanr    coverage ~/data/S288c.ranges -o /dev/null`                           |  177.3 ± 1.9 |    174.6 |    181.2 |        1.00 |
+| `jrunlist cover    ~/data/S288c.ranges -c 2 -o /dev/null`                      |  300.5 ± 4.2 |    293.8 |    306.7 | 1.69 ± 0.03 |
+| `runlist  coverage ~/data/S288c.ranges -s ~/data/S288c.chr.sizes -o /dev/null` | 1208.1 ± 9.8 |   1194.1 |   1227.3 | 6.81 ± 0.09 |
 
 | Command  |       Mean [s] | Min [s] | Max [s] |     Relative |
 |:---------|---------------:|--------:|--------:|-------------:|
