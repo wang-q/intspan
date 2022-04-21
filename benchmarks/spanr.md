@@ -12,9 +12,9 @@ brew install hyperfine
 ## `bash benchmarks/spanr/run.sh`
 
 ```shell
-bash ~/Scripts/rust/intspan/benchmarks/spanr/run.sh
+bash ~/Scripts/intspan/benchmarks/spanr/run.sh
 
-rm ~/Scripts/rust/intspan/benchmarks/spanr/*.tmp
+rm ~/Scripts/intspan/benchmarks/spanr/*.tmp
 
 ```
 
