@@ -38,11 +38,11 @@ BASE_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 cd ${BASE_DIR}
 
 if [[ ! -e intspan-x86_64-unknown-linux-gnu.tar.gz ]]; then
-    wget https://github.com/wang-q/intspan/releases/download/v0.4.16/intspan-x86_64-unknown-linux-gnu.tar.gz
+    curl -LO https://github.com/wang-q/intspan/releases/download/v0.6.5/intspan-x86_64-unknown-linux-gnu.tar.gz
 fi
 
-if [[ ! -e intspan-x86_64-unknown-linux-gnu.tar.gz ]]; then
-    wget -N https://github.com/wang-q/intspan/releases/download/v0.4.16/intspan-x86_64-unknown-linux-musl.tar.gz
+if [[ ! -e intspan-x86_64-unknown-linux-musl.tar.gz ]]; then
+    curl -LO https://github.com/wang-q/intspan/releases/download/v0.6.5/intspan-x86_64-unknown-linux-musl.tar.gz
 fi
 
 tar xvfz intspan-x86_64-unknown-linux-gnu.tar.gz
