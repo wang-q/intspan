@@ -3,7 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Use rust_lapper as an intermediate layer instead of intspan::Coverage
-  * Greatly improves the speed of `spanr coverage`
+    * Greatly improves the speed of `spanr coverage`
 
 ## 0.6.4 - 2022-04-21
 
