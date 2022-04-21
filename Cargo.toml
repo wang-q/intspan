@@ -49,7 +49,9 @@ petgraph = "0.4.13"
 indexmap = "1.1.0"
 flate2 = "1.0"
 itertools = "0.10.3"
+
 bio = "0.30.0"
+rust-lapper = "1.0.0"
 
 [build-dependencies]
 

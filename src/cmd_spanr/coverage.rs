@@ -1,11 +1,11 @@
 use clap::*;
 use intspan::*;
+use rust_lapper::{Interval, Lapper};
 use std::collections::BTreeMap;
 use std::io::BufRead;
 
-// TODO: optional chr.sizes to be passed to Coverage::new()
-
-// TODO: improve speeds on large files
+// Interval: represent a range from [start, stop), carrying val
+type Iv = Interval<u32, u32>; // the first type should be Unsigned
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
@@ -48,8 +48,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         std::process::exit(1)
     });
 
-    // seq_name => tier_of => IntSpan
-    let mut res: BTreeMap<String, Coverage> = BTreeMap::new();
+    // seq_name => Vector of Intervals
+    let mut res: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
@@ -60,12 +60,17 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
             }
             let chr = range.chr();
             if !res.contains_key(chr) {
-                let tiers = Coverage::new(coverage);
-                res.insert(chr.clone(), tiers);
+                let ivs: Vec<Iv> = vec![];
+                res.insert(chr.clone(), ivs);
             }
 
-            res.entry(chr.to_string())
-                .and_modify(|e| e.bump(*range.start(), *range.end()));
+            let iv = Iv {
+                start: *range.start() as u32,
+                stop: *range.end() as u32 + 1,
+                val: 0,
+            };
+
+            res.entry(chr.to_string()).and_modify(|e| e.push(iv));
         }
     }
 
@@ -74,7 +79,20 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     //----------------------------
     let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
     for chr in res.keys() {
-        set.insert(chr.to_string(), res.get(chr).unwrap().max_tier());
+        let lapper = Lapper::new(res.get(chr).unwrap().to_owned());
+        let ivs = lapper.depth().collect::<Vec<Interval<u32, u32>>>();
+
+        let mut intspan = IntSpan::new();
+        for iv in ivs {
+            let depth = iv.val as i32;
+            if depth < coverage {
+                continue;
+            }
+
+            intspan.add_pair(iv.start as i32, iv.stop as i32 - 1);
+        }
+
+        set.insert(chr.to_string(), intspan);
     }
     let out_yaml = set2yaml(&set);
     write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;

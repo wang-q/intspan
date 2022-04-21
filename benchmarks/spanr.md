@@ -211,26 +211,25 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
 ```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'spanr    coverage ~/data/S288c.ranges -o /dev/null' \
-    'jrunlist cover    ~/data/S288c.ranges -c 2 -o /dev/null' \
+    'jrunlist cover    ~/data/S288c.ranges -o /dev/null' \
     'runlist  coverage ~/data/S288c.ranges -s ~/data/S288c.chr.sizes -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'spanr    coverage ~/data/Spom.ranges -o /dev/null' \
-    'jrunlist cover    ~/data/Spom.ranges -c 2 -o /dev/null' \
+    'jrunlist cover    ~/data/Spom.ranges -o /dev/null' \
     'runlist  coverage ~/data/Spom.ranges -s ~/data/Spom.chr.sizes -o /dev/null'
 
 
 ```
 
-| Command                                                                        |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
-|:-------------------------------------------------------------------------------|-------------:|---------:|---------:|------------:|
-| `spanr    coverage ~/data/S288c.ranges -o /dev/null`                           |  177.3 ± 1.9 |    174.6 |    181.2 |        1.00 |
-| `jrunlist cover    ~/data/S288c.ranges -c 2 -o /dev/null`                      |  300.5 ± 4.2 |    293.8 |    306.7 | 1.69 ± 0.03 |
-| `runlist  coverage ~/data/S288c.ranges -s ~/data/S288c.chr.sizes -o /dev/null` | 1208.1 ± 9.8 |   1194.1 |   1227.3 | 6.81 ± 0.09 |
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:---------|--------------:|---------:|---------:|-------------:|
+| spanr    |    18.0 ± 0.9 |     17.2 |     28.1 |         1.00 |
+| jrunlist |  365.1 ± 10.2 |    350.4 |    380.2 | 20.33 ± 1.20 |
+| runlist  | 1198.0 ± 15.5 |   1176.5 |   1232.3 | 66.69 ± 3.59 |
 
-| Command  |       Mean [s] | Min [s] | Max [s] |     Relative |
-|:---------|---------------:|--------:|--------:|-------------:|
-| spanr    | 21.520 ± 0.230 |  21.242 |  21.929 | 13.49 ± 0.37 |
-| jrunlist |  1.595 ± 0.040 |   1.544 |   1.662 |         1.00 |
-| runlist  |  8.936 ± 0.342 |   8.502 |   9.340 |  5.60 ± 0.26 |
-
+| Command  |     Mean [ms] | Min [ms] | Max [ms] |      Relative |
+|:---------|--------------:|---------:|---------:|--------------:|
+| spanr    |    37.6 ± 1.9 |     35.8 |     46.2 |          1.00 |
+| jrunlist |  732.9 ± 14.8 |    719.4 |    765.3 |  19.49 ± 1.05 |
+| runlist  | 6914.3 ± 29.1 |   6870.1 |   6960.8 | 183.88 ± 9.26 |
