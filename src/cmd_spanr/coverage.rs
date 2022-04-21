@@ -65,7 +65,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
             }
 
             res.entry(chr.to_string())
-                .and_modify(|e| e.bump(range.start().clone(), range.end().clone()));
+                .and_modify(|e| e.bump(*range.start(), *range.end()));
         }
     }
 
