@@ -9,7 +9,7 @@
 
 ## Install
 
-Current release: 0.6.4
+Current release: 0.6.5
 
 ```bash
 cargo install intspan
