@@ -42,7 +42,8 @@ fn main() -> std::io::Result<()> {
         Some(("convert", sub_matches)) => cmd_spanr::convert::execute(sub_matches),
         Some(("range", sub_matches)) => cmd_spanr::range::execute(sub_matches),
         _ => unreachable!(),
-    }?;
+    }
+    .unwrap();
 
     Ok(())
 }
