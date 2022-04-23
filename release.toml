@@ -1,6 +1,5 @@
 pre-release-replacements = [
   {file="README.md", search="Current release: [a-z0-9\\.-]+", replace="Current release: {{version}}"} ,
-  {file ="Cargo.toml", search="branch=\"[a-z0-9\\.-]+\"", replace="branch=\"{{version}}\""},
   {file="CHANGELOG.md", search="Unreleased", replace="{{version}}"},
   {file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}"},
   {file="CHANGELOG.md", search="Change Log", replace="Change Log\n\n## Unreleased - ReleaseDate"}
