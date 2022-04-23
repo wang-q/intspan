@@ -12,9 +12,9 @@ brew install hyperfine
 ## `bash benchmarks/linkr/run.sh`
 
 ```bash
-bash ~/Scripts/rust/intspan/benchmarks/linkr/run.sh
+bash ~/Scripts/intspan/benchmarks/linkr/run.sh
 
-rm ~/Scripts/rust/intspan/benchmarks/linkr/*.tmp
+rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 
 ```
 
