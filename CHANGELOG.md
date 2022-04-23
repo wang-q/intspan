@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `--detailed` to `spanr coverage`
+
 ## 0.6.5 - 2022-04-22
 
 * Use rust_lapper as an intermediate layer instead of intspan::Coverage
