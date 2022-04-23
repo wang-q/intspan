@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.6.6 - 2022-04-24
+
 * Add `spanr count`
 * Add `--detailed` to `spanr coverage`
 * Use `Box<dyn std::error::Error>`
