@@ -5,7 +5,7 @@ use std::io::BufRead;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("range")
-        .about("Convert runlist file to ranges file")
+        .about("Compare runlist file with ranges file")
         .arg(
             Arg::new("runlist")
                 .help("Sets the input file to use")
