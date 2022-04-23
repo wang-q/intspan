@@ -14,6 +14,8 @@ Current release: 0.6.7
 ```bash
 cargo install intspan
 
+cargo install --force --path .
+
 # or
 brew install intspan
 
@@ -110,17 +112,16 @@ SUBCOMMANDS:
 
 ### IntSpans
 
-An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`
-or `-99--10,1-10,19,45-48`.
+An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`.
 
-The following picture is the schema of an IntSpan object. Jump lines are above the baseline; loop
+The following figure shows the schema of an IntSpan object. Jump lines are above the baseline; loop
 lines are below it.
 
 ![intspans](doc/intspans.png)
 
 Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
-[jintspan](https://github.com/egateam/jintspan) are implements of IntSpan objects in Perl and Java,
-respectively.
+[jintspan](https://github.com/egateam/jintspan) are implements of the IntSpan objects in Perl and
+Java, respectively.
 
 ### IntSpans on chromosomes
 
@@ -132,7 +133,7 @@ respectively.
 
 ### Ranges
 
-Examples in [`S288c.ranges`](tests/spanr/S288c.ranges)
+An example is [`S288c.ranges`](tests/spanr/S288c.ranges)
 
 ```text
 I:1-100
@@ -154,8 +155,9 @@ Simple rules:
 * `:` to separate names and digits
 * `-` to separate `start` and `end`
 * For `species`:
-    * `species` should be alphanumeric and without spaces, one exception char is `/`.
-    * `species` is an identity, you can also treat is as a strain name, a lineage or something else.
+    * `species` should be alphanumeric with no spaces, the one exception character is `/`.
+    * A `species` is an identity that you can also think of as a strain name, an assembly, or
+      something else.
 
 ```text
 species.chromosome(strand):start-end
@@ -169,26 +171,23 @@ Types of links:
 
 * Bilateral links
 
-                I(+):13063-17220    I(-):215091-219225
-                I(+):139501-141431  XII(+):95564-97485
+        I(+):13063-17220    I(-):215091-219225
+        I(+):139501-141431  XII(+):95564-97485
 
 * Bilateral links with hit strand
 
-                I(+):13327-17227    I(+):215084-218967  -
-                I(+):139501-141431  XII(+):95564-97485  +
+        I(+):13327-17227    I(+):215084-218967  -
+        I(+):139501-141431  XII(+):95564-97485  +
 
 * Multilateral links
 
-                II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
+        II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
 
 ## EXAMPLES
 
 ### `spanr`
 
 ```bash
-# cargo install --force --path .
-# cargo install --force --git https://github.com/wang-q/intspan
-
 spanr genome tests/spanr/S288c.chr.sizes
 
 spanr genome tests/spanr/S288c.chr.sizes |
@@ -201,11 +200,11 @@ spanr merge tests/spanr/I.yml tests/spanr/II.yml
 spanr cover tests/spanr/S288c.ranges
 spanr cover tests/spanr/dazzname.ranges
 
-spanr coverage tests/spanr/S288c.ranges -c 2
+spanr coverage tests/spanr/S288c.ranges -m 2
+
+spanr coverage tests/spanr/S288c.ranges -d
 
 spanr gff tests/spanr/NC_007942.gff --tag tRNA
-
-spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.ranges
 
 spanr span --op cover tests/spanr/brca2.yml
 
@@ -251,9 +250,14 @@ diff <(spanr statop \
 spanr convert tests/spanr/repeat.yml tests/spanr/intergenic.yml |
     spanr cover stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
+
 spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
     spanr combine stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
+
+spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.ranges
+
+spanr count tests/spanr/S288c.ranges tests/spanr/S288c.ranges
 
 ```
 
