@@ -125,11 +125,11 @@ Java, respectively.
 
 ### IntSpans on chromosomes
 
-* `chr.sizes`
+* Single: [`repeat.yml`](tests/spanr/repeat.yml)
 
-* Single
+* Multi: [`Atha.yml`](tests/spanr/Atha.yml)
 
-* Multi
+* `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
 
 ### Ranges
 
