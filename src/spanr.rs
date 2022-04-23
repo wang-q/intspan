@@ -23,7 +23,8 @@ fn main() -> std::io::Result<()> {
         .subcommand(cmd_spanr::coverage::make_subcommand())
         .subcommand(cmd_spanr::gff::make_subcommand())
         .subcommand(cmd_spanr::convert::make_subcommand())
-        .subcommand(cmd_spanr::range::make_subcommand());
+        .subcommand(cmd_spanr::range::make_subcommand())
+        .subcommand(cmd_spanr::count::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
@@ -41,6 +42,7 @@ fn main() -> std::io::Result<()> {
         Some(("gff", sub_matches)) => cmd_spanr::gff::execute(sub_matches),
         Some(("convert", sub_matches)) => cmd_spanr::convert::execute(sub_matches),
         Some(("range", sub_matches)) => cmd_spanr::range::execute(sub_matches),
+        Some(("count", sub_matches)) => cmd_spanr::count::execute(sub_matches),
         _ => unreachable!(),
     }
     .unwrap();
@@ -60,3 +62,4 @@ fn main() -> std::io::Result<()> {
 //      BTreeMap<String, IntSpan>
 // res_of: BTreeMap<String, BTreeMap<String, IntSpan>>
 // sizes: chr.sizes, BTreeMap<String, i32>
+// iv_of: BTreeMap<String, Vec<Iv>>

@@ -711,3 +711,21 @@ fn command_range_invalid() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_count() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("count")
+        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.ranges")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains("I:1-100\t2"));
+    assert!(stdout.contains("21294-22075\t1"));
+
+    Ok(())
+}

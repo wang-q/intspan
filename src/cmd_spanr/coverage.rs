@@ -45,7 +45,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
+pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
     //----------------------------
     // Loading
     //----------------------------
@@ -56,19 +56,22 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
     let is_detailed = args.is_present("detailed");
 
     // seq_name => Vector of Intervals
-    let mut res: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
+    let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
+            if line.starts_with('#') {
+                continue;
+            }
             let range = Range::from_str(&line);
             if !range.is_valid() {
                 continue;
             }
             let chr = range.chr();
-            if !res.contains_key(chr) {
+            if !iv_of.contains_key(chr) {
                 let ivs: Vec<Iv> = vec![];
-                res.insert(chr.clone(), ivs);
+                iv_of.insert(chr.clone(), ivs);
             }
 
             let iv = Iv {
@@ -77,7 +80,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
                 val: 0,
             };
 
-            res.entry(chr.to_string()).and_modify(|e| e.push(iv));
+            iv_of.entry(chr.to_string()).and_modify(|e| e.push(iv));
         }
     }
 
@@ -88,8 +91,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         // Multi
         let mut set_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
 
-        for chr in res.keys() {
-            let lapper = Lapper::new(res.get(chr).unwrap().to_owned());
+        for chr in iv_of.keys() {
+            let lapper = Lapper::new(iv_of.get(chr).unwrap().to_owned());
             let ivs = lapper.depth().collect::<Vec<Interval<u32, u32>>>();
 
             // depth => IntSpan
@@ -131,8 +134,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), std::io::Error> {
         // chr => IntSpan
         let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
 
-        for chr in res.keys() {
-            let lapper = Lapper::new(res.get(chr).unwrap().to_owned());
+        for chr in iv_of.keys() {
+            let lapper = Lapper::new(iv_of.get(chr).unwrap().to_owned());
             let ivs = lapper.depth().collect::<Vec<Interval<u32, u32>>>();
 
             let mut intspan = IntSpan::new();
