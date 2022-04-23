@@ -19,7 +19,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .arg(
             Arg::new("all")
                 .long("all")
-                .help("All parts of file_stem, except the last one"),
+                .help("All parts of file_stem (aka basename), except the last one"),
         )
         .arg(
             Arg::new("outfile")
