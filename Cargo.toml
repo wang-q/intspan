@@ -11,10 +11,6 @@ categories = ["command-line-utilities", "science"]
 license = "MIT"
 edition = "2018"
 
-[badges]
-travis-ci = { repository = "wang-q/intspan", branch="0.6.5" }
-appveyor = { repository = "wang-q/intspan" }
-
 [lib]
 name = "intspan"
 
