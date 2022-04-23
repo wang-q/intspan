@@ -148,7 +148,6 @@ rm ~/Scripts/intspan/benchmarks/spanr/*.tmp
         Page size (bytes): 4096
         Exit status: 0
 
-
 ```
 
 ## `spanr cover`
@@ -218,7 +217,6 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'spanr    coverage ~/data/Spom.ranges -o /dev/null' \
     'jrunlist cover    ~/data/Spom.ranges -o /dev/null' \
     'runlist  coverage ~/data/Spom.ranges -s ~/data/Spom.chr.sizes -o /dev/null'
-
 
 ```
 
