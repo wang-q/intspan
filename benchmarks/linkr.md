@@ -18,160 +18,415 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 
 ```
 
-* OSX 10.14 i7-8700k oracleJDK8
+* OSX 11.6 i7-8700k oracleJDK@18
 
 ```text
 ==> merge <==
 ==> jrange merge lastz blast
-        3.93 real         4.34 user         0.71 sys
-2232537088  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-    546795  page reclaims
-       302  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         1  signals received
-       390  voluntary context switches
-      5457  involuntary context switches
+        2.89 real         4.13 user         0.21 sys
+           652529664  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              160994  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                 118  voluntary context switches
+                4371  involuntary context switches
+         37410461948  instructions retired
+         18487691396  cycles elapsed
+           609824768  peak memory footprint
 ==> linkr merge lastz blast
-        8.13 real         8.08 user         0.02 sys
-  10190848  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-      2205  page reclaims
-       293  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         0  signals received
-         4  voluntary context switches
-      3448  involuntary context switches
+        6.93 real         6.91 user         0.01 sys
+             9736192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                2390  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1669  involuntary context switches
+         77317299730  instructions retired
+         30035881697  cycles elapsed
+             8495104  peak memory footprint
 ==> rangeops merge lastz blast
-      109.38 real       303.42 user         0.76 sys
-  81293312  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-    193419  page reclaims
-       537  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-       140  messages sent
-       131  messages received
-         0  signals received
-       579  voluntary context switches
-    109887  involuntary context switches
+      114.52 real       308.76 user         1.20 sys
+            69718016  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              176132  page reclaims
+                 548  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                 135  messages sent
+                 126  messages received
+                   0  signals received
+                 453  voluntary context switches
+              241748  involuntary context switches
+         54025942898  instructions retired
+         26236539133  cycles elapsed
+            67203072  peak memory footprint
 
 ==> clean <==
 ==> jrange clean sort.clean
-        2.37 real         3.46 user         0.39 sys
-1152528384  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-    283193  page reclaims
-       224  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         1  signals received
-       159  voluntary context switches
-      4389  involuntary context switches
+        2.27 real         3.81 user         0.24 sys
+           509960192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              125953  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+                   2  voluntary context switches
+                8710  involuntary context switches
+         31436632868  instructions retired
+         17123212271  cycles elapsed
+           477802496  peak memory footprint
 ==> linkr clean sort.clean
-        2.48 real         2.47 user         0.00 sys
-  17862656  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-      4352  page reclaims
-        18  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         0  signals received
-         0  voluntary context switches
-        84  involuntary context switches
+        2.44 real         2.39 user         0.01 sys
+            18178048  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                4451  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                1916  involuntary context switches
+         23088748720  instructions retired
+         10302438203  cycles elapsed
+            15097856  peak memory footprint
 ==> rangeops clean sort.clean
-       49.96 real        49.88 user         0.05 sys
-  86474752  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-     25658  page reclaims
-         0  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         0  signals received
-         4  voluntary context switches
-      1759  involuntary context switches
+       52.79 real        52.39 user         0.22 sys
+            73043968  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               21691  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   3  voluntary context switches
+               30116  involuntary context switches
+        468489165364  instructions retired
+        225762118998  cycles elapsed
+            70160384  peak memory footprint
 
 ==> clean bundle <==
 ==> jrange clean bundle sort.clean
-        4.55 real         6.13 user         0.55 sys
-1812459520  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-    444689  page reclaims
-         0  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         3  signals received
-         0  voluntary context switches
-      5293  involuntary context switches
+        4.23 real         6.62 user         0.26 sys
+           522530816  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              129148  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   2  signals received
+                   0  voluntary context switches
+               17318  involuntary context switches
+         59648631114  instructions retired
+         29524446691  cycles elapsed
+           482168832  peak memory footprint
 ==> linkr clean bundle sort.clean
-        4.95 real         4.94 user         0.00 sys
-  26411008  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-      6456  page reclaims
-         1  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         0  signals received
-         0  voluntary context switches
-       194  involuntary context switches
+        4.50 real         4.47 user         0.02 sys
+            24215552  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+                5929  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   0  voluntary context switches
+                 963  involuntary context switches
+         48248393033  instructions retired
+         19244412966  cycles elapsed
+            17686528  peak memory footprint
 ==> rangeops clean bundle sort.clean
-       78.40 real        78.23 user         0.10 sys
-  90353664  maximum resident set size
-         0  average shared memory size
-         0  average unshared data size
-         0  average unshared stack size
-     26996  page reclaims
-         0  page faults
-         0  swaps
-         0  block input operations
-         0  block output operations
-         0  messages sent
-         0  messages received
-         0  signals received
-         4  voluntary context switches
-     10379  involuntary context switches
+       92.40 real        91.79 user         0.37 sys
+            80662528  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+               23661  page reclaims
+                   0  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                   4  voluntary context switches
+               50365  involuntary context switches
+        787407478040  instructions retired
+        394885162910  cycles elapsed
+            77492224  peak memory footprint
 
 ```
+
+* Ubuntu 14.04 E5-2690 v3 openJDK@18
+
+```text
+==> merge <==
+==> jrange merge lastz blast
+	Command being timed: "jrange merge -o stdout -c 0.95 links.lastz.tsv links.blast.tsv"
+	User time (seconds): 6.07
+	System time (seconds): 0.44
+	Percent of CPU this job got: 148%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.38
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1372452
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 32177
+	Voluntary context switches: 5228
+	Involuntary context switches: 21
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> linkr merge lastz blast
+	Command being timed: "linkr merge -o stdout -c 0.95 links.lastz.tsv links.blast.tsv"
+	User time (seconds): 4.36
+	System time (seconds): 0.00
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.39
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7504
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 4450
+	Voluntary context switches: 6
+	Involuntary context switches: 3
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> rangeops merge lastz blast
+	Command being timed: "rangeops merge -o stdout -c 0.95 -p 8 links.lastz.tsv links.blast.tsv"
+	User time (seconds): 394.96
+	System time (seconds): 0.90
+	Percent of CPU this job got: 269%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:26.69
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 72340
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 386079
+	Voluntary context switches: 13292
+	Involuntary context switches: 732
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+==> clean <==
+==> jrange clean sort.clean
+	Command being timed: "jrange clean -o stdout sort.clean.tsv"
+	User time (seconds): 5.17
+	System time (seconds): 0.48
+	Percent of CPU this job got: 194%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.91
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1378808
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 34077
+	Voluntary context switches: 7007
+	Involuntary context switches: 15
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> linkr clean sort.clean
+	Command being timed: "linkr clean -o stdout sort.clean.tsv"
+	User time (seconds): 1.22
+	System time (seconds): 0.01
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.23
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 11388
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3783
+	Voluntary context switches: 3
+	Involuntary context switches: 2
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> rangeops clean sort.clean
+	Command being timed: "rangeops clean -o stdout sort.clean.tsv"
+	User time (seconds): 64.05
+	System time (seconds): 0.12
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:04.17
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 75796
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 62153
+	Voluntary context switches: 32
+	Involuntary context switches: 54
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+==> clean bundle <==
+==> jrange clean bundle sort.clean
+	Command being timed: "jrange clean -o stdout --bundle 500 sort.clean.tsv"
+	User time (seconds): 8.76
+	System time (seconds): 0.55
+	Percent of CPU this job got: 157%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:05.93
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1375340
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 35715
+	Voluntary context switches: 7075
+	Involuntary context switches: 18
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> linkr clean bundle sort.clean
+	Command being timed: "linkr clean -o stdout --bundle 500 sort.clean.tsv"
+	User time (seconds): 2.76
+	System time (seconds): 0.01
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.78
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 12644
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 6245
+	Voluntary context switches: 3
+	Involuntary context switches: 11
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+==> rangeops clean bundle sort.clean
+	Command being timed: "rangeops clean -o stdout --bundle 500 sort.clean.tsv"
+	User time (seconds): 111.82
+	System time (seconds): 0.13
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:51.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 80944
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 99363
+	Voluntary context switches: 33
+	Involuntary context switches: 57
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+
+```
+
 
 ## `linkr` on macOS
 
