@@ -5,11 +5,11 @@ use std::fmt;
 
 #[derive(Default, Clone)]
 pub struct Range {
-    name: String,
-    chr: String,
-    strand: String,
-    start: i32,
-    end: i32,
+    pub name: String,
+    pub chr: String,
+    pub strand: String,
+    pub start: i32,
+    pub end: i32,
 }
 
 lazy_static! {
