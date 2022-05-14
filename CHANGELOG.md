@@ -4,6 +4,8 @@
 
 * New binary `rgr`
 
+* Move `ovlpr replace` to `rgr replace`
+
 ## 0.6.7 - 2022-04-24
 
 ## 0.6.6 - 2022-04-24

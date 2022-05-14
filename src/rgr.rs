@@ -22,4 +22,6 @@ fn main() -> std::io::Result<()> {
 }
 
 // TODO: `rgr field`
+// TODO: `rgr count`
 // TODO: `rgr annotate`
+// TODO: `rgr merge`
