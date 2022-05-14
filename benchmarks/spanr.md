@@ -161,8 +161,8 @@ curl -o ~/data/S288c.fa.gz \
 curl -o ~/data/Spom.fa.gz \
     -L http://ftp.ensemblgenomes.org/pub/fungi/release-53/fasta/schizosaccharomyces_pombe/dna/Schizosaccharomyces_pombe.ASM294v2.dna_sm.toplevel.fa.gz
 
-faops masked ~/data/S288c.fa.gz > ~/data/S288c.ranges
-faops masked ~/data/Spom.fa.gz > ~/data/Spom.ranges
+faops masked ~/data/S288c.fa.gz > ~/data/S288c.rg
+faops masked ~/data/Spom.fa.gz > ~/data/Spom.rg
 
 faops size ~/data/S288c.fa.gz > ~/data/S288c.chr.sizes
 faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
@@ -176,14 +176,14 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'spanr    cover ~/data/S288c.ranges -o /dev/null' \
-    'jrunlist cover ~/data/S288c.ranges -o /dev/null' \
-    'runlist  cover ~/data/S288c.ranges -o /dev/null'
+    'spanr    cover ~/data/S288c.rg -o /dev/null' \
+    'jrunlist cover ~/data/S288c.rg -o /dev/null' \
+    'runlist  cover ~/data/S288c.rg -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'spanr    cover ~/data/Spom.ranges -o /dev/null' \
-    'jrunlist cover ~/data/Spom.ranges -o /dev/null' \
-    'runlist  cover ~/data/Spom.ranges -o /dev/null'
+    'spanr    cover ~/data/Spom.rg -o /dev/null' \
+    'jrunlist cover ~/data/Spom.rg -o /dev/null' \
+    'runlist  cover ~/data/Spom.rg -o /dev/null'
 
 ```
 
@@ -195,28 +195,28 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
 
 | Command                                           |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
 |:--------------------------------------------------|-------------:|---------:|---------:|-------------:|
-| `spanr    cover ~/data/S288c.ranges -o /dev/null` |   13.3 ± 0.6 |     12.5 |     16.8 |         1.00 |
-| `jrunlist cover ~/data/S288c.ranges -o /dev/null` | 371.8 ± 15.4 |    356.0 |    404.2 | 27.91 ± 1.65 |
-| `runlist  cover ~/data/S288c.ranges -o /dev/null` |  284.5 ± 2.7 |    281.4 |    288.8 | 21.35 ± 0.93 |
+| `spanr    cover ~/data/S288c.rg -o /dev/null` |   13.3 ± 0.6 |     12.5 |     16.8 |         1.00 |
+| `jrunlist cover ~/data/S288c.rg -o /dev/null` | 371.8 ± 15.4 |    356.0 |    404.2 | 27.91 ± 1.65 |
+| `runlist  cover ~/data/S288c.rg -o /dev/null` |  284.5 ± 2.7 |    281.4 |    288.8 | 21.35 ± 0.93 |
 
 | Command                                          |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
 |:-------------------------------------------------|-------------:|---------:|---------:|-------------:|
-| `spanr    cover ~/data/Spom.ranges -o /dev/null` |   20.7 ± 1.3 |     19.2 |     26.9 |         1.00 |
-| `jrunlist cover ~/data/Spom.ranges -o /dev/null` | 824.9 ± 51.5 |    764.1 |    896.3 | 39.77 ± 3.56 |
-| `runlist  cover ~/data/Spom.ranges -o /dev/null` |  473.9 ± 8.9 |    460.6 |    486.7 | 22.85 ± 1.53 |
+| `spanr    cover ~/data/Spom.rg -o /dev/null` |   20.7 ± 1.3 |     19.2 |     26.9 |         1.00 |
+| `jrunlist cover ~/data/Spom.rg -o /dev/null` | 824.9 ± 51.5 |    764.1 |    896.3 | 39.77 ± 3.56 |
+| `runlist  cover ~/data/Spom.rg -o /dev/null` |  473.9 ± 8.9 |    460.6 |    486.7 | 22.85 ± 1.53 |
 
 ## `spanr coverage`
 
 ```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'spanr    coverage ~/data/S288c.ranges -o /dev/null' \
-    'jrunlist cover    ~/data/S288c.ranges -o /dev/null' \
-    'runlist  coverage ~/data/S288c.ranges -s ~/data/S288c.chr.sizes -o /dev/null'
+    'spanr    coverage ~/data/S288c.rg -o /dev/null' \
+    'jrunlist cover    ~/data/S288c.rg -o /dev/null' \
+    'runlist  coverage ~/data/S288c.rg -s ~/data/S288c.chr.sizes -o /dev/null'
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'spanr    coverage ~/data/Spom.ranges -o /dev/null' \
-    'jrunlist cover    ~/data/Spom.ranges -o /dev/null' \
-    'runlist  coverage ~/data/Spom.ranges -s ~/data/Spom.chr.sizes -o /dev/null'
+    'spanr    coverage ~/data/Spom.rg -o /dev/null' \
+    'jrunlist cover    ~/data/Spom.rg -o /dev/null' \
+    'runlist  coverage ~/data/Spom.rg -s ~/data/Spom.chr.sizes -o /dev/null'
 
 ```
 

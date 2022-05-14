@@ -499,7 +499,7 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -513,7 +513,7 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
-        .arg("tests/spanr/dazzname.ranges")
+        .arg("tests/spanr/dazzname.rg")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -530,7 +530,7 @@ fn command_coverage() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("coverage")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("-m")
         .arg("2")
         .output()
@@ -550,7 +550,7 @@ fn command_coverage_detailed() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("coverage")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("-m")
         .arg("1")
         .arg("-d")
@@ -653,7 +653,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("range")
         .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("--op")
         .arg("overlap")
         .output()
@@ -668,7 +668,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("range")
         .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("--op")
         .arg("non-overlap")
         .output()
@@ -683,7 +683,7 @@ fn command_range() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("range")
         .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("--op")
         .arg("superset")
         .output()
@@ -702,7 +702,7 @@ fn command_range_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("range")
         .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
         .arg("--op")
         .arg("invalid");
     cmd.assert()
@@ -717,8 +717,8 @@ fn command_count() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("count")
-        .arg("tests/spanr/S288c.ranges")
-        .arg("tests/spanr/S288c.ranges")
+        .arg("tests/spanr/S288c.rg")
+        .arg("tests/spanr/S288c.rg")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();

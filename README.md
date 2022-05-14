@@ -154,7 +154,7 @@ Java, respectively.
 
 ### Ranges
 
-An example is [`S288c.ranges`](tests/spanr/S288c.ranges)
+An example is [`S288c.rg`](tests/spanr/S288c.rg)
 
 ```text
 I:1-100
@@ -218,12 +218,12 @@ spanr some tests/spanr/Atha.yml tests/spanr/Atha.list
 
 spanr merge tests/spanr/I.yml tests/spanr/II.yml
 
-spanr cover tests/spanr/S288c.ranges
-spanr cover tests/spanr/dazzname.ranges
+spanr cover tests/spanr/S288c.rg
+spanr cover tests/spanr/dazzname.rg
 
-spanr coverage tests/spanr/S288c.ranges -m 2
+spanr coverage tests/spanr/S288c.rg -m 2
 
-spanr coverage tests/spanr/S288c.ranges -d
+spanr coverage tests/spanr/S288c.rg -d
 
 spanr gff tests/spanr/NC_007942.gff --tag tRNA
 
@@ -276,9 +276,9 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
     spanr combine stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
-spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.ranges
+spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.rg
 
-spanr count tests/spanr/S288c.ranges tests/spanr/S288c.ranges
+spanr count tests/spanr/S288c.rg tests/spanr/S288c.rg
 
 ```
 
