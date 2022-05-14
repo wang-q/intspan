@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.6.8 - 2022-05-14
+
 * New binary `rgr`
 
 * Move `ovlpr replace` to `rgr replace`
