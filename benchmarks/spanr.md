@@ -171,63 +171,92 @@ faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
 
 ```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    -n spanr \
     'faops masked ~/data/S288c.fa.gz | spanr    cover stdin -o /dev/null' \
+    -n jrunlist \
     'faops masked ~/data/S288c.fa.gz | jrunlist cover stdin -o /dev/null' \
+    -n runlist \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
-hyperfine --warmup 1 --export-markdown cover.md.tmp \
-    'spanr    cover ~/data/S288c.rg -o /dev/null' \
-    'jrunlist cover ~/data/S288c.rg -o /dev/null' \
-    'runlist  cover ~/data/S288c.rg -o /dev/null'
+cat cover.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    -n spanr \
+    'spanr    cover ~/data/S288c.rg -o /dev/null' \
+    -n jrunlist \
+    'jrunlist cover ~/data/S288c.rg -o /dev/null' \
+    -n runlist \
+    'runlist  cover ~/data/S288c.rg -o /dev/null'
+
+cat cover.md.tmp
+
+hyperfine --warmup 1 --export-markdown cover.md.tmp \
+    -n spanr \
     'spanr    cover ~/data/Spom.rg -o /dev/null' \
+    -n jrunlist \
     'jrunlist cover ~/data/Spom.rg -o /dev/null' \
+    -n runlist \
     'runlist  cover ~/data/Spom.rg -o /dev/null'
+
+cat cover.md.tmp
 
 ```
 
-| Command  |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
-|:---------|-------------:|---------:|---------:|------------:|
-| spanr    |   47.3 ± 1.1 |     45.6 |     51.7 |        1.00 |
-| jrunlist | 470.2 ± 13.5 |    457.1 |    505.2 | 9.94 ± 0.36 |
-| runlist  |  365.6 ± 2.3 |    362.5 |    370.1 | 7.73 ± 0.18 |
+### R7 5800 Windows 11 WSL
 
-| Command                                           |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:--------------------------------------------------|-------------:|---------:|---------:|-------------:|
-| `spanr    cover ~/data/S288c.rg -o /dev/null` |   13.3 ± 0.6 |     12.5 |     16.8 |         1.00 |
-| `jrunlist cover ~/data/S288c.rg -o /dev/null` | 371.8 ± 15.4 |    356.0 |    404.2 | 27.91 ± 1.65 |
-| `runlist  cover ~/data/S288c.rg -o /dev/null` |  284.5 ± 2.7 |    281.4 |    288.8 | 21.35 ± 0.93 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-----------|------------:|---------:|---------:|------------:|
+| `spanr`    | 103.5 ± 1.6 |     99.1 |    106.1 |        1.00 |
+| `jrunlist` | 357.4 ± 5.4 |    347.9 |    365.6 | 3.45 ± 0.08 |
+| `runlist`  | 290.6 ± 3.1 |    285.4 |    295.8 | 2.81 ± 0.05 |
 
-| Command                                          |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:-------------------------------------------------|-------------:|---------:|---------:|-------------:|
-| `spanr    cover ~/data/Spom.rg -o /dev/null` |   20.7 ± 1.3 |     19.2 |     26.9 |         1.00 |
-| `jrunlist cover ~/data/Spom.rg -o /dev/null` | 824.9 ± 51.5 |    764.1 |    896.3 | 39.77 ± 3.56 |
-| `runlist  cover ~/data/Spom.rg -o /dev/null` |  473.9 ± 8.9 |    460.6 |    486.7 | 22.85 ± 1.53 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|------------:|---------:|---------:|-------------:|
+| `spanr`    |  12.5 ± 0.2 |     11.8 |     13.4 |         1.00 |
+| `jrunlist` | 368.1 ± 9.2 |    358.5 |    381.7 | 29.43 ± 0.94 |
+| `runlist`  | 287.3 ± 3.9 |    280.9 |    293.1 | 22.97 ± 0.55 |
+
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|-------------:|---------:|---------:|-------------:|
+| `spanr`    |   20.4 ± 0.4 |     19.5 |     22.1 |         1.00 |
+| `jrunlist` | 754.8 ± 24.8 |    725.3 |    798.9 | 37.09 ± 1.39 |
+| `runlist`  |  470.4 ± 8.2 |    459.7 |    484.4 | 23.11 ± 0.58 |
 
 ## `spanr coverage`
 
 ```shell
-hyperfine --warmup 1 --export-markdown cover.md.tmp \
+hyperfine --warmup 1 --export-markdown coverage.md.tmp \
+    -n spanr \
     'spanr    coverage ~/data/S288c.rg -o /dev/null' \
+    -n jrunlist \
     'jrunlist cover    ~/data/S288c.rg -o /dev/null' \
+    -n runlist \
     'runlist  coverage ~/data/S288c.rg -s ~/data/S288c.chr.sizes -o /dev/null'
 
-hyperfine --warmup 1 --export-markdown cover.md.tmp \
+cat coverage.md.tmp
+
+hyperfine --warmup 1 --export-markdown coverage.md.tmp \
+    -n spanr \
     'spanr    coverage ~/data/Spom.rg -o /dev/null' \
+    -n jrunlist \
     'jrunlist cover    ~/data/Spom.rg -o /dev/null' \
+    -n runlist \
     'runlist  coverage ~/data/Spom.rg -s ~/data/Spom.chr.sizes -o /dev/null'
+
+cat coverage.md.tmp
 
 ```
 
-| Command  |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:---------|--------------:|---------:|---------:|-------------:|
-| spanr    |    18.0 ± 0.9 |     17.2 |     28.1 |         1.00 |
-| jrunlist |  365.1 ± 10.2 |    350.4 |    380.2 | 20.33 ± 1.20 |
-| runlist  | 1198.0 ± 15.5 |   1176.5 |   1232.3 | 66.69 ± 3.59 |
+### R7 5800 Windows 11 WSL
 
-| Command  |     Mean [ms] | Min [ms] | Max [ms] |      Relative |
-|:---------|--------------:|---------:|---------:|--------------:|
-| spanr    |    37.6 ± 1.9 |     35.8 |     46.2 |          1.00 |
-| jrunlist |  732.9 ± 14.8 |    719.4 |    765.3 |  19.49 ± 1.05 |
-| runlist  | 6914.3 ± 29.1 |   6870.1 |   6960.8 | 183.88 ± 9.26 |
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|-------------:|---------:|---------:|-------------:|
+| `spanr`    |   18.1 ± 0.4 |     17.3 |     20.7 |         1.00 |
+| `jrunlist` |  361.1 ± 4.1 |    350.9 |    366.0 | 19.96 ± 0.47 |
+| `runlist`  | 1204.7 ± 8.9 |   1190.8 |   1224.3 | 66.59 ± 1.44 |
+
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |      Relative |
+|:-----------|--------------:|---------:|---------:|--------------:|
+| `spanr`    |    36.6 ± 0.4 |     35.5 |     37.4 |          1.00 |
+| `jrunlist` |  786.5 ± 60.8 |    740.2 |    907.5 |  21.50 ± 1.68 |
+| `runlist`  | 6826.4 ± 54.5 |   6748.5 |   6891.2 | 186.59 ± 2.55 |
