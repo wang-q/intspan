@@ -5,6 +5,7 @@
 * New binary `rgr`
 
 * Move `ovlpr replace` to `rgr replace`
+* Move `linkr merge` to `rgr merge`
 
 ## 0.6.7 - 2022-04-24
 

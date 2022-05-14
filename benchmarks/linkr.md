@@ -41,7 +41,7 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
          37410461948  instructions retired
          18487691396  cycles elapsed
            609824768  peak memory footprint
-==> linkr merge lastz blast
+==> rgr merge lastz blast
         6.93 real         6.91 user         0.01 sys
              9736192  maximum resident set size
                    0  average shared memory size
@@ -228,8 +228,8 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
-==> linkr merge lastz blast
-	Command being timed: "linkr merge -o stdout -c 0.95 links.lastz.tsv links.blast.tsv"
+==> rgr merge lastz blast
+	Command being timed: "rgr merge -o stdout -c 0.95 links.lastz.tsv links.blast.tsv"
 	User time (seconds): 4.36
 	System time (seconds): 0.00
 	Percent of CPU this job got: 99%
@@ -472,7 +472,7 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp \
 
 ```bash
 hyperfine --min-runs 3 --export-markdown merge.md.tmp \
-    'linkr    merge tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
+    'rgr      merge tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
     'jrange   merge tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
     'rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o /dev/null'
 
@@ -569,7 +569,7 @@ hyperfine --min-runs 3 --export-markdown clean.md.tmp `
 
 ```ps1
 hyperfine --min-runs 3 --export-markdown merge.md.tmp `
-    "linkr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" `
+    "rgr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" `
     "rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o stdout > NUL"
 
 ```

@@ -285,6 +285,8 @@ spanr count tests/spanr/S288c.ranges tests/spanr/S288c.ranges
 ### `rgr`
 
 ```shell
+rgr merge tests/S288c/sort.clean.tsv -c 0.95
+
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
@@ -295,7 +297,7 @@ rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 ```bash
 linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 
-linkr merge tests/linkr/II.links.tsv -v
+rgr merge tests/linkr/II.links.tsv -v
 
 linkr clean tests/linkr/II.sort.tsv
 linkr clean tests/linkr/II.sort.tsv --bundle 500
@@ -339,7 +341,7 @@ linkr sort tests/S288c/links.lastz.tsv tests/S288c/links.blast.tsv \
 linkr clean tests/S288c/sort.tsv \
     -o tests/S288c/sort.clean.tsv
 
-linkr merge tests/S288c/sort.clean.tsv -c 0.95 \
+rgr merge tests/S288c/sort.clean.tsv -c 0.95 \
     -o tests/S288c/merge.tsv
 
 linkr clean tests/S288c/sort.clean.tsv -r tests/S288c/merge.tsv --bundle 500 \
@@ -376,7 +378,7 @@ gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr so
 
 linkr clean tests/Atha/sort.tsv -o tests/Atha/sort.clean.tsv
 
-linkr merge tests/Atha/sort.clean.tsv -c 0.95 -o tests/Atha/merge.tsv
+rgr merge tests/Atha/sort.clean.tsv -c 0.95 -o tests/Atha/merge.tsv
 
 linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 -o tests/Atha/clean.tsv
 

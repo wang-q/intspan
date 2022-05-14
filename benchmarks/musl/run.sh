@@ -69,9 +69,9 @@ echo >&2
 
 log_info "merge"
 hyperfine --warmup 1 --export-markdown merge.md \
-    '~/.cargo/bin/linkr                             merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
-    'target/release/linkr                           merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
-    'target/x86_64-unknown-linux-musl/release/linkr merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null'
+    '~/.cargo/bin/rgr                             merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
+    'target/release/rgr                           merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null' \
+    'target/x86_64-unknown-linux-musl/release/rgr merge ../../tests/Atha/sort.clean.tsv -c 0.95 -o /dev/null'
 
 echo >&2
 

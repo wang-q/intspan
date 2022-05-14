@@ -64,23 +64,6 @@ fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("linkr")?;
-    let output = cmd
-        .arg("merge")
-        .arg("tests/linkr/II.links.tsv")
-        .arg("--verbose")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 6);
-    assert!(stdout.contains("892-4685"), "merged");
-
-    Ok(())
-}
-
-#[test]
 fn command_filter() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd

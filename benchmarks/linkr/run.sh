@@ -50,8 +50,8 @@ ${COMMAND_TIME} jrange \
     sort \
     > jmerge.tsv.tmp
 
-log_info "linkr merge lastz blast"
-${COMMAND_TIME} linkr \
+log_info "rgr merge lastz blast"
+${COMMAND_TIME} rgr \
     merge \
     -o stdout -c 0.95 \
     links.lastz.tsv \

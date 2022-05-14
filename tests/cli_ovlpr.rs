@@ -123,43 +123,6 @@ fn command_paf2ovlp() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_replace() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("ovlpr")?;
-    let output = cmd
-        .arg("replace")
-        .arg("tests/ovlpr/1_4.ovlp.tsv")
-        .arg("tests/ovlpr/1_4.replace.tsv")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 50);
-    assert!(stdout.contains("pac6425_4471"), "original");
-    assert!(!stdout.contains("falcon_read/12/0_4471"), "not replaced");
-
-    Ok(())
-}
-
-#[test]
-fn command_replace_reverse() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("ovlpr")?;
-    let output = cmd
-        .arg("replace")
-        .arg("tests/ovlpr/1_4.ovlp.tsv")
-        .arg("tests/ovlpr/1_4.replace.tsv")
-        .arg("--reverse")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 50);
-    assert!(!stdout.contains("pac6425_4471"), "original");
-    assert!(stdout.contains("falcon_read/12/0_4471"), "replaced");
-
-    Ok(())
-}
-
-#[test]
 fn command_restrict() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
