@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.6.9 - 2022-05-15
+
 * Add `rgr field`
 
 * Move `spanr range` to `rgr runlist`
