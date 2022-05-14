@@ -23,7 +23,6 @@ fn main() -> std::io::Result<()> {
         .subcommand(cmd_spanr::coverage::make_subcommand())
         .subcommand(cmd_spanr::gff::make_subcommand())
         .subcommand(cmd_spanr::convert::make_subcommand())
-        .subcommand(cmd_spanr::range::make_subcommand())
         .subcommand(cmd_spanr::count::make_subcommand());
 
     // Check which subcomamnd the user ran...
@@ -41,7 +40,6 @@ fn main() -> std::io::Result<()> {
         Some(("coverage", sub_matches)) => cmd_spanr::coverage::execute(sub_matches),
         Some(("gff", sub_matches)) => cmd_spanr::gff::execute(sub_matches),
         Some(("convert", sub_matches)) => cmd_spanr::convert::execute(sub_matches),
-        Some(("range", sub_matches)) => cmd_spanr::range::execute(sub_matches),
         Some(("count", sub_matches)) => cmd_spanr::count::execute(sub_matches),
         _ => unreachable!(),
     }

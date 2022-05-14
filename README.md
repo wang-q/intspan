@@ -144,7 +144,7 @@ Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
 [jintspan](https://github.com/egateam/jintspan) are implements of the IntSpan objects in Perl and
 Java, respectively.
 
-### IntSpans on chromosomes
+### Runlist - IntSpans on chromosomes
 
 * Single: [`repeat.yml`](tests/spanr/repeat.yml)
 
@@ -276,19 +276,19 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
     spanr combine stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
-spanr range --op overlap tests/spanr/intergenic.yml tests/spanr/S288c.rg
-
-spanr count tests/spanr/S288c.rg tests/spanr/S288c.rg
-
 ```
 
 ### `rgr`
 
 ```shell
+rgr count tests/spanr/S288c.rg tests/spanr/S288c.rg
+
 rgr merge tests/S288c/sort.clean.tsv -c 0.95
 
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
+
+rgr span --op overlap tests/rgr/intergenic.yml tests/rgr/S288c.rg
 
 ```
 

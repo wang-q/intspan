@@ -4,8 +4,8 @@ use std::io::BufRead;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
-    Command::new("range")
-        .about("Compare runlist file with range file")
+    Command::new("runlist")
+        .about("Compare a runlist file with a range file")
         .arg(
             Arg::new("runlist")
                 .help("Sets the input file to use")
@@ -85,7 +85,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                     writer.write_all((line + "\n").as_ref())?;
                 }
             }
-            _ => panic!("Invalid Range Op"),
+            _ => panic!("Invalid Op"),
         };
     }
 

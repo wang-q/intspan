@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Move `spanr range` to `rgr runlist`
+
 * Rename .ranges to .rg
 
 ## 0.6.8 - 2022-05-14
