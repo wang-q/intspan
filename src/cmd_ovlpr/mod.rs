@@ -1,4 +1,4 @@
-//! Subcommand modules for the `linkr` binary.
+//! Subcommand modules for the `ovlpr` binary.
 
 pub mod covered;
 pub mod paf2ovlp;
