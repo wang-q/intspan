@@ -10,12 +10,14 @@ fn main() -> std::io::Result<()> {
         .about("`rgr` operates ranges in .rg and .tsv files)")
         .propagate_version(true)
         .arg_required_else_help(true)
+        .subcommand(cmd_rgr::count::make_subcommand())
         .subcommand(cmd_rgr::merge::make_subcommand())
         .subcommand(cmd_rgr::replace::make_subcommand())
         .subcommand(cmd_rgr::runlist::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
+        Some(("count", sub_matches)) => cmd_rgr::count::execute(sub_matches),
         Some(("merge", sub_matches)) => cmd_rgr::merge::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
         Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
@@ -27,5 +29,4 @@ fn main() -> std::io::Result<()> {
 }
 
 // TODO: `rgr field`
-// TODO: `rgr count`
 // TODO: `rgr annotate`

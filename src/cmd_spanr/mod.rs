@@ -3,7 +3,6 @@
 pub mod combine;
 pub mod compare;
 pub mod convert;
-pub mod count;
 pub mod cover;
 pub mod coverage;
 pub mod genome;

@@ -281,14 +281,14 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ### `rgr`
 
 ```shell
-rgr count tests/spanr/S288c.rg tests/spanr/S288c.rg
+rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 
-rgr merge tests/S288c/sort.clean.tsv -c 0.95
+rgr merge tests/rgr/II.links.tsv -c 0.95
 
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
-rgr span --op overlap tests/rgr/intergenic.yml tests/rgr/S288c.rg
+rgr runlist --op overlap tests/rgr/intergenic.yml tests/rgr/S288c.rg
 
 ```
 

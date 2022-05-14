@@ -137,8 +137,8 @@ fn command_count() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("count")
-        .arg("tests/spanr/S288c.rg")
-        .arg("tests/spanr/S288c.rg")
+        .arg("tests/rgr/S288c.rg")
+        .arg("tests/rgr/S288c.rg")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();

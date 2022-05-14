@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Move `spanr range` to `rgr runlist`
+* Move `spanr count` to `rgr count`
 
 * Rename .ranges to .rg
 
