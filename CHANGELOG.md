@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* New binary `rgr`
+
 ## 0.6.7 - 2022-04-24
 
 ## 0.6.6 - 2022-04-24

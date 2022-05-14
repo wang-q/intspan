@@ -26,6 +26,10 @@ path = "src/linkr.rs"
 name = "ovlpr"
 path = "src/ovlpr.rs"
 
+[[bin]]
+name = "rgr"
+path = "src/rgr.rs"
+
 [[example]]
 name = "test"
 
