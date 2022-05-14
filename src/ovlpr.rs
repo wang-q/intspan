@@ -20,7 +20,8 @@ fn main() -> std::io::Result<()> {
         Some(("paf2ovlp", sub_matches)) => cmd_ovlpr::paf2ovlp::execute(sub_matches),
         Some(("restrict", sub_matches)) => cmd_ovlpr::restrict::execute(sub_matches),
         _ => unreachable!(),
-    }?;
+    }
+    .unwrap();
 
     Ok(())
 }

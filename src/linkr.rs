@@ -24,7 +24,8 @@ fn main() -> std::io::Result<()> {
         Some(("clean", sub_matches)) => cmd_linkr::clean::execute(sub_matches),
         Some(("connect", sub_matches)) => cmd_linkr::connect::execute(sub_matches),
         _ => unreachable!(),
-    }?;
+    }
+    .unwrap();
 
     Ok(())
 }
