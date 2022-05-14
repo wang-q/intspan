@@ -18,7 +18,7 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 
 ```
 
-* OSX 11.6 i7-8700k oracleJDK@18
+### OSX 11.6 i7-8700k oracleJDK@18
 
 ```text
 ==> merge <==
@@ -200,7 +200,7 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 
 ```
 
-* Ubuntu 14.04 E5-2690 v3 openJDK@18
+### Ubuntu 14.04 E5-2690 v3 openJDK@18
 
 ```text
 ==> merge <==
