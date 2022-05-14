@@ -27,7 +27,7 @@ brew install intspan
 
 ```text
 $ spanr help
-spanr 0.6.7
+spanr 0.6.8
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
@@ -42,14 +42,12 @@ SUBCOMMANDS:
     combine     Combine multiple sets of runlists in a yaml file
     compare     Compare 1 YAML file against others
     convert     Convert runlist file to ranges file
-    count       Count each range overlapping with other range files
     cover       Output covers on chromosomes
     coverage    Output minimum or detailed depth of coverage on chromosomes
     genome      Convert chr.size to runlists
     gff         Convert gff3 to covers on chromosomes
     help        Print this message or the help of the given subcommand(s)
     merge       Merge runlist yaml files
-    range       Compare runlist file with range file
     some        Extract some records from a runlist yaml file
     span        Operate spans in a YAML file
     split       Split a runlist yaml file
@@ -62,9 +60,9 @@ SUBCOMMANDS:
 
 ```text
 $ rgr help
-rgr 0.6.7
+rgr 0.6.8
 wang-q <wang-q@outlook.com>
-`rgr` operates ranges (in tsv files)
+`rgr` operates ranges in .rg and .tsv files)
 
 USAGE:
     rgr [SUBCOMMAND]
@@ -74,8 +72,12 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
+    count      Count each range overlapping with other range files
+    field      Create/append ranges from fields
     help       Print this message or the help of the given subcommand(s)
+    merge      Merge overlapped ranges via overlapping graph
     replace    Replace fields in *.tsv
+    runlist    Compare a runlist file with a range file
 
 ```
 
@@ -83,7 +85,7 @@ SUBCOMMANDS:
 
 ```text
 $ linkr help
-linkr 0.6.1
+linkr 0.6.8
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
@@ -100,7 +102,6 @@ SUBCOMMANDS:
     connect    Connect bilateral links into multilateral ones
     filter     Filter links by numbers of ranges or length differences
     help       Print this message or the help of the given subcommand(s)
-    merge      Merge overlapped ranges via overlapping graph
     sort       Sort links and ranges within links
 
 ```
@@ -109,7 +110,7 @@ SUBCOMMANDS:
 
 ```text
 $ ovlpr help
-ovlpr 0.6.1
+ovlpr 0.6.8
 wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
@@ -124,7 +125,6 @@ SUBCOMMANDS:
     covered     Covered regions from .ovlp.tsv files
     help        Print this message or the help of the given subcommand(s)
     paf2ovlp    Convert minimap .paf to overlaps
-    replace     Replace fields in *.tsv
     restrict    Restrict overlaps to known pairs
 
 ```
