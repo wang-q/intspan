@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Rename .ranges to .rg
+
 ## 0.6.8 - 2022-05-14
 
 * New binary `rgr`
@@ -9,7 +11,6 @@
 * Move `ovlpr replace` to `rgr replace`
 * Move `linkr merge` to `rgr merge`
 
-* Rename .ranges to .rg
 
 ## 0.6.7 - 2022-04-24
 
