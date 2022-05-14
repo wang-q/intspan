@@ -283,6 +283,9 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ```shell
 rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 
+rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
+rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
+
 rgr merge tests/rgr/II.links.tsv -c 0.95
 
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
