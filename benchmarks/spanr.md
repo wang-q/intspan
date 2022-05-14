@@ -172,30 +172,30 @@ faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
 ```shell
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
-    'faops masked ~/data/S288c.fa.gz | spanr    cover stdin -o /dev/null' \
     -n jrunlist \
-    'faops masked ~/data/S288c.fa.gz | jrunlist cover stdin -o /dev/null' \
     -n runlist \
+    'faops masked ~/data/S288c.fa.gz | spanr    cover stdin -o /dev/null' \
+    'faops masked ~/data/S288c.fa.gz | jrunlist cover stdin -o /dev/null' \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
 cat cover.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
-    'spanr    cover ~/data/S288c.rg -o /dev/null' \
     -n jrunlist \
-    'jrunlist cover ~/data/S288c.rg -o /dev/null' \
     -n runlist \
+    'spanr    cover ~/data/S288c.rg -o /dev/null' \
+    'jrunlist cover ~/data/S288c.rg -o /dev/null' \
     'runlist  cover ~/data/S288c.rg -o /dev/null'
 
 cat cover.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
-    'spanr    cover ~/data/Spom.rg -o /dev/null' \
     -n jrunlist \
-    'jrunlist cover ~/data/Spom.rg -o /dev/null' \
     -n runlist \
+    'spanr    cover ~/data/Spom.rg -o /dev/null' \
+    'jrunlist cover ~/data/Spom.rg -o /dev/null' \
     'runlist  cover ~/data/Spom.rg -o /dev/null'
 
 cat cover.md.tmp
@@ -227,20 +227,20 @@ cat cover.md.tmp
 ```shell
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
-    'spanr    coverage ~/data/S288c.rg -o /dev/null' \
     -n jrunlist \
-    'jrunlist cover    ~/data/S288c.rg -o /dev/null' \
     -n runlist \
+    'spanr    coverage ~/data/S288c.rg -o /dev/null' \
+    'jrunlist cover    ~/data/S288c.rg -o /dev/null' \
     'runlist  coverage ~/data/S288c.rg -s ~/data/S288c.chr.sizes -o /dev/null'
 
 cat coverage.md.tmp
 
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
-    'spanr    coverage ~/data/Spom.rg -o /dev/null' \
     -n jrunlist \
-    'jrunlist cover    ~/data/Spom.rg -o /dev/null' \
     -n runlist \
+    'spanr    coverage ~/data/Spom.rg -o /dev/null' \
+    'jrunlist cover    ~/data/Spom.rg -o /dev/null' \
     'runlist  coverage ~/data/Spom.rg -s ~/data/Spom.chr.sizes -o /dev/null'
 
 cat coverage.md.tmp
