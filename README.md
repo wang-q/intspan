@@ -23,7 +23,7 @@ brew install intspan
 
 ## SYNOPSIS
 
-* `spanr`
+### `spanr`
 
 ```text
 $ spanr help
@@ -58,7 +58,28 @@ SUBCOMMANDS:
 
 ```
 
-* `linkr`
+### `rgr`
+
+```text
+$ rgr help
+rgr 0.6.7
+wang-q <wang-q@outlook.com>
+`rgr` operates ranges (in tsv files)
+
+USAGE:
+    rgr [SUBCOMMAND]
+
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    help       Print this message or the help of the given subcommand(s)
+    replace    Replace fields in *.tsv
+
+```
+
+### `linkr`
 
 ```text
 $ linkr help
@@ -84,7 +105,7 @@ SUBCOMMANDS:
 
 ```
 
-* `ovlpr`
+### `ovlpr`
 
 ```text
 $ ovlpr help
@@ -261,6 +282,14 @@ spanr count tests/spanr/S288c.ranges tests/spanr/S288c.ranges
 
 ```
 
+### `rgr`
+
+```shell
+rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
+rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
+
+```
+
 ### `linkr`
 
 ```bash
@@ -394,9 +423,6 @@ ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
 ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
 
 ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
-
-ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv
-ovlpr replace tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.replace.tsv -r
 
 ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 
