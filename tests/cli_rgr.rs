@@ -149,3 +149,84 @@ fn command_count() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_field() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("field")
+        .arg("tests/Atha/chr.sizes")
+        .arg("--chr")
+        .arg("1")
+        .arg("--start")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 5);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        1,
+        "field count"
+    );
+    assert!(!stdout.contains("4\t18585056"));
+    assert!(stdout.contains("4:18585056"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("field")
+        .arg("tests/Atha/chr.sizes")
+        .arg("--chr")
+        .arg("1")
+        .arg("--start")
+        .arg("2")
+        .arg("-H")
+        .arg("-a")
+        .arg("-s") // no effect
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 5);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("30427671\trange"));
+    assert!(!stdout.contains("1:30427671"));
+    assert!(stdout.contains("4\t18585056"));
+    assert!(stdout.contains("4:18585056"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("field")
+        .arg("tests/spanr/NC_007942.gff")
+        .arg("-H")
+        .arg("--chr")
+        .arg("1")
+        .arg("--start")
+        .arg("4")
+        .arg("--end")
+        .arg("5")
+        .arg("--strand")
+        .arg("7")
+        .arg("--eq")
+        .arg("3:tRNA")
+        .arg("--ne")
+        .arg("7:+")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        1,
+        "field count"
+    );
+    assert!(stdout.contains("NC_007942(-):13066-13138"));
+
+    Ok(())
+}

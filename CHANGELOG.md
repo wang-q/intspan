@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `rgr field`
+
 * Move `spanr range` to `rgr runlist`
 * Move `spanr count` to `rgr count`
 
