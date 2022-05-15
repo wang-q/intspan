@@ -288,19 +288,20 @@ rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.
 
 rgr sort tests/rgr/S288c.rg
 rgr sort tests/rgr/ctg.range.tsv -H -f 3
+# ctg:I:1 is treated as a range
+rgr sort tests/rgr/S288c.rg tests/rgr/ctg.range.tsv
 
 rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 rgr count tests/rgr/ctg.range.tsv tests/rgr/S288c.rg -H -f 3
 
-# ctg:I:1 is treated as a range
-rgr sort tests/rgr/S288c.rg tests/rgr/ctg.range.tsv
+rgr runlist tests/rgr/intergenic.yml tests/rgr/S288c.rg --op overlap
+rgr runlist tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv --op non-overlap -H -f 3
 
 rgr merge tests/rgr/II.links.tsv -c 0.95
 
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
-rgr runlist --op overlap tests/rgr/intergenic.yml tests/rgr/S288c.rg
 
 ```
 

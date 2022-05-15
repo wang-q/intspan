@@ -114,6 +114,29 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
     assert!(!stdout.contains("S288c"));
     assert!(stdout.contains("21294-22075"));
 
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("runlist")
+        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .arg("--op")
+        .arg("overlap")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("I:1-100000"));
+    assert!(!stdout.contains("Mito:1-85779"));
+
     Ok(())
 }
 

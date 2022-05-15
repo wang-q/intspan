@@ -136,11 +136,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    'LINE: for (i, line) in reader(args.value_of("range").unwrap())
-        .lines()
-        .filter_map(|r| r.ok())
-        .enumerate()
-    {
+    let reader = reader(args.value_of("range").unwrap());
+    'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
         if is_header && i == 0 {
             writer.write_fmt(format_args!("{}\t{}\n", line, "count"))?;
             continue 'LINE;
