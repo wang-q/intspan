@@ -281,15 +281,17 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ### `rgr`
 
 ```shell
+rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
+rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
+rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.range.tsv
+
 rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 
 rgr sort tests/rgr/S288c.rg
 rgr sort tests/rgr/ctg.range.tsv -H -f 3
 
-rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
-rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
-
-rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.range.tsv
+# ctg:I:1 is treated as a range
+rgr sort tests/rgr/S288c.rg tests/rgr/ctg.range.tsv
 
 rgr merge tests/rgr/II.links.tsv -c 0.95
 
