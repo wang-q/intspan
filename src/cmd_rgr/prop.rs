@@ -11,7 +11,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .after_help(
             r###"
 * Lines without a valid range will not be output
-* Append fields
+* Appended fields
     * `prop`
     * `length`: length of the range
     * `size`: size of the intersection

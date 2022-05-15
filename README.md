@@ -76,9 +76,13 @@ SUBCOMMANDS:
     field      Create/append ranges from fields
     help       Print this message or the help of the given subcommand(s)
     merge      Merge overlapped ranges via overlapping graph
+    prop       Proportion of the ranges intersecting a runlist file
     replace    Replace fields in .tsv file
     runlist    Filter .rg and .tsv files by comparison with a runlist file
     sort       Sort .rg and .tsv files by a range field
+
+
+* Field numbers start with 1
 
 ```
 
