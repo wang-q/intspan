@@ -354,3 +354,70 @@ fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_prop() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("prop")
+        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/S288c.rg")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        2,
+        "field count"
+    );
+    assert!(stdout.contains("I:1-100\t0.0000"));
+    assert!(stdout.contains("II:21294-22075\t1.0000"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("prop")
+        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        4,
+        "field count"
+    );
+    assert!(stdout.contains("range\tprop"));
+    assert!(stdout.contains("I:1-100000\t0.1301"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("prop")
+        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .arg("--prefix")
+        .arg("--full")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        6,
+        "field count"
+    );
+    assert!(stdout.contains("range\tintergenicProp\tintergenicLength\tintergenicSize"));
+    assert!(stdout.contains("I:1-100000\t0.1301\t100000\t13011"));
+
+    Ok(())
+}

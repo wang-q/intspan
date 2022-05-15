@@ -3,6 +3,7 @@
 pub mod count;
 pub mod field;
 pub mod merge;
+pub mod prop;
 pub mod replace;
 pub mod runlist;
 pub mod sort;

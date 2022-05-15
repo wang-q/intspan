@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Add `rgr sort`
+* Add `rgr prop`
 
 * Add --fields to `rgr field`
 * Add --header, --sharp, --field to `rgr count` and `rgr runlist`

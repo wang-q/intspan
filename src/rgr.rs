@@ -19,6 +19,7 @@ fn main() -> std::io::Result<()> {
         .subcommand(cmd_rgr::count::make_subcommand())
         .subcommand(cmd_rgr::field::make_subcommand())
         .subcommand(cmd_rgr::merge::make_subcommand())
+        .subcommand(cmd_rgr::prop::make_subcommand())
         .subcommand(cmd_rgr::replace::make_subcommand())
         .subcommand(cmd_rgr::runlist::make_subcommand())
         .subcommand(cmd_rgr::sort::make_subcommand());
@@ -28,6 +29,7 @@ fn main() -> std::io::Result<()> {
         Some(("count", sub_matches)) => cmd_rgr::count::execute(sub_matches),
         Some(("field", sub_matches)) => cmd_rgr::field::execute(sub_matches),
         Some(("merge", sub_matches)) => cmd_rgr::merge::execute(sub_matches),
+        Some(("prop", sub_matches)) => cmd_rgr::prop::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
         Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
         Some(("sort", sub_matches)) => cmd_rgr::sort::execute(sub_matches),
@@ -38,6 +40,5 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// TODO: `rgr proportion`
 // TODO: `rgr span` 5p and 3p
 // TODO: --bed for `rgr field`
