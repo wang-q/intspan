@@ -78,7 +78,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         }
         let chr = range.chr();
         let mut intspan = IntSpan::new();
-        intspan.add_pair(range.start().clone(), range.end().clone());
+        intspan.add_pair(*range.start(), *range.end());
 
         //----------------------------
         // Output

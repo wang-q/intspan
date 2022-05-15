@@ -26,7 +26,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
     } else {
         let path = Path::new(input);
         let file = match File::open(&path) {
-            Err(why) => panic!("could not open {}: {}", path.display(), why.to_string()),
+            Err(why) => panic!("could not open {}: {}", path.display(), why),
             Ok(file) => file,
         };
 
@@ -140,7 +140,7 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error
 pub fn write_yaml(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
     let mut s = serde_yaml::to_string(yaml).unwrap();
-    s.push_str("\n");
+    s.push('\n');
     writer.write_all(s.as_bytes())?;
 
     Ok(())
@@ -339,8 +339,7 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
     //----------------------------
     {
         among_links.sort_by_cached_key(|k| {
-            let parts: Vec<&str> = k.split('\t').collect();
-            Reverse(parts.len())
+            Reverse(k.split('\t').count())
         });
     }
 

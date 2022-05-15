@@ -109,11 +109,11 @@ Example:
 
 // command implementation
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let mut writer = intspan::writer(args.value_of("outfile").unwrap());
-
     //----------------------------
     // Options
     //----------------------------
+    let mut writer = intspan::writer(args.value_of("outfile").unwrap());
+
     let mut is_append = args.is_present("append");
     let is_header = args.is_present("header");
     let is_sharp = args.is_present("sharp");
@@ -198,28 +198,22 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             let parts: Vec<&str> = line.split('\t').collect();
 
             // the header line
-            if is_header {
-                if i == 0 {
-                    if is_append {
-                        if fields.is_empty() {
-                            writer.write_fmt(format_args!("{}\t{}\n", line, "range"))?;
-                        } else {
-                            let selected: Vec<String> = fields
-                                .iter()
-                                .map(|e| parts.get(*e - 1).unwrap().to_string())
-                                .collect();
-
-                            writer.write_fmt(format_args!(
-                                "{}\t{}\n",
-                                selected.join("\t"),
-                                "range"
-                            ))?;
-                        }
+            if is_header && i == 0 {
+                if is_append {
+                    if fields.is_empty() {
+                        writer.write_fmt(format_args!("{}\t{}\n", line, "range"))?;
                     } else {
-                        writer.write_fmt(format_args!("{}\n", "range"))?;
+                        let selected: Vec<String> = fields
+                            .iter()
+                            .map(|e| parts.get(*e - 1).unwrap().to_string())
+                            .collect();
+
+                        writer.write_fmt(format_args!("{}\t{}\n", selected.join("\t"), "range"))?;
                     }
-                    continue 'LINE;
+                } else {
+                    writer.write_fmt(format_args!("{}\n", "range"))?;
                 }
+                continue 'LINE;
             }
 
             if line.starts_with('#') {
