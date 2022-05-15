@@ -130,7 +130,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 res.insert(f_id.clone(), tiers);
             }
             res.entry(f_id.to_string())
-                .and_modify(|e| e.bump(ovlp.f_begin().clone(), ovlp.f_end().clone()));
+                .and_modify(|e| e.bump(*ovlp.f_begin(), *ovlp.f_end()));
 
             // second
             if !res.contains_key(g_id) {
@@ -138,7 +138,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 res.insert(g_id.clone(), tiers);
             }
             res.entry(g_id.to_string())
-                .and_modify(|e| e.bump(ovlp.g_begin().clone(), ovlp.g_end().clone()));
+                .and_modify(|e| e.bump(*ovlp.g_begin(), *ovlp.g_end()));
         }
     }
 
@@ -161,7 +161,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             let intspan = res.get(key).unwrap().max_tier();
 
             if !is_longest || intspan.span_size() <= 1 {
-                _out_line = format!("{}:{}", key, intspan.to_string());
+                _out_line = format!("{}:{}", key, intspan);
             } else {
                 _out_line = longest_line(key, &intspan);
             }
@@ -185,7 +185,7 @@ fn base_lines(key: &str, tiers: &BTreeMap<i32, IntSpan>) -> String {
     }
 
     let mut sorted: Vec<i32> = basecovs.keys().copied().collect();
-    sorted.sort();
+    sorted.sort_unstable();
 
     let mut out_lines: Vec<String> = vec![];
     for pos in sorted {
@@ -228,5 +228,5 @@ fn longest_line(key: &str, intspan: &IntSpan) -> String {
     let mut longest = IntSpan::new();
     longest.add_pair(ranges[max_i * 2], ranges[max_i * 2 + 1]);
 
-    format!("{}:{}", key, longest.to_string())
+    format!("{}:{}", key, longest)
 }

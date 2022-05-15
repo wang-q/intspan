@@ -45,7 +45,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     for line in read_lines(args.value_of("restrict").unwrap()) {
         let mut parts: Vec<&str> = line.split('\t').collect();
         if parts.len() == 2 {
-            parts.sort();
+            parts.sort_unstable();
             restricts.insert(parts.join("\t"));
         }
     }
@@ -60,9 +60,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         }
 
         // f_id and g_id
-        let mut pair = vec![];
-        pair.push(fields[0].to_string());
-        pair.push(fields[1].to_string());
+        let mut pair = vec![fields[0].to_string(), fields[1].to_string()];
         pair.sort();
 
         if restricts.contains(pair.join("\t").as_str()) {
