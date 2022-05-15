@@ -64,17 +64,17 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    'line: for line in reader.lines().filter_map(|r| r.ok()) {
+    'LINE: for line in reader.lines().filter_map(|r| r.ok()) {
         if line.starts_with('#') {
             if is_sharp {
                 writer.write_fmt(format_args!("{}\n", line))?;
             }
-            continue 'line;
+            continue 'LINE;
         }
 
         let range = Range::from_str(&line);
         if !range.is_valid() {
-            continue 'line;
+            continue 'LINE;
         }
         let chr = range.chr();
         let mut intspan = IntSpan::new();

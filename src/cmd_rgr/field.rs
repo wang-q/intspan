@@ -194,7 +194,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     for infile in args.values_of("infiles").unwrap() {
         let reader = reader(infile);
-        'line: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
+        'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();
 
             // the header line
@@ -218,7 +218,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                     } else {
                         writer.write_fmt(format_args!("{}\n", "range"))?;
                     }
-                    continue 'line;
+                    continue 'LINE;
                 }
             }
 
@@ -226,7 +226,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 if is_sharp {
                     writer.write_fmt(format_args!("{}\n", line))?;
                 }
-                continue 'line;
+                continue 'LINE;
             }
 
             // --eq and --ne
@@ -234,7 +234,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 for (k, v) in &eq_of {
                     let val = parts.get(k - 1).unwrap();
                     if val.to_string() != *v {
-                        continue 'line;
+                        continue 'LINE;
                     }
                 }
             }
@@ -242,7 +242,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 for (k, v) in &ne_of {
                     let val = parts.get(k - 1).unwrap();
                     if val.to_string() == *v {
-                        continue 'line;
+                        continue 'LINE;
                     }
                 }
             }
