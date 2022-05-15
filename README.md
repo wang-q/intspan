@@ -77,7 +77,7 @@ SUBCOMMANDS:
     help       Print this message or the help of the given subcommand(s)
     merge      Merge overlapped ranges via overlapping graph
     replace    Replace fields in .tsv file
-    runlist    Filter a range file by comparison with a runlist file
+    runlist    Filter .rg and .tsv files by comparison with a runlist file
     sort       Sort .rg and .tsv files by a range field
 
 ```
@@ -302,7 +302,6 @@ rgr merge tests/rgr/II.links.tsv -c 0.95
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
-
 ```
 
 ### `linkr`
@@ -329,20 +328,20 @@ linkr circos --highlight tests/linkr/II.connect.tsv
 Steps:
 
 ```text
-        sort
-          |
-          v
-        clean -> merge
-          |     /
-          |  /
-          v
-        clean
-          |
-          V
-        connect
-          |
-          v
-        filter
+    sort
+      |
+      v
+    clean -> merge
+      |     /
+      |  /
+      v
+    clean
+      |
+      V
+    connect
+      |
+      v
+    filter
 ```
 
 #### S288c
