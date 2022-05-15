@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Add --fields to `rgr field`
+* Add --sharp to `rgr count` and `rgr runlist`
 
 ## 0.6.9 - 2022-05-15
 

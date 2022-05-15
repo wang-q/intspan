@@ -33,6 +33,13 @@ For large range files, pre-sorting may improve perfermonce.
                 .min_values(1),
         )
         .arg(
+            Arg::new("sharp")
+                .long("sharp")
+                .short('s')
+                .takes_value(false)
+                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+        )
+        .arg(
             Arg::new("outfile")
                 .short('o')
                 .long("outfile")
@@ -50,6 +57,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     let mut writer = writer(args.value_of("outfile").unwrap());
 
+    let is_sharp = args.is_present("sharp");
+
     // seq_name => Vector of Intervals
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
@@ -59,6 +68,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             if line.starts_with('#') {
                 continue;
             }
+
             let range = Range::from_str(&line);
             if !range.is_valid() {
                 continue;
@@ -90,16 +100,20 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    for line in reader(args.value_of("range").unwrap())
+    'line: for line in reader(args.value_of("range").unwrap())
         .lines()
         .filter_map(|r| r.ok())
     {
         if line.starts_with('#') {
-            continue;
+            if is_sharp {
+                writer.write_fmt(format_args!("{}\n", line))?;
+            }
+            continue 'line;
         }
+
         let range = Range::from_str(&line);
         if !range.is_valid() {
-            continue;
+            continue 'line;
         }
         let chr = range.chr();
 

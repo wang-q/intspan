@@ -27,6 +27,13 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .help("operations: overlap, non-overlap or superset"),
         )
         .arg(
+            Arg::new("sharp")
+                .long("sharp")
+                .short('s')
+                .takes_value(false)
+                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+        )
+        .arg(
             Arg::new("outfile")
                 .short('o')
                 .long("outfile")
@@ -40,6 +47,12 @@ pub fn make_subcommand<'a>() -> Command<'a> {
 // command implementation
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
     //----------------------------
+    // Options
+    //----------------------------
+    let op = args.value_of("op").unwrap();
+    let is_sharp = args.is_present("sharp");
+
+    //----------------------------
     // Loading
     //----------------------------
     let yaml = read_yaml(args.value_of("runlist").unwrap());
@@ -48,15 +61,20 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let reader = reader(args.value_of("ranges").unwrap());
     let mut writer = writer(args.value_of("outfile").unwrap());
 
-    let op = args.value_of("op").unwrap();
-
     //----------------------------
     // Operating
     //----------------------------
-    for line in reader.lines().filter_map(|r| r.ok()) {
+    'line: for line in reader.lines().filter_map(|r| r.ok()) {
+        if line.starts_with('#') {
+            if is_sharp {
+                writer.write_fmt(format_args!("{}\n", line))?;
+            }
+            continue 'line;
+        }
+
         let range = Range::from_str(&line);
         if !range.is_valid() {
-            continue;
+            continue 'line;
         }
         let chr = range.chr();
         let mut intspan = IntSpan::new();
