@@ -5,7 +5,8 @@
 * Add `rgr sort`
 
 * Add --fields to `rgr field`
-* Add --sharp to `rgr count` and `rgr runlist`
+* Add --header, --sharp, --field to `rgr count`
+* Add --sharp to `rgr runlist`
 
 ## 0.6.9 - 2022-05-15
 

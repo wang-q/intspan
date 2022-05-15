@@ -13,9 +13,18 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .about("Count each range overlapping with other range files")
         .after_help(
             r#"
+* Field numbers start with 1
+* Lines without a valid range will not be output
+
+Example:
+
+    rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
+
+    rgr count tests/rgr/ctg.range.tsv tests/rgr/S288c.rg -H -f 3
+
 For large range files, pre-sorting may improve perfermonce.
 
-    cat *.rg | rgr sort stdin | rgr count target.ranges stdin
+    cat *.rg | rgr sort stdin | rgr count target.rg stdin
 
 "#,
         )
@@ -33,11 +42,25 @@ For large range files, pre-sorting may improve perfermonce.
                 .min_values(1),
         )
         .arg(
+            Arg::new("header")
+                .long("header")
+                .short('H')
+                .takes_value(false)
+                .help("Treat the first line of each file as a header"),
+        )
+        .arg(
             Arg::new("sharp")
                 .long("sharp")
                 .short('s')
                 .takes_value(false)
                 .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+        )
+        .arg(
+            Arg::new("field")
+                .long("field")
+                .short('f')
+                .takes_value(true)
+                .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("outfile")
@@ -53,12 +76,25 @@ For large range files, pre-sorting may improve perfermonce.
 // command implementation
 pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
     //----------------------------
-    // Loading
+    // Options
     //----------------------------
     let mut writer = writer(args.value_of("outfile").unwrap());
 
     let is_sharp = args.is_present("sharp");
+    let is_header = args.is_present("header");
 
+    let idx_range: usize = if args.is_present("field") {
+        args.value_of_t("field").unwrap_or_else(|e| {
+            eprintln!("Need an integer for --field\n{}", e);
+            std::process::exit(1)
+        })
+    } else {
+        0
+    };
+
+    //----------------------------
+    // Loading
+    //----------------------------
     // seq_name => Vector of Intervals
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
@@ -100,10 +136,16 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    'LINE: for line in reader(args.value_of("range").unwrap())
+    'LINE: for (i, line) in reader(args.value_of("range").unwrap())
         .lines()
         .filter_map(|r| r.ok())
+        .enumerate()
     {
+        if is_header && i == 0 {
+            writer.write_fmt(format_args!("{}\t{}\n", line, "count"))?;
+            continue 'LINE;
+        }
+
         if line.starts_with('#') {
             if is_sharp {
                 writer.write_fmt(format_args!("{}\n", line))?;
@@ -111,15 +153,28 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             continue 'LINE;
         }
 
-        let range = Range::from_str(&line);
+        let parts: Vec<&str> = line.split('\t').collect();
+
+        let mut range = Range::new();
+        if idx_range == 0 {
+            for part in parts {
+                let r = Range::from_str(part);
+                if r.is_valid() {
+                    range = r;
+                    break;
+                }
+            }
+        } else {
+            range = Range::from_str(parts.get(idx_range - 1).unwrap());
+        }
+
         if !range.is_valid() {
             continue 'LINE;
         }
-        let chr = range.chr();
 
         let mut count = 0;
-        if lapper_of.contains_key(chr.as_str()) {
-            let lapper = lapper_of.get(chr.as_str()).unwrap();
+        if lapper_of.contains_key(range.chr()) {
+            let lapper = lapper_of.get(range.chr()).unwrap();
             count = lapper.count(*range.start() as u32, *range.end() as u32 + 1);
         }
 

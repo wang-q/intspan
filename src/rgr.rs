@@ -32,6 +32,6 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// TODO: `rgr annotate`
-// TODO: `rgr span` 5' and 3'
+// TODO: `rgr proportion`
+// TODO: `rgr span` 5p and 3p
 // TODO: --bed for `rgr field`

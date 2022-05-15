@@ -62,6 +62,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let mut writer = writer(args.value_of("outfile").unwrap());
 
     let is_header = args.is_present("header");
+
     let idx_range: usize = if args.is_present("field") {
         args.value_of_t("field").unwrap_or_else(|e| {
             eprintln!("Need an integer for --field\n{}", e);

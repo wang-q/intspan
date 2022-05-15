@@ -147,6 +147,28 @@ fn command_count() -> Result<(), Box<dyn std::error::Error>> {
     assert!(stdout.contains("I:1-100\t2"));
     assert!(stdout.contains("21294-22075\t1"));
 
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("count")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("tests/rgr/S288c.rg")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        4,
+        "field count"
+    );
+    assert!(stdout.contains("range\tcount"));
+    assert!(stdout.contains("I:1-100000\t4"));
+    assert!(stdout.contains("Mito:1-85779\t0"));
+
     Ok(())
 }
 
