@@ -15,7 +15,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
             r#"
 For large range files, pre-sorting may improve perfermonce.
 
-    cat *.rg | linkr sort | spanr count target.ranges stdin
+    cat *.rg | rgr sort stdin | rgr count target.ranges stdin
 
 "#,
         )

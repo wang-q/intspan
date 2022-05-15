@@ -60,7 +60,7 @@ SUBCOMMANDS:
 
 ```text
 $ rgr help
-rgr 0.6.8
+rgr 0.6.9
 wang-q <wang-q@outlook.com>
 `rgr` operates ranges in .rg and .tsv files)
 
@@ -76,8 +76,9 @@ SUBCOMMANDS:
     field      Create/append ranges from fields
     help       Print this message or the help of the given subcommand(s)
     merge      Merge overlapped ranges via overlapping graph
-    replace    Replace fields in *.tsv
-    runlist    Compare a runlist file with a range file
+    replace    Replace fields in .tsv file
+    runlist    Filter a range file by comparison with a runlist file
+    sort       Sort .rg and .tsv files by a range field
 
 ```
 

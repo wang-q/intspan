@@ -6,7 +6,7 @@ use std::io::BufRead;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("replace")
-        .about("Replace fields in *.tsv")
+        .about("Replace fields in .tsv file")
         .arg(
             Arg::new("infile")
                 .help("Sets the input file to use")

@@ -6,7 +6,7 @@ use std::io::BufRead;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("sort")
-        .about("Sort *.rg and *.tsv by a range field")
+        .about("Sort .rg and .tsv files by a range field")
         .after_help(
             r###"
 * Field numbers start with 1
