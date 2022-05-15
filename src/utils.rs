@@ -217,7 +217,7 @@ pub fn yaml2set_m(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<S
             s_of.insert(key.to_string(), set_one);
         }
     } else {
-        let set_one = yaml2set(&yaml);
+        let set_one = yaml2set(yaml);
         s_of.insert("__single".to_string(), set_one);
     }
 
@@ -338,9 +338,7 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
     // Sort by copy number among links (desc)
     //----------------------------
     {
-        among_links.sort_by_cached_key(|k| {
-            Reverse(k.split('\t').count())
-        });
+        among_links.sort_by_cached_key(|k| Reverse(k.split('\t').count()));
     }
 
     among_links

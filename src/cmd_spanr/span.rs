@@ -96,7 +96,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let out_yaml = if is_multi {
         set2yaml_m(&res_of)
     } else {
-        set2yaml(&res_of.get("__single").unwrap())
+        set2yaml(res_of.get("__single").unwrap())
     };
     write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
 

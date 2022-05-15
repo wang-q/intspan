@@ -555,7 +555,7 @@ impl IntSpan {
 
     pub fn union(&self, other: &Self) -> Self {
         let mut new = self.copy();
-        new.merge(&other);
+        new.merge(other);
         new
     }
 
@@ -570,7 +570,7 @@ impl IntSpan {
             Self::new()
         } else {
             let mut new = self.copy();
-            new.subtract(&other);
+            new.subtract(other);
             new
         }
     }
@@ -587,8 +587,8 @@ impl IntSpan {
     }
 
     pub fn xor(&self, other: &Self) -> Self {
-        let mut new = self.union(&other);
-        let intersect = self.intersect(&other);
+        let mut new = self.union(other);
+        let intersect = self.intersect(other);
         new.subtract(&intersect);
         new
     }
@@ -665,11 +665,11 @@ impl IntSpan {
     }
 
     pub fn subset(&self, other: &Self) -> bool {
-        self.diff(&other).is_empty()
+        self.diff(other).is_empty()
     }
 
     pub fn superset(&self, other: &Self) -> bool {
-        other.diff(&self).is_empty()
+        other.diff(self).is_empty()
     }
 }
 
@@ -1368,7 +1368,7 @@ impl IntSpan {
 
             while idx + i < len {
                 let ch = bytes[idx + i];
-                if ch >= b'0' && ch <= b'9' {
+                if (b'0'..=b'9').contains(&ch) {
                     if !in_upper {
                         lower *= radix;
                         lower -= (ch as char).to_digit(10).unwrap() as i32;
@@ -1422,7 +1422,7 @@ impl IntSpan {
 impl fmt::Display for IntSpan {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.is_empty() {
-            write!(f, "{}", EMPTY_STRING.to_string())?;
+            write!(f, "{}", *EMPTY_STRING)?;
         } else {
             let mut runlist = "".to_string();
 
@@ -1432,7 +1432,7 @@ impl fmt::Display for IntSpan {
 
                 let mut buf = "".to_string();
                 if i != 0 {
-                    buf.push_str(",");
+                    buf.push(',');
                 }
 
                 if lower == upper {

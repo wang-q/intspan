@@ -73,8 +73,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     }
     fill_up_m(&mut s1_of, &chrs);
 
-    for mut s2 in s2s.iter_mut() {
-        fill_up_s(&mut s2, &chrs);
+    for s2 in s2s.iter_mut() {
+        fill_up_s(s2, &chrs);
     }
 
     let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
@@ -103,7 +103,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     let out_yaml = if is_multi {
         set2yaml_m(&res_of)
     } else {
-        set2yaml(&res_of.get("__single").unwrap())
+        set2yaml(res_of.get("__single").unwrap())
     };
     write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
 

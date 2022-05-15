@@ -57,7 +57,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             }
 
             set.entry(chr.to_string())
-                .and_modify(|e| e.add_pair(range.start().clone(), range.end().clone()));
+                .and_modify(|e| e.add_pair(*range.start(), *range.end()));
         }
     }
 
