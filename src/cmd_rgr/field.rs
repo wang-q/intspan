@@ -9,8 +9,6 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .about("Create/append ranges from fields")
         .after_help(
             r###"
-Field numbers start with 1.
-
 Example:
 
     rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s

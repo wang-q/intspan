@@ -12,8 +12,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("count")
         .about("Count each range overlapping with other range files")
         .after_help(
-            r#"
-* Field numbers start with 1
+            r###"
 * Lines without a valid range will not be output
 
 Example:
@@ -26,7 +25,7 @@ For large range files, pre-sorting may improve perfermonce.
 
     cat *.rg | rgr sort stdin | rgr count target.rg stdin
 
-"#,
+"###,
         )
         .arg(
             Arg::new("range")

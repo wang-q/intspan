@@ -9,7 +9,6 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .about("Sort .rg and .tsv files by a range field")
         .after_help(
             r###"
-* Field numbers start with 1
 * If no part is a valid range, the line will be written to the last
 
 Example:

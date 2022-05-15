@@ -7,8 +7,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("runlist")
         .about("Filter .rg and .tsv files by comparison with a runlist file")
         .after_help(
-            r#"
-* Field numbers start with 1
+            r###"
 * Lines without a valid range will not be output
 
 Example:
@@ -17,7 +16,7 @@ Example:
 
     rgr runlist tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv --op overlap -H -f 3
 
-"#,
+"###,
         )
         .arg(
             Arg::new("runlist")
