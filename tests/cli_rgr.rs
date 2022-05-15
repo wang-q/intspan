@@ -260,11 +260,7 @@ fn command_field() -> Result<(), Box<dyn std::error::Error>> {
 #[test]
 fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
-    let output = cmd
-        .arg("sort")
-        .arg("tests/rgr/S288c.rg")
-        .output()
-        .unwrap();
+    let output = cmd.arg("sort").arg("tests/rgr/S288c.rg").output().unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 6);
