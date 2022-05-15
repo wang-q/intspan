@@ -8,8 +8,11 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("combine")
         .about("Combine multiple sets of runlists in a yaml file")
         .after_help(
-            "It's expected that the YAML file contains multiple sets of runlists, \
-             otherwise this command will make no effects",
+            r###"
+It's expected that the YAML file contains multiple sets of runlists,
+otherwise this command will make no effects
+
+"###,
         )
         .arg(
             Arg::new("infile")

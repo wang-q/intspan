@@ -8,13 +8,14 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("cover")
         .about("Output covers on chromosomes")
         .after_help(
-            "\
+            r###"
 Like command `combine`, but <infiles> are chromosome ranges
 
     I:1-100
     I(+):90-150             # Strand will be omitted
-    S288c.I(-):190-200      # Species name will be omitted \
-            ",
+    S288c.I(-):190-200      # Species name will be omitted
+
+"###,
         )
         .arg(
             Arg::new("infiles")

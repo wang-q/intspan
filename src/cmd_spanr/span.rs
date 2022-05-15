@@ -8,15 +8,17 @@ pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("span")
         .about("Operate spans in a YAML file")
         .after_help(
-            "\
+            r###"
 List of operations
-    cover:  a single span from min to max
-    holes:  all the holes in runlist
-    trim:   remove N integers from each end of each span of runlist
-    pad:    add N integers from each end of each span of runlist
-    excise: remove all spans smaller than N
-    fill:   fill in all holes smaller than or equals to N \
-            ",
+
+* cover:  a single span from min to max
+* holes:  all the holes in runlist
+* trim:   remove N integers from each end of each span of runlist
+* pad:    add N integers from each end of each span of runlist
+* excise: remove all spans smaller than N
+* fill:   fill in all holes smaller than or equals to N
+
+"###,
         )
         .arg(
             Arg::new("infile")
