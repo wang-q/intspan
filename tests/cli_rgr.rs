@@ -228,5 +228,31 @@ fn command_field() -> Result<(), Box<dyn std::error::Error>> {
     );
     assert!(stdout.contains("NC_007942(-):13066-13138"));
 
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("field")
+        .arg("tests/rgr/ctg.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("6,1")
+        .arg("--chr")
+        .arg("2")
+        .arg("--start")
+        .arg("3")
+        .arg("--end")
+        .arg("4")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("ID\trange"));
+    assert!(stdout.contains("ctg:I:2\tI:100001-230218"));
+
     Ok(())
 }

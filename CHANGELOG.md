@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add --fields to `rgr field`
+
 ## 0.6.9 - 2022-05-15
 
 * Add `rgr field`

@@ -1,0 +1,4 @@
+ID	chr_id	chr_start	chr_end	chr_strand	length
+ctg:I:1	I	1	100000	+	100000
+ctg:Mito:1	Mito	1	85779	+	85779
+ctg:I:2	I	100001	230218	+	130218
