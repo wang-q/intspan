@@ -14,7 +14,8 @@ fn main() -> std::io::Result<()> {
         .subcommand(cmd_rgr::field::make_subcommand())
         .subcommand(cmd_rgr::merge::make_subcommand())
         .subcommand(cmd_rgr::replace::make_subcommand())
-        .subcommand(cmd_rgr::runlist::make_subcommand());
+        .subcommand(cmd_rgr::runlist::make_subcommand())
+        .subcommand(cmd_rgr::sort::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
@@ -23,6 +24,7 @@ fn main() -> std::io::Result<()> {
         Some(("merge", sub_matches)) => cmd_rgr::merge::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
         Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
+        Some(("sort", sub_matches)) => cmd_rgr::sort::execute(sub_matches),
         _ => unreachable!(),
     }
     .unwrap();
@@ -31,4 +33,5 @@ fn main() -> std::io::Result<()> {
 }
 
 // TODO: `rgr annotate`
-// TODO: `rgr sort`
+// TODO: `rgr span` 5' and 3'
+// TODO: --bed for `rgr field`

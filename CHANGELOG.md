@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `rgr sort`
+
 * Add --fields to `rgr field`
 * Add --sharp to `rgr count` and `rgr runlist`
 

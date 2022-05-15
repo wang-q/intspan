@@ -1,0 +1,4 @@
+length	ID	range
+100000	ctg:I:1	I:1-100000
+85779	ctg:Mito:1	Mito:1-85779
+130218	ctg:I:2	I:100001-230218

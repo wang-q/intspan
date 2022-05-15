@@ -256,3 +256,60 @@ fn command_field() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+
+#[test]
+fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/rgr/S288c.rg")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        1,
+        "field count"
+    );
+    assert!(stdout.contains("S288c.I(-):190-200\nS288c"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/rgr/ctg.range.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("Mito:1-85779\nlength"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("range\n100000"));
+    assert!(stdout.contains("I:1-100000\n130218"));
+
+    Ok(())
+}

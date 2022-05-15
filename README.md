@@ -11,7 +11,7 @@
 
 Current release: 0.6.9
 
-```bash
+```shell
 cargo install intspan
 
 cargo install --force --path .
@@ -208,7 +208,7 @@ Types of links:
 
 ### `spanr`
 
-```bash
+```shell
 spanr genome tests/spanr/S288c.chr.sizes
 
 spanr genome tests/spanr/S288c.chr.sizes |
@@ -283,8 +283,13 @@ spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
 ```shell
 rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 
+rgr sort tests/rgr/S288c.rg
+rgr sort tests/rgr/ctg.range.tsv -H -f 3
+
 rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
 rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
+
+rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.range.tsv
 
 rgr merge tests/rgr/II.links.tsv -c 0.95
 
@@ -297,7 +302,7 @@ rgr runlist --op overlap tests/rgr/intergenic.yml tests/rgr/S288c.rg
 
 ### `linkr`
 
-```bash
+```shell
 linkr sort tests/linkr/II.links.tsv -o tests/linkr/II.sort.tsv
 
 rgr merge tests/linkr/II.links.tsv -v
@@ -337,7 +342,7 @@ Steps:
 
 #### S288c
 
-```bash
+```shell
 linkr sort tests/S288c/links.lastz.tsv tests/S288c/links.blast.tsv \
     -o tests/S288c/sort.tsv
 
@@ -376,7 +381,7 @@ spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 
 #### Atha
 
-```bash
+```shell
 gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin -o tests/Atha/sort.tsv
 
 linkr clean tests/Atha/sort.tsv -o tests/Atha/sort.clean.tsv
@@ -407,7 +412,7 @@ spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
 
 ### `ovlpr`
 
-```bash
+```shell
 echo "tests/ovlpr/1_4.anchor.fasta;tests/ovlpr/1_4.pac.fasta" |
     parallel --colsep ";" -j 1 "
         minimap2 -cx asm20 {1} {2} |

@@ -5,3 +5,4 @@ pub mod field;
 pub mod merge;
 pub mod replace;
 pub mod runlist;
+pub mod sort;
