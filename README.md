@@ -301,6 +301,9 @@ rgr count tests/rgr/ctg.range.tsv tests/rgr/S288c.rg -H -f 3
 rgr runlist tests/rgr/intergenic.yml tests/rgr/S288c.rg --op overlap
 rgr runlist tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv --op non-overlap -H -f 3
 
+rgr prop tests/rgr/intergenic.yml tests/rgr/S288c.rg
+rgr prop tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv -H -f 3 --prefix --full
+
 rgr merge tests/rgr/II.links.tsv -c 0.95
 
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
