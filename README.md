@@ -26,8 +26,8 @@ brew install intspan
 ### `spanr`
 
 ```text
-$ spanr help
-spanr 0.6.8
+$ $ spanr help
+spanr 0.7.0
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
@@ -60,9 +60,9 @@ SUBCOMMANDS:
 
 ```text
 $ rgr help
-rgr 0.6.9
+rgr 0.7.0
 wang-q <wang-q@outlook.com>
-`rgr` operates ranges in .rg and .tsv files)
+`rgr` operates ranges in .rg and .tsv files
 
 USAGE:
     rgr [SUBCOMMAND]
@@ -90,7 +90,7 @@ SUBCOMMANDS:
 
 ```text
 $ linkr help
-linkr 0.6.8
+linkr 0.7.0
 wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
@@ -115,7 +115,7 @@ SUBCOMMANDS:
 
 ```text
 $ ovlpr help
-ovlpr 0.6.8
+ovlpr 0.7.0
 wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
