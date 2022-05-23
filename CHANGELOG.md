@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.0 - 2022-05-23
+
 * Add `rgr sort`
 * Add `rgr prop`
 
