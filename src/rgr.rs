@@ -7,7 +7,7 @@ fn main() -> std::io::Result<()> {
     let app = Command::new("rgr")
         .version(crate_version!())
         .author(crate_authors!())
-        .about("`rgr` operates ranges in .rg and .tsv files)")
+        .about("`rgr` operates ranges in .rg and .tsv files")
         .propagate_version(true)
         .arg_required_else_help(true)
         .after_help(
