@@ -9,7 +9,7 @@
 
 ## `bash benchmarks/musl/run.sh`
 
-```bash
+```shell
 # cargo install --path ~/Scripts/rust/intspan --force
 
 bash ~/Scripts/intspan/benchmarks/musl/run.sh

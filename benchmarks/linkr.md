@@ -1,6 +1,6 @@
 # `linkr`, `jrange` and `rangeops`
 
-```bash
+```shell
 brew install intspan
 brew install jrange
 cpanm App::Rangeops
@@ -11,7 +11,7 @@ brew install hyperfine
 
 ## `bash benchmarks/linkr/run.sh`
 
-```bash
+```shell
 bash ~/Scripts/intspan/benchmarks/linkr/run.sh
 
 rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
@@ -442,7 +442,7 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
 
 ### sort
 
-```bash
+```shell
 hyperfine --warmup 1 --export-markdown sort.md.tmp \
     -n linkr \
     -n jrange \
@@ -463,7 +463,7 @@ cat sort.md.tmp
 
 ### clean
 
-```bash
+```shell
 hyperfine --min-runs 3 --export-markdown clean.md.tmp \
     -n linkr \
     -n jrange \
@@ -484,7 +484,7 @@ cat clean.md.tmp
 
 ### merge
 
-```bash
+```shell
 hyperfine --min-runs 3 --export-markdown merge.md.tmp \
     -n rgr \
     -n jrange \
@@ -505,7 +505,7 @@ cat merge.md.tmp
 
 ### clean2
 
-```bash
+```shell
 hyperfine --min-runs 3 --export-markdown clean2.md.tmp \
     -n linkr \
     -n jrange \
@@ -526,7 +526,7 @@ cat clean2.md.tmp
 
 ### connect
 
-```bash
+```shell
 hyperfine --export-markdown connect.md.tmp \
     -n linkr \
     -n rangeops \
@@ -544,7 +544,7 @@ cat connect.md.tmp
 
 ### filter
 
-```bash
+```shell
 hyperfine --warmup 1 --export-markdown filter.md.tmp \
     -n linkr \
     -n jrange \
