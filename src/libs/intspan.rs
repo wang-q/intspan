@@ -87,12 +87,13 @@
 //!
 
 use std::cmp::min;
+use std::collections::VecDeque;
 use std::fmt;
 use std::vec::Vec;
 
 #[derive(Default, Clone)]
 pub struct IntSpan {
-    edges: Vec<i32>,
+    edges: VecDeque<i32>,
 }
 
 lazy_static! {
@@ -106,7 +107,7 @@ lazy_static! {
 //----------------------------------------------------------
 impl IntSpan {
     pub fn new() -> Self {
-        IntSpan { edges: Vec::new() }
+        IntSpan { edges: VecDeque::new() }
     }
 
     pub fn from(runlist: &str) -> Self {
@@ -184,7 +185,7 @@ impl IntSpan {
             panic!("Can't get extrema for empty IntSpan");
         }
 
-        *self.edges.first().unwrap()
+        *self.edges.front().unwrap()
     }
 
     pub fn max(&self) -> i32 {
@@ -192,7 +193,7 @@ impl IntSpan {
             panic!("Can't get extrema for empty IntSpan");
         }
 
-        *self.edges.last().unwrap() - 1
+        *self.edges.back().unwrap() - 1
     }
 }
 
@@ -311,11 +312,11 @@ impl IntSpan {
     }
 
     pub fn is_neg_inf(&self) -> bool {
-        *self.edges.first().unwrap() == *NEG_INF
+        *self.edges.front().unwrap() == *NEG_INF
     }
 
     pub fn is_pos_inf(&self) -> bool {
-        *self.edges.last().unwrap() == *POS_INF
+        *self.edges.back().unwrap() == *POS_INF
     }
 
     pub fn is_infinite(&self) -> bool {
@@ -423,22 +424,22 @@ impl IntSpan {
     pub fn invert(&mut self) {
         if self.is_empty() {
             // Universal set
-            self.edges.push(*NEG_INF);
-            self.edges.push(*POS_INF);
+            self.edges.push_back(*NEG_INF);
+            self.edges.push_back(*POS_INF);
         } else {
             // Either add or remove infinity from each end. The net effect is always an even number
             // of additions and deletions
 
             if self.is_neg_inf() {
-                self.edges.remove(0); // shift
+                self.edges.pop_front(); // shift
             } else {
-                self.edges.insert(0, *NEG_INF); // unshift
+                self.edges.push_front( *NEG_INF); // unshift
             }
 
             if self.is_pos_inf() {
-                self.edges.pop(); // pop
+                self.edges.pop_back(); // pop
             } else {
-                self.edges.push(*POS_INF); // push
+                self.edges.push_back(*POS_INF); // push
             }
         }
     }
