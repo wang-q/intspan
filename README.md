@@ -1,6 +1,5 @@
 # intspan
 
-[![Publish](https://github.com/wang-q/intspan/actions/workflows/publish.yml/badge.svg)](https://github.com/wang-q/intspan/actions)
 [![Build](https://github.com/wang-q/intspan/actions/workflows/build.yml/badge.svg)](https://github.com/wang-q/intspan/actions)
 [![Windows build status](https://ci.appveyor.com/api/projects/status/github/wang-q/intspan?svg=true)](https://ci.appveyor.com/project/wang-q/intspan)
 [![codecov](https://codecov.io/gh/wang-q/intspan/branch/master/graph/badge.svg?token=m8OIcyvuGr)](https://codecov.io/gh/wang-q/intspan)
