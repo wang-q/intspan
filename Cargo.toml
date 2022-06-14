@@ -1,6 +1,6 @@
 [package]
 name = "intspan"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["wang-q <wang-q@outlook.com>"]
 description = "Command line tools for IntSpan related bioinformatics operations"
 documentation = "https://github.com/wang-q/intspan"
