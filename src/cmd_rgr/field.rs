@@ -57,6 +57,7 @@ Example:
         .arg(
             Arg::new("chr")
                 .long("chr")
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .required(true)
                 .help("Field idx of chr"),
@@ -64,12 +65,14 @@ Example:
         .arg(
             Arg::new("strand")
                 .long("strand")
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .help("Optional field idx of strand"),
         )
         .arg(
             Arg::new("start")
                 .long("start")
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .required(true)
                 .help("Field idx of start"),
@@ -77,6 +80,7 @@ Example:
         .arg(
             Arg::new("end")
                 .long("end")
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .help("Optional field idx of end"),
         )
@@ -84,14 +88,14 @@ Example:
             Arg::new("eq")
                 .long("eq")
                 .takes_value(true)
-                .multiple_occurrences(true)
+                .action(ArgAction::Append)
                 .help("Filter lines by field:STR, FIELD == STR"),
         )
         .arg(
             Arg::new("ne")
                 .long("ne")
                 .takes_value(true)
-                .multiple_occurrences(true)
+                .action(ArgAction::Append)
                 .help("Filter lines by field:STR, FIELD != STR"),
         )
         .arg(
@@ -100,7 +104,7 @@ Example:
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -110,42 +114,34 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Options
     //----------------------------
-    let mut writer = intspan::writer(args.value_of("outfile").unwrap());
+    let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
-    let mut is_append = args.is_present("append");
-    let is_header = args.is_present("header");
-    let is_sharp = args.is_present("sharp");
+    let mut is_append = args.contains_id("append");
+    let is_header = args.contains_id("header");
+    let is_sharp = args.contains_id("sharp");
 
-    let idx_chr: usize = args.value_of_t("chr").unwrap_or_else(|e| {
-        eprintln!("Need an integer for --chr\n{}", e);
-        std::process::exit(1)
-    });
-    let idx_strand: usize = if args.is_present("strand") {
-        args.value_of_t("strand").unwrap_or_else(|e| {
-            eprintln!("Need an integer for --strand\n{}", e);
-            std::process::exit(1)
-        })
+    let idx_chr = *args.get_one::<usize>("chr").unwrap();
+    let idx_strand = if args.contains_id("strand") {
+        *args.get_one::<usize>("strand").unwrap()
     } else {
         0
     };
-    let idx_start: usize = args.value_of_t("start").unwrap_or_else(|e| {
-        eprintln!("Need an integer for --start\n{}", e);
-        std::process::exit(1)
-    });
-    let idx_end: usize = if args.is_present("end") {
-        args.value_of_t("end").unwrap_or_else(|e| {
-            eprintln!("Need an integer for --end\n{}", e);
-            std::process::exit(1)
-        })
+    let idx_start = *args.get_one::<usize>("start").unwrap();
+    let idx_end = if args.contains_id("end") {
+        *args.get_one::<usize>("end").unwrap()
     } else {
         0
     };
 
-    let fields: Vec<usize> = if args.is_present("fields") {
+    let fields: Vec<usize> = if args.contains_id("fields") {
         is_append = true;
 
         let mut ints: Vec<i32> = vec![];
-        let parts: Vec<&str> = args.value_of("fields").unwrap().split(',').collect();
+        let parts: Vec<&str> = args
+            .get_one::<String>("fields")
+            .unwrap()
+            .split(',')
+            .collect();
         for p in parts {
             let intspan = IntSpan::from(p);
             intspan.elements().iter().for_each(|e| ints.push(*e));
@@ -157,8 +153,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     };
 
     let mut eq_of: BTreeMap<usize, String> = BTreeMap::new();
-    if args.is_present("eq") {
-        for s in args.values_of("eq").unwrap() {
+    if args.contains_id("eq") {
+        for s in args.get_many::<String>("eq").unwrap() {
             let parts: Vec<&str> = s.splitn(2, ':').collect();
 
             if parts.len() != 2 {
@@ -172,8 +168,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         }
     }
     let mut ne_of: BTreeMap<usize, String> = BTreeMap::new();
-    if args.is_present("ne") {
-        for s in args.values_of("ne").unwrap() {
+    if args.contains_id("ne") {
+        for s in args.get_many::<String>("ne").unwrap() {
             let parts: Vec<&str> = s.splitn(2, ':').collect();
 
             if parts.len() != 2 {
@@ -190,7 +186,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();

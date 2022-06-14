@@ -58,6 +58,7 @@ For large range files, pre-sorting may improve perfermonce.
             Arg::new("field")
                 .long("field")
                 .short('f')
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
@@ -67,7 +68,7 @@ For large range files, pre-sorting may improve perfermonce.
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -77,16 +78,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Options
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let is_sharp = args.is_present("sharp");
-    let is_header = args.is_present("header");
+    let is_sharp = args.contains_id("sharp");
+    let is_header = args.contains_id("header");
 
-    let idx_range: usize = if args.is_present("field") {
-        args.value_of_t("field").unwrap_or_else(|e| {
-            eprintln!("Need an integer for --field\n{}", e);
-            std::process::exit(1)
-        })
+    let idx_range = if args.contains_id("field") {
+        *args.get_one::<usize>("field").unwrap()
     } else {
         0
     };
@@ -97,7 +95,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // seq_name => Vector of Intervals
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             if line.starts_with('#') {
@@ -135,7 +133,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    let reader = reader(args.value_of("range").unwrap());
+    let reader = reader(args.get_one::<String>("range").unwrap());
     'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
         if is_header && i == 0 {
             writer.write_fmt(format_args!("{}\t{}\n", line, "count"))?;

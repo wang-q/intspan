@@ -22,7 +22,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .short('c')
                 .takes_value(true)
                 .default_value("0.95")
-                .forbid_empty_values(true)
+                .value_parser(value_parser!(f32))
                 .help("When larger than this ratio, merge ranges"),
         )
         .arg(
@@ -37,7 +37,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -47,11 +47,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let coverage: f32 = args.value_of_t("coverage").unwrap_or_else(|e| {
-        eprintln!("Need a float for --coverage\n{}", e);
-        std::process::exit(1)
-    });
-    let is_verbose = args.is_present("verbose");
+    let coverage = *args.get_one::<f32>("coverage").unwrap();
+    let is_verbose = args.contains_id("verbose");
 
     // store graph separately by chromosomes
     // petgraph use NodeIndex to store and identify nodes
@@ -65,7 +62,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // all chromosomes
     let mut chrs: HashSet<String> = HashSet::new();
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             for part in line.split('\t') {
@@ -195,7 +192,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Output
     //----------------------------
     write_lines(
-        args.value_of("outfile").unwrap(),
+        args.get_one::<String>("outfile").unwrap(),
         &out_lines.iter().map(AsRef::as_ref).collect(),
     )?;
 

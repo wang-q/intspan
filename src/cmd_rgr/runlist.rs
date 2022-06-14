@@ -49,6 +49,7 @@ Example:
             Arg::new("field")
                 .long("field")
                 .short('f')
+                .value_parser(value_parser!(usize))
                 .takes_value(true)
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
@@ -57,7 +58,7 @@ Example:
                 .long("op")
                 .takes_value(true)
                 .default_value("overlap")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: overlap, non-overlap or superset"),
         )
         .arg(
@@ -66,7 +67,7 @@ Example:
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -76,18 +77,15 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Options
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let op = args.value_of("op").unwrap();
+    let op = args.get_one::<String>("op").unwrap().as_str();
 
-    let is_sharp = args.is_present("sharp");
-    let is_header = args.is_present("header");
+    let is_sharp = args.contains_id("sharp");
+    let is_header = args.contains_id("header");
 
-    let idx_range: usize = if args.is_present("field") {
-        args.value_of_t("field").unwrap_or_else(|e| {
-            eprintln!("Need an integer for --field\n{}", e);
-            std::process::exit(1)
-        })
+    let idx_range = if args.contains_id("field") {
+        *args.get_one::<usize>("field").unwrap()
     } else {
         0
     };
@@ -95,13 +93,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml = read_yaml(args.value_of("runlist").unwrap());
+    let yaml = read_yaml(args.get_one::<String>("runlist").unwrap());
     let set = yaml2set(&yaml);
 
     //----------------------------
     // Operating
     //----------------------------
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
             if is_header && i == 0 {

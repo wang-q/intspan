@@ -31,7 +31,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -41,17 +41,17 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
-    let reader = reader(args.value_of("infile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
+    let reader = reader(args.get_one::<String>("infile").unwrap());
 
     //----------------------------
     // Load replaces
     //----------------------------
     let mut replaces: HashMap<String, String> = HashMap::new();
-    for line in read_lines(args.value_of("replace").unwrap()) {
+    for line in read_lines(args.get_one::<String>("replace").unwrap()) {
         let parts: Vec<&str> = line.split('\t').collect();
         if parts.len() == 2 {
-            if args.is_present("reverse") {
+            if args.contains_id("reverse") {
                 replaces.insert(parts[1].to_string(), parts[0].to_string());
             } else {
                 replaces.insert(parts[0].to_string(), parts[1].to_string());
