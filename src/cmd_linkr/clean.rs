@@ -26,16 +26,16 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("replace")
                 .short('r')
                 .takes_value(true)
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Two-column tsv file, normally produced by command merge"),
         )
         .arg(
             Arg::new("bundle")
                 .long("bundle")
                 .short('b')
+                .value_parser(value_parser!(i32))
                 .takes_value(true)
                 .default_value("0")
-                .forbid_empty_values(true)
                 .help("Bundle overlapped links. This value is the overlapping size. Suggested value is [500]"),
         )
         .arg(
@@ -50,7 +50,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -60,11 +60,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let bundle: i32 = args.value_of_t("bundle").unwrap_or_else(|e| {
-        eprintln!("Need an integer for --bundle\n{}", e);
-        std::process::exit(1)
-    });
-    let is_verbose = args.is_present("verbose");
+    let bundle = *args.get_one::<i32>("bundle").unwrap();
+    let is_verbose = args.contains_id("verbose");
 
     // cache ranges
     let mut range_of_part: HashMap<String, Range> = HashMap::new();
@@ -73,11 +70,11 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Load replaces
     //----------------------------
     let mut replaces: HashMap<String, String> = HashMap::new();
-    if args.is_present("replace") {
+    if args.contains_id("replace") {
         if is_verbose {
             eprintln!("==> Load replaces");
         }
-        for line in read_lines(args.value_of("replace").unwrap()) {
+        for line in read_lines(args.get_one::<String>("replace").unwrap()) {
             build_range_of_part(&line, &mut range_of_part);
 
             let parts: Vec<&str> = line.split('\t').collect();
@@ -95,7 +92,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     }
 
     let mut line_set: BTreeSet<String> = BTreeSet::new();
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             build_range_of_part(&line, &mut range_of_part);
@@ -351,7 +348,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Links of nearly identical ranges escaped from merging
     //----------------------------
-    if args.is_present("replace") {
+    if args.contains_id("replace") {
         if is_verbose {
             eprintln!("==> Remove self links");
         }
@@ -389,7 +386,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Output
     //----------------------------
     write_lines(
-        args.value_of("outfile").unwrap(),
+        args.get_one::<String>("outfile").unwrap(),
         &lines.iter().map(AsRef::as_ref).collect(),
     )?;
 

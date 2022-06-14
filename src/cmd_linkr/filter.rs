@@ -30,6 +30,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
             Arg::new("ratio")
                 .long("ratio")
                 .short('r')
+                .value_parser(value_parser!(f32))
                 .takes_value(true)
                 .help("Ratio of lengths differences. The suggested value is [0.8]"),
         )
@@ -39,7 +40,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -49,23 +50,20 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let numbers = if args.is_present("number") {
-        IntSpan::from(args.value_of("number").unwrap())
+    let numbers = if args.contains_id("number") {
+        IntSpan::from(args.get_one::<String>("number").unwrap())
     } else {
         IntSpan::new()
     };
-    let ratio: f32 = if args.is_present("ratio") {
-        args.value_of_t("ratio").unwrap_or_else(|e| {
-            eprintln!("Need a float for --ratio\n{}", e);
-            std::process::exit(1)
-        })
+    let ratio = if args.contains_id("ratio") {
+        *args.get_one::<f32>("ratio").unwrap()
     } else {
         -1.0
     };
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             let parts: Vec<&str> = line.split('\t').collect();
