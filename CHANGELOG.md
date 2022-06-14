@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Store `IntSpan.edges` in VecDeque
+* Switch to `clap` v3.2
 
 ## 0.7.0 - 2022-05-23
 
