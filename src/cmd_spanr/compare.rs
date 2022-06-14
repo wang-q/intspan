@@ -26,7 +26,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("op")
                 .takes_value(true)
                 .default_value("intersect")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Operations: intersect, union, diff or xor"),
         )
         .arg(
@@ -35,7 +35,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -46,20 +46,20 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Loading
     //----------------------------
     // first file
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
     let is_multi: bool = yaml.values().next().unwrap().is_mapping();
     let mut s1_of = yaml2set_m(&yaml);
 
     // second file or more
     let mut s2s = vec![];
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let yaml_s = read_yaml(infile);
         let s2 = yaml2set(&yaml_s);
         s2s.push(s2);
     }
 
-    let op = args.value_of("op").unwrap();
+    let op = args.get_one::<String>("op").unwrap().as_str();
 
     //----------------------------
     // Operating
@@ -105,7 +105,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     } else {
         set2yaml(res_of.get("__single").unwrap())
     };
-    write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
 
     Ok(())
 }

@@ -25,7 +25,7 @@ otherwise this command will make no effects
                 .long("op")
                 .takes_value(true)
                 .default_value("union")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Operations: intersect, union, diff or xor"),
         )
         .arg(
@@ -34,7 +34,7 @@ otherwise this command will make no effects
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -44,11 +44,11 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
     let s_of = yaml2set_m(&yaml);
     let chrs = chrs_in_sets(&s_of);
 
-    let op = args.value_of("op").unwrap();
+    let op = args.get_one::<String>("op").unwrap().as_str();
 
     //----------------------------
     // Operating
@@ -84,7 +84,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Output
     //----------------------------
     let out_yaml = set2yaml(&res);
-    write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
 
     Ok(())
 }

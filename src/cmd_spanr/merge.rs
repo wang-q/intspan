@@ -27,7 +27,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -39,9 +39,9 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
 
-    let is_all = args.is_present("all");
+    let is_all = args.contains_id("all");
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let yaml = read_yaml(infile);
 
         let key = if is_all {
@@ -66,7 +66,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Output
     //----------------------------
-    write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
 
     Ok(())
 }

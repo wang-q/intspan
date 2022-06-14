@@ -19,7 +19,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -29,7 +29,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let sizes = read_sizes(args.value_of("infile").unwrap());
+    let sizes = read_sizes(args.get_one::<String>("infile").unwrap());
 
     //----------------------------
     // Operating
@@ -44,7 +44,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Output
     //----------------------------
-    write_yaml(args.value_of("outfile").unwrap(), &yaml)?;
+    write_yaml(args.get_one::<String>("outfile").unwrap(), &yaml)?;
 
     Ok(())
 }

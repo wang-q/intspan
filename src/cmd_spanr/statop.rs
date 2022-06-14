@@ -38,7 +38,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("op")
                 .takes_value(true)
                 .default_value("intersect")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: intersect, union, diff or xor"),
         )
         .arg(
@@ -53,7 +53,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -63,25 +63,25 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let sizes = read_sizes(args.value_of("chr.sizes").unwrap());
+    let sizes = read_sizes(args.get_one::<String>("chr.sizes").unwrap());
 
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile1").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile1").unwrap());
     let is_multi: bool = yaml.values().next().unwrap().is_mapping();
     let mut s1_of = yaml2set_m(&yaml);
 
-    let single: BTreeMap<String, Value> = read_yaml(args.value_of("infile2").unwrap());
+    let single: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile2").unwrap());
     let mut s2 = yaml2set(&single);
 
-    let is_all = args.is_present("all");
-    let base = if args.is_present("base") {
-        args.value_of("base").unwrap()
+    let is_all = args.contains_id("all");
+    let base = if args.contains_id("base") {
+        args.get_one::<String>("base").unwrap()
     } else {
-        Path::new(args.value_of("infile2").unwrap())
+        Path::new(args.get_one::<String>("infile2").unwrap())
             .file_stem()
             .and_then(OsStr::to_str)
             .unwrap()
     };
-    let op = args.value_of("op").unwrap();
+    let op = args.get_one::<String>("op").unwrap().as_str();
 
     //----------------------------
     // Operating
@@ -155,7 +155,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Output
     //----------------------------
     write_lines(
-        args.value_of("outfile").unwrap(),
+        args.get_one::<String>("outfile").unwrap(),
         &lines.iter().map(AsRef::as_ref).collect(),
     )?;
 

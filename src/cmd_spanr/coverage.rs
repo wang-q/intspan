@@ -23,9 +23,9 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .help("Set the minimum depth of coverage")
                 .long("minimum")
                 .short('m')
+                .value_parser(value_parser!(i32))
                 .takes_value(true)
-                .default_value("1")
-                .forbid_empty_values(true),
+                .default_value("1"),
         )
         .arg(
             Arg::new("detailed")
@@ -39,7 +39,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -49,16 +49,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let minimum: i32 = args.value_of_t("minimum").unwrap_or_else(|e| {
-        eprintln!("Need a integer for --minimum\n{}", e);
-        std::process::exit(1)
-    });
-    let is_detailed = args.is_present("detailed");
+    let minimum = *args.get_one::<i32>("minimum").unwrap();
+    let is_detailed = args.contains_id("detailed");
 
     // seq_name => Vector of Intervals
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             if line.starts_with('#') {
@@ -128,7 +125,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         }
 
         let out_yaml = set2yaml_m(&set_of);
-        write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+        write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
     } else {
         // Single
         // chr => IntSpan
@@ -152,7 +149,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
         }
 
         let out_yaml = set2yaml(&set);
-        write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+        write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
     }
 
     Ok(())

@@ -31,16 +31,16 @@ List of operations
                 .long("op")
                 .takes_value(true)
                 .default_value("cover")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: cover, holes, trim, pad, excise or fill"),
         )
         .arg(
             Arg::new("number")
                 .long("number")
                 .short('n')
+                .value_parser(value_parser!(i32))
                 .takes_value(true)
-                .default_value("0")
-                .forbid_empty_values(true),
+                .default_value("0"),
         )
         .arg(
             Arg::new("outfile")
@@ -48,7 +48,7 @@ List of operations
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -58,15 +58,12 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
     let is_multi: bool = yaml.values().next().unwrap().is_mapping();
     let set_of = yaml2set_m(&yaml);
 
-    let op = args.value_of("op").unwrap();
-    let number: i32 = args.value_of_t("number").unwrap_or_else(|e| {
-        eprintln!("Need a integer for --number\n{}", e);
-        std::process::exit(1)
-    });
+    let op = args.get_one::<String>("op").unwrap().as_str();
+    let number = *args.get_one::<i32>("number").unwrap();
 
     //----------------------------
     // Operating
@@ -98,7 +95,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     } else {
         set2yaml(res_of.get("__single").unwrap())
     };
-    write_yaml(args.value_of("outfile").unwrap(), &out_yaml)?;
+    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
 
     Ok(())
 }

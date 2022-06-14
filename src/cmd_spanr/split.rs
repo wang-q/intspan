@@ -21,7 +21,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .short('s')
                 .takes_value(true)
                 .default_value(".yml")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Extensions of output files"),
         )
         .arg(
@@ -30,7 +30,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outdir")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output location. [stdout] for screen"),
         )
 }
@@ -40,14 +40,14 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.value_of("infile").unwrap());
+    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
 
-    let outdir = args.value_of("outdir").unwrap();
+    let outdir = args.get_one::<String>("outdir").unwrap();
     if outdir != "stdout" {
         fs::create_dir_all(outdir)?;
     }
 
-    let suffix = args.value_of("suffix").unwrap();
+    let suffix = args.get_one::<String>("suffix").unwrap();
 
     //----------------------------
     // Operating

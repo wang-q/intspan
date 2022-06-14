@@ -107,7 +107,9 @@ lazy_static! {
 //----------------------------------------------------------
 impl IntSpan {
     pub fn new() -> Self {
-        IntSpan { edges: VecDeque::new() }
+        IntSpan {
+            edges: VecDeque::new(),
+        }
     }
 
     pub fn from(runlist: &str) -> Self {
@@ -433,7 +435,7 @@ impl IntSpan {
             if self.is_neg_inf() {
                 self.edges.pop_front(); // shift
             } else {
-                self.edges.push_front( *NEG_INF); // unshift
+                self.edges.push_front(*NEG_INF); // unshift
             }
 
             if self.is_pos_inf() {
