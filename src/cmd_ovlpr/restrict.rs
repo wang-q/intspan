@@ -25,7 +25,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -35,14 +35,14 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
-    let reader = reader(args.value_of("infile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
+    let reader = reader(args.get_one::<String>("infile").unwrap());
 
     //----------------------------
     // Load restricts
     //----------------------------
     let mut restricts: HashSet<String> = HashSet::new();
-    for line in read_lines(args.value_of("restrict").unwrap()) {
+    for line in read_lines(args.get_one::<String>("restrict").unwrap()) {
         let mut parts: Vec<&str> = line.split('\t').collect();
         if parts.len() == 2 {
             parts.sort_unstable();

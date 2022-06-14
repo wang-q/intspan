@@ -22,7 +22,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .short('c')
                 .takes_value(true)
                 .default_value("3")
-                .forbid_empty_values(true),
+                .value_parser(value_parser!(i32)),
         )
         .arg(
             Arg::new("len")
@@ -31,7 +31,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .short('l')
                 .takes_value(true)
                 .default_value("1000")
-                .forbid_empty_values(true),
+                .value_parser(value_parser!(i32)),
         )
         .arg(
             Arg::new("idt")
@@ -40,7 +40,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .short('i')
                 .takes_value(true)
                 .default_value("0.0")
-                .forbid_empty_values(true),
+                .value_parser(value_parser!(f32)),
         )
         .arg(Arg::new("paf").long("paf").help("PAF as input format"))
         .arg(
@@ -56,7 +56,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("outfile")
                 .takes_value(true)
                 .default_value("stdout")
-                .forbid_empty_values(true)
+                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -66,31 +66,23 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let mut writer = writer(args.value_of("outfile").unwrap());
+    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let coverage: i32 = args.value_of_t("coverage").unwrap_or_else(|e| {
-        eprintln!("Need a integer for --coverage\n{}", e);
-        std::process::exit(1)
-    });
-    let min_len: i32 = args.value_of_t("len").unwrap_or_else(|e| {
-        eprintln!("Need a integer for --len\n{}", e);
-        std::process::exit(1)
-    });
-    let min_idt: f32 = args.value_of_t("idt").unwrap_or_else(|e| {
-        eprintln!("Need a integer for --idt\n{}", e);
-        std::process::exit(1)
-    });
-    let is_paf = args.is_present("paf");
-    let is_longest = args.is_present("longest");
-    let is_base = args.is_present("base");
-    let is_mean = args.is_present("mean");
+    let coverage = *args.get_one::<i32>("coverage").unwrap();
+    let min_len = *args.get_one::<i32>("len").unwrap();
+    let min_idt = *args.get_one::<f32>("idt").unwrap();
+
+    let is_paf = args.contains_id("paf");
+    let is_longest = args.contains_id("longest");
+    let is_base = args.contains_id("base");
+    let is_mean = args.contains_id("mean");
 
     // seq_name => tier_of => IntSpan
     let mut res: HashMap<String, Coverage> = HashMap::new();
     let mut index_of: IndexSet<String> = IndexSet::new();
     let mut seen: HashSet<(usize, usize)> = HashSet::new();
 
-    for infile in args.values_of("infiles").unwrap() {
+    for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().filter_map(|r| r.ok()) {
             let ovlp = if is_paf {
