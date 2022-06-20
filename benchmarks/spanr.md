@@ -6,6 +6,7 @@ brew install jrunlist
 cpanm App::RL
 
 brew install hyperfine
+brew install xsel
 brew install faops
 
 ```
@@ -321,9 +322,31 @@ cat cover.md.tmp
 | `jrunlist` | 1203.8 ± 39.3 |   1162.0 |   1271.6 | 48.23 ± 2.69 |
 | `runlist`  |  754.5 ± 54.9 |    693.0 |    857.6 | 30.23 ± 2.59 |
 
+### i7-8700K Ubuntu 22.04
+
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-----------|-------------:|---------:|---------:|------------:|
+| `spanr`    |   83.1 ± 4.0 |     80.1 |    103.5 |        1.00 |
+| `jrunlist` | 501.7 ± 14.6 |    471.5 |    517.9 | 6.03 ± 0.34 |
+| `runlist`  |  355.0 ± 6.3 |    348.0 |    371.6 | 4.27 ± 0.22 |
+
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|-------------:|---------:|---------:|-------------:|
+| `spanr`    |   13.6 ± 0.5 |     13.0 |     16.6 |         1.00 |
+| `jrunlist` | 464.0 ± 19.7 |    437.8 |    491.0 | 34.15 ± 1.97 |
+| `runlist`  | 389.1 ± 25.0 |    365.7 |    455.6 | 28.64 ± 2.15 |
+
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|--------------:|---------:|---------:|-------------:|
+| `spanr`    |    22.0 ± 0.6 |     21.0 |     24.7 |         1.00 |
+| `jrunlist` | 1023.2 ± 75.0 |    941.3 |   1174.9 | 46.61 ± 3.67 |
+| `runlist`  |   620.3 ± 8.4 |    600.0 |    630.9 | 28.26 ± 0.89 |
+
 ## `spanr coverage`
 
 ```shell
+xsel --delete
+
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
     -n jrunlist \
@@ -332,7 +355,9 @@ hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     'jrunlist cover    ~/data/S288c.rg -o /dev/null' \
     'runlist  coverage ~/data/S288c.rg -s ~/data/S288c.chr.sizes -o /dev/null'
 
-cat coverage.md.tmp
+cat coverage.md.tmp |
+    ( cat && echo ) |
+    xsel --append
 
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
@@ -342,7 +367,11 @@ hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     'jrunlist cover    ~/data/Spom.rg -o /dev/null' \
     'runlist  coverage ~/data/Spom.rg -s ~/data/Spom.chr.sizes -o /dev/null'
 
-cat coverage.md.tmp
+cat coverage.md.tmp |
+    ( cat && echo ) |
+    xsel --append
+
+xsel
 
 ```
 
@@ -373,3 +402,18 @@ cat coverage.md.tmp
 | `spanr`    |      47.6 ± 1.1 |     45.7 |     50.3 |           1.00 |
 | `jrunlist` |   1141.6 ± 32.0 |   1111.4 |   1205.6 |   23.98 ± 0.86 |
 | `runlist`  | 10334.2 ± 755.4 |   9766.4 |  12291.9 | 217.11 ± 16.60 |
+
+### i7-8700K Ubuntu 22.04
+
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|--------------:|---------:|---------:|-------------:|
+| `spanr`    |    21.2 ± 1.6 |     19.9 |     27.6 |         1.00 |
+| `jrunlist` |  494.6 ± 20.9 |    465.7 |    536.0 | 23.29 ± 2.06 |
+| `runlist`  | 1602.7 ± 87.5 |   1529.9 |   1784.0 | 75.47 ± 7.16 |
+
+| Command    |      Mean [ms] | Min [ms] | Max [ms] |      Relative |
+|:-----------|---------------:|---------:|---------:|--------------:|
+| `spanr`    |     45.2 ± 1.5 |     44.0 |     53.7 |          1.00 |
+| `jrunlist` |  1031.7 ± 40.1 |    996.5 |   1118.2 |  22.82 ± 1.16 |
+| `runlist`  | 9033.2 ± 234.4 |   8682.3 |   9528.2 | 199.81 ± 8.35 |
+
