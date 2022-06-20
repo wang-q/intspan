@@ -250,6 +250,8 @@ faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
 ```
 
 ```shell
+xsel --delete
+
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
     -n jrunlist \
@@ -258,7 +260,9 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'faops masked ~/data/S288c.fa.gz | jrunlist cover stdin -o /dev/null' \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
-cat cover.md.tmp
+cat cover.md.tmp |
+    ( cat && echo ) |
+    xsel --append
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
@@ -268,7 +272,9 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'jrunlist cover ~/data/S288c.rg -o /dev/null' \
     'runlist  cover ~/data/S288c.rg -o /dev/null'
 
-cat cover.md.tmp
+cat cover.md.tmp |
+    ( cat && echo ) |
+    xsel --append
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
@@ -278,7 +284,11 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'jrunlist cover ~/data/Spom.rg -o /dev/null' \
     'runlist  cover ~/data/Spom.rg -o /dev/null'
 
-cat cover.md.tmp
+cat cover.md.tmp |
+    ( cat && echo ) |
+    xsel --append
+
+xsel
 
 ```
 
