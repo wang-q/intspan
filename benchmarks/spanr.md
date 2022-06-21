@@ -250,7 +250,7 @@ faops size ~/data/Spom.fa.gz > ~/data/Spom.chr.sizes
 ```
 
 ```shell
-xsel --delete
+rm cover.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
@@ -261,8 +261,8 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'faops masked ~/data/S288c.fa.gz | runlist  cover stdin -o /dev/null'
 
 cat cover.md.tmp |
-    ( cat && echo ) |
-    xsel --append
+    ( cat && echo ) \
+    >> cover.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
@@ -273,8 +273,8 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'runlist  cover ~/data/S288c.rg -o /dev/null'
 
 cat cover.md.tmp |
-    ( cat && echo ) |
-    xsel --append
+    ( cat && echo ) \
+    >> cover.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown cover.md.tmp \
     -n spanr \
@@ -285,10 +285,10 @@ hyperfine --warmup 1 --export-markdown cover.md.tmp \
     'runlist  cover ~/data/Spom.rg -o /dev/null'
 
 cat cover.md.tmp |
-    ( cat && echo ) |
-    xsel --append
+    ( cat && echo ) \
+    >> cover.all.md.tmp
 
-xsel
+cat cover.all.md.tmp
 
 ```
 
@@ -312,25 +312,25 @@ xsel
 | `jrunlist` | 725.4 ± 16.6 |    704.0 |    754.1 | 33.60 ± 1.45 |
 | `runlist`  |  459.5 ± 7.5 |    447.4 |    471.4 | 21.28 ± 0.85 |
 
-### R5 4600U Windows 11 WSL
+### i5-12500H Windows 11 WSL
 
 | Command    |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
 |:-----------|-------------:|---------:|---------:|------------:|
-| `spanr`    |   93.2 ± 4.3 |     89.3 |    107.8 |        1.00 |
-| `jrunlist` | 574.4 ± 29.8 |    530.8 |    631.4 | 6.16 ± 0.43 |
-| `runlist`  |  408.1 ± 9.2 |    395.6 |    424.6 | 4.38 ± 0.22 |
+| `spanr`    |  103.9 ± 9.0 |     97.2 |    144.1 |        1.00 |
+| `jrunlist` | 424.3 ± 12.6 |    410.4 |    447.2 | 4.08 ± 0.37 |
+| `runlist`  | 312.0 ± 35.3 |    270.7 |    367.9 | 3.00 ± 0.43 |
 
 | Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
 |:-----------|-------------:|---------:|---------:|-------------:|
-| `spanr`    |   16.1 ± 0.8 |     14.7 |     19.4 |         1.00 |
-| `jrunlist` | 551.9 ± 34.0 |    515.0 |    602.9 | 34.33 ± 2.74 |
-| `runlist`  | 431.8 ± 11.7 |    413.2 |    451.6 | 26.86 ± 1.54 |
+| `spanr`    |   23.2 ± 4.1 |     14.4 |     37.5 |         1.00 |
+| `jrunlist` |  417.5 ± 9.6 |    399.7 |    432.4 | 18.03 ± 3.20 |
+| `runlist`  | 279.7 ± 22.8 |    262.5 |    323.2 | 12.08 ± 2.35 |
 
-| Command    |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:-----------|--------------:|---------:|---------:|-------------:|
-| `spanr`    |    25.0 ± 1.1 |     23.5 |     30.2 |         1.00 |
-| `jrunlist` | 1203.8 ± 39.3 |   1162.0 |   1271.6 | 48.23 ± 2.69 |
-| `runlist`  |  754.5 ± 54.9 |    693.0 |    857.6 | 30.23 ± 2.59 |
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|-------------:|---------:|---------:|-------------:|
+| `spanr`    |   31.7 ± 8.1 |     21.6 |     45.2 |         1.00 |
+| `jrunlist` | 897.2 ± 91.8 |    820.8 |   1140.6 | 28.34 ± 7.81 |
+| `runlist`  | 473.0 ± 37.5 |    431.7 |    532.6 | 14.94 ± 4.00 |
 
 ### i7-8700K Ubuntu 22.04
 
@@ -352,10 +352,30 @@ xsel
 | `jrunlist` | 1023.2 ± 75.0 |    941.3 |   1174.9 | 46.61 ± 3.67 |
 | `runlist`  |   620.3 ± 8.4 |    600.0 |    630.9 | 28.26 ± 0.89 |
 
+### R5 4600U Windows 11 WSL
+
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-----------|-------------:|---------:|---------:|------------:|
+| `spanr`    |   93.2 ± 4.3 |     89.3 |    107.8 |        1.00 |
+| `jrunlist` | 574.4 ± 29.8 |    530.8 |    631.4 | 6.16 ± 0.43 |
+| `runlist`  |  408.1 ± 9.2 |    395.6 |    424.6 | 4.38 ± 0.22 |
+
+| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|-------------:|---------:|---------:|-------------:|
+| `spanr`    |   16.1 ± 0.8 |     14.7 |     19.4 |         1.00 |
+| `jrunlist` | 551.9 ± 34.0 |    515.0 |    602.9 | 34.33 ± 2.74 |
+| `runlist`  | 431.8 ± 11.7 |    413.2 |    451.6 | 26.86 ± 1.54 |
+
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|--------------:|---------:|---------:|-------------:|
+| `spanr`    |    25.0 ± 1.1 |     23.5 |     30.2 |         1.00 |
+| `jrunlist` | 1203.8 ± 39.3 |   1162.0 |   1271.6 | 48.23 ± 2.69 |
+| `runlist`  |  754.5 ± 54.9 |    693.0 |    857.6 | 30.23 ± 2.59 |
+
 ## `spanr coverage`
 
 ```shell
-xsel --delete
+rm coverage.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
@@ -366,8 +386,8 @@ hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     'runlist  coverage ~/data/S288c.rg -s ~/data/S288c.chr.sizes -o /dev/null'
 
 cat coverage.md.tmp |
-    ( cat && echo ) |
-    xsel --append
+    ( cat && echo ) \
+    >> coverage.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     -n spanr \
@@ -378,10 +398,10 @@ hyperfine --warmup 1 --export-markdown coverage.md.tmp \
     'runlist  coverage ~/data/Spom.rg -s ~/data/Spom.chr.sizes -o /dev/null'
 
 cat coverage.md.tmp |
-    ( cat && echo ) |
-    xsel --append
+    ( cat && echo ) \
+    >> coverage.all.md.tmp
 
-xsel
+cat coverage.all.md.tmp
 
 ```
 
@@ -399,19 +419,19 @@ xsel
 | `jrunlist` |  726.4 ± 15.4 |    708.8 |    749.0 |  19.58 ± 0.51 |
 | `runlist`  | 6728.6 ± 42.0 |   6667.7 |   6802.6 | 181.37 ± 2.93 |
 
-### R5 4600U Windows 11 WSL
+### i5-12500H Windows 11 WSL
 
-| Command    |      Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:-----------|---------------:|---------:|---------:|-------------:|
-| `spanr`    |     23.8 ± 1.0 |     22.0 |     27.5 |         1.00 |
-| `jrunlist` |   562.1 ± 33.2 |    523.1 |    626.3 | 23.58 ± 1.71 |
-| `runlist`  | 1862.1 ± 122.8 |   1769.0 |   2157.5 | 78.13 ± 6.13 |
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|--------------:|---------:|---------:|-------------:|
+| `spanr`    |    27.5 ± 3.4 |     21.1 |     48.5 |         1.00 |
+| `jrunlist` |  400.5 ± 17.3 |    377.8 |    438.3 | 14.56 ± 1.89 |
+| `runlist`  | 1007.6 ± 38.1 |    967.6 |   1066.7 | 36.62 ± 4.68 |
 
-| Command    |       Mean [ms] | Min [ms] | Max [ms] |       Relative |
-|:-----------|----------------:|---------:|---------:|---------------:|
-| `spanr`    |      47.6 ± 1.1 |     45.7 |     50.3 |           1.00 |
-| `jrunlist` |   1141.6 ± 32.0 |   1111.4 |   1205.6 |   23.98 ± 0.86 |
-| `runlist`  | 10334.2 ± 755.4 |   9766.4 |  12291.9 | 217.11 ± 16.60 |
+| Command    |      Mean [ms] | Min [ms] | Max [ms] |       Relative |
+|:-----------|---------------:|---------:|---------:|---------------:|
+| `spanr`    |     53.6 ± 4.8 |     44.0 |     64.8 |           1.00 |
+| `jrunlist` |   875.3 ± 62.1 |    801.4 |   1011.6 |   16.34 ± 1.86 |
+| `runlist`  | 6994.4 ± 172.9 |   6682.3 |   7210.3 | 130.60 ± 12.09 |
 
 ### i7-8700K Ubuntu 22.04
 
@@ -427,3 +447,16 @@ xsel
 | `jrunlist` |  1031.7 ± 40.1 |    996.5 |   1118.2 |  22.82 ± 1.16 |
 | `runlist`  | 9033.2 ± 234.4 |   8682.3 |   9528.2 | 199.81 ± 8.35 |
 
+### R5 4600U Windows 11 WSL
+
+| Command    |      Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:-----------|---------------:|---------:|---------:|-------------:|
+| `spanr`    |     23.8 ± 1.0 |     22.0 |     27.5 |         1.00 |
+| `jrunlist` |   562.1 ± 33.2 |    523.1 |    626.3 | 23.58 ± 1.71 |
+| `runlist`  | 1862.1 ± 122.8 |   1769.0 |   2157.5 | 78.13 ± 6.13 |
+
+| Command    |       Mean [ms] | Min [ms] | Max [ms] |       Relative |
+|:-----------|----------------:|---------:|---------:|---------------:|
+| `spanr`    |      47.6 ± 1.1 |     45.7 |     50.3 |           1.00 |
+| `jrunlist` |   1141.6 ± 32.0 |   1111.4 |   1205.6 |   23.98 ± 0.86 |
+| `runlist`  | 10334.2 ± 755.4 |   9766.4 |  12291.9 | 217.11 ± 16.60 |
