@@ -6,7 +6,6 @@ brew install jrunlist
 cpanm App::RL
 
 brew install hyperfine
-brew install xsel
 brew install faops
 
 ```
