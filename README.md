@@ -393,7 +393,8 @@ spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
 #### Atha
 
 ```shell
-gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin -o tests/Atha/sort.tsv
+gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz |
+    linkr sort stdin -o tests/Atha/sort.tsv
 
 linkr clean tests/Atha/sort.tsv -o tests/Atha/sort.clean.tsv
 
