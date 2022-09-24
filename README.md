@@ -26,7 +26,7 @@ brew install intspan
 ### `spanr`
 
 ```text
-$ $ spanr help
+$ spanr help
 spanr 0.7.0
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
