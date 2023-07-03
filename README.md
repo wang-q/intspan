@@ -222,6 +222,7 @@ spanr genome tests/spanr/S288c.chr.sizes |
 spanr some tests/spanr/Atha.json tests/spanr/Atha.list
 
 spanr merge tests/spanr/I.json tests/spanr/II.json
+spanr merge tests/spanr/I.json tests/spanr/II.other.json --all
 
 spanr cover tests/spanr/S288c.rg
 spanr cover tests/spanr/dazzname.rg
