@@ -59,3 +59,5 @@ fn main() -> std::io::Result<()> {
 // res_of: BTreeMap<String, BTreeMap<String, IntSpan>>
 // sizes: chr.sizes, BTreeMap<String, i32>
 // iv_of: BTreeMap<String, Vec<Iv>>
+
+// TODO: use json to replace yaml

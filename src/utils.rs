@@ -117,6 +117,14 @@ pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
     serde_yaml::from_str(&s).unwrap()
 }
 
+pub fn read_json(input: &str) -> BTreeMap<String, Value> {
+    let mut reader = reader(input);
+    let mut s = String::new();
+    reader.read_to_string(&mut s).expect("Read error");
+
+    serde_json::from_str(&s).unwrap()
+}
+
 pub fn writer(output: &str) -> Box<dyn Write> {
     let writer: Box<dyn Write> = if output == "stdout" {
         Box::new(BufWriter::new(io::stdout()))
@@ -140,6 +148,15 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error
 pub fn write_yaml(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
     let mut s = serde_yaml::to_string(yaml).unwrap();
+    s.push('\n');
+    writer.write_all(s.as_bytes())?;
+
+    Ok(())
+}
+
+pub fn write_json(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
+    let mut writer = writer(output);
+    let mut s = serde_json::to_string_pretty(yaml).unwrap();
     s.push('\n');
     writer.write_all(s.as_bytes())?;
 
@@ -380,5 +397,23 @@ mod read_write {
 
         let lines = read_lines(&filename);
         assert!(lines.len() == 11 || lines.len() == 12);
+    }
+
+    #[test]
+    fn test_read_write_json() {
+        let tmp = TempDir::new().unwrap();
+        let filename = tmp
+            .path()
+            .join("test.json")
+            .into_os_string()
+            .into_string()
+            .unwrap();
+
+        let json = read_json("tests/spanr/Atha.json");
+
+        write_json(&filename, &json).expect("Write error");
+
+        let lines = read_lines(&filename);
+        assert!(lines.len() == 17 || lines.len() == 18);
     }
 }
