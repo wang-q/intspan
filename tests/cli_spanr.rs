@@ -120,8 +120,8 @@ fn command_split() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert!(stdout.contains("28547-29194"));
-    assert!(stdout.contains("---\nI: "));
-    assert!(stdout.contains("---\nII: "));
+    assert!(stdout.contains("{\"I\":"));
+    assert!(stdout.contains("{\"II\":"));
 
     Ok(())
 }
@@ -317,9 +317,9 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
+    assert!(stdout.lines().count() == 18 || stdout.lines().count() == 19);
     assert!(stdout.contains("878539-878709"), "runlist exists");
-    assert!(stdout.contains("\nXVI:"));
+    assert!(stdout.contains("\"XVI\":"));
 
     // union
     let mut cmd = Command::cargo_bin("spanr")?;
@@ -333,9 +333,9 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
+    assert!(stdout.lines().count() == 18 || stdout.lines().count() == 19);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
-    assert!(stdout.contains("\nXVI:"));
+    assert!(stdout.contains("\"XVI\":"));
 
     // xor
     let mut cmd = Command::cargo_bin("spanr")?;
@@ -349,9 +349,9 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
+    assert!(stdout.lines().count() == 18 || stdout.lines().count() == 19);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
-    assert!(stdout.contains("\nXVI:"));
+    assert!(stdout.contains("\"XVI\":"));
 
     // m
     let mut cmd = Command::cargo_bin("spanr")?;
@@ -365,7 +365,7 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 35 || stdout.lines().count() == 36);
+    assert!(stdout.lines().count() == 38 || stdout.lines().count() == 39);
 
     // m3
     let mut cmd = Command::cargo_bin("spanr")?;
@@ -380,7 +380,7 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 7 || stdout.lines().count() == 8);
+    assert!(stdout.lines().count() == 10 || stdout.lines().count() == 11);
     assert!(!stdout.contains("13744-17133"), "all empty");
 
     Ok(())
@@ -554,7 +554,7 @@ fn command_coverage_detailed() -> Result<(), Box<dyn std::error::Error>> {
 
     // eprintln!("stdout = {:#?}", stdout);
 
-    assert!(stdout.lines().count() == 6 || stdout.lines().count() == 7);
+    assert!(stdout.lines().count() == 9 || stdout.lines().count() == 10);
     assert!(!stdout.contains("S288c"), "species name");
     assert!(stdout.contains("1-89"), "coverage 1");
     assert!(stdout.contains("90-100"), "coverage 2");
@@ -590,12 +590,12 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
         .arg("--tag")
         .arg("CDS")
         .arg("-o")
-        .arg(&tempdir.path().join("cds.yml"))
+        .arg(&tempdir.path().join("cds.json"))
         .assert()
         .success()
         .stdout(predicate::str::is_empty());
 
-    assert!(&tempdir.path().join("cds.yml").is_file());
+    assert!(&tempdir.path().join("cds.json").is_file());
 
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("gff")
@@ -611,13 +611,13 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
-        .arg(&tempdir.path().join("cds.yml"))
+        .arg(&tempdir.path().join("cds.json"))
         .arg(&tempdir.path().join("repeat.json"))
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 5 || stdout.lines().count() == 6);
+    assert!(stdout.lines().count() == 8 || stdout.lines().count() == 9);
     assert!(stdout.contains("cds"));
     assert!(stdout.contains("repeat"));
 

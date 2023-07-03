@@ -20,7 +20,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .long("suffix")
                 .short('s')
                 .takes_value(true)
-                .default_value(".yml")
+                .default_value(".json")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Extensions of output files"),
         )
