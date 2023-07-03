@@ -72,7 +72,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("runlist")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/S288c.rg")
         .arg("--op")
         .arg("overlap")
@@ -87,7 +87,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("runlist")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/S288c.rg")
         .arg("--op")
         .arg("non-overlap")
@@ -102,7 +102,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("runlist")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/S288c.rg")
         .arg("--op")
         .arg("superset")
@@ -117,7 +117,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("runlist")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/ctg.range.tsv")
         .arg("-H")
         .arg("-f")
@@ -144,7 +144,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
 fn command_runlist_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     cmd.arg("runlist")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/S288c.rg")
         .arg("--op")
         .arg("invalid");
@@ -360,7 +360,7 @@ fn command_prop() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("prop")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/S288c.rg")
         .output()
         .unwrap();
@@ -378,7 +378,7 @@ fn command_prop() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("prop")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/ctg.range.tsv")
         .arg("-H")
         .arg("-f")
@@ -399,7 +399,7 @@ fn command_prop() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("prop")
-        .arg("tests/rgr/intergenic.yml")
+        .arg("tests/rgr/intergenic.json")
         .arg("tests/rgr/ctg.range.tsv")
         .arg("-H")
         .arg("-f")

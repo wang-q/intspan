@@ -1,6 +1,6 @@
 use crate::{IntSpan, Range};
 use flate2::read::GzDecoder;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsStr;
@@ -109,14 +109,6 @@ pub fn read_replaces(input: &str) -> BTreeMap<String, Vec<String>> {
     replaces
 }
 
-pub fn read_yaml(input: &str) -> BTreeMap<String, Value> {
-    let mut reader = reader(input);
-    let mut s = String::new();
-    reader.read_to_string(&mut s).expect("Read error");
-
-    serde_yaml::from_str(&s).unwrap()
-}
-
 pub fn read_json(input: &str) -> BTreeMap<String, Value> {
     let mut reader = reader(input);
     let mut s = String::new();
@@ -145,18 +137,9 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error
     Ok(())
 }
 
-pub fn write_yaml(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
+pub fn write_json(output: &str, json: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
-    let mut s = serde_yaml::to_string(yaml).unwrap();
-    s.push('\n');
-    writer.write_all(s.as_bytes())?;
-
-    Ok(())
-}
-
-pub fn write_json(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
-    let mut writer = writer(output);
-    let mut s = serde_json::to_string_pretty(yaml).unwrap();
+    let mut s = serde_json::to_string_pretty(json).unwrap();
     s.push('\n');
     writer.write_all(s.as_bytes())?;
 
@@ -164,19 +147,19 @@ pub fn write_json(output: &str, yaml: &BTreeMap<String, Value>) -> Result<(), st
 }
 
 /// ```
-/// use serde_yaml::Value;
+/// use serde_json::Value;
 /// use std::collections::BTreeMap;
-/// let value: Value = serde_yaml::to_value("28547-29194").unwrap();
+/// let value: Value = serde_json::to_value("28547-29194").unwrap();
 /// let mut runlists: BTreeMap<String, Value> = BTreeMap::new();
 /// runlists.insert("I".to_string(), value);
 ///
-/// let sets = intspan::yaml2set(&runlists);
+/// let sets = intspan::json2set(&runlists);
 /// assert!(sets.values().next().unwrap().contains(28550));
 /// ```
-pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
+pub fn json2set(json: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
     let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
 
-    for (chr, value) in yaml {
+    for (chr, value) in json {
         let intspan = IntSpan::from(value.as_str().unwrap());
         set.insert(chr.into(), intspan);
     }
@@ -185,7 +168,7 @@ pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
 }
 
 /// ```
-/// use serde_yaml::Value;
+/// use serde_json::Value;
 /// use std::collections::BTreeMap;
 /// use intspan::IntSpan;
 /// let mut intspan = IntSpan::new();
@@ -193,48 +176,48 @@ pub fn yaml2set(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
 /// let mut set_of: BTreeMap<String, IntSpan> = BTreeMap::new();
 /// set_of.insert("I".to_string(), intspan);
 ///
-/// let runlist_of = intspan::set2yaml(&set_of);
+/// let runlist_of = intspan::set2json(&set_of);
 /// assert_eq!(
 ///     runlist_of.values().next().unwrap(),
 ///     &Value::String("28547-29194".into())
 /// );
 /// ```
-pub fn set2yaml(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
-    let mut yaml: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2json(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
+    let mut json: BTreeMap<String, Value> = BTreeMap::new();
 
     for (chr, value) in set {
         let runlist = value.to_string();
-        yaml.insert(chr.into(), serde_yaml::to_value(runlist).unwrap());
+        json.insert(chr.into(), serde_json::to_value(runlist).unwrap());
     }
 
-    yaml
+    json
 }
 
-pub fn set2yaml_m(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeMap<String, Value> {
-    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2json_m(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeMap<String, Value> {
+    let mut out_json: BTreeMap<String, Value> = BTreeMap::new();
 
     for (name, set) in set_of {
-        let yaml = set2yaml(set);
-        out_yaml.insert(name.to_string(), serde_yaml::to_value(yaml).unwrap());
+        let json = set2json(set);
+        out_json.insert(name.to_string(), serde_json::to_value(json).unwrap());
     }
 
-    out_yaml
+    out_json
 }
 
-pub fn yaml2set_m(yaml: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
-    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
+pub fn json2set_m(json: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
+    let is_multi: bool = json.values().next().unwrap().is_object();
 
     let mut s_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     if is_multi {
-        for (key, value) in yaml {
-            let string = serde_yaml::to_string(value).unwrap();
+        for (key, value) in json {
+            let string = serde_json::to_string(value).unwrap();
             let runlist_one: BTreeMap<String, Value> =
-                serde_yaml::from_str(string.as_str()).unwrap();
-            let set_one = yaml2set(&runlist_one);
+                serde_json::from_str(string.as_str()).unwrap();
+            let set_one = json2set(&runlist_one);
             s_of.insert(key.to_string(), set_one);
         }
     } else {
-        let set_one = yaml2set(yaml);
+        let set_one = json2set(json);
         s_of.insert("__single".to_string(), set_one);
     }
 
@@ -379,24 +362,6 @@ mod read_write {
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 4);
-    }
-
-    #[test]
-    fn test_read_write_runlist() {
-        let tmp = TempDir::new().unwrap();
-        let filename = tmp
-            .path()
-            .join("test.yml")
-            .into_os_string()
-            .into_string()
-            .unwrap();
-
-        let yaml = read_yaml("tests/spanr/Atha.yml");
-
-        write_yaml(&filename, &yaml).expect("Write error");
-
-        let lines = read_lines(&filename);
-        assert!(lines.len() == 11 || lines.len() == 12);
     }
 
     #[test]
