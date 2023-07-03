@@ -385,9 +385,9 @@ wc -l tests/S288c/*.tsv
 
 cat tests/S288c/filter.tsv |
     perl -nla -F"\t" -e 'print for @F' |
-    spanr cover stdin -o tests/S288c/cover.yml
+    spanr cover stdin -o tests/S288c/cover.json
 
-spanr stat tests/S288c/chr.sizes tests/S288c/cover.yml -o stdout
+spanr stat tests/S288c/chr.sizes tests/S288c/cover.json -o stdout
 
 ```
 
@@ -417,9 +417,9 @@ wc -l tests/Atha/*.tsv
 
 cat tests/Atha/filter.tsv |
     perl -nla -F"\t" -e 'print for @F' |
-    spanr cover stdin -o tests/Atha/cover.yml
+    spanr cover stdin -o tests/Atha/cover.json
 
-spanr stat tests/Atha/chr.sizes tests/Atha/cover.yml -o stdout
+spanr stat tests/Atha/chr.sizes tests/Atha/cover.json -o stdout
 
 ```
 
