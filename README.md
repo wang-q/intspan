@@ -151,7 +151,7 @@ Java, respectively.
 
 ### Runlist - IntSpans on chromosomes
 
-* Single: [`repeat.yml`](tests/spanr/repeat.yml)
+* Single: [`repeat.json`](tests/spanr/repeat.json)
 
 * Multi: [`Atha.yml`](tests/spanr/Atha.yml)
 
@@ -238,8 +238,8 @@ spanr combine tests/spanr/Atha.yml
 
 spanr compare \
     --op intersect \
-    tests/spanr/intergenic.yml \
-    tests/spanr/repeat.yml
+    tests/spanr/intergenic.json \
+    tests/spanr/repeat.json
 
 spanr compare \
     --op intersect \
@@ -249,7 +249,7 @@ spanr compare \
 
 spanr split tests/spanr/I.II.yml
 
-spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.yml
+spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.json
 
 spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.yml
 
@@ -258,8 +258,8 @@ spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml
 spanr statop \
     --op intersect \
     tests/spanr/S288c.chr.sizes \
-    tests/spanr/intergenic.yml \
-    tests/spanr/repeat.yml
+    tests/spanr/intergenic.json \
+    tests/spanr/repeat.json
 
 diff <(spanr statop \
         --op intersect --all\
@@ -273,11 +273,11 @@ diff <(spanr statop \
         tests/spanr/Atha.yml \
         tests/spanr/paralog.yml )
 
-spanr convert tests/spanr/repeat.yml tests/spanr/intergenic.yml |
+spanr convert tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr cover stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
-spanr merge tests/spanr/repeat.yml tests/spanr/intergenic.yml |
+spanr merge tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr combine stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
@@ -298,11 +298,11 @@ rgr sort tests/rgr/S288c.rg tests/rgr/ctg.range.tsv
 rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 rgr count tests/rgr/ctg.range.tsv tests/rgr/S288c.rg -H -f 3
 
-rgr runlist tests/rgr/intergenic.yml tests/rgr/S288c.rg --op overlap
-rgr runlist tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv --op non-overlap -H -f 3
+rgr runlist tests/rgr/intergenic.json tests/rgr/S288c.rg --op overlap
+rgr runlist tests/rgr/intergenic.json tests/rgr/ctg.range.tsv --op non-overlap -H -f 3
 
-rgr prop tests/rgr/intergenic.yml tests/rgr/S288c.rg
-rgr prop tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv -H -f 3 --prefix --full
+rgr prop tests/rgr/intergenic.json tests/rgr/S288c.rg
+rgr prop tests/rgr/intergenic.json tests/rgr/ctg.range.tsv -H -f 3 --prefix --full
 
 rgr merge tests/rgr/II.links.tsv -c 0.95
 

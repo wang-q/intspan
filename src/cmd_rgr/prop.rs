@@ -18,9 +18,9 @@ pub fn make_subcommand<'a>() -> Command<'a> {
 
 Example:
 
-    rgr prop tests/rgr/intergenic.yml tests/rgr/S288c.rg
+    rgr prop tests/rgr/intergenic.json tests/rgr/S288c.rg
 
-    rgr prop tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv -H -f 3 --prefix --full
+    rgr prop tests/rgr/intergenic.json tests/rgr/ctg.range.tsv -H -f 3 --prefix --full
 
 "###,
         )

@@ -12,9 +12,9 @@ pub fn make_subcommand<'a>() -> Command<'a> {
 
 Example:
 
-    rgr runlist tests/rgr/intergenic.yml tests/rgr/S288c.rg --op overlap
+    rgr runlist tests/rgr/intergenic.json tests/rgr/S288c.rg --op overlap
 
-    rgr runlist tests/rgr/intergenic.yml tests/rgr/ctg.range.tsv --op overlap -H -f 3
+    rgr runlist tests/rgr/intergenic.json tests/rgr/ctg.range.tsv --op overlap -H -f 3
 
 "###,
         )
