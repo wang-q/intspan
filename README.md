@@ -153,7 +153,7 @@ Java, respectively.
 
 * Single: [`repeat.json`](tests/spanr/repeat.json)
 
-* Multi: [`Atha.yml`](tests/spanr/Atha.yml)
+* Multi: [`Atha.json`](tests/spanr/Atha.json)
 
 * `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
 
@@ -219,7 +219,7 @@ spanr genome tests/spanr/S288c.chr.sizes
 spanr genome tests/spanr/S288c.chr.sizes |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
 
-spanr some tests/spanr/Atha.yml tests/spanr/Atha.list
+spanr some tests/spanr/Atha.json tests/spanr/Atha.list
 
 spanr merge tests/spanr/I.yml tests/spanr/II.yml
 
@@ -232,9 +232,9 @@ spanr coverage tests/spanr/S288c.rg -d
 
 spanr gff tests/spanr/NC_007942.gff --tag tRNA
 
-spanr span --op cover tests/spanr/brca2.yml
+spanr span --op cover tests/spanr/brca2.json
 
-spanr combine tests/spanr/Atha.yml
+spanr combine tests/spanr/Atha.json
 
 spanr compare \
     --op intersect \
@@ -253,7 +253,7 @@ spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.json
 
 spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.yml
 
-spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.yml
+spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.json
 
 spanr statop \
     --op intersect \
@@ -264,14 +264,14 @@ spanr statop \
 diff <(spanr statop \
         --op intersect --all\
         tests/spanr/Atha.chr.sizes \
-        tests/spanr/Atha.yml \
-        tests/spanr/paralog.yml ) \
+        tests/spanr/Atha.json \
+        tests/spanr/paralog.json ) \
     <(jrunlist statop \
         -o stdout \
         --op intersect --all \
         tests/spanr/Atha.chr.sizes \
-        tests/spanr/Atha.yml \
-        tests/spanr/paralog.yml )
+        tests/spanr/Atha.json \
+        tests/spanr/paralog.json )
 
 spanr convert tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr cover stdin |

@@ -77,7 +77,7 @@ rm ~/Scripts/intspan/benchmarks/spanr/*.tmp
 
 ```text
 ==> jrunlist
-        Command being timed: "jrunlist statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+        Command being timed: "jrunlist statop chr.sizes sep-gene.yml paralog.json --op intersect --all -o stdout"
         User time (seconds): 8.48
         System time (seconds): 1.55
         Percent of CPU this job got: 123%
@@ -101,7 +101,7 @@ rm ~/Scripts/intspan/benchmarks/spanr/*.tmp
         Page size (bytes): 4096
         Exit status: 0
 ==> spanr
-        Command being timed: "spanr statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+        Command being timed: "spanr statop chr.sizes sep-gene.yml paralog.json --op intersect --all -o stdout"
         User time (seconds): 1.83
         System time (seconds): 0.05
         Percent of CPU this job got: 98%
@@ -125,7 +125,7 @@ rm ~/Scripts/intspan/benchmarks/spanr/*.tmp
         Page size (bytes): 4096
         Exit status: 0
 ==> App::RL
-        Command being timed: "runlist stat2 -s chr.sizes sep-gene.yml paralog.yml --op intersect --all --mk -o stdout"
+        Command being timed: "runlist stat2 -s chr.sizes sep-gene.yml paralog.json --op intersect --all --mk -o stdout"
         User time (seconds): 284.90
         System time (seconds): 0.10
         Percent of CPU this job got: 99%
@@ -155,7 +155,7 @@ s
 
 ```text
 ==> jrunlist
-	Command being timed: "jrunlist statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+	Command being timed: "jrunlist statop chr.sizes sep-gene.yml paralog.json --op intersect --all -o stdout"
 	User time (seconds): 7.31
 	System time (seconds): 0.88
 	Percent of CPU this job got: 274%
@@ -179,7 +179,7 @@ s
 	Page size (bytes): 4096
 	Exit status: 0
 ==> spanr
-	Command being timed: "spanr statop chr.sizes sep-gene.yml paralog.yml --op intersect --all -o stdout"
+	Command being timed: "spanr statop chr.sizes sep-gene.yml paralog.json --op intersect --all -o stdout"
 	User time (seconds): 1.59
 	System time (seconds): 0.05
 	Percent of CPU this job got: 99%
@@ -203,7 +203,7 @@ s
 	Page size (bytes): 4096
 	Exit status: 0
 ==> App::RL
-	Command being timed: "runlist stat2 -s chr.sizes sep-gene.yml paralog.yml --op intersect --all --mk -o stdout"
+	Command being timed: "runlist stat2 -s chr.sizes sep-gene.yml paralog.json --op intersect --all --mk -o stdout"
 	User time (seconds): 321.30
 	System time (seconds): 0.20
 	Percent of CPU this job got: 100%
