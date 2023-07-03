@@ -76,8 +76,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Output
     //----------------------------
-    let out_yaml = set2yaml(&res);
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+    let out_json = set2json(&res);
+    write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
 
     Ok(())
 }

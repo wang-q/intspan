@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 use std::ffi::OsStr;
 use std::path::Path;
@@ -65,12 +65,12 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     let sizes = read_sizes(args.get_one::<String>("chr.sizes").unwrap());
 
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile1").unwrap());
-    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
-    let mut s1_of = yaml2set_m(&yaml);
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile1").unwrap());
+    let is_multi: bool = json.values().next().unwrap().is_object();
+    let mut s1_of = json2set_m(&json);
 
-    let single: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile2").unwrap());
-    let mut s2 = yaml2set(&single);
+    let single: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile2").unwrap());
+    let mut s2 = json2set(&single);
 
     let is_all = args.contains_id("all");
     let base = if args.contains_id("base") {

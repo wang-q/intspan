@@ -34,8 +34,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Operating
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let yaml = read_yaml(infile);
-        let set_of = yaml2set_m(&yaml);
+        let json = read_json(infile);
+        let set_of = json2set_m(&json);
 
         for set in set_of.values() {
             for chr in set.keys() {

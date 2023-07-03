@@ -53,7 +53,7 @@ fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("genome").arg("tests/spanr/S288c.chr.sizes");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("I: 1-230218"));
+        .stdout(predicate::str::contains("1-230218"));
 
     Ok(())
 }
@@ -63,13 +63,13 @@ fn command_some() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("some")
-        .arg("tests/spanr/Atha.yml")
+        .arg("tests/spanr/Atha.json")
         .arg("tests/spanr/Atha.list")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 7 || stdout.lines().count() == 8);
+    assert!(stdout.lines().count() == 11 || stdout.lines().count() == 12);
     assert!(stdout.contains("AT2G01008"));
     assert!(!stdout.contains("AT2G01021"));
 
@@ -81,31 +81,30 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
-        .arg("tests/spanr/I.yml")
-        .arg("tests/spanr/II.yml")
+        .arg("tests/spanr/I.json")
+        .arg("tests/spanr/II.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 5 || stdout.lines().count() == 6);
+    assert!(stdout.lines().count() == 8 || stdout.lines().count() == 9);
     assert!(stdout.contains("28547-29194"));
-    assert!(stdout.contains("\nII:\n"));
+    assert!(stdout.contains("\"II\":"));
 
     // --all
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
-        .arg("tests/spanr/I.yml")
-        .arg("tests/spanr/II.other.yml")
+        .arg("tests/spanr/I.json")
+        .arg("tests/spanr/II.other.json")
         .arg("--all")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 5 || stdout.lines().count() == 6);
+    assert!(stdout.lines().count() == 8 || stdout.lines().count() == 9);
     assert!(stdout.contains("28547-29194"));
-    assert!(!stdout.contains("\nII:\n"));
-    assert!(stdout.contains("\nII.other:\n"));
+    assert!(stdout.contains("\"II.other\":"));
 
     Ok(())
 }
@@ -115,7 +114,7 @@ fn command_split() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("split")
-        .arg("tests/spanr/I.II.yml")
+        .arg("tests/spanr/I.II.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -134,15 +133,15 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("split")
-        .arg("tests/spanr/I.II.yml")
+        .arg("tests/spanr/I.II.json")
         .arg("-o")
         .arg(tempdir_str)
         .assert()
         .success()
         .stdout(predicate::str::is_empty());
 
-    assert!(&tempdir.path().join("II.yml").is_file());
-    assert!(!&tempdir.path().join("I.II.yml").exists());
+    assert!(&tempdir.path().join("II.json").is_file());
+    assert!(!&tempdir.path().join("I.II.json").exists());
 
     tempdir.close()?;
     Ok(())
@@ -154,7 +153,7 @@ fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("stat")
         .arg("tests/spanr/S288c.chr.sizes")
-        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/intergenic.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -176,7 +175,7 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("stat")
         .arg("tests/spanr/S288c.chr.sizes")
-        .arg("tests/spanr/intergenic.yml")
+        .arg("tests/spanr/intergenic.json")
         .arg("--all")
         .output()
         .unwrap();
@@ -199,8 +198,8 @@ fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("statop")
         .arg("tests/spanr/S288c.chr.sizes")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -225,8 +224,8 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
     let output = cmd
         .arg("statop")
         .arg("tests/spanr/S288c.chr.sizes")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--all")
         .output()
         .unwrap();
@@ -251,8 +250,8 @@ fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("statop")
         .arg("tests/spanr/S288c.chr.sizes")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--op")
         .arg("invalid")
         .arg("--all");
@@ -268,33 +267,33 @@ fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
-        .arg("tests/spanr/Atha.yml")
+        .arg("tests/spanr/Atha.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 3 || stdout.lines().count() == 4);
+    assert!(stdout.lines().count() == 4 || stdout.lines().count() == 5);
     assert!(!stdout.contains("7232,7384"), "combined");
 
     // op
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
-        .arg("tests/spanr/Atha.yml")
+        .arg("tests/spanr/Atha.json")
         .arg("--op")
         .arg("xor")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert!(stdout.lines().count() == 3 || stdout.lines().count() == 4);
+    assert!(stdout.lines().count() == 4 || stdout.lines().count() == 5);
     assert!(stdout.contains("7233-7383"), "xor");
 
     // II
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
-        .arg("tests/spanr/II.yml")
+        .arg("tests/spanr/II.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -310,8 +309,8 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--op")
         .arg("intersect")
         .output()
@@ -326,8 +325,8 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--op")
         .arg("union")
         .output()
@@ -342,8 +341,8 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/spanr/intergenic.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/intergenic.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--op")
         .arg("xor")
         .output()
@@ -358,8 +357,8 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/spanr/I.II.yml")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/I.II.json")
+        .arg("tests/spanr/repeat.json")
         .arg("--op")
         .arg("intersect")
         .output()
@@ -372,9 +371,9 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
-        .arg("tests/spanr/I.II.yml")
-        .arg("tests/spanr/I.yml")
-        .arg("tests/spanr/II.yml")
+        .arg("tests/spanr/I.II.json")
+        .arg("tests/spanr/I.json")
+        .arg("tests/spanr/II.json")
         .arg("--op")
         .arg("intersect")
         .output()
@@ -393,7 +392,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("cover")
         .output()
@@ -407,7 +406,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("fill")
         .arg("-n")
@@ -425,7 +424,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("trim")
         .arg("-n")
@@ -442,7 +441,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("pad")
         .arg("-n")
@@ -459,7 +458,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("excise")
         .arg("-n")
@@ -479,7 +478,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
 fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("span")
-        .arg("tests/spanr/brca2.yml")
+        .arg("tests/spanr/brca2.json")
         .arg("--op")
         .arg("invalid");
     cmd.assert()
@@ -602,18 +601,18 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("gff")
         .arg("tests/spanr/NC_007942.rm.gff")
         .arg("-o")
-        .arg(&tempdir.path().join("repeat.yml"))
+        .arg(&tempdir.path().join("repeat.json"))
         .assert()
         .success()
         .stdout(predicate::str::is_empty());
 
-    assert!(&tempdir.path().join("repeat.yml").is_file());
+    assert!(&tempdir.path().join("repeat.json").is_file());
 
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
         .arg(&tempdir.path().join("cds.yml"))
-        .arg(&tempdir.path().join("repeat.yml"))
+        .arg(&tempdir.path().join("repeat.json"))
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -631,7 +630,7 @@ fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("convert")
-        .arg("tests/spanr/repeat.yml")
+        .arg("tests/spanr/repeat.json")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();

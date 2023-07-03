@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 use std::ffi::OsStr;
 use std::path::Path;
@@ -8,7 +8,7 @@ use std::path::Path;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("merge")
-        .about("Merge runlist yaml files")
+        .about("Merge runlist json files")
         .arg(
             Arg::new("infiles")
                 .help("Sets the input file to use")
@@ -37,12 +37,12 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
+    let mut out_json: BTreeMap<String, Value> = BTreeMap::new();
 
     let is_all = args.contains_id("all");
 
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let yaml = read_yaml(infile);
+        let json = read_json(infile);
 
         let key = if is_all {
             Path::new(infile)
@@ -60,13 +60,13 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
                 .unwrap()
                 .to_string()
         };
-        out_yaml.insert(key, serde_yaml::to_value(yaml).unwrap());
+        out_json.insert(key, serde_json::to_value(json).unwrap());
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+    write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
 
     Ok(())
 }

@@ -1,15 +1,15 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("combine")
-        .about("Combine multiple sets of runlists in a yaml file")
+        .about("Combine multiple sets of runlists in a json file")
         .after_help(
             r###"
-It's expected that the YAML file contains multiple sets of runlists,
+It's expected that the JSON file contains multiple sets of runlists,
 otherwise this command will make no effects
 
 "###,
@@ -44,8 +44,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
-    let s_of = yaml2set_m(&yaml);
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
+    let s_of = json2set_m(&json);
     let chrs = chrs_in_sets(&s_of);
 
     let op = args.get_one::<String>("op").unwrap().as_str();
@@ -83,8 +83,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Output
     //----------------------------
-    let out_yaml = set2yaml(&res);
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+    let out_json = set2json(&res);
+    write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
 
     Ok(())
 }

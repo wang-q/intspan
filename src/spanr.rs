@@ -46,6 +46,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
+// Variable naming conventions
 // set, runlists: single name IntSpan set or runlists
 //      set is a set of IntSpans
 //      set: BTreeMap<String, IntSpan>
@@ -53,7 +54,7 @@ fn main() -> std::io::Result<()> {
 // s_of, r_of: multiple names IntSpan or runlist
 //      name ==> chr ==> IntSpan
 //      name ==> chr ==> String
-// yaml: BTreeMap<String, Value>, single or multiple yaml
+// json: BTreeMap<String, Value>, single or multiple json
 // res: result, single name IntSpan set
 //      BTreeMap<String, IntSpan>
 // res_of: BTreeMap<String, BTreeMap<String, IntSpan>>

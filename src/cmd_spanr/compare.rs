@@ -1,12 +1,12 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("compare")
-        .about("Compare 1 YAML file against others")
+        .about("Compare one JSON file against others")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
             Arg::new("infile")
@@ -46,16 +46,16 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     // Loading
     //----------------------------
     // first file
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
-    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
-    let mut s1_of = yaml2set_m(&yaml);
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
+    let is_multi: bool = json.values().next().unwrap().is_object();
+    let mut s1_of = json2set_m(&json);
 
     // second file or more
     let mut s2s = vec![];
 
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let yaml_s = read_yaml(infile);
-        let s2 = yaml2set(&yaml_s);
+        let json_s = read_json(infile);
+        let s2 = json2set(&json_s);
         s2s.push(s2);
     }
 
@@ -100,12 +100,12 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Output
     //----------------------------
-    let out_yaml = if is_multi {
-        set2yaml_m(&res_of)
+    let out_json = if is_multi {
+        set2json_m(&res_of)
     } else {
-        set2yaml(res_of.get("__single").unwrap())
+        set2json(res_of.get("__single").unwrap())
     };
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+    write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
 
     Ok(())
 }

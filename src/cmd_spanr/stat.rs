@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
@@ -42,10 +42,10 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     let sizes = read_sizes(args.get_one::<String>("chr.sizes").unwrap());
 
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
-    let is_multi: bool = yaml.values().next().unwrap().is_mapping();
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
+    let is_multi: bool = json.values().next().unwrap().is_object();
 
-    let set_of = yaml2set_m(&yaml);
+    let set_of = json2set_m(&json);
 
     let is_all = args.contains_id("all");
 

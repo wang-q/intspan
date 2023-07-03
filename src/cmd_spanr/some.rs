@@ -1,12 +1,12 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("some")
-        .about("Extract some records from a runlist yaml file")
+        .about("Extract some records from a runlist json file")
         .arg(
             Arg::new("infile")
                 .help("Sets the input file to use")
@@ -35,7 +35,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
 
     let mut names: BTreeSet<String> = BTreeSet::new();
     for line in read_lines(args.get_one::<String>("list").unwrap()) {
@@ -45,17 +45,17 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    let mut out_yaml: BTreeMap<String, Value> = BTreeMap::new();
-    for (key, value) in &yaml {
+    let mut out_json: BTreeMap<String, Value> = BTreeMap::new();
+    for (key, value) in &json {
         if names.contains(key) {
-            out_yaml.insert(key.into(), value.clone());
+            out_json.insert(key.into(), value.clone());
         }
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+    write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
 
     Ok(())
 }

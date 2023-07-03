@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
@@ -8,7 +8,7 @@ use std::path::Path;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("split")
-        .about("Split a runlist yaml file")
+        .about("Split a runlist json file")
         .arg(
             Arg::new("infile")
                 .help("Sets the input file to use")
@@ -40,7 +40,7 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml: BTreeMap<String, Value> = read_yaml(args.get_one::<String>("infile").unwrap());
+    let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
 
     let outdir = args.get_one::<String>("outdir").unwrap();
     if outdir != "stdout" {
@@ -52,12 +52,12 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    for (key, value) in &yaml {
-        if !value.is_mapping() {
-            panic!("Not a valid multi-key runlist yaml file");
+    for (key, value) in &json {
+        if !value.is_object() {
+            panic!("Not a valid multi-key runlist json file");
         }
 
-        let string = serde_yaml::to_string(value).unwrap();
+        let string = serde_json::to_string(value).unwrap();
 
         //----------------------------
         // Output

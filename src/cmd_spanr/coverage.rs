@@ -124,8 +124,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             }
         }
 
-        let out_yaml = set2yaml_m(&set_of);
-        write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+        let out_json = set2json_m(&set_of);
+        write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
     } else {
         // Single
         // chr => IntSpan
@@ -148,8 +148,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
             set.insert(chr.to_string(), intspan);
         }
 
-        let out_yaml = set2yaml(&set);
-        write_yaml(args.get_one::<String>("outfile").unwrap(), &out_yaml)?;
+        let out_json = set2json(&set);
+        write_json(args.get_one::<String>("outfile").unwrap(), &out_json)?;
     }
 
     Ok(())

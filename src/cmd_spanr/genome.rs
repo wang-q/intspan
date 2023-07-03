@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use serde_yaml::Value;
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
@@ -34,17 +34,17 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Operating
     //----------------------------
-    let mut yaml: BTreeMap<String, Value> = BTreeMap::new();
+    let mut json: BTreeMap<String, Value> = BTreeMap::new();
     for (key, value) in sizes {
         let mut intspan = IntSpan::new();
         intspan.add_pair(1, value);
-        yaml.insert(key, intspan.to_string().into());
+        json.insert(key, intspan.to_string().into());
     }
 
     //----------------------------
     // Output
     //----------------------------
-    write_yaml(args.get_one::<String>("outfile").unwrap(), &yaml)?;
+    write_json(args.get_one::<String>("outfile").unwrap(), &json)?;
 
     Ok(())
 }
