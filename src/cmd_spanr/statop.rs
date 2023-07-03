@@ -8,7 +8,7 @@ use std::path::Path;
 // Create clap subcommand arguments
 pub fn make_subcommand<'a>() -> Command<'a> {
     Command::new("statop")
-        .about("Coverage on chromosomes for one YAML crossed another")
+        .about("Coverage on chromosomes for one JSON crossed another")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
             Arg::new("chr.sizes")

@@ -27,7 +27,7 @@ brew install intspan
 
 ```text
 $ spanr help
-spanr 0.7.0
+spanr 0.7.1
 wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
@@ -39,20 +39,20 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    combine     Combine multiple sets of runlists in a yaml file
-    compare     Compare 1 YAML file against others
+    combine     Combine multiple sets of runlists in a json file
+    compare     Compare one JSON file against others
     convert     Convert runlist file to ranges file
     cover       Output covers on chromosomes
     coverage    Output minimum or detailed depth of coverage on chromosomes
     genome      Convert chr.size to runlists
     gff         Convert gff3 to covers on chromosomes
     help        Print this message or the help of the given subcommand(s)
-    merge       Merge runlist yaml files
-    some        Extract some records from a runlist yaml file
-    span        Operate spans in a YAML file
-    split       Split a runlist yaml file
+    merge       Merge runlist json files
+    some        Extract some records from a runlist json file
+    span        Operate spans in a JSON file
+    split       Split a runlist json file
     stat        Coverage on chromosomes for runlists
-    statop      Coverage on chromosomes for one YAML crossed another
+    statop      Coverage on chromosomes for one JSON crossed another
 
 ```
 

@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Use json to replace yaml
+
 ## 0.7.1 - 2022-06-14
 
 * Store `IntSpan.edges` in VecDeque
