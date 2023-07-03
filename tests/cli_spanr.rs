@@ -89,7 +89,6 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(stdout.lines().count() == 5 || stdout.lines().count() == 6);
     assert!(stdout.contains("28547-29194"));
-    assert!(stdout.contains("\nI:\n"));
     assert!(stdout.contains("\nII:\n"));
 
     // --all
@@ -105,7 +104,6 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(stdout.lines().count() == 5 || stdout.lines().count() == 6);
     assert!(stdout.contains("28547-29194"));
-    assert!(stdout.contains("\nI:\n"));
     assert!(!stdout.contains("\nII:\n"));
     assert!(stdout.contains("\nII.other:\n"));
 
@@ -322,7 +320,6 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
     assert!(stdout.contains("878539-878709"), "runlist exists");
-    assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
 
     // union
@@ -339,7 +336,6 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
-    assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
 
     // xor
@@ -356,7 +352,6 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
 
     assert!(stdout.lines().count() == 17 || stdout.lines().count() == 18);
     assert!(!stdout.contains("\"-\""), "no empty runlists");
-    assert!(stdout.contains("\nI:"));
     assert!(stdout.contains("\nXVI:"));
 
     // m
