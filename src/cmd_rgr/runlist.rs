@@ -93,8 +93,8 @@ pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error:
     //----------------------------
     // Loading
     //----------------------------
-    let yaml = read_json(args.get_one::<String>("runlist").unwrap());
-    let set = json2set(&yaml);
+    let json = read_json(args.get_one::<String>("runlist").unwrap());
+    let set = json2set(&json);
 
     //----------------------------
     // Operating
