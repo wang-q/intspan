@@ -221,7 +221,7 @@ spanr genome tests/spanr/S288c.chr.sizes |
 
 spanr some tests/spanr/Atha.json tests/spanr/Atha.list
 
-spanr merge tests/spanr/I.yml tests/spanr/II.yml
+spanr merge tests/spanr/I.json tests/spanr/II.json
 
 spanr cover tests/spanr/S288c.rg
 spanr cover tests/spanr/dazzname.rg
@@ -243,15 +243,15 @@ spanr compare \
 
 spanr compare \
     --op intersect \
-    tests/spanr/I.II.yml \
-    tests/spanr/I.yml \
-    tests/spanr/II.yml
+    tests/spanr/I.II.json \
+    tests/spanr/I.json \
+    tests/spanr/II.json
 
-spanr split tests/spanr/I.II.yml
+spanr split tests/spanr/I.II.json
 
 spanr stat tests/spanr/S288c.chr.sizes tests/spanr/intergenic.json
 
-spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.yml
+spanr stat tests/spanr/S288c.chr.sizes tests/spanr/I.II.json
 
 spanr stat tests/spanr/Atha.chr.sizes tests/spanr/Atha.json
 
