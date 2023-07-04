@@ -46,7 +46,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
+pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Loading
     //----------------------------

@@ -3,7 +3,7 @@ use predicates::prelude::*; // Used for writing assertions
 use std::process::Command; // Run programs
 
 #[test]
-fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     cmd.arg("foobar");
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -14,7 +14,7 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_circos() -> Result<(), Box<dyn std::error::Error>> {
+fn command_circos() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("circos")
@@ -31,7 +31,7 @@ fn command_circos() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_circos_highlight() -> Result<(), Box<dyn std::error::Error>> {
+fn command_circos_highlight() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("circos")
@@ -48,7 +48,7 @@ fn command_circos_highlight() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
+fn command_sort() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("sort")
@@ -64,7 +64,7 @@ fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_filter() -> Result<(), Box<dyn std::error::Error>> {
+fn command_filter() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("filter")
@@ -81,7 +81,7 @@ fn command_filter() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_filter_3() -> Result<(), Box<dyn std::error::Error>> {
+fn command_filter_3() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("filter")
@@ -101,7 +101,7 @@ fn command_filter_3() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_clean() -> Result<(), Box<dyn std::error::Error>> {
+fn command_clean() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("clean")
@@ -117,7 +117,7 @@ fn command_clean() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_clean_bundle() -> Result<(), Box<dyn std::error::Error>> {
+fn command_clean_bundle() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("clean")
@@ -136,7 +136,7 @@ fn command_clean_bundle() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_clean_merge() -> Result<(), Box<dyn std::error::Error>> {
+fn command_clean_merge() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("clean")
@@ -156,7 +156,7 @@ fn command_clean_merge() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_connect() -> Result<(), Box<dyn std::error::Error>> {
+fn command_connect() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("linkr")?;
     let output = cmd
         .arg("connect")

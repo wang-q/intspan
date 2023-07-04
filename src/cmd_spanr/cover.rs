@@ -36,7 +36,7 @@ Like command `combine`, but <infiles> are chromosome ranges
 }
 
 // command implementation
-pub fn execute(args: &ArgMatches) -> std::result::Result<(), Box<dyn std::error::Error>> {
+pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Loading
     //----------------------------

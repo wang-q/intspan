@@ -4,7 +4,7 @@ use std::process::Command; // Run programs
 use tempfile::TempDir;
 
 #[test]
-fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("foobar");
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -15,7 +15,7 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
+fn file_doesnt_be_needed() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("test").arg("tests/spanr/S288c.chr.sizes");
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -26,7 +26,7 @@ fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 // #[test]
-// fn file_doesnt_provided() -> Result<(), Box<dyn std::error::Error>> {
+// fn file_doesnt_provided() -> anyhow::Result<()> {
 //     let mut cmd = Command::cargo_bin("spanr")?;
 //     cmd.arg("genome");
 //     cmd.assert().failure().stderr(predicate::str::contains(
@@ -37,7 +37,7 @@ fn file_doesnt_be_needed() -> Result<(), Box<dyn std::error::Error>> {
 // }
 
 #[test]
-fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
+fn file_doesnt_exist() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("genome").arg("tests/file/doesnt/exist");
     cmd.assert()
@@ -48,7 +48,7 @@ fn file_doesnt_exist() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
+fn command_genome() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("genome").arg("tests/spanr/S288c.chr.sizes");
     cmd.assert()
@@ -59,7 +59,7 @@ fn command_genome() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_some() -> Result<(), Box<dyn std::error::Error>> {
+fn command_some() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("some")
@@ -77,7 +77,7 @@ fn command_some() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
+fn command_merge() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("merge")
@@ -110,7 +110,7 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_split() -> Result<(), Box<dyn std::error::Error>> {
+fn command_split() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("split")
@@ -127,7 +127,7 @@ fn command_split() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
+fn command_split_to() -> anyhow::Result<()> {
     let tempdir = TempDir::new().unwrap();
     let tempdir_str = tempdir.path().to_str().unwrap();
 
@@ -148,7 +148,7 @@ fn command_split_to() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
+fn command_stat() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("stat")
@@ -170,7 +170,7 @@ fn command_stat() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
+fn command_stat_all() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("stat")
@@ -193,7 +193,7 @@ fn command_stat_all() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
+fn command_statop() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("statop")
@@ -219,7 +219,7 @@ fn command_statop() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
+fn command_statop_all() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("statop")
@@ -246,7 +246,7 @@ fn command_statop_all() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_statop_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("statop")
         .arg("tests/spanr/S288c.chr.sizes")
@@ -263,7 +263,7 @@ fn command_statop_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
+fn command_combine() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("combine")
@@ -305,7 +305,7 @@ fn command_combine() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
+fn command_compare() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("compare")
@@ -387,7 +387,7 @@ fn command_compare() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_span() -> Result<(), Box<dyn std::error::Error>> {
+fn command_span() -> anyhow::Result<()> {
     // cover
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
@@ -475,7 +475,7 @@ fn command_span() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_span_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("span")
         .arg("tests/spanr/brca2.json")
@@ -489,7 +489,7 @@ fn command_span_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
+fn command_cover() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("cover")
@@ -520,7 +520,7 @@ fn command_cover() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_coverage() -> Result<(), Box<dyn std::error::Error>> {
+fn command_coverage() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("coverage")
@@ -540,7 +540,7 @@ fn command_coverage() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_coverage_detailed() -> Result<(), Box<dyn std::error::Error>> {
+fn command_coverage_detailed() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("coverage")
@@ -564,7 +564,7 @@ fn command_coverage_detailed() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
+fn command_gff() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("gff")
@@ -581,7 +581,7 @@ fn command_gff() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
+fn command_gff_merge() -> anyhow::Result<()> {
     let tempdir = TempDir::new().unwrap();
 
     let mut cmd = Command::cargo_bin("spanr")?;
@@ -626,7 +626,7 @@ fn command_gff_merge() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_convert() -> Result<(), Box<dyn std::error::Error>> {
+fn command_convert() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     let output = cmd
         .arg("convert")

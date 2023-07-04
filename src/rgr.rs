@@ -3,7 +3,7 @@ use clap::*;
 
 mod cmd_rgr;
 
-fn main() -> std::io::Result<()> {
+fn main() -> anyhow::Result<()> {
     let app = Command::new("rgr")
         .version(crate_version!())
         .author(crate_authors!())

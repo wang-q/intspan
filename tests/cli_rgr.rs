@@ -3,7 +3,7 @@ use predicates::prelude::*; // Used for writing assertions
 use std::process::Command; // Run programs
 
 #[test]
-fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     cmd.arg("foobar");
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -14,7 +14,7 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
+fn command_merge() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("merge")
@@ -31,7 +31,7 @@ fn command_merge() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_replace() -> Result<(), Box<dyn std::error::Error>> {
+fn command_replace() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("replace")
@@ -49,7 +49,7 @@ fn command_replace() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_replace_reverse() -> Result<(), Box<dyn std::error::Error>> {
+fn command_replace_reverse() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("replace")
@@ -68,7 +68,7 @@ fn command_replace_reverse() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
+fn command_runlist() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("runlist")
@@ -141,7 +141,7 @@ fn command_runlist() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_runlist_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_runlist_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     cmd.arg("runlist")
         .arg("tests/rgr/intergenic.json")
@@ -156,7 +156,7 @@ fn command_runlist_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_count() -> Result<(), Box<dyn std::error::Error>> {
+fn command_count() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("count")
@@ -196,7 +196,7 @@ fn command_count() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_field() -> Result<(), Box<dyn std::error::Error>> {
+fn command_field() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("field")
@@ -303,7 +303,7 @@ fn command_field() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
+fn command_sort() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd.arg("sort").arg("tests/rgr/S288c.rg").output().unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -356,7 +356,7 @@ fn command_sort() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_prop() -> Result<(), Box<dyn std::error::Error>> {
+fn command_prop() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("prop")

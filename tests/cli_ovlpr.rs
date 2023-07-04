@@ -3,7 +3,7 @@ use predicates::prelude::*; // Used for writing assertions
 use std::process::Command; // Run programs
 
 #[test]
-fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
+fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     cmd.arg("foobar");
     cmd.assert().failure().stderr(predicate::str::contains(
@@ -14,7 +14,7 @@ fn command_invalid() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_covered() -> Result<(), Box<dyn std::error::Error>> {
+fn command_covered() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("covered")
@@ -31,7 +31,7 @@ fn command_covered() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_covered_paf() -> Result<(), Box<dyn std::error::Error>> {
+fn command_covered_paf() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("covered")
@@ -49,7 +49,7 @@ fn command_covered_paf() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_covered_longest() -> Result<(), Box<dyn std::error::Error>> {
+fn command_covered_longest() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("covered")
@@ -67,7 +67,7 @@ fn command_covered_longest() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_covered_base() -> Result<(), Box<dyn std::error::Error>> {
+fn command_covered_base() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("covered")
@@ -84,7 +84,7 @@ fn command_covered_base() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_covered_mean() -> Result<(), Box<dyn std::error::Error>> {
+fn command_covered_mean() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("covered")
@@ -107,7 +107,7 @@ fn command_covered_mean() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_paf2ovlp() -> Result<(), Box<dyn std::error::Error>> {
+fn command_paf2ovlp() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("paf2ovlp")
@@ -123,7 +123,7 @@ fn command_paf2ovlp() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn command_restrict() -> Result<(), Box<dyn std::error::Error>> {
+fn command_restrict() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     let output = cmd
         .arg("restrict")
