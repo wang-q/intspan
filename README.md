@@ -27,32 +27,29 @@ brew install intspan
 
 ```text
 $ spanr help
-spanr 0.7.1
-wang-q <wang-q@outlook.com>
 `spanr` operates chromosome IntSpan files
 
-USAGE:
-    spanr [SUBCOMMAND]
+Usage: spanr [COMMAND]
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+Commands:
+  genome    Convert chr.size to runlists
+  some      Extract some records from a runlist json file
+  merge     Merge runlist json files
+  split     Split a runlist json file
+  stat      Coverage on chromosomes for runlists
+  statop    Coverage on chromosomes for one JSON crossed another
+  combine   Combine multiple sets of runlists in a json file
+  compare   Compare one JSON file against others
+  span      Operate spans in a JSON file
+  cover     Output covers on chromosomes
+  coverage  Output minimum or detailed depth of coverage on chromosomes
+  gff       Convert gff3 to covers on chromosomes
+  convert   Convert runlist file to ranges file
+  help      Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    combine     Combine multiple sets of runlists in a json file
-    compare     Compare one JSON file against others
-    convert     Convert runlist file to ranges file
-    cover       Output covers on chromosomes
-    coverage    Output minimum or detailed depth of coverage on chromosomes
-    genome      Convert chr.size to runlists
-    gff         Convert gff3 to covers on chromosomes
-    help        Print this message or the help of the given subcommand(s)
-    merge       Merge runlist json files
-    some        Extract some records from a runlist json file
-    span        Operate spans in a JSON file
-    split       Split a runlist json file
-    stat        Coverage on chromosomes for runlists
-    statop      Coverage on chromosomes for one JSON crossed another
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 
 ```
 
@@ -60,27 +57,23 @@ SUBCOMMANDS:
 
 ```text
 $ rgr help
-rgr 0.7.0
-wang-q <wang-q@outlook.com>
 `rgr` operates ranges in .rg and .tsv files
 
-USAGE:
-    rgr [SUBCOMMAND]
+Usage: rgr [COMMAND]
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+Commands:
+  count    Count each range overlapping with other range files
+  field    Create/append ranges from fields
+  merge    Merge overlapped ranges via overlapping graph
+  prop     Proportion of the ranges intersecting a runlist file
+  replace  Replace fields in .tsv file
+  runlist  Filter .rg and .tsv files by comparison with a runlist file
+  sort     Sort .rg and .tsv files by a range field
+  help     Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    count      Count each range overlapping with other range files
-    field      Create/append ranges from fields
-    help       Print this message or the help of the given subcommand(s)
-    merge      Merge overlapped ranges via overlapping graph
-    prop       Proportion of the ranges intersecting a runlist file
-    replace    Replace fields in .tsv file
-    runlist    Filter .rg and .tsv files by comparison with a runlist file
-    sort       Sort .rg and .tsv files by a range field
-
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 
 * Field numbers start with 1
 
@@ -90,24 +83,21 @@ SUBCOMMANDS:
 
 ```text
 $ linkr help
-linkr 0.7.0
-wang-q <wang-q@outlook.com>
 `linkr` operates ranges on chromosomes and links of ranges
 
-USAGE:
-    linkr [SUBCOMMAND]
+Usage: linkr [COMMAND]
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+Commands:
+  circos   Convert links to circos links or highlights
+  sort     Sort links and ranges within links
+  filter   Filter links by numbers of ranges or length differences
+  clean    Replace ranges within links, incorporate hit strands and remove nested links
+  connect  Connect bilateral links into multilateral ones
+  help     Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    circos     Convert links to circos links or highlights
-    clean      Replace ranges within links, incorporate hit strands and remove nested links
-    connect    Connect bilateral links into multilateral ones
-    filter     Filter links by numbers of ranges or length differences
-    help       Print this message or the help of the given subcommand(s)
-    sort       Sort links and ranges within links
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 
 ```
 
@@ -115,22 +105,19 @@ SUBCOMMANDS:
 
 ```text
 $ ovlpr help
-ovlpr 0.7.0
-wang-q <wang-q@outlook.com>
 `ovlpr` operates overlaps between sequences
 
-USAGE:
-    ovlpr [SUBCOMMAND]
+Usage: ovlpr [COMMAND]
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+Commands:
+  covered   Covered regions from .ovlp.tsv files
+  paf2ovlp  Convert minimap .paf to overlaps
+  restrict  Restrict overlaps to known pairs
+  help      Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    covered     Covered regions from .ovlp.tsv files
-    help        Print this message or the help of the given subcommand(s)
-    paf2ovlp    Convert minimap .paf to overlaps
-    restrict    Restrict overlaps to known pairs
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 
 ```
 
