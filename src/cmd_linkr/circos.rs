@@ -3,33 +3,34 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("circos")
         .about("Convert links to circos links or highlights")
         .after_help(
-            "\
-             It's assumed that all ranges in input files are valid\
-             ",
+            r###"
+* It's assumed that all ranges in input files are valid
+
+"###,
         )
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Sets the input files to use"),
         )
         .arg(
             Arg::new("highlight")
                 .long("highlight")
+                .action(ArgAction::SetTrue)
                 .help("Create highlights instead of links"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -40,7 +41,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Loading
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
-    let is_highlight = args.contains_id("highlight");
+    let is_highlight = args.get_flag("highlight");
 
     let mut colors = (1..=12)
         .map(|n| format!("paired-12-qual-{}", n))

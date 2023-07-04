@@ -4,38 +4,37 @@ use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("compare")
         .about("Compare one JSON file against others")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
             Arg::new("infile")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
                 .index(2)
-                .min_values(1),
+                .num_args(1..)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("op")
                 .long("op")
-                .takes_value(true)
+                .num_args(1)
                 .default_value("intersect")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Operations: intersect, union, diff or xor"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

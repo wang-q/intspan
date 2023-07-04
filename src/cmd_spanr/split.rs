@@ -6,7 +6,7 @@ use std::fs;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("split")
         .about("Split a runlist json file")
         .arg(
@@ -19,7 +19,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
             Arg::new("suffix")
                 .long("suffix")
                 .short('s')
-                .takes_value(true)
+                .num_args(1)
                 .default_value(".json")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Extensions of output files"),
@@ -28,7 +28,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
             Arg::new("outdir")
                 .short('o')
                 .long("outdir")
-                .takes_value(true)
+                .num_args(1)
                 .default_value("stdout")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output location. [stdout] for screen"),

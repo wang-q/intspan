@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("field")
         .about("Create/append ranges from fields")
         .after_help(
@@ -21,90 +21,87 @@ Example:
         )
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Sets the input files to use"),
         )
         .arg(
             Arg::new("append")
                 .long("append")
                 .short('a')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Append a field of range. The default is to write only the range"),
         )
         .arg(
             Arg::new("header")
                 .long("header")
                 .short('H')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Treat the first line of each file as a header"),
         )
         .arg(
             Arg::new("sharp")
                 .long("sharp")
                 .short('s')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("fields")
                 .long("fields")
                 .short('f')
-                .takes_value(true)
+                .num_args(1)
                 .help("Writes selected fields and the generated range field, in the order listed"),
         )
         .arg(
             Arg::new("chr")
                 .long("chr")
-                .value_parser(value_parser!(usize))
-                .takes_value(true)
+                .num_args(1)
                 .required(true)
+                .value_parser(value_parser!(usize))
                 .help("Field idx of chr"),
         )
         .arg(
             Arg::new("strand")
                 .long("strand")
+                .num_args(1)
                 .value_parser(value_parser!(usize))
-                .takes_value(true)
                 .help("Optional field idx of strand"),
         )
         .arg(
             Arg::new("start")
                 .long("start")
-                .value_parser(value_parser!(usize))
-                .takes_value(true)
+                .num_args(1)
                 .required(true)
+                .value_parser(value_parser!(usize))
                 .help("Field idx of start"),
         )
         .arg(
             Arg::new("end")
                 .long("end")
                 .value_parser(value_parser!(usize))
-                .takes_value(true)
+                .num_args(1)
                 .help("Optional field idx of end"),
         )
         .arg(
             Arg::new("eq")
                 .long("eq")
-                .takes_value(true)
                 .action(ArgAction::Append)
                 .help("Filter lines by field:STR, FIELD == STR"),
         )
         .arg(
             Arg::new("ne")
                 .long("ne")
-                .takes_value(true)
                 .action(ArgAction::Append)
                 .help("Filter lines by field:STR, FIELD != STR"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -116,9 +113,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
-    let mut is_append = args.contains_id("append");
-    let is_header = args.contains_id("header");
-    let is_sharp = args.contains_id("sharp");
+    let mut is_append = args.get_flag("append");
+    let is_header = args.get_flag("header");
+    let is_sharp = args.get_flag("sharp");
 
     let idx_chr = *args.get_one::<usize>("chr").unwrap();
     let idx_strand = if args.contains_id("strand") {

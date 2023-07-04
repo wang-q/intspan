@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("span")
         .about("Operate spans in a JSON file")
         .after_help(
@@ -22,14 +22,14 @@ List of operations
         )
         .arg(
             Arg::new("infile")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("op")
                 .long("op")
-                .takes_value(true)
+                .num_args(1)
                 .default_value("cover")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: cover, holes, trim, pad, excise or fill"),
@@ -38,17 +38,16 @@ List of operations
             Arg::new("number")
                 .long("number")
                 .short('n')
+                .num_args(1)
                 .value_parser(value_parser!(i32))
-                .takes_value(true)
                 .default_value("0"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

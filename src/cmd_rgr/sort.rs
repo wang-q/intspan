@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("sort")
         .about("Sort .rg and .tsv files by a range field")
         .after_help(
@@ -23,33 +23,32 @@ Example:
         )
         .arg(
             Arg::new("infiles")
-                .help("Set the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Set the input file to use")
         )
         .arg(
             Arg::new("header")
                 .long("header")
                 .short('H')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Treat the first line of each file as a header"),
         )
         .arg(
             Arg::new("field")
                 .long("field")
                 .short('f')
+                .num_args(1)
                 .value_parser(value_parser!(usize))
-                .takes_value(true)
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -61,7 +60,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let is_header = args.contains_id("header");
+    let is_header = args.get_flag("header");
 
     let idx_range = if args.contains_id("field") {
         *args.get_one::<usize>("field").unwrap()

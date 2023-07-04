@@ -4,28 +4,29 @@ use std::collections::HashSet;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("restrict")
         .about("Restrict overlaps to known pairs")
         .arg(
             Arg::new("infile")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .num_args(1)
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("restrict")
-                .help("Two-column tsv file")
                 .required(true)
-                .index(2),
+                .num_args(1)
+                .index(2)
+                .help("Two-column tsv file"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

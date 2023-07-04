@@ -6,37 +6,38 @@ use std::ffi::OsStr;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("statop")
         .about("Coverage on chromosomes for one JSON crossed another")
         .after_help("Only the *first* file can contain multiple sets of runlists")
         .arg(
             Arg::new("chr.sizes")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("infile1")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(2),
+                .index(2)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("infile2")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(3),
+                .index(3)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("all")
                 .long("all")
+                .action(ArgAction::SetTrue)
                 .help("Only write whole genome stats"),
         )
         .arg(
             Arg::new("op")
                 .long("op")
-                .takes_value(true)
+                .num_args(1)
                 .default_value("intersect")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: intersect, union, diff or xor"),
@@ -44,16 +45,15 @@ pub fn make_subcommand<'a>() -> Command<'a> {
         .arg(
             Arg::new("base")
                 .long("base")
-                .takes_value(true)
+                .num_args(1)
                 .help("basename of infile2"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -72,7 +72,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let single: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile2").unwrap());
     let mut s2 = json2set(&single);
 
-    let is_all = args.contains_id("all");
+    let is_all = args.get_flag("all");
     let base = if args.contains_id("base") {
         args.get_one::<String>("base").unwrap()
     } else {

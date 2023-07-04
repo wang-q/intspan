@@ -10,6 +10,7 @@ fn main() -> anyhow::Result<()> {
         .about("`linkr` operates ranges on chromosomes and links of ranges")
         .propagate_version(true)
         .arg_required_else_help(true)
+        .color(ColorChoice::Auto)
         .subcommand(cmd_linkr::circos::make_subcommand())
         .subcommand(cmd_linkr::sort::make_subcommand())
         .subcommand(cmd_linkr::filter::make_subcommand())

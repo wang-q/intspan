@@ -3,44 +3,44 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("filter")
         .about("Filter links by numbers of ranges or length differences")
         .after_help(
-            "\
-             It's assumed that all ranges in input files are valid.
-             Inputs should not contain hit strands.\
-             ",
+            r###"
+* It's assumed that all ranges in input files are valid
+* Inputs should not contain hit strands
+
+"###,
         )
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Sets the input files to use"),
         )
         .arg(
             Arg::new("number")
                 .long("number")
                 .short('n')
-                .takes_value(true)
+                .num_args(1)
                 .help("Numbers of ranges, an IntSpan like [2-10]"),
         )
         .arg(
             Arg::new("ratio")
                 .long("ratio")
                 .short('r')
+                .num_args(1)
                 .value_parser(value_parser!(f32))
-                .takes_value(true)
                 .help("Ratio of lengths differences. The suggested value is [0.8]"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

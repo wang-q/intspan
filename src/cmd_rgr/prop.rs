@@ -5,7 +5,7 @@ use std::io::BufRead;
 use std::path::Path;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("prop")
         .about("Proportion of the ranges intersecting a runlist file")
         .after_help(
@@ -26,58 +26,58 @@ Example:
         )
         .arg(
             Arg::new("runlist")
-                .help("Set the runlist file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .num_args(1)
+                .help("Set the runlist file to use")
         )
         .arg(
             Arg::new("infiles")
-                .help("Set the input files to use")
                 .required(true)
                 .index(2)
-            .min_values(1),
+                .num_args(1..)
+                .help("Set the input files to use")
         )
         .arg(
             Arg::new("header")
                 .long("header")
                 .short('H')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Treat the first line of each file as a header"),
         )
         .arg(
             Arg::new("sharp")
                 .long("sharp")
                 .short('s')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("field")
                 .long("field")
                 .short('f')
+                .num_args(1)
                 .value_parser(value_parser!(usize))
-                .takes_value(true)
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("full")
                 .long("full")
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Also append `length` and `size` fields"),
         )
         .arg(
             Arg::new("prefix")
                 .long("prefix")
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Prefix the basename of the runlist file if `--header` is set"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -89,8 +89,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    let is_sharp = args.contains_id("sharp");
-    let is_header = args.contains_id("header");
+    let is_sharp = args.get_flag("sharp");
+    let is_header = args.get_flag("header");
 
     let idx_range = if args.contains_id("field") {
         *args.get_one::<usize>("field").unwrap()
@@ -98,8 +98,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         0
     };
 
-    let is_full = args.contains_id("full");
-    let is_prefix = args.contains_id("prefix");
+    let is_full = args.get_flag("full");
+    let is_prefix = args.get_flag("prefix");
 
     //----------------------------
     // Loading

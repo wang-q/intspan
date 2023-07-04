@@ -4,28 +4,29 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("some")
         .about("Extract some records from a runlist json file")
         .arg(
             Arg::new("infile")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .num_args(1)
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("list")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(2),
+                .num_args(1)
+                .index(2)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

@@ -4,22 +4,21 @@ use serde_json::Value;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("genome")
         .about("Convert chr.size to runlists")
         .arg(
             Arg::new("infile")
-                .help("Sets the input file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .help("Sets the input file to use"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }

@@ -6,21 +6,21 @@ use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("merge")
         .about("Merge overlapped ranges via overlapping graph")
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Sets the input files to use"),
         )
         .arg(
             Arg::new("coverage")
                 .long("coverage")
                 .short('c')
-                .takes_value(true)
+                .num_args(1)
                 .default_value("0.95")
                 .value_parser(value_parser!(f32))
                 .help("When larger than this ratio, merge ranges"),
@@ -29,15 +29,15 @@ pub fn make_subcommand<'a>() -> Command<'a> {
             Arg::new("verbose")
                 .long("verbose")
                 .short('v')
+                .action(ArgAction::SetTrue)
                 .help("Verbose mode"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -48,7 +48,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Loading
     //----------------------------
     let coverage = *args.get_one::<f32>("coverage").unwrap();
-    let is_verbose = args.contains_id("verbose");
+    let is_verbose = args.get_flag("verbose");
 
     // store graph separately by chromosomes
     // petgraph use NodeIndex to store and identify nodes

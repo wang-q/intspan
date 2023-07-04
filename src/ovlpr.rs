@@ -10,6 +10,7 @@ fn main() -> anyhow::Result<()> {
         .about("`ovlpr` operates overlaps between sequences")
         .propagate_version(true)
         .arg_required_else_help(true)
+        .color(ColorChoice::Auto)
         .subcommand(cmd_ovlpr::covered::make_subcommand())
         .subcommand(cmd_ovlpr::paf2ovlp::make_subcommand())
         .subcommand(cmd_ovlpr::restrict::make_subcommand());

@@ -8,38 +8,38 @@ use std::io::BufRead;
 type Iv = Interval<u32, u32>; // the first type should be Unsigned
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("coverage")
         .about("Output minimum or detailed depth of coverage on chromosomes")
         .arg(
             Arg::new("infiles")
-                .help("Set the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Set the input file to use"),
         )
         .arg(
             Arg::new("minimum")
-                .help("Set the minimum depth of coverage")
                 .long("minimum")
                 .short('m')
                 .value_parser(value_parser!(i32))
-                .takes_value(true)
-                .default_value("1"),
+                .num_args(1)
+                .default_value("1")
+                .help("Set the minimum depth of coverage"),
         )
         .arg(
             Arg::new("detailed")
-                .help("Output detailed depth")
                 .long("detailed")
-                .short('d'),
+                .short('d')
+                .action(ArgAction::SetTrue)
+                .help("Output detailed depth"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -50,7 +50,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Loading
     //----------------------------
     let minimum = *args.get_one::<i32>("minimum").unwrap();
-    let is_detailed = args.contains_id("detailed");
+    let is_detailed = args.get_flag("detailed");
 
     // seq_name => Vector of Intervals
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();

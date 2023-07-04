@@ -5,22 +5,22 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("covered")
         .about("Covered regions from .ovlp.tsv files")
         .arg(
             Arg::new("infiles")
-                .help("Sets the input file to use")
                 .required(true)
-                .min_values(1)
-                .index(1),
+                .num_args(1..)
+                .index(1)
+                .help("Sets the input files to use"),
         )
         .arg(
             Arg::new("coverage")
                 .help("minimal coverage")
                 .long("coverage")
                 .short('c')
-                .takes_value(true)
+                .num_args(1)
                 .default_value("3")
                 .value_parser(value_parser!(i32)),
         )
@@ -29,7 +29,7 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .help("minimal length of overlaps")
                 .long("len")
                 .short('l')
-                .takes_value(true)
+                .num_args(1)
                 .default_value("1000")
                 .value_parser(value_parser!(i32)),
         )
@@ -38,25 +38,40 @@ pub fn make_subcommand<'a>() -> Command<'a> {
                 .help("minimal identities of overlaps")
                 .long("idt")
                 .short('i')
-                .takes_value(true)
+                .num_args(1)
                 .default_value("0.0")
                 .value_parser(value_parser!(f32)),
         )
-        .arg(Arg::new("paf").long("paf").help("PAF as input format"))
+        .arg(
+            Arg::new("paf")
+                .long("paf")
+                .action(ArgAction::SetTrue)
+                .help("PAF as input format"),
+        )
         .arg(
             Arg::new("longest")
                 .long("longest")
+                .action(ArgAction::SetTrue)
                 .help("only keep the longest span"),
         )
-        .arg(Arg::new("base").long("base").help("per base coverage"))
-        .arg(Arg::new("mean").long("mean").help("mean coverage"))
+        .arg(
+            Arg::new("base")
+                .long("base")
+                .action(ArgAction::SetTrue)
+                .help("per base coverage"),
+        )
+        .arg(
+            Arg::new("mean")
+                .long("mean")
+                .action(ArgAction::SetTrue)
+                .help("mean coverage"),
+        )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -72,10 +87,10 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let min_len = *args.get_one::<i32>("len").unwrap();
     let min_idt = *args.get_one::<f32>("idt").unwrap();
 
-    let is_paf = args.contains_id("paf");
-    let is_longest = args.contains_id("longest");
-    let is_base = args.contains_id("base");
-    let is_mean = args.contains_id("mean");
+    let is_paf = args.get_flag("paf");
+    let is_longest = args.get_flag("longest");
+    let is_base = args.get_flag("base");
+    let is_mean = args.get_flag("mean");
 
     // seq_name => tier_of => IntSpan
     let mut res: HashMap<String, Coverage> = HashMap::new();

@@ -6,9 +6,9 @@ use std::process::Command; // Run programs
 fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("ovlpr")?;
     cmd.arg("foobar");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "which wasn't expected, or isn't valid in this context",
-    ));
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("recognized"));
 
     Ok(())
 }

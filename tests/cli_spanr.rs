@@ -7,34 +7,34 @@ use tempfile::TempDir;
 fn command_invalid() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("foobar");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "which wasn't expected, or isn't valid in this context",
-    ));
-
-    Ok(())
-}
-
-#[test]
-fn file_doesnt_be_needed() -> anyhow::Result<()> {
-    let mut cmd = Command::cargo_bin("spanr")?;
-    cmd.arg("test").arg("tests/spanr/S288c.chr.sizes");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "which wasn't expected, or isn't valid in this context",
-    ));
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("recognized"));
 
     Ok(())
 }
 
 // #[test]
-// fn file_doesnt_provided() -> anyhow::Result<()> {
+// fn file_doesnt_be_needed() -> anyhow::Result<()> {
 //     let mut cmd = Command::cargo_bin("spanr")?;
-//     cmd.arg("genome");
+//     cmd.arg("test").arg("tests/spanr/S288c.chr.sizes");
 //     cmd.assert().failure().stderr(predicate::str::contains(
-//         "The following required arguments were not provided",
+//         "which wasn't expected, or isn't valid in this context",
 //     ));
 //
 //     Ok(())
 // }
+
+#[test]
+fn file_doesnt_provided() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("spanr")?;
+    cmd.arg("genome");
+    cmd.assert().failure().stderr(predicate::str::contains(
+        "not provided",
+    ));
+
+    Ok(())
+}
 
 #[test]
 fn file_doesnt_exist() -> anyhow::Result<()> {

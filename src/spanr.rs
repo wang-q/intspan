@@ -10,6 +10,7 @@ fn main() -> anyhow::Result<()> {
         .about("`spanr` operates chromosome IntSpan files")
         .propagate_version(true)
         .arg_required_else_help(true)
+        .color(ColorChoice::Auto)
         .subcommand(cmd_spanr::genome::make_subcommand())
         .subcommand(cmd_spanr::some::make_subcommand())
         .subcommand(cmd_spanr::merge::make_subcommand())

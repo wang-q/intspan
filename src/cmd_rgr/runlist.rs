@@ -3,7 +3,7 @@ use intspan::*;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
-pub fn make_subcommand<'a>() -> Command<'a> {
+pub fn make_subcommand() -> Command {
     Command::new("runlist")
         .about("Filter .rg and .tsv files by comparison with a runlist file")
         .after_help(
@@ -20,54 +20,54 @@ Example:
         )
         .arg(
             Arg::new("runlist")
-                .help("Set the runlist file to use")
                 .required(true)
-                .index(1),
+                .index(1)
+                .num_args(1)
+                .help("Set the runlist file to use")
         )
         .arg(
             Arg::new("infiles")
-                .help("Set the input files to use")
                 .required(true)
                 .index(2)
-            .min_values(1),
+                .num_args(1..)
+                .help("Set the input files to use")
         )
         .arg(
             Arg::new("header")
                 .long("header")
                 .short('H')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Treat the first line of each file as a header"),
         )
         .arg(
             Arg::new("sharp")
                 .long("sharp")
                 .short('s')
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
                 .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("field")
                 .long("field")
                 .short('f')
+                .num_args(1)
                 .value_parser(value_parser!(usize))
-                .takes_value(true)
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("op")
                 .long("op")
-                .takes_value(true)
+                .num_args(1)
                 .default_value("overlap")
                 .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("operations: overlap, non-overlap or superset"),
         )
         .arg(
             Arg::new("outfile")
-                .short('o')
                 .long("outfile")
-                .takes_value(true)
+                .short('o')
+                .num_args(1)
                 .default_value("stdout")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
                 .help("Output filename. [stdout] for screen"),
         )
 }
@@ -81,8 +81,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     let op = args.get_one::<String>("op").unwrap().as_str();
 
-    let is_sharp = args.contains_id("sharp");
-    let is_header = args.contains_id("header");
+    let is_sharp = args.get_flag("sharp");
+    let is_header = args.get_flag("header");
 
     let idx_range = if args.contains_id("field") {
         *args.get_one::<usize>("field").unwrap()

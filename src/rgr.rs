@@ -10,6 +10,7 @@ fn main() -> anyhow::Result<()> {
         .about("`rgr` operates ranges in .rg and .tsv files")
         .propagate_version(true)
         .arg_required_else_help(true)
+        .color(ColorChoice::Auto)
         .after_help(
             r###"
 * Field numbers start with 1

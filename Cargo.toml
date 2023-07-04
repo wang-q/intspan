@@ -40,7 +40,7 @@ name = "benchmark"
 name = "file"
 
 [dependencies]
-clap = { version = "3.2.2", features = ["cargo"] }
+clap = { version = "4.3.10", features = ["cargo"] }
 serde = "1.0.137"
 serde_json = "1.0.99"
 anyhow = "1.0.66"

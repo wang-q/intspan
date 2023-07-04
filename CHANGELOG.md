@@ -4,6 +4,10 @@
 
 * Use json to replace yaml
 
+* Bump versions of deps
+    * clap v4
+    * Use anyhow
+
 ## 0.7.1 - 2022-06-14
 
 * Store `IntSpan.edges` in VecDeque
