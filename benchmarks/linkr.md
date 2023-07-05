@@ -441,6 +441,8 @@ rm ~/Scripts/intspan/benchmarks/linkr/*.tmp
     * Perl 5.34.0
 
 ```shell
+cd ~/Scripts/intspan/
+
 rm linkr.all.md.tmp
 
 hyperfine --warmup 1 --export-markdown linkr.md.tmp \
@@ -517,154 +519,140 @@ cat linkr.all.md.tmp
 
 ```
 
-### i7-4770HQ macOS Big Sur
+### i5-12500H Windows 11 WSL
 
-| Command         |      Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:----------------|---------------:|---------:|---------:|-------------:|
-| `sort linkr`    |   192.5 ± 21.6 |    169.8 |    243.3 |         1.00 |
-| `sort jrange`   | 1396.4 ± 221.2 |   1194.8 |   1795.4 |  7.26 ± 1.41 |
-| `sort rangeops` | 2718.7 ± 698.2 |   2045.9 |   4508.8 | 14.13 ± 3.96 |
+| Command         |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:----------------|-------------:|---------:|---------:|-------------:|
+| `sort linkr`    |   75.1 ± 2.6 |     70.7 |     80.1 |         1.00 |
+| `sort jrange`   | 671.2 ± 79.3 |    610.3 |    890.0 |  8.94 ± 1.10 |
+| `sort rangeops` | 884.6 ± 33.3 |    836.1 |    939.7 | 11.78 ± 0.60 |
 
-| Command          |        Mean [s] | Min [s] | Max [s] |     Relative |
-|:-----------------|----------------:|--------:|--------:|-------------:|
-| `clean linkr`    |  10.237 ± 0.929 |   9.283 |  11.139 |         1.00 |
-| `clean jrange`   |  10.926 ± 1.499 |  10.018 |  12.656 |  1.07 ± 0.18 |
-| `clean rangeops` | 217.755 ± 9.570 | 206.715 | 223.689 | 21.27 ± 2.14 |
+| Command          |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:-----------------|---------------:|--------:|--------:|-------------:|
+| `clean linkr`    |  1.390 ± 0.041 |   1.343 |   1.419 |         1.00 |
+| `clean jrange`   |  4.082 ± 0.338 |   3.713 |   4.378 |  2.94 ± 0.26 |
+| `clean rangeops` | 88.158 ± 0.819 |  87.485 |  89.069 | 63.44 ± 1.95 |
 
-| Command          |        Mean [s] | Min [s] | Max [s] |     Relative |
-|:-----------------|----------------:|--------:|--------:|-------------:|
-| `merge rgr`      |  10.334 ± 1.050 |   9.211 |  11.292 |  2.97 ± 0.30 |
-| `merge jrange`   |   3.484 ± 0.038 |   3.457 |   3.527 |         1.00 |
-| `merge rangeops` | 133.528 ± 3.098 | 130.136 | 136.208 | 38.33 ± 0.98 |
+| Command          |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:-----------------|---------------:|--------:|--------:|-------------:|
+| `merge rgr`      |  1.322 ± 0.046 |   1.283 |   1.372 |         1.00 |
+| `merge jrange`   |  1.567 ± 0.050 |   1.512 |   1.609 |  1.19 ± 0.06 |
+| `merge rangeops` | 51.696 ± 0.827 |  50.775 |  52.375 | 39.11 ± 1.50 |
 
-| Command           |        Mean [s] | Min [s] | Max [s] |     Relative |
-|:------------------|----------------:|--------:|--------:|-------------:|
-| `clean2 linkr`    |   4.505 ± 0.283 |   4.182 |   4.704 |         1.00 |
-| `clean2 jrange`   |   7.109 ± 0.094 |   7.033 |   7.215 |  1.58 ± 0.10 |
-| `clean2 rangeops` | 104.708 ± 4.599 |  99.539 | 108.345 | 23.24 ± 1.78 |
+| Command           |       Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:------------------|----------------:|---------:|---------:|-------------:|
+| `clean2 linkr`    |     853.7 ± 1.4 |    852.1 |    854.6 |         1.00 |
+| `clean2 jrange`   |   3446.4 ± 31.6 |   3415.5 |   3478.6 |  4.04 ± 0.04 |
+| `clean2 rangeops` | 44194.3 ± 591.0 |  43713.1 |  44853.9 | 51.77 ± 0.70 |
 
-| Command            |        Mean [ms] | Min [ms] | Max [ms] |      Relative |
-|:-------------------|-----------------:|---------:|---------:|--------------:|
-| `connect linkr`    |     274.5 ± 12.3 |    257.4 |    295.4 |          1.00 |
-| `connect rangeops` | 37331.9 ± 1713.8 |  34847.7 |  39465.5 | 135.99 ± 8.71 |
+| Command            |       Mean [ms] | Min [ms] | Max [ms] |      Relative |
+|:-------------------|----------------:|---------:|---------:|--------------:|
+| `connect linkr`    |     103.4 ± 5.3 |     94.6 |    115.9 |          1.00 |
+| `connect rangeops` | 15053.5 ± 513.1 |  14232.5 |  15858.4 | 145.63 ± 8.97 |
 
-| Command           |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:------------------|-------------:|---------:|---------:|-------------:|
-| `filter linkr`    |   45.8 ± 3.6 |     41.3 |     57.6 |         1.00 |
-| `filter jrange`   | 186.1 ± 26.4 |    156.9 |    246.5 |  4.06 ± 0.66 |
-| `filter rangeops` | 725.4 ± 90.3 |    633.3 |    943.5 | 15.83 ± 2.34 |
+| Command           |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:------------------|------------:|---------:|---------:|-------------:|
+| `filter linkr`    |  26.1 ± 5.0 |     20.5 |     47.5 |         1.00 |
+| `filter jrange`   |  86.6 ± 3.0 |     82.0 |     93.9 |  3.32 ± 0.65 |
+| `filter rangeops` | 287.7 ± 5.3 |    280.9 |    295.2 | 11.04 ± 2.13 |
 
 ## `linkr` on Windows
 
-* Ryzen 7 5800
-* Windows 11 21H2
-* rustc 1.62.0 msvc
-* Strawberry Perl 5.32.1
-
-### sort
-
 ```powershell
-hyperfine --warmup 1 --export-markdown sort.md.tmp `
-    -n linkr `
-    -n rangeops `
+cd ~/Scripts/intspan/
+
+rm linkr.all.md.tmp
+
+hyperfine --warmup 1 --export-markdown linkr.md.tmp `
+    -n "sort linkr" `
+    -n "sort rangeops" `
     "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | linkr sort stdin > NUL" `
     "gzip -dcf tests/Atha/links.lastz.tsv.gz tests/Atha/links.blast.tsv.gz | rangeops sort stdin -o stdout > NUL"
 
-cat sort.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
 
-```
-
-| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:-----------|-------------:|---------:|---------:|-------------:|
-| `linkr`    |  107.9 ± 0.9 |    106.2 |    109.8 |         1.00 |
-| `rangeops` | 1263.4 ± 9.3 |   1249.0 |   1279.3 | 11.71 ± 0.13 |
-
-### clean
-
-```powershell
-hyperfine --min-runs 3 --export-markdown clean.md.tmp `
-    -n linkr `
-    -n rangeops `
+hyperfine --min-runs 3 --export-markdown linkr.md.tmp `
+    -n "clean linkr" `
+    -n "clean rangeops" `
     "linkr clean tests/Atha/sort.tsv > NUL" `
     "rangeops clean tests/Atha/sort.tsv -o stdout > NUL"
 
-cat clean.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
 
-```
-
-| Command    |       Mean [s] | Min [s] | Max [s] |     Relative |
-|:-----------|---------------:|--------:|--------:|-------------:|
-| `linkr`    |  2.306 ± 0.065 |   2.253 |   2.379 |         1.00 |
-| `rangeops` | 91.878 ± 0.535 |  91.265 |  92.254 | 39.84 ± 1.15 |
-
-### merge
-
-```powershell
-hyperfine --min-runs 3 --export-markdown merge.md.tmp `
-    -n rgr `
-    -n rangeops `
+hyperfine --min-runs 3 --export-markdown linkr.md.tmp `
+    -n "merge rgr" `
+    -n "merge rangeops" `
     "rgr merge tests/Atha/sort.clean.tsv -c 0.95 > NUL" `
     "rangeops merge tests/Atha/sort.clean.tsv -c 0.95 -p 4 -o stdout > NUL"
 
-cat merge.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
 
-```
-
-| Command    |       Mean [s] | Min [s] | Max [s] |     Relative |
-|:-----------|---------------:|--------:|--------:|-------------:|
-| `rgr`      |  2.532 ± 0.030 |   2.513 |   2.566 |         1.00 |
-| `rangeops` | 54.278 ± 1.479 |  52.890 |  55.833 | 21.44 ± 0.64 |
-
-### clean2
-
-```powershell
-hyperfine --min-runs 3 --export-markdown clean2.md.tmp `
-    -n linkr `
-    -n rangeops `
+hyperfine --min-runs 3 --export-markdown linkr.md.tmp `
+    -n "clean2 linkr" `
+    -n "clean2 rangeops" `
     "linkr clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL" `
     "rangeops clean tests/Atha/sort.clean.tsv -r tests/Atha/merge.tsv --bundle 500 > NUL"
 
-cat clean2.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
 
-```
-
-| Command    |       Mean [s] | Min [s] | Max [s] |     Relative |
-|:-----------|---------------:|--------:|--------:|-------------:|
-| `linkr`    |  1.316 ± 0.024 |   1.294 |   1.342 |         1.00 |
-| `rangeops` | 44.935 ± 0.419 |  44.478 |  45.303 | 34.16 ± 0.71 |
-
-### connect
-
-```powershell
-hyperfine --warmup 1 --export-markdown connect.md.tmp `
-    -n linkr `
-    -n rangeops `
+hyperfine --warmup 1 --export-markdown linkr.md.tmp `
+    -n "connect linkr" `
+    -n "connect rangeops" `
     "linkr connect tests/Atha/clean.tsv > NUL" `
     "rangeops connect tests/Atha/clean.tsv > NUL"
 
-cat connect.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
 
-```
-
-| Command    |       Mean [ms] | Min [ms] | Max [ms] |       Relative |
-|:-----------|----------------:|---------:|---------:|---------------:|
-| `linkr`    |    114.6 ± 12.5 |    106.9 |    158.4 |           1.00 |
-| `rangeops` | 14018.0 ± 122.7 |  13872.1 |  14239.5 | 122.36 ± 13.42 |
-
-### filter
-
-```powershell
-hyperfine --warmup 1 --export-markdown filter.md.tmp `
-    -n linkr `
-    -n rangeops `
+hyperfine --warmup 1 --export-markdown linkr.md.tmp `
+    -n "filter linkr" `
+    -n "filter rangeops" `
     "linkr filter tests/Atha/connect.tsv -r 0.8 > NUL" `
     "rangeops filter tests/Atha/connect.tsv -r 0.8 -o stdout > NUL"
 
-cat filter.md.tmp
+cat linkr.md.tmp >> linkr.all.md.tmp
+echo "" >> 　linkr.all.md.tmp
+
+cat linkr.all.md.tmp
 
 ```
 
-| Command    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
-|:-----------|-------------:|---------:|---------:|-------------:|
-| `linkr`    |   22.2 ± 0.6 |     20.9 |     24.5 |         1.00 |
-| `rangeops` | 481.6 ± 29.5 |    462.4 |    562.0 | 21.65 ± 1.46 |
+### i5-12500H
+
+* Windows 11 22H2
+* rustc 1.70.0 msvc
+* Strawberry Perl 5.32.1
+
+| Command         |     Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:----------------|--------------:|---------:|---------:|-------------:|
+| `sort linkr`    |    96.3 ± 4.3 |     90.1 |    108.9 |         1.00 |
+| `sort rangeops` | 1223.1 ± 21.7 |   1193.9 |   1260.4 | 12.70 ± 0.61 |
+
+| Command          |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:-----------------|---------------:|--------:|--------:|-------------:|
+| `clean linkr`    |  2.347 ± 0.042 |   2.320 |   2.395 |         1.00 |
+| `clean rangeops` | 95.275 ± 3.151 |  91.889 |  98.120 | 40.60 ± 1.53 |
+
+| Command          |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:-----------------|---------------:|--------:|--------:|-------------:|
+| `merge rgr`      |  2.663 ± 0.022 |   2.639 |   2.681 |         1.00 |
+| `merge rangeops` | 59.336 ± 1.359 |  57.827 |  60.462 | 22.28 ± 0.54 |
+
+| Command           |       Mean [s] | Min [s] | Max [s] |     Relative |
+|:------------------|---------------:|--------:|--------:|-------------:|
+| `clean2 linkr`    |  1.327 ± 0.027 |   1.306 |   1.357 |         1.00 |
+| `clean2 rangeops` | 47.184 ± 1.831 |  46.029 |  49.295 | 35.55 ± 1.56 |
+
+| Command            |       Mean [ms] | Min [ms] | Max [ms] |      Relative |
+|:-------------------|----------------:|---------:|---------:|--------------:|
+| `connect linkr`    |     110.7 ± 2.5 |    107.2 |    115.5 |          1.00 |
+| `connect rangeops` | 16109.4 ± 819.7 |  15179.0 |  17980.0 | 145.49 ± 8.08 |
+
+| Command           |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+|:------------------|-------------:|---------:|---------:|-------------:|
+| `filter linkr`    |   25.9 ± 1.6 |     22.6 |     30.8 |         1.00 |
+| `filter rangeops` | 460.5 ± 11.5 |    441.8 |    477.5 | 17.79 ± 1.18 |
