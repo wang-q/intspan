@@ -1371,7 +1371,7 @@ impl IntSpan {
 
             while idx + i < len {
                 let ch = bytes[idx + i];
-                if (b'0'..=b'9').contains(&ch) {
+                if ch.is_ascii_digit() {
                     if !in_upper {
                         lower *= radix;
                         lower -= (ch as char).to_digit(10).unwrap() as i32;

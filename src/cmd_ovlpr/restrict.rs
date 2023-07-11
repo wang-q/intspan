@@ -54,7 +54,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Output
     //----------------------------
-    for line in reader.lines().filter_map(|r| r.ok()) {
+    for line in reader.lines().map_while(Result::ok) {
         let fields: Vec<&str> = line.split('\t').collect();
         if fields.len() != 13 {
             continue;

@@ -112,7 +112,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
+        'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             if is_header && i == 0 {
                 if is_prefix {
                     let prefix = Path::new(args.get_one::<String>("runlist").unwrap())

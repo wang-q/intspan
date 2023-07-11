@@ -185,7 +185,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
+        'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();
 
             // the header line

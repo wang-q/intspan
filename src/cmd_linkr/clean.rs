@@ -94,7 +94,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let mut line_set: BTreeSet<String> = BTreeSet::new();
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        for line in reader.lines().filter_map(|r| r.ok()) {
+        for line in reader.lines().map_while(Result::ok) {
             build_range_of_part(&line, &mut range_of_part);
 
             let mut parts: Vec<String> = line.split('\t').map(String::from).collect();

@@ -64,7 +64,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Output
     //----------------------------
-    for line in reader.lines().filter_map(|r| r.ok()) {
+    for line in reader.lines().map_while(Result::ok) {
         let mut fields: Vec<&str> = line.split('\t').collect();
 
         for i in 0..fields.len() {

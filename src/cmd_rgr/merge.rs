@@ -64,7 +64,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        for line in reader.lines().filter_map(|r| r.ok()) {
+        for line in reader.lines().map_while(Result::ok) {
             for part in line.split('\t') {
                 let range = Range::from_str(part);
                 if !range.is_valid() {

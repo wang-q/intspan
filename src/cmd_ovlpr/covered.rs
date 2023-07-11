@@ -99,7 +99,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        for line in reader.lines().filter_map(|r| r.ok()) {
+        for line in reader.lines().map_while(Result::ok) {
             let ovlp = if is_paf {
                 Overlap::from_paf(&line)
             } else {

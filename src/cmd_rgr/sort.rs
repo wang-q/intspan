@@ -76,7 +76,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
+        'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             if is_header && i == 0 {
                 writer.write_fmt(format_args!("{}\n", line))?;
                 continue 'LINE;
@@ -104,7 +104,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         }
     }
 
-    let mut valids: Vec<String> = line_map.keys().into_iter().map(|e| e.to_string()).collect();
+    let mut valids: Vec<String> = line_map.keys().map(|e| e.to_string()).collect();
     {
         // by chromosome strand
         valids.sort_by_cached_key(|k| line_map.get(k).unwrap().strand());

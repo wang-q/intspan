@@ -97,7 +97,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
-        for line in reader.lines().filter_map(|r| r.ok()) {
+        for line in reader.lines().map_while(Result::ok) {
             if line.starts_with('#') {
                 continue;
             }
@@ -134,7 +134,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Operating
     //----------------------------
     let reader = reader(args.get_one::<String>("range").unwrap());
-    'LINE: for (i, line) in reader.lines().filter_map(|r| r.ok()).enumerate() {
+    'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
         if is_header && i == 0 {
             writer.write_fmt(format_args!("{}\t{}\n", line, "count"))?;
             continue 'LINE;
