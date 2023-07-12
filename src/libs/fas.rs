@@ -1,4 +1,5 @@
 use crate::Range;
+use std::collections::VecDeque;
 use std::io;
 
 pub struct LinesRef<'a, B: 'a> {
@@ -78,6 +79,116 @@ impl FasEntry {
     }
 }
 
+/// A Fas alignment block.
+pub struct FasBlock {
+    pub entries: Vec<FasEntry>,
+}
+
+/// Get the next FasBlock out of the input.
+pub fn next_fas_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<FasBlock, io::Error> {
+    let mut header: Option<String> = None;
+    {
+        let lines = LinesRef { buf: &mut input };
+        for line_res in lines {
+            let line: String = line_res?;
+            if line.trim().is_empty() {
+                // Blank line
+                continue;
+            }
+            if line.starts_with('#') {
+                // MAF comment
+                // return Ok(MAFBlock { entries: vec![] });
+                continue;
+            } else if line.starts_with('>') {
+                // Start of a block
+                header = Some(line);
+                break;
+            } else {
+                // Shouldn't see this.
+                return Err(io::Error::new(io::ErrorKind::Other, "Unexpected line"));
+            }
+        }
+    }
+    let block = parse_fas_block(
+        header.ok_or(io::Error::new(io::ErrorKind::Other, "EOF"))?,
+        LinesRef { buf: &mut input },
+    )?;
+    Ok(block)
+}
+
+pub fn parse_fas_block(
+    header: String,
+    iter: impl Iterator<Item = Result<String, io::Error>>,
+) -> Result<FasBlock, io::Error> {
+    let mut block_lines: VecDeque<String> = VecDeque::new();
+    block_lines.push_back(header.to_string());
+
+    for line_res in iter {
+        let line: String = line_res?;
+        if line.is_empty() {
+            // Blank lines terminate the "paragraph".
+            break;
+        }
+        block_lines.push_back(line);
+    }
+    let mut block_entries: Vec<FasEntry> = vec![];
+
+    while let Some(header) = block_lines.pop_front() {
+        let range = Range::from_str(header.as_str());
+        let seq = block_lines.pop_front().unwrap().as_bytes().to_vec();
+
+        let entry = FasEntry::from(&range, &seq);
+        block_entries.push(entry);
+    }
+
+    Ok(FasBlock {
+        entries: block_entries,
+    })
+}
+
+#[cfg(test)]
+mod fas_tests {
+    use super::*;
+    use std::io::{BufRead, BufReader};
+
+    #[test]
+    fn parse_block_range() {
+        let str = ">S288c.I(+):13267-13287|species=S288c
+TCGTCAGTTGGTTGACCATTA
+>YJM789.gi_151941327(-):5668-5688|species=YJM789
+TCGTCAGTTGGTTGACCATTA
+>RM11.gi_61385832(-):5590-5610|species=RM11
+TCGTCAGTTGGTTGACCATTA
+>Spar.gi_29362400(+):2477-2497|species=Spar
+TCATCAGTTGGCAAACCGTTA
+
+>S288c.I(+):185273-185334|species=S288c
+GCATATAATATGAACCAATATCTA-TTCATGAAGAGACTATGGTATACCCGGTACTATTTCTA
+>YJM789.gi_151941327(+):156665-156726|species=YJM789
+GCGTATAATATGAACCAGTATCTTTTTCATGAAG-GGCTATGGTATACTCCATATTACTTCTA
+>RM11.gi_61385833(-):3668-3730|species=RM11
+GCATATAATATGAACCAATATCTATTTCATGGAGAGACTATGATAT-CCCCGTACTATTTCTA
+>Spar.gi_29362478(-):2102-2161|species=Spar
+GC-TAAAATATGAA-CGATATTTA-CCTGTAGAGGGACTATGGGAT-CCCCATACTACTTT--
+";
+        let mut reader = BufReader::new(str.as_bytes());
+        let block = next_fas_block(&mut reader).unwrap();
+        assert_eq!(
+            block.entries.get(0).unwrap().range.to_string(),
+            "S288c.I(+):13267-13287".to_string()
+        );
+        assert_eq!(
+            block.entries.get(2).unwrap().range.to_string(),
+            "RM11.gi_61385832(-):5590-5610".to_string()
+        );
+
+        let block = next_fas_block(&mut reader).unwrap();
+        assert_eq!(
+            String::from_utf8(block.entries.get(1).unwrap().seq.clone()).unwrap(),
+            "GCGTATAATATGAACCAGTATCTTTTTCATGAAG-GGCTATGGTATACTCCATATTACTTCTA".to_string()
+        );
+    }
+}
 // MAF
 // https://genome.ucsc.edu/FAQ/FAQformat.html#format5
 // https://github.com/joelarmstrong/maf_stream/blob/master/multiple_alignment_format/src/parser.rs
@@ -137,7 +248,7 @@ pub struct MafBlock {
     pub entries: Vec<MafEntry>,
 }
 
-/// Get the next MAFItem out of the input.
+/// Get the next MafBlock out of the input.
 pub fn next_maf_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<MafBlock, io::Error> {
     let mut header: Option<String> = None;
     {
@@ -217,7 +328,7 @@ fn parse_s_line(
 
 pub fn parse_maf_block(
     header: String,
-    iter: impl Iterator<Item=Result<String, io::Error>>,
+    iter: impl Iterator<Item = Result<String, io::Error>>,
 ) -> Result<MafBlock, io::Error> {
     let mut block_lines = vec![];
     block_lines.push(header);
@@ -374,11 +485,23 @@ s Spar.gi_29362604    100946  97 - 143114 CG--ACATAGTTTTTTCCAGGCACTTTCAGCTGCGG--
 ";
         let mut reader = BufReader::new(str.as_bytes());
         let block = next_maf_block(&mut reader).unwrap();
-        assert_eq!(block.entries.get(0).unwrap().to_range(), "S288c.VIII(+):13377-13410".to_string());
-        assert_eq!(block.entries.get(3).unwrap().to_range(), "Spar.gi_29362578(-):72853-72885".to_string());
+        assert_eq!(
+            block.entries.get(0).unwrap().to_range(),
+            "S288c.VIII(+):13377-13410".to_string()
+        );
+        assert_eq!(
+            block.entries.get(3).unwrap().to_range(),
+            "Spar.gi_29362578(-):72853-72885".to_string()
+        );
 
         let block = next_maf_block(&mut reader).unwrap();
-        assert_eq!(block.entries.get(1).unwrap().to_range(), "RM11_1a.scaffold_12(+):189217-189317".to_string());
-        assert_eq!(block.entries.get(3).unwrap().to_range(), "Spar.gi_29362604(-):42072-42168".to_string());
+        assert_eq!(
+            block.entries.get(1).unwrap().to_range(),
+            "RM11_1a.scaffold_12(+):189217-189317".to_string()
+        );
+        assert_eq!(
+            block.entries.get(3).unwrap().to_range(),
+            "Spar.gi_29362604(-):42072-42168".to_string()
+        );
     }
 }
