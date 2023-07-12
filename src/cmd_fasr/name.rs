@@ -5,10 +5,10 @@ use std::collections::BTreeMap;
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("name")
-        .about("Scan block fasta files and output all species names")
+        .about("Output all species names")
         .after_help(
             r###"
-* <infiles> are paths to fas files, .fas.gz is supported
+* <infiles> are paths to block fasta files, .fas.gz is supported
 * infile == stdin means reading from STDIN
 
 "###,
@@ -51,10 +51,11 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut reader = reader(infile);
 
         while let Ok(block) = next_fas_block(&mut reader) {
-            for entry in block.entries {
+            for entry in &block.entries {
                 let range = entry.range();
 
-                count_of.entry(range.name().to_string())
+                count_of
+                    .entry(range.name().to_string())
                     .and_modify(|e| *e += 1)
                     .or_insert(1);
             }

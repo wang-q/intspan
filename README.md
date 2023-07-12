@@ -445,6 +445,8 @@ cargo run --bin fasr maf2fas tests/fasr/example.maf
 
 cargo run --bin fasr name tests/fasr/example.fas -c
 
+cargo run --bin fasr concat tests/fasr/example.fas tests/fasr/name.lst
+
 ```
 
 

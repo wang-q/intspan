@@ -82,6 +82,7 @@ impl FasEntry {
 /// A Fas alignment block.
 pub struct FasBlock {
     pub entries: Vec<FasEntry>,
+    pub names: Vec<String>,
 }
 
 /// Get the next FasBlock out of the input.
@@ -131,6 +132,7 @@ pub fn parse_fas_block(
         block_lines.push_back(line);
     }
     let mut block_entries: Vec<FasEntry> = vec![];
+    let mut block_names: Vec<String> = vec![];
 
     while let Some(header) = block_lines.pop_front() {
         let range = Range::from_str(header.as_str());
@@ -138,10 +140,12 @@ pub fn parse_fas_block(
 
         let entry = FasEntry::from(&range, &seq);
         block_entries.push(entry);
+        block_names.push(range.name().to_string());
     }
 
     Ok(FasBlock {
         entries: block_entries,
+        names: block_names,
     })
 }
 
