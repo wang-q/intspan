@@ -76,7 +76,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 let mut lengths: Vec<i32> = vec![];
 
                 for part in &parts {
-                    let range = Range::from_str(*part);
+                    let range = Range::from_str(part);
                     if !range.is_valid() {
                         continue;
                     }

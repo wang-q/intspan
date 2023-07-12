@@ -131,15 +131,13 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                     } else {
                         writer.write_fmt(format_args!("{}\t{}{}\n", line, prefix, "Prop"))?;
                     }
+                } else if is_full {
+                    writer.write_fmt(format_args!(
+                        "{}\t{}\t{}\t{}\n",
+                        line, "prop", "length", "size"
+                    ))?;
                 } else {
-                    if is_full {
-                        writer.write_fmt(format_args!(
-                            "{}\t{}\t{}\t{}\n",
-                            line, "prop", "length", "size"
-                        ))?;
-                    } else {
-                        writer.write_fmt(format_args!("{}\t{}\n", line, "prop"))?;
-                    }
+                    writer.write_fmt(format_args!("{}\t{}\n", line, "prop"))?;
                 }
 
                 continue 'LINE;
@@ -193,18 +191,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 } else {
                     writer.write_fmt(format_args!("{}\t{:.4}\n", line, prop))?;
                 }
+            } else if is_full {
+                writer.write_fmt(format_args!(
+                    "{}\t{:.4}\t{}\t{}\n",
+                    line,
+                    0.0,
+                    intspan.cardinality(),
+                    0
+                ))?;
             } else {
-                if is_full {
-                    writer.write_fmt(format_args!(
-                        "{}\t{:.4}\t{}\t{}\n",
-                        line,
-                        0.0,
-                        intspan.cardinality(),
-                        0
-                    ))?;
-                } else {
-                    writer.write_fmt(format_args!("{}\t{:.4}\n", line, 0.0))?;
-                }
+                writer.write_fmt(format_args!("{}\t{:.4}\n", line, 0.0))?;
             }
         }
     }

@@ -25,7 +25,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
         Box::new(BufReader::new(io::stdin()))
     } else {
         let path = Path::new(input);
-        let file = match File::open(&path) {
+        let file = match File::open(path) {
             Err(why) => panic!("could not open {}: {}", path.display(), why),
             Ok(file) => file,
         };
