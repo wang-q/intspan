@@ -25,15 +25,23 @@ impl<'a, B: io::BufRead> Iterator for LinesRef<'a, B> {
     }
 }
 
-// https://genome.ucsc.edu/FAQ/FAQformat.html#format5
-// https://github.com/joelarmstrong/maf_stream/blob/master/multiple_alignment_format/src/parser.rs
-
 /// Indicates one of the two strands.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum Strand {
     Plus,
     Minus,
 }
+
+fn parse_strand(strand: &str) -> Result<Strand, io::Error> {
+    match strand {
+        "+" => Ok(Strand::Plus),
+        "-" => Ok(Strand::Minus),
+        _ => Err(io::Error::new(io::ErrorKind::Other, "Strand not valid")),
+    }
+}
+
+// https://genome.ucsc.edu/FAQ/FAQformat.html#format5
+// https://github.com/joelarmstrong/maf_stream/blob/master/multiple_alignment_format/src/parser.rs
 
 /// An alignment entry within a MAF block. Corresponds to the "s" line.
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -89,14 +97,6 @@ pub fn next_maf_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<MAFB
         LinesRef { buf: &mut input },
     )?;
     Ok(block)
-}
-
-fn parse_strand(strand: &str) -> Result<Strand, io::Error> {
-    match strand {
-        "+" => Ok(Strand::Plus),
-        "-" => Ok(Strand::Minus),
-        _ => Err(io::Error::new(io::ErrorKind::Other, "Strand not valid")),
-    }
 }
 
 fn parse_s_line(
