@@ -12,3 +12,37 @@ fn command_invalid() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_name() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("name")
+        .arg("tests/fasr/example.fas")
+        .arg("-c")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert!(stdout.contains("S288c\t3"), "name count");
+
+    Ok(())
+}
+
+#[test]
+fn command_maf2fas() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("maf2fas")
+        .arg("tests/fasr/example.maf")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 18);
+    assert!(stdout.contains("S288c.VIII"), "name list");
+    assert!(stdout.contains(":42072-42168"), "coordinate Transformed");
+
+    Ok(())
+}
