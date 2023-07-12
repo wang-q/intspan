@@ -443,6 +443,8 @@ ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 ```shell
 cargo run --bin fasr maf2fas tests/fasr/example.maf
 
+cargo run --bin fasr name tests/fasr/example.fas -c
+
 ```
 
 

@@ -96,8 +96,7 @@ pub fn next_fas_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<FasB
                 continue;
             }
             if line.starts_with('#') {
-                // MAF comment
-                // return Ok(MAFBlock { entries: vec![] });
+                // Fas comment
                 continue;
             } else if line.starts_with('>') {
                 // Start of a block
