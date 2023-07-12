@@ -60,7 +60,7 @@ pub struct MAFBlock {
 }
 
 /// Get the next MAFItem out of the input.
-pub fn next_maf_item<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<MAFBlock, io::Error> {
+pub fn next_maf_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<MAFBlock, io::Error> {
     let mut header: Option<String> = None;
     {
         let lines = LinesRef { buf: &mut input };
@@ -99,7 +99,7 @@ fn parse_strand(strand: &str) -> Result<Strand, io::Error> {
     }
 }
 
-fn s_line(
+fn parse_s_line(
     fields: &mut Vec<&str>,
     block_entries: &mut Vec<MAFBlockEntry>,
 ) -> Result<(), io::Error> {
@@ -166,7 +166,7 @@ pub fn parse_maf_block(
         let mut fields: Vec<_> = line.split_whitespace().collect();
         match fields[0] {
             "a" => (),
-            "s" => s_line(&mut fields, &mut block_entries)?,
+            "s" => parse_s_line(&mut fields, &mut block_entries)?,
             "i" => (),
             "e" => (),
             "q" => (),
@@ -189,7 +189,7 @@ mod maf_tests {
     fn parse_comment() {
         let str = "##maf version=1";
         let mut reader = BufReader::new(str.as_bytes());
-        let res = next_maf_item(&mut reader);
+        let res = next_maf_block(&mut reader);
         eprintln!("got error {:?}", res.as_ref().err());
         assert!(matches!(res.unwrap_err().kind(), io::ErrorKind::Other));
     }
@@ -198,7 +198,7 @@ mod maf_tests {
     fn parse_blank_comment() {
         let str = "#";
         let mut reader = BufReader::new(str.as_bytes());
-        let res = next_maf_item(&mut reader);
+        let res = next_maf_block(&mut reader);
         assert!(matches!(res.unwrap_err().kind(), io::ErrorKind::Other));
     }
 
@@ -206,7 +206,7 @@ mod maf_tests {
     fn parse_err_unexpected() {
         let str = "#\nUnexpected";
         let mut reader = BufReader::new(str.as_bytes());
-        let res = next_maf_item(&mut reader);
+        let res = next_maf_block(&mut reader);
         eprintln!("got error {:?}", res.as_ref().err());
         assert!(matches!(res.unwrap_err().kind(), io::ErrorKind::Other));
     }
@@ -215,7 +215,7 @@ mod maf_tests {
     fn parse_err_misc_s() {
         let str = "#\na\ns 123";
         let mut reader = BufReader::new(str.as_bytes());
-        let res = next_maf_item(&mut reader);
+        let res = next_maf_block(&mut reader);
         eprintln!("got error {:?}", res.as_ref().err());
         assert!(matches!(res.unwrap_err().kind(), io::ErrorKind::Other));
     }
@@ -224,7 +224,7 @@ mod maf_tests {
     fn parse_block_a() {
         let str = "#\na score=23262.0 pass=2";
         let mut reader = BufReader::new(str.as_bytes());
-        match next_maf_item(&mut reader) {
+        match next_maf_block(&mut reader) {
             Err(e) => assert!(false, "Got error {:?}", e),
             Ok(val) => assert_eq!(val, MAFBlock { entries: vec![] }),
         }
@@ -234,7 +234,7 @@ mod maf_tests {
     fn parse_block_a_empty() {
         let str = "#\na";
         let mut reader = BufReader::new(str.as_bytes());
-        match next_maf_item(&mut reader) {
+        match next_maf_block(&mut reader) {
             Err(e) => assert!(false, "Got error {:?}", e),
             Ok(val) => assert_eq!(val, MAFBlock { entries: vec![] }),
         }
