@@ -65,15 +65,18 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Output
     //----------------------------
     for line in reader.lines().map_while(Result::ok) {
-        let mut fields: Vec<&str> = line.split('\t').collect();
+        let fields: Vec<&str> = line.split('\t').collect();
+        let mut out: Vec<&str> = vec![];
 
-        for i in 0..fields.len() {
-            if replaces.contains_key(fields[i]) {
-                fields[i] = replaces.get(fields[i]).unwrap();
+        for f in fields {
+            if replaces.contains_key(f) {
+                out.push(replaces.get(f).unwrap());
+            } else {
+                out.push(f);
             }
         }
 
-        writer.write_all((fields.join("\t") + "\n").as_ref())?;
+        writer.write_all((out.join("\t") + "\n").as_ref())?;
     }
 
     Ok(())

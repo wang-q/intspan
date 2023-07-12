@@ -218,7 +218,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             if !eq_of.is_empty() {
                 for (k, v) in &eq_of {
                     let val = parts.get(k - 1).unwrap();
-                    if val.to_string() != *v {
+                    if *val != *v {
                         continue 'LINE;
                     }
                 }
@@ -226,7 +226,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             if !ne_of.is_empty() {
                 for (k, v) in &ne_of {
                     let val = parts.get(k - 1).unwrap();
-                    if val.to_string() == *v {
+                    if *val == *v {
                         continue 'LINE;
                     }
                 }
