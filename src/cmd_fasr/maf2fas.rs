@@ -31,14 +31,21 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let reader = reader(infile);
-        for line in reader.lines().map_while(Result::ok) {
-            let ovlp = Overlap::from_paf(&line);
+        let mut reader = reader(infile);
 
-            //----------------------------
-            // Output
-            //----------------------------
-            writer.write_all((ovlp.to_string() + "\n").as_ref())?;
+        while let Ok(block) = next_maf_block(&mut reader) {
+            for entry in block.entries {
+                let range = entry.to_range();
+                let seq = String::from_utf8(entry.alignment).unwrap();
+
+                //----------------------------
+                // Output
+                //----------------------------
+                writer.write_all(format!(">{}\n{}\n", range, seq).as_ref())?;
+            }
+
+            // end of a block
+            writer.write_all("\n".as_ref())?;
         }
     }
 
