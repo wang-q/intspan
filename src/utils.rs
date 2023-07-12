@@ -70,10 +70,10 @@ pub fn read_sizes(input: &str) -> BTreeMap<String, i32> {
 }
 
 /// ```
-/// let sizes = intspan::read_first_column("tests/spanr/S288c.chr.sizes");
-/// assert_eq!(sizes.len(), 16);
-/// assert_eq!(*sizes.get(1).unwrap(), "II");
-/// assert_eq!(*sizes.get(15).unwrap(), "XVI");
+/// let chrs = intspan::read_first_column("tests/spanr/S288c.chr.sizes");
+/// assert_eq!(chrs.len(), 16);
+/// assert_eq!(*chrs.get(1).unwrap(), "II");
+/// assert_eq!(*chrs.get(15).unwrap(), "XVI");
 /// ```
 pub fn read_first_column(input: &str) -> Vec<String> {
     let reader = reader(input);
