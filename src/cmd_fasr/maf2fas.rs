@@ -40,6 +40,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut reader = reader(infile);
 
         while let Ok(block) = next_maf_block(&mut reader) {
+            // Can't use reference as entry.alignment does not Copy
             for entry in block.entries {
                 let range = entry.to_range();
                 let seq = String::from_utf8(entry.alignment).unwrap();
