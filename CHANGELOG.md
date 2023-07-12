@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* New binary `fasr`
+
 * Use json to replace yaml
 
 * Bump versions of deps

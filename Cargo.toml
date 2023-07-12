@@ -30,6 +30,10 @@ path = "src/ovlpr.rs"
 name = "rgr"
 path = "src/rgr.rs"
 
+[[bin]]
+name = "fasr"
+path = "src/fasr.rs"
+
 [[example]]
 name = "test"
 
