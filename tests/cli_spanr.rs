@@ -29,9 +29,9 @@ fn command_invalid() -> anyhow::Result<()> {
 fn file_doesnt_provided() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("spanr")?;
     cmd.arg("genome");
-    cmd.assert().failure().stderr(predicate::str::contains(
-        "not provided",
-    ));
+    cmd.assert()
+        .failure()
+        .stderr(predicate::str::contains("not provided"));
 
     Ok(())
 }

@@ -159,7 +159,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 std::process::exit(1)
             }
 
-            let idx = parts.get(0).unwrap().parse::<usize>().unwrap();
+            let idx = parts.first().unwrap().parse::<usize>().unwrap();
 
             eq_of.insert(idx, parts.get(1).unwrap().to_string());
         }
@@ -174,7 +174,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 std::process::exit(1)
             }
 
-            let idx = parts.get(0).unwrap().parse::<usize>().unwrap();
+            let idx = parts.first().unwrap().parse::<usize>().unwrap();
 
             ne_of.insert(idx, parts.get(1).unwrap().to_string());
         }
