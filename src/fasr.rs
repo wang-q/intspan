@@ -11,7 +11,7 @@ fn main() -> anyhow::Result<()> {
         .propagate_version(true)
         .arg_required_else_help(true)
         .color(ColorChoice::Auto)
-        .subcommand(cmd_ovlpr::restrict::make_subcommand());
+        .subcommand(cmd_fasr::maf2fas::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
