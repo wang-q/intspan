@@ -45,6 +45,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let is_count = args.get_flag("count");
 
+    let mut names: Vec<String> = vec![];
     let mut count_of: BTreeMap<String, i32> = BTreeMap::new();
 
     for infile in args.get_many::<String>("infiles").unwrap() {
@@ -53,6 +54,10 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         while let Ok(block) = next_fas_block(&mut reader) {
             for entry in &block.entries {
                 let range = entry.range();
+
+                if !names.contains(range.name()) {
+                    names.push(range.name().to_string());
+                }
 
                 count_of
                     .entry(range.name().to_string())
@@ -65,11 +70,12 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Output
     //----------------------------
-    for (k, v) in &count_of {
+    for name in &names {
         if is_count {
-            writer.write_all(format!("{}\t{}\n", k, v).as_ref())?;
+            let value = count_of.get(name).unwrap();
+            writer.write_all(format!("{}\t{}\n", name, value).as_ref())?;
         } else {
-            writer.write_all(format!("{}\n", k).as_ref())?;
+            writer.write_all(format!("{}\n", name).as_ref())?;
         }
     }
 

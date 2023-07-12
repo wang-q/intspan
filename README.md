@@ -449,7 +449,6 @@ cargo run --bin fasr concat tests/fasr/example.fas tests/fasr/name.lst
 
 ```
 
-
 ## License
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fwang-q%2Fintspan.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fwang-q%2Fintspan?ref=badge_large)

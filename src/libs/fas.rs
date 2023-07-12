@@ -71,10 +71,10 @@ impl FasEntry {
     /// # assert_eq!(*entry.range.end(), 10);
     /// # assert_eq!(String::from_utf8(entry.seq).unwrap(), "ACAGCTGA-AA".to_string());
     /// ```
-    pub fn from(range: &Range, seq: &Vec<u8>) -> Self {
+    pub fn from(range: &Range, seq: &[u8]) -> Self {
         Self {
             range: range.clone(),
-            seq: seq.clone(),
+            seq: seq.to_owned(),
         }
     }
 }
@@ -121,7 +121,7 @@ pub fn parse_fas_block(
     iter: impl Iterator<Item = Result<String, io::Error>>,
 ) -> Result<FasBlock, io::Error> {
     let mut block_lines: VecDeque<String> = VecDeque::new();
-    block_lines.push_back(header.to_string());
+    block_lines.push_back(header);
 
     for line_res in iter {
         let line: String = line_res?;
@@ -224,7 +224,7 @@ impl MafEntry {
         let mut end = start + self.size - 1;
 
         // If the strand field is "-" then this is the start relative to the reverse-complemented source sequence
-        if self.strand == "-".to_string() {
+        if self.strand == *"-" {
             start = self.src_size - start + 1;
             end = self.src_size - end + 1;
             (start, end) = (end, start);
