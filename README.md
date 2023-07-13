@@ -121,6 +121,26 @@ Options:
 
 ```
 
+### `fasr`
+
+```text
+$ fasr help
+`fasr` operates block fasta files
+
+Usage: fasr [COMMAND]
+
+Commands:
+  concat   Concatenate sequence pieces of the same species
+  name     Output all species names
+  maf2fas  Convert maf to block fasta
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+```
+
 ## Concepts
 
 ### IntSpans
@@ -446,6 +466,8 @@ cargo run --bin fasr maf2fas tests/fasr/example.maf
 cargo run --bin fasr name tests/fasr/example.fas -c
 
 cargo run --bin fasr concat tests/fasr/example.fas tests/fasr/name.lst
+
+cargo run --bin fasr subset tests/fasr/example.fas tests/fasr/name.lst
 
 ```
 

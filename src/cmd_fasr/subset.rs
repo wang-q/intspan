@@ -1,11 +1,10 @@
 use clap::*;
 use intspan::*;
-use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
-    Command::new("concat")
-        .about("Concatenate sequence pieces of the same species")
+    Command::new("subset")
+        .about("Extract a subset of species")
         .after_help(
             r###"
 * <infile> is path to block fasta file, .fas.gz is supported
@@ -30,12 +29,6 @@ pub fn make_subcommand() -> Command {
                 .help("Path to name.lst"),
         )
         .arg(
-            Arg::new("phylip")
-                .long("phylip")
-                .action(ArgAction::SetTrue)
-                .help("Output relaxed phylip instead of fasta"),
-        )
-        .arg(
             Arg::new("outfile")
                 .long("outfile")
                 .short('o')
@@ -52,55 +45,31 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let mut reader = reader(args.get_one::<String>("infile").unwrap());
-    let is_phylip = args.get_flag("phylip");
 
     //----------------------------
     // Load names
     //----------------------------
-    let names = read_first_column(args.get_one::<String>("name.lst").unwrap());
-
-    let mut seq_of: BTreeMap<String, String> = BTreeMap::new();
-    for name in &names {
-        // default value
-        seq_of.insert(name.to_string(), "".to_string());
-    }
+    let needed = read_first_column(args.get_one::<String>("name.lst").unwrap());
 
     while let Ok(block) = next_fas_block(&mut reader) {
         let block_names = block.names;
-        let length = block.entries.first().unwrap().seq().len();
 
-        for name in &names {
+        for name in &needed {
             if block_names.contains(name) {
                 for entry in &block.entries {
                     let entry_name = entry.range().name();
+                    //----------------------------
+                    // Output
+                    //----------------------------
                     if entry_name == name {
-                        let seq = std::str::from_utf8(entry.seq()).unwrap();
-                        seq_of.entry(name.to_string()).and_modify(|e| *e += seq);
+                        writer.write_all(entry.to_string().as_ref())?;
                     }
                 }
-            } else {
-                // fill absent names with ------
-                seq_of
-                    .entry(name.to_string())
-                    .and_modify(|e| *e += "-".repeat(length).as_str());
             }
         }
-    }
 
-    //----------------------------
-    // Output
-    //----------------------------
-    if is_phylip {
-        let count = names.len();
-        let length = seq_of.first_key_value().unwrap().1.len();
-        writer.write_all(format!("{} {}\n", count, length).as_ref())?;
-        for (k, v) in &seq_of {
-            writer.write_all(format!("{} {}\n", k, v).as_ref())?;
-        }
-    } else {
-        for (k, v) in &seq_of {
-            writer.write_all(format!(">{}\n{}\n", k, v).as_ref())?;
-        }
+        // end of a block
+        writer.write_all("\n".as_ref())?;
     }
 
     Ok(())

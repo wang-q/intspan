@@ -61,7 +61,7 @@ fn command_concat() -> anyhow::Result<()> {
 
     assert_eq!(stdout.lines().count(), 4);
     assert_eq!(stdout.lines().next().unwrap().len(), 5); // >Spar
-    assert_eq!(stdout.lines().last().unwrap().len(), 239); // >Spar
+    assert_eq!(stdout.lines().last().unwrap().len(), 239);
     assert!(stdout.contains("Spar"), "name list");
     assert!(!stdout.contains("S288c"), "name list");
 
@@ -85,6 +85,23 @@ fn command_concat_phylip() -> anyhow::Result<()> {
         stdout.lines().last().unwrap().len(),
         "YJM789".to_string().len() + 1 + 239
     );
+
+    Ok(())
+}
+
+#[test]
+fn command_subset() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("subset")
+        .arg("tests/fasr/example.fas")
+        .arg("tests/fasr/name.lst")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 15);
+    assert!(stdout.lines().next().unwrap().contains("Spar")); // >Spar.
 
     Ok(())
 }
