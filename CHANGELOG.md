@@ -5,6 +5,7 @@
 * New binary `fasr`
 
 * Use json to replace yaml
+* Add `utils::get_seq_faidx()`
 
 * Bump versions of deps
     * clap v4

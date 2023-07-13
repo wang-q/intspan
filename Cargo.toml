@@ -57,6 +57,8 @@ petgraph = "0.6.3"
 indexmap = "2.0.0"
 rust-lapper = "1.0.1"
 
+which = "4.4.0"
+
 [build-dependencies]
 
 [dev-dependencies]

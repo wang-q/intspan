@@ -7,6 +7,7 @@ use std::ffi::OsStr;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
 use std::path::Path;
+use std::process::Command;
 
 /// ```
 /// use std::io::BufRead;
@@ -342,6 +343,61 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
     }
 
     among_links
+}
+
+/// ```
+/// match which::which("samtools") {
+///     Ok(_) => {
+///         let seq = intspan::get_seq_faidx("tests/fasr/NC_000932.fa", "NC_000932:1-10").unwrap();
+///         assert_eq!(seq, "ATGGGCGAAC".to_string());
+///         let res = intspan::get_seq_faidx("tests/fasr/NC_000932.fa", "FAKE:1-10");
+///         eprintln!("got error {:?}", res.as_ref().err());
+///         assert!(matches!(res.unwrap_err().kind(), std::io::ErrorKind::Other));
+///     }
+///     Err(_) => {}
+/// }
+/// ```
+// cargo test --verbose --doc utils::get_seq_faidx
+pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> {
+    let mut bin = String::new();
+    for e in &["samtools"] {
+        match which::which(e) {
+            Ok(pth) => bin = pth.to_string_lossy().to_string(),
+            Err(_) => {}
+        }
+    }
+
+    if bin.len() == 0 {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Can't find the external command",
+        ));
+    }
+
+    let mut seq = String::new();
+    let output = Command::new(bin)
+        .arg("faidx")
+        .arg(file)
+        .arg(range)
+        .output()?;
+
+    if !output.status.success() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Command executed with failing error code",
+        ));
+    }
+
+    for line in output.stdout.lines().map_while(Result::ok) {
+        // header
+        if line.starts_with('>') {
+            continue;
+        }
+
+        seq += line.as_str();
+    }
+
+    Ok(seq)
 }
 
 #[cfg(test)]

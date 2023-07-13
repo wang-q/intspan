@@ -471,6 +471,8 @@ cargo run --bin fasr subset tests/fasr/example.fas tests/fasr/name.lst
 
 cargo run --bin fasr link tests/fasr/example.fas --pair
 
+samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
+
 ```
 
 ## License
