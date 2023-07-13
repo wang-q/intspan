@@ -32,3 +32,5 @@ fn main() -> anyhow::Result<()> {
 }
 
 // TODO: fasr link --best
+// TODO: replace samtools
+// TODO: add more tools
