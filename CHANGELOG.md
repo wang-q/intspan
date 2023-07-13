@@ -3,8 +3,14 @@
 ## Unreleased - ReleaseDate
 
 * New binary `fasr`
+    * `fasr concat`
+    * `fasr link`
+    * `fasr maf2fas`
+    * `fasr name`
+    * `fasr subset`
 
-* Use json to replace yaml
+* Use json to replace yaml in `spanr`
+
 * Add `utils::get_seq_faidx()`
 
 * Bump versions of deps

@@ -461,15 +461,15 @@ ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 ### `fasr`
 
 ```shell
-cargo run --bin fasr maf2fas tests/fasr/example.maf
+fasr maf2fas tests/fasr/example.maf
 
-cargo run --bin fasr name tests/fasr/example.fas --count
+fasr name tests/fasr/example.fas --count
 
-cargo run --bin fasr concat tests/fasr/example.fas tests/fasr/name.lst
+fasr concat tests/fasr/example.fas tests/fasr/name.lst
 
-cargo run --bin fasr subset tests/fasr/example.fas tests/fasr/name.lst
+fasr subset tests/fasr/example.fas tests/fasr/name.lst
 
-cargo run --bin fasr link tests/fasr/example.fas --pair
+fasr link tests/fasr/example.fas --pair
 
 samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
 

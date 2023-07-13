@@ -57,7 +57,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             //----------------------------
             if is_pair {
                 for i in 0..headers.len() {
-                    for j in i+1..headers.len() {
+                    for j in i + 1..headers.len() {
                         writer.write_all(format!("{}\t{}\n", headers[i], headers[j]).as_ref())?;
                     }
                 }
