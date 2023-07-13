@@ -1,6 +1,6 @@
 use crate::Range;
 use std::collections::VecDeque;
-use std::io;
+use std::{fmt, io, str};
 
 pub struct LinesRef<'a, B: 'a> {
     buf: &'a mut B,
@@ -76,6 +76,28 @@ impl FasEntry {
             range: range.clone(),
             seq: seq.to_owned(),
         }
+    }
+}
+
+/// To string
+///
+/// ```
+/// # use intspan::Range;
+/// # use intspan::FasEntry;
+/// let range = Range::from("I", 1, 10);
+/// let seq = "ACAGCTGA-AA".as_bytes().to_vec();
+/// let entry = FasEntry::from(&range, &seq);
+/// assert_eq!(entry.to_string(), ">I:1-10\nACAGCTGA-AA\n");
+/// ```
+impl fmt::Display for FasEntry {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            ">{}\n{}\n",
+            self.range(),
+            str::from_utf8(self.seq()).unwrap()
+        )?;
+        Ok(())
     }
 }
 
