@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: cargo build --verbose --release
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr
+        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr target/release/fasr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: cargo build --verbose --release --target x86_64-unknown-linux-musl
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/rgr target/x86_64-unknown-linux-musl/release/linkr target/x86_64-unknown-linux-musl/release/ovlpr
+        run: tar cvfz intspan.tar.gz target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/rgr target/x86_64-unknown-linux-musl/release/linkr target/x86_64-unknown-linux-musl/release/ovlpr target/x86_64-unknown-linux-musl/release/fasr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
@@ -68,7 +68,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: 10.12
         run: cargo build --verbose --release
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr
+        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr target/release/fasr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
@@ -92,7 +92,7 @@ jobs:
       - name: Build
         run: cargo build --verbose --release
       - name: Create zip
-        run: Compress-Archive -DestinationPath ./intspan.zip -Path ./target/release/spanr.exe,./target/release/rgr.exe,./target/release/linkr.exe,./target/release/ovlpr.exe
+        run: Compress-Archive -DestinationPath ./intspan.zip -Path ./target/release/spanr.exe,./target/release/rgr.exe,./target/release/linkr.exe,./target/release/ovlpr.exe,./target/release/fasr.exe
         shell: powershell
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v1-release
