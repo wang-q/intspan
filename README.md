@@ -131,8 +131,10 @@ Usage: fasr [COMMAND]
 
 Commands:
   concat   Concatenate sequence pieces of the same species
-  name     Output all species names
+  link     Output bi/multi-lateral range links
   maf2fas  Convert maf to block fasta
+  name     Output all species names
+  subset   Extract a subset of species
   help     Print this message or the help of the given subcommand(s)
 
 Options:
@@ -465,9 +467,9 @@ fasr maf2fas tests/fasr/example.maf
 
 fasr name tests/fasr/example.fas --count
 
-fasr concat tests/fasr/example.fas tests/fasr/name.lst
+fasr concat tests/fasr/name.lst tests/fasr/example.fas
 
-fasr subset tests/fasr/example.fas tests/fasr/name.lst
+fasr subset tests/fasr/name.lst tests/fasr/example.fas
 
 fasr link tests/fasr/example.fas --pair
 

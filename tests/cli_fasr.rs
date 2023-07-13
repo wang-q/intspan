@@ -53,8 +53,8 @@ fn command_concat() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
         .arg("concat")
-        .arg("tests/fasr/example.fas")
         .arg("tests/fasr/name.lst")
+        .arg("tests/fasr/example.fas")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
@@ -73,8 +73,8 @@ fn command_concat_phylip() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
         .arg("concat")
-        .arg("tests/fasr/example.fas")
         .arg("tests/fasr/name.lst")
+        .arg("tests/fasr/example.fas")
         .arg("--phylip")
         .output()
         .unwrap();
@@ -94,8 +94,8 @@ fn command_subset() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
         .arg("subset")
-        .arg("tests/fasr/example.fas")
         .arg("tests/fasr/name.lst")
+        .arg("tests/fasr/example.fas")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
