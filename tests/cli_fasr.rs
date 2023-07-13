@@ -105,3 +105,36 @@ fn command_subset() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_link() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("link")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert_eq!(stdout.lines().next().unwrap().split_whitespace().count(), 4);
+
+    Ok(())
+}
+
+#[test]
+fn command_link_pair() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("link")
+        .arg("tests/fasr/example.fas")
+        .arg("--pair")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 18);
+    assert_eq!(stdout.lines().next().unwrap().split_whitespace().count(), 2);
+
+    Ok(())
+}
