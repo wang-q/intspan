@@ -1,6 +1,7 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
-use std::process::Command; // Run programs
+use std::process::Command;
+use tempfile::TempDir;
 
 #[test]
 fn command_invalid() -> anyhow::Result<()> {
@@ -200,5 +201,51 @@ fn command_create() -> anyhow::Result<()> {
     assert!(stdout.contains("tgtgtgggtgtggtgtgg"), "revcom sequences");
     assert!(stdout.lines().next().unwrap().contains(">S288c."));
 
+    Ok(())
+}
+
+#[test]
+fn command_separate() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("separate")
+        .arg("tests/fasr/example.fas")
+        .arg("--rc")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 24);
+    assert_eq!(
+        stdout.lines().last().unwrap().len(),
+        57,
+        "length after remove dashes"
+    );
+    assert!(!stdout.contains("(-)"), "all strands are +");
+    assert!(!stdout.contains("T-C"), "no dash, line 24");
+
+    Ok(())
+}
+
+#[test]
+fn command_separate_to() -> anyhow::Result<()> {
+    let tempdir = TempDir::new().unwrap();
+    let tempdir_str = tempdir.path().to_str().unwrap();
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    cmd.arg("separate")
+        .arg("tests/fasr/example.fas")
+        .arg("--suffix")
+        .arg(".tmp")
+        .arg("-o")
+        .arg(tempdir_str)
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+
+    assert!(&tempdir.path().join("S288c.tmp").is_file());
+    assert!(!&tempdir.path().join("YJM789.fasta").exists());
+
+    tempdir.close()?;
     Ok(())
 }
