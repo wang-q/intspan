@@ -142,7 +142,7 @@ fn command_link_pair() -> anyhow::Result<()> {
 #[test]
 fn command_check() -> anyhow::Result<()> {
     match which::which("samtools") {
-        Err(_) => { return Ok(()) }
+        Err(_) => return Ok(()),
         Ok(_) => {}
     }
 
@@ -174,6 +174,31 @@ fn command_check() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.lines().next().unwrap().contains("\tOK"));
     assert!(stdout.lines().last().unwrap().contains("\tOK"));
+
+    Ok(())
+}
+
+#[test]
+fn command_create() -> anyhow::Result<()> {
+    match which::which("samtools") {
+        Err(_) => return Ok(()),
+        Ok(_) => {}
+    }
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("create")
+        .arg("tests/fasr/genome.fa")
+        .arg("tests/fasr/I.connect.tsv")
+        .arg("--name")
+        .arg("S288c")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 10);
+    assert!(stdout.contains("tgtgtgggtgtggtgtgg"), "revcom sequences");
+    assert!(stdout.lines().next().unwrap().contains(">S288c."));
 
     Ok(())
 }

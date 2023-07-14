@@ -46,6 +46,9 @@ impl Range {
     }
 
     // Mutable accessors
+    pub fn name_mut(&mut self) -> &mut String {
+        &mut self.name
+    }
     pub fn strand_mut(&mut self) -> &mut String {
         &mut self.strand
     }

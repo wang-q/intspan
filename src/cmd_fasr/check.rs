@@ -12,6 +12,8 @@ pub fn make_subcommand() -> Command {
 * <infiles> are paths to block fasta files, .fas.gz is supported
 * infile == stdin means reading from STDIN
 
+* Need `samtools` in $PATH
+
 "###,
         )
         .arg(
@@ -68,7 +70,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                         //----------------------------
                         if entry_name == name {
                             let status = check_seq(entry, genome)?;
-                            writer.write_all(format!("{}\t{}\n", entry.range(), status).as_ref())?;
+                            writer
+                                .write_all(format!("{}\t{}\n", entry.range(), status).as_ref())?;
                         }
                     }
                 }

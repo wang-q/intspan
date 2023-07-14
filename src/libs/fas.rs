@@ -214,6 +214,7 @@ GC-TAAAATATGAA-CGATATTTA-CCTGTAGAGGGACTATGGGAT-CCCCATACTACTTT--
         );
     }
 }
+
 // MAF
 // https://genome.ucsc.edu/FAQ/FAQformat.html#format5
 // https://github.com/joelarmstrong/maf_stream/blob/master/multiple_alignment_format/src/parser.rs
@@ -286,7 +287,6 @@ pub fn next_maf_block<T: io::BufRead + ?Sized>(mut input: &mut T) -> Result<MafB
             }
             if line.starts_with('#') {
                 // MAF comment
-                // return Ok(MAFBlock { entries: vec![] });
                 continue;
             } else if line.starts_with('a') {
                 // Start of a block
@@ -530,3 +530,6 @@ s Spar.gi_29362604    100946  97 - 143114 CG--ACATAGTTTTTTCCAGGCACTTTCAGCTGCGG--
         );
     }
 }
+
+// Axt
+// https://genome.ucsc.edu/goldenPath/help/axt.html

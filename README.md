@@ -482,6 +482,8 @@ samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
 
 cargo run --bin fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
 
+cargo run --bin fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name S288c
+
 ```
 
 ## License
