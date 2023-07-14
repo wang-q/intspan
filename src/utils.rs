@@ -361,13 +361,13 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
 pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> {
     let mut bin = String::new();
     for e in &["samtools"] {
-        match which::which(e) {
-            Ok(pth) => bin = pth.to_string_lossy().to_string(),
-            Err(_) => {}
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
         }
     }
 
-    if bin.len() == 0 {
+    if bin.is_empty() {
         return Err(io::Error::new(
             io::ErrorKind::Other,
             "Can't find the external command",

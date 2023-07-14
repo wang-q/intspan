@@ -174,7 +174,7 @@ pub fn parse_fas_block(
 #[cfg(test)]
 mod fas_tests {
     use super::*;
-    use std::io::{BufRead, BufReader};
+    use std::io::BufReader;
 
     #[test]
     fn parse_block_range() {
