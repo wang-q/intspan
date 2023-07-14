@@ -58,6 +58,7 @@ indexmap = "2.0.0"
 rust-lapper = "1.0.1"
 
 which = "4.4.0"
+bio = "0.30.1"
 
 [build-dependencies]
 

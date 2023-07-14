@@ -11,6 +11,7 @@ fn main() -> anyhow::Result<()> {
         .propagate_version(true)
         .arg_required_else_help(true)
         .color(ColorChoice::Auto)
+        .subcommand(cmd_fasr::check::make_subcommand())
         .subcommand(cmd_fasr::concat::make_subcommand())
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
@@ -19,6 +20,7 @@ fn main() -> anyhow::Result<()> {
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
+        Some(("check", sub_matches)) => cmd_fasr::check::execute(sub_matches),
         Some(("concat", sub_matches)) => cmd_fasr::concat::execute(sub_matches),
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),

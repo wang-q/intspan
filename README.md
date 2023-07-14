@@ -19,6 +19,11 @@ cargo install --force --path .
 # or
 brew install intspan
 
+# build under WSL 2
+export CARGO_TARGET_DIR=/tmp
+cargo build
+cargo run --bin fasr help
+
 ```
 
 ## SYNOPSIS
@@ -474,6 +479,8 @@ fasr subset tests/fasr/name.lst tests/fasr/example.fas
 fasr link tests/fasr/example.fas --pair
 
 samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
+
+cargo run --bin fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
 
 ```
 

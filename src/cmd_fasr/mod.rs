@@ -1,5 +1,6 @@
 //! Subcommand modules for the `fasr` binary.
 
+pub mod check;
 pub mod concat;
 pub mod link;
 pub mod maf2fas;

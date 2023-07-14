@@ -38,8 +38,8 @@ fn parse_strand(strand: &str) -> Result<String, io::Error> {
 
 #[derive(Default, Clone)]
 pub struct FasEntry {
-    pub range: Range,
-    pub seq: Vec<u8>,
+    range: Range,
+    seq: Vec<u8>,
 }
 
 impl FasEntry {
@@ -66,10 +66,10 @@ impl FasEntry {
     /// let range = Range::from("I", 1, 10);
     /// let seq = "ACAGCTGA-AA".as_bytes().to_vec();
     /// let entry = FasEntry::from(&range, &seq);
-    /// # assert_eq!(*entry.range.chr(), "I");
-    /// # assert_eq!(*entry.range.start(), 1);
-    /// # assert_eq!(*entry.range.end(), 10);
-    /// # assert_eq!(String::from_utf8(entry.seq).unwrap(), "ACAGCTGA-AA".to_string());
+    /// # assert_eq!(*entry.range().chr(), "I");
+    /// # assert_eq!(*entry.range().start(), 1);
+    /// # assert_eq!(*entry.range().end(), 10);
+    /// # assert_eq!(std::str::from_utf8(entry.seq()).unwrap(), "ACAGCTGA-AA".to_string());
     /// ```
     pub fn from(range: &Range, seq: &[u8]) -> Self {
         Self {
