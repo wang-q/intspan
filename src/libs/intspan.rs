@@ -86,7 +86,7 @@
 //! which contains many codes from `Set::IntSpan`, `Set::IntSpan::Fast` and `Set::IntSpan::Island`.
 //!
 
-use std::cmp::min;
+use std::cmp::{min, Ordering};
 use std::collections::VecDeque;
 use std::fmt;
 use std::vec::Vec;
@@ -1310,12 +1310,11 @@ impl IntSpan {
 
         while low < high {
             let mid = (low + high) / 2;
-            if val < *self.edges.get(mid).unwrap() {
-                high = mid;
-            } else if val > *self.edges.get(mid).unwrap() {
-                low = mid + 1;
-            } else {
-                return mid;
+            let mid_edge = self.edges.get(mid).unwrap();
+            match val.cmp(mid_edge) {
+                Ordering::Less => high = mid,
+                Ordering::Greater => low = mid + 1,
+                Ordering::Equal => return mid,
             }
         }
 
