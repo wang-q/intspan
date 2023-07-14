@@ -486,6 +486,8 @@ cargo run --bin fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name
 
 cargo run --bin fasr separate tests/fasr/example.fas -o . --suffix .tmp
 
+cargo run --bin fasr axt2fas tests/fasr/RM11_1a.chr.sizes tests/fasr/example.axt --qname RM11_1a
+
 ```
 
 ## License

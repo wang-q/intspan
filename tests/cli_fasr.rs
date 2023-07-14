@@ -44,7 +44,29 @@ fn command_maf2fas() -> anyhow::Result<()> {
 
     assert_eq!(stdout.lines().count(), 18);
     assert!(stdout.contains("S288c.VIII"), "name list");
-    assert!(stdout.contains(":42072-42168"), "coordinate Transformed");
+    assert!(stdout.contains(":42072-42168"), "coordinate transformed");
+
+    Ok(())
+}
+
+#[test]
+fn command_axt2fas() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("axt2fas")
+        .arg("tests/fasr/RM11_1a.chr.sizes")
+        .arg("tests/fasr/example.axt")
+        .arg("--qname")
+        .arg("RM11_1a")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 10);
+    assert!(stdout.contains("target.I(+)"), "name list");
+    assert!(stdout.contains("RM11_1a.scaffold_14"), "name list");
+    assert!(stdout.contains("(+):3634-3714"), "positive strand");
+    assert!(stdout.contains("(-):22732-22852"), "coordinate transformed");
 
     Ok(())
 }

@@ -1,5 +1,5 @@
 use crate::Range;
-use std::collections::VecDeque;
+use std::collections::{BTreeMap, VecDeque};
 use std::{fmt, io, str};
 
 pub struct LinesRef<'a, B: 'a> {
@@ -171,13 +171,144 @@ pub fn parse_fas_block(
     })
 }
 
+// Axt
+// https://genome.ucsc.edu/goldenPath/help/axt.html
+
+/// Get the next Axt block out of the input.
+pub fn next_axt_block<T: io::BufRead + ?Sized>(
+    mut input: &mut T,
+    sizes: &BTreeMap<String, i32>,
+    tname: &String,
+    qname: &String,
+) -> Result<FasBlock, io::Error> {
+    let mut header: Option<String> = None;
+    {
+        let lines = LinesRef { buf: &mut input };
+        for line_res in lines {
+            let line: String = line_res?;
+            if line.trim().is_empty() {
+                // Blank line
+                continue;
+            }
+            if line.starts_with('#') {
+                // Axt comment
+                continue;
+            } else if line.chars().next().unwrap().is_numeric() {
+                // Start of a block
+                header = Some(line);
+                break;
+            } else {
+                // Shouldn't see this.
+                return Err(io::Error::new(io::ErrorKind::Other, "Unexpected line"));
+            }
+        }
+    }
+    let block = parse_axt_block(
+        header.ok_or(io::Error::new(io::ErrorKind::Other, "EOF"))?,
+        LinesRef { buf: &mut input },
+        sizes,
+        tname,
+        qname,
+    )?;
+    Ok(block)
+}
+
+pub fn parse_axt_block(
+    header: String,
+    iter: impl Iterator<Item = Result<String, io::Error>>,
+    sizes: &BTreeMap<String, i32>,
+    tname: &String,
+    qname: &String,
+) -> Result<FasBlock, io::Error> {
+    let mut block_lines: VecDeque<String> = VecDeque::new();
+    block_lines.push_back(header);
+
+    for line_res in iter {
+        let line: String = line_res?;
+        if line.is_empty() {
+            // Blank lines terminate the "paragraph".
+            break;
+        }
+        block_lines.push_back(line);
+    }
+    let mut block_entries: Vec<FasEntry> = vec![];
+    let mut block_names: Vec<String> = vec![];
+
+    // Three lines
+    // Summary line
+    let fields = block_lines
+        .pop_front()
+        .unwrap()
+        .split_whitespace()
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>();
+    if fields.len() != 9 {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Errors in the Axt summary line",
+        ));
+    }
+
+    // 0 - Alignment number
+    let f_chr = fields.get(1).unwrap();
+    let f_begin = fields.get(2).unwrap().parse::<i32>().unwrap();
+    let f_end = fields.get(3).unwrap().parse::<i32>().unwrap();
+
+    let g_chr = fields.get(4).unwrap();
+    let mut g_begin = fields.get(5).unwrap().parse::<i32>().unwrap();
+    let mut g_end = fields.get(6).unwrap().parse::<i32>().unwrap();
+
+    let g_strand = fields.get(7).unwrap();
+    // 8 - Blastz score
+
+    if !sizes.contains_key(g_chr) {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            ".sizes file doesn't contain the needed chr",
+        ));
+    }
+
+    if g_strand == "-" {
+        g_begin = sizes.get(g_chr).unwrap() - g_begin + 1;
+        g_end = sizes.get(g_chr).unwrap() - g_end + 1;
+        (g_begin, g_end) = (g_end, g_begin);
+    }
+
+    // Sequence lines
+    let f_seq = block_lines.pop_front().unwrap().as_bytes().to_vec();
+    let g_seq = block_lines.pop_front().unwrap().as_bytes().to_vec();
+
+    // Build ranges
+    let mut f_range = Range::from(f_chr, f_begin, f_end);
+    *f_range.name_mut() = tname.to_string();
+    *f_range.strand_mut() = "+".to_string();
+
+    let mut g_range = Range::from(g_chr, g_begin, g_end);
+    *g_range.name_mut() = qname.to_string();
+    *g_range.strand_mut() = g_strand.to_string();
+
+    // Build entries
+    let f_entry = FasEntry::from(&f_range, &f_seq);
+    block_entries.push(f_entry);
+    block_names.push(f_range.name().to_string());
+
+    let g_entry = FasEntry::from(&g_range, &g_seq);
+    block_entries.push(g_entry);
+    block_names.push(g_range.name().to_string());
+
+    Ok(FasBlock {
+        entries: block_entries,
+        names: block_names,
+    })
+}
+
 #[cfg(test)]
 mod fas_tests {
     use super::*;
     use std::io::BufReader;
 
     #[test]
-    fn parse_block_range() {
+    fn parse_fas_block_range() {
         let str = ">S288c.I(+):13267-13287|species=S288c
 TCGTCAGTTGGTTGACCATTA
 >YJM789.gi_151941327(-):5668-5688|species=YJM789
@@ -530,6 +661,3 @@ s Spar.gi_29362604    100946  97 - 143114 CG--ACATAGTTTTTTCCAGGCACTTTCAGCTGCGG--
         );
     }
 }
-
-// Axt
-// https://genome.ucsc.edu/goldenPath/help/axt.html
