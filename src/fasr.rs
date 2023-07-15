@@ -46,3 +46,4 @@ fn main() -> anyhow::Result<()> {
 // TODO: fasr link --best
 // TODO: replace samtools
 // TODO: add more tools
+// TODO: join, refine, replace, slice, stat, vars, xlsx
