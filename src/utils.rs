@@ -357,7 +357,7 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
 ///     Err(_) => {}
 /// }
 /// ```
-// cargo test --verbose --doc utils::get_seq_faidx
+// cargo test --doc utils::get_seq_faidx
 pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> {
     let mut bin = String::new();
     for e in &["samtools"] {
@@ -387,6 +387,102 @@ pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> 
             "Command executed with failing error code",
         ));
     }
+
+    for line in output.stdout.lines().map_while(Result::ok) {
+        // header
+        if line.starts_with('>') {
+            continue;
+        }
+
+        seq += line.as_str();
+    }
+
+    Ok(seq)
+}
+
+/// ```
+/// match which::which("spoa") {
+///     Ok(_) => {
+///         let seqs = vec![
+///         //              *
+///             "TTAGCCGCTGAGAAGC",
+///             "TTAGCCGCTGAGAAGC",
+///             "TTAGCCGCTGA-AAGC",
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "TTAGCCGCTGAGAAGC".to_string());
+///
+///         let seqs = vec![
+///         //      *   **
+///             "AAATTTTGG",
+///             "AAAATTTTT",
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTGG".to_string());
+///
+///         let seqs = vec![
+///         //           **
+///             "AAAATTTTGG",
+///             "AAAATTTTTG",
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTTG".to_string());
+///
+///         let seqs = vec![
+///         //
+///             "AAAATTTTGG",
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTGG".to_string());
+///
+///     }
+///     Err(_) => {}
+/// }
+/// ```
+// cargo test --doc utils::get_consensus_poa
+pub fn get_consensus_poa(seqs: &Vec<&str>) -> Result<String, std::io::Error> {
+    let mut bin = String::new();
+    for e in &["spoa"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+
+    if bin.is_empty() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Can't find the external command",
+        ));
+    }
+
+    let mut seq_in = tempfile::Builder::new()
+        .prefix("seq-in-")
+        .suffix(".fasta")
+        .rand_bytes(8)
+        .tempfile()?;
+
+    for (i, seq) in seqs.iter().enumerate() {
+        write!(seq_in, ">seq-{}\n{}\n", i, seq)?;
+    }
+    let seq_in_path = seq_in.into_temp_path();
+
+    let mut seq = String::new();
+    let output = Command::new(bin)
+        .arg("--result")
+        .arg("0")
+        .arg(seq_in_path.to_string_lossy().to_string())
+        .output()?;
+
+    if !output.status.success() {
+        return Err(io::Error::new(
+            io::ErrorKind::Other,
+            "Command executed with failing error code",
+        ));
+    }
+
+    // closing the `TempPath` explicitly
+    seq_in_path.close()?;
 
     for line in output.stdout.lines().map_while(Result::ok) {
         // header
