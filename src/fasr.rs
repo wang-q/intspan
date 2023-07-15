@@ -14,6 +14,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::axt2fas::make_subcommand())
         .subcommand(cmd_fasr::check::make_subcommand())
         .subcommand(cmd_fasr::concat::make_subcommand())
+        .subcommand(cmd_fasr::consensus::make_subcommand())
         .subcommand(cmd_fasr::create::make_subcommand())
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
@@ -26,6 +27,7 @@ fn main() -> anyhow::Result<()> {
         Some(("axt2fas", sub_matches)) => cmd_fasr::axt2fas::execute(sub_matches),
         Some(("check", sub_matches)) => cmd_fasr::check::execute(sub_matches),
         Some(("concat", sub_matches)) => cmd_fasr::concat::execute(sub_matches),
+        Some(("consensus", sub_matches)) => cmd_fasr::consensus::execute(sub_matches),
         Some(("create", sub_matches)) => cmd_fasr::create::execute(sub_matches),
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),

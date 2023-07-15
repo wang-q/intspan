@@ -482,13 +482,16 @@ fasr link tests/fasr/example.fas --pair
 
 samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
 
-cargo run --bin fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
+fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
 
-cargo run --bin fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name S288c
+fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name S288c
 
-cargo run --bin fasr separate tests/fasr/example.fas -o . --suffix .tmp
+fasr separate tests/fasr/example.fas -o . --suffix .tmp
 
 spoa tests/fasr/refine.fasta -r 1
+
+cargo run --bin fasr consensus tests/fasr/example.fas
+cargo run --bin fasr consensus tests/fasr/refine.fas
 
 ```
 

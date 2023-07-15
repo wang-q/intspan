@@ -271,3 +271,25 @@ fn command_separate_to() -> anyhow::Result<()> {
     tempdir.close()?;
     Ok(())
 }
+
+#[test]
+fn command_consensus() -> anyhow::Result<()> {
+    match which::which("spoa") {
+        Err(_) => return Ok(()),
+        Ok(_) => {}
+    }
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("consensus")
+        .arg("tests/fasr/refine.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains(">consensus\n"), "simple name");
+    assert!(stdout.contains(">consensus.I("), "fas name");
+
+    Ok(())
+}
