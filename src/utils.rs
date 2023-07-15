@@ -440,7 +440,7 @@ pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> 
 /// }
 /// ```
 // cargo test --doc utils::get_consensus_poa
-pub fn get_consensus_poa(seqs: &Vec<&str>) -> Result<String, std::io::Error> {
+pub fn get_consensus_poa(seqs: &[&str]) -> Result<String, std::io::Error> {
     let mut bin = String::new();
     for e in &["spoa"] {
         if let Ok(pth) = which::which(e) {

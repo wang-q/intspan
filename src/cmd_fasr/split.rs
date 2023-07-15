@@ -85,10 +85,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 let trange = &block.entries.first().unwrap().range().clone();
                 trange.to_string()
             }
-                .replace('(', "_")
-                .replace(')', "_")
-                .replace(':', "_")
-                .replace("__", "_");
+            .replace(['(', ')', ':'], "_")
+            .replace("__", "_");
 
             for entry in &block.entries {
                 let range = entry.range().clone();
@@ -120,9 +118,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
             // end of a block
             if outdir == "stdout" {
-                print!("\n");
+                println!();
             } else {
-                write!(file_of.get(&filename).unwrap(), "\n")?;
+                writeln!(file_of.get(&filename).unwrap())?;
             }
         }
     }
