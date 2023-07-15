@@ -135,12 +135,18 @@ $ fasr help
 Usage: fasr [COMMAND]
 
 Commands:
-  concat   Concatenate sequence pieces of the same species
-  link     Output bi/multi-lateral range links
-  maf2fas  Convert maf to block fasta
-  name     Output all species names
-  subset   Extract a subset of species
-  help     Print this message or the help of the given subcommand(s)
+  axt2fas    Convert axt to block fasta
+  check      Check genome locations in block fasta headers
+  concat     Concatenate sequence pieces of the same species
+  consensus  Generate consensus sequences by POA
+  create     Create block fasta files from links of ranges
+  link       Output bi/multi-lateral range links
+  maf2fas    Convert maf to block fasta
+  name       Output all species names
+  separate   Separate block fasta files by species
+  split      Split block fasta files to per-alignment/chromosome fasta files
+  subset     Extract a subset of species
+  help       Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
@@ -492,6 +498,9 @@ spoa tests/fasr/refine.fasta -r 1
 
 cargo run --bin fasr consensus tests/fasr/example.fas
 cargo run --bin fasr consensus tests/fasr/refine.fas
+
+cargo run --bin fasr split tests/fasr/example.fas --simple
+cargo run --bin fasr split tests/fasr/example.fas -o . --chr --suffix .tmp
 
 ```
 

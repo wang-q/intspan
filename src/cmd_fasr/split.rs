@@ -8,15 +8,12 @@ use std::path::Path;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
-    Command::new("separate")
-        .about("Separate block fasta files by species")
+    Command::new("split")
+        .about("Split block fasta files to per-alignment/chromosome fasta files")
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
 * infile == stdin means reading from STDIN
-
-* Dashes ('-') will be removed from sequences
-* If the target file exists, it will be overwritten
 
 "###,
         )
@@ -32,14 +29,20 @@ pub fn make_subcommand() -> Command {
                 .long("suffix")
                 .short('s')
                 .num_args(1)
-                .default_value(".fasta")
+                .default_value(".fas")
                 .help("Extensions of output files"),
         )
         .arg(
-            Arg::new("rc")
-                .long("rc")
+            Arg::new("chr")
+                .long("chr")
                 .action(ArgAction::SetTrue)
-                .help("Revcom sequences when chr_strand is '-'"),
+                .help("Split by chromosomes"),
+        )
+        .arg(
+            Arg::new("simple")
+                .long("simple")
+                .action(ArgAction::SetTrue)
+                .help("Only keep names in headers"),
         )
         .arg(
             Arg::new("outdir")
@@ -62,7 +65,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     }
 
     let suffix = args.get_one::<String>("suffix").unwrap();
-    let is_rc = args.get_flag("rc");
+    let is_chr = args.get_flag("chr");
+    let is_simple = args.get_flag("simple");
 
     let mut file_of: BTreeMap<String, File> = BTreeMap::new();
 
@@ -73,38 +77,52 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut reader = reader(infile);
 
         while let Ok(block) = next_fas_block(&mut reader) {
-            for entry in &block.entries {
-                let entry_name = entry.range().name(); // Don't borrow the following `range`
-                let mut range = entry.range().clone();
+            let filename = if is_chr {
+                let tname = block.entries.first().unwrap().range().name();
+                let tchr = block.entries.first().unwrap().range().chr();
+                format!("{}.{}", tname, tchr)
+            } else {
+                let trange = &block.entries.first().unwrap().range().clone();
+                trange.to_string()
+            }
+                .replace('(', "_")
+                .replace(')', "_")
+                .replace(':', "_")
+                .replace("__", "_");
 
-                let seq = if is_rc && range.strand() == "-" {
-                    *range.strand_mut() = "+".to_string();
-                    bio::alphabets::dna::revcomp(entry.seq())
-                } else {
-                    entry.seq().to_vec()
-                };
-                let seq = std::str::from_utf8(&seq)
-                    .unwrap()
-                    .to_string()
-                    .replace('-', "");
+            for entry in &block.entries {
+                let range = entry.range().clone();
+                let seq = std::str::from_utf8(entry.seq()).unwrap();
 
                 //----------------------------
                 // Output
                 //----------------------------
                 if outdir == "stdout" {
-                    print!(">{}\n{}\n", range, seq);
+                    let header = if is_simple {
+                        range.name().to_string()
+                    } else {
+                        range.to_string()
+                    };
+                    print!(">{}\n{}\n", header, seq);
                 } else {
-                    if !file_of.contains_key(entry_name) {
-                        let path = Path::new(outdir).join(range.name().to_owned() + suffix);
+                    if !file_of.contains_key(&filename) {
+                        let path = Path::new(outdir).join(filename.clone() + suffix);
                         let file = OpenOptions::new()
                             .create(true)
                             .write(true)
                             .truncate(true)
                             .open(path)?;
-                        file_of.insert(entry_name.to_string(), file);
+                        file_of.insert(filename.clone(), file);
                     }
-                    write!(file_of.get(entry_name).unwrap(), ">{}\n{}\n", range, seq)?;
+                    write!(file_of.get(&filename).unwrap(), ">{}\n{}\n", range, seq)?;
                 }
+            }
+
+            // end of a block
+            if outdir == "stdout" {
+                print!("\n");
+            } else {
+                write!(file_of.get(&filename).unwrap(), "\n")?;
             }
         }
     }

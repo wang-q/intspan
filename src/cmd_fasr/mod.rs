@@ -9,4 +9,5 @@ pub mod link;
 pub mod maf2fas;
 pub mod name;
 pub mod separate;
+pub mod split;
 pub mod subset;

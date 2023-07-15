@@ -20,6 +20,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
         .subcommand(cmd_fasr::name::make_subcommand())
         .subcommand(cmd_fasr::separate::make_subcommand())
+        .subcommand(cmd_fasr::split::make_subcommand())
         .subcommand(cmd_fasr::subset::make_subcommand());
 
     // Check which subcomamnd the user ran...
@@ -33,6 +34,7 @@ fn main() -> anyhow::Result<()> {
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
         Some(("name", sub_matches)) => cmd_fasr::name::execute(sub_matches),
         Some(("separate", sub_matches)) => cmd_fasr::separate::execute(sub_matches),
+        Some(("split", sub_matches)) => cmd_fasr::split::execute(sub_matches),
         Some(("subset", sub_matches)) => cmd_fasr::subset::execute(sub_matches),
         _ => unreachable!(),
     }

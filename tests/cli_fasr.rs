@@ -273,6 +273,57 @@ fn command_separate_to() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_split() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("split")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("split")
+        .arg("tests/fasr/example.fas")
+        .arg("--simple")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert!(stdout.contains(">S288c\n"), "simple headers");
+    assert!(!stdout.contains("I(+)"), "no positions");
+
+    Ok(())
+}
+
+#[test]
+fn command_split_to() -> anyhow::Result<()> {
+    let tempdir = TempDir::new().unwrap();
+    let tempdir_str = tempdir.path().to_str().unwrap();
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    cmd.arg("split")
+        .arg("tests/fasr/example.fas")
+        .arg("--suffix")
+        .arg(".tmp")
+        .arg("--chr")
+        .arg("-o")
+        .arg(tempdir_str)
+        .assert()
+        .success()
+        .stdout(predicate::str::is_empty());
+
+    assert!(&tempdir.path().join("S288c.I.tmp").is_file());
+    assert!(!&tempdir.path().join("YJM789.fasta").exists());
+
+    tempdir.close()?;
+    Ok(())
+}
+
+#[test]
 fn command_consensus() -> anyhow::Result<()> {
     match which::which("spoa") {
         Err(_) => return Ok(()),
