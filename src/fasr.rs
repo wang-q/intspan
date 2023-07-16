@@ -49,6 +49,6 @@ fn main() -> anyhow::Result<()> {
 
 // TODO: replace samtools
 // TODO: add more tools
-// TODO: simple - replace, slice
-// TODO: hard - refine, stat, vars, xlsx
+// TODO: simple - replace, stat, slice
+// TODO: hard - refine, vars, xlsx
 // TODO: fasr kb - scripts for join pairwise alignments p2m
