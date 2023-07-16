@@ -33,6 +33,9 @@ cargo run --bin fasr help
 An example is [`S288c.rg`](tests/spanr/S288c.rg).
 The information presented in this format is very similar to formats such as the `BED`.
 
+I chose this format because of its compactness, readability, and embeddability into other
+tab-separated files.
+
 ```text
 I:1-100
 I(+):90-150
@@ -41,6 +44,8 @@ II:21294-22075
 II:23537-24097
 
 ```
+
+The schema of an `Range` object is shown below.
 
 ![ranges](doc/ranges.png)
 
@@ -63,6 +68,8 @@ species.chromosome(strand):start-end
 
 ```
 
+In this toolset, [`rgr`](#rgr-help) is used to operate ranges in `.rg` and `.tsv` files.
+
 ### IntSpans
 
 An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`.
@@ -76,11 +83,62 @@ Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
 [jintspan](https://github.com/egateam/jintspan) are implements of the IntSpan objects in Perl and
 Java, respectively.
 
-### Runlist - IntSpans on chromosomes
+### Runlists - IntSpans on chromosomes stored in JSON
+
+Very often, we need to deal with many genomic intervals of the same property, e.g., all the exons of
+a gene, all the promoters of a gene family, all the repeats in a genome, and so on.
+
+Existing formats, such as `bedGraph`, can partially deal with such situations, but often face
+problems of intuitiveness, performance, etc. At the same time, there are only a very limited number
+of tools that can handle files in such proprietary formats.
+
+Saving `IntSpan` to a JSON file is the solution of this toolset, where [`spanr`](#spanr-help)
+handles this job.
 
 * Single: [`repeat.json`](tests/spanr/repeat.json)
 
+```json
+{
+    "I": "-",
+    "II": "327069-327703",
+    "III": "-",
+    "IV": "512988-513590,757572-759779,802895-805654,981142-987119,1017673-1018183,1175134-1175738,1307621-1308556,1504223-1504728",
+    "IX": "-",
+    "V": "354135-354917",
+    "VI": "-",
+    "VII": "778784-779515,878539-879235",
+    "VIII": "116405-117059,133581-134226",
+    "X": "366757-367499,712641-713226",
+    "XI": "162831-163399",
+    "XII": "64067-65208,91960-92481,451418-455181,455933-457732,460517-464318,465070-466869,489753-490545,817840-818474",
+    "XIII": "609100-609861",
+    "XIV": "-",
+    "XV": "437522-438484",
+    "XVI": "560481-561065"
+}
+```
+
 * Multi: [`Atha.json`](tests/spanr/Atha.json)
+
+```json
+{
+    "AT1G01010.1": {
+        "1": "3631-3913,3996-4276,4486-4605,4706-5095,5174-5326,5439-5899"
+    },
+    "AT1G01020.1": {
+        "1": "5928-6263,6437-7069,7157-7232,7384-7450,7564-7649,7762-7835,7942-7987,8236-8325,8417-8464,8571-8737"
+    },
+    "AT1G01020.2": {
+        "1": "6790-7069,7157-7450,7564-7649,7762-7835,7942-7987,8236-8325,8417-8464,8571-8737"
+    },
+    "AT2G01008.1": {
+        "2": "1025-1272,1458-1510,1873-2810,3706-5513,5782-5945"
+    },
+    "AT2G01021.1": {
+        "2": "6571-6672"
+    }
+}
+```
 
 * `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
 
@@ -104,10 +162,34 @@ Types of links:
 
 ## Synopsis
 
-### `spanr`
+### `rgr help`
 
 ```text
-$ spanr help
+`rgr` operates ranges in .rg and .tsv files
+
+Usage: rgr [COMMAND]
+
+Commands:
+  count    Count each range overlapping with other range files
+  field    Create/append ranges from fields
+  merge    Merge overlapped ranges via overlapping graph
+  prop     Proportion of the ranges intersecting a runlist file
+  replace  Replace fields in .tsv file
+  runlist  Filter .rg and .tsv files by comparison with a runlist file
+  sort     Sort .rg and .tsv files by a range field
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+* Field numbers in the TSV file start at 1
+
+```
+
+### `spanr help`
+
+```text
 `spanr` operates chromosome IntSpan files
 
 Usage: spanr [COMMAND]
@@ -134,36 +216,36 @@ Options:
 
 ```
 
-### `rgr`
+### `fasr help`
 
 ```text
-$ rgr help
-`rgr` operates ranges in .rg and .tsv files
+`fasr` operates block fasta files
 
-Usage: rgr [COMMAND]
+Usage: fasr [COMMAND]
 
 Commands:
-  count    Count each range overlapping with other range files
-  field    Create/append ranges from fields
-  merge    Merge overlapped ranges via overlapping graph
-  prop     Proportion of the ranges intersecting a runlist file
-  replace  Replace fields in .tsv file
-  runlist  Filter .rg and .tsv files by comparison with a runlist file
-  sort     Sort .rg and .tsv files by a range field
-  help     Print this message or the help of the given subcommand(s)
+  axt2fas    Convert axt to block fasta
+  check      Check genome locations in block fasta headers
+  concat     Concatenate sequence pieces of the same species
+  consensus  Generate consensus sequences by POA
+  create     Create block fasta files from links of ranges
+  link       Output bi/multi-lateral range links
+  maf2fas    Convert maf to block fasta
+  name       Output all species names
+  separate   Separate block fasta files by species
+  split      Split block fasta files to per-alignment/chromosome fasta files
+  subset     Extract a subset of species
+  help       Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
   -V, --version  Print version
 
-* Field numbers start with 1
-
 ```
 
-### `linkr`
+### `linkr help`
 
 ```text
-$ linkr help
 `linkr` operates ranges on chromosomes and links of ranges
 
 Usage: linkr [COMMAND]
@@ -182,10 +264,9 @@ Options:
 
 ```
 
-### `ovlpr`
+### `ovlpr help`
 
 ```text
-$ ovlpr help
 `ovlpr` operates overlaps between sequences
 
 Usage: ovlpr [COMMAND]
@@ -195,34 +276,6 @@ Commands:
   paf2ovlp  Convert minimap .paf to overlaps
   restrict  Restrict overlaps to known pairs
   help      Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-
-```
-
-### `fasr`
-
-```text
-$ fasr help
-`fasr` operates block fasta files
-
-Usage: fasr [COMMAND]
-
-Commands:
-  axt2fas    Convert axt to block fasta
-  check      Check genome locations in block fasta headers
-  concat     Concatenate sequence pieces of the same species
-  consensus  Generate consensus sequences by POA
-  create     Create block fasta files from links of ranges
-  link       Output bi/multi-lateral range links
-  maf2fas    Convert maf to block fasta
-  name       Output all species names
-  separate   Separate block fasta files by species
-  split      Split block fasta files to per-alignment/chromosome fasta files
-  subset     Extract a subset of species
-  help       Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
@@ -283,17 +336,11 @@ spanr statop \
     tests/spanr/intergenic.json \
     tests/spanr/repeat.json
 
-diff <(spanr statop \
-        --op intersect --all\
-        tests/spanr/Atha.chr.sizes \
-        tests/spanr/Atha.json \
-        tests/spanr/paralog.json ) \
-    <(jrunlist statop \
-        -o stdout \
-        --op intersect --all \
-        tests/spanr/Atha.chr.sizes \
-        tests/spanr/Atha.json \
-        tests/spanr/paralog.json )
+spanr statop \
+    --op intersect --all\
+    tests/spanr/Atha.chr.sizes \
+    tests/spanr/Atha.json \
+    tests/spanr/paralog.json
 
 spanr convert tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr cover stdin |

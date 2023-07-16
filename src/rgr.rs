@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
         .color(ColorChoice::Auto)
         .after_help(
             r###"
-* Field numbers start with 1
+* Field numbers in the TSV file start at 1
 
 "###,
         )
