@@ -72,6 +72,42 @@ fn command_axt2fas() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_cover() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("cover")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 16);
+    assert!(stdout.contains("S288c"), "name list");
+    assert!(stdout.contains("I"), "chr list");
+    assert!(stdout.contains("13267-13287"), "runlist");
+
+    // --name, --trim
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("cover")
+        .arg("tests/fasr/example.fas")
+        .arg("--name")
+        .arg("S288c")
+        .arg("--trim")
+        .arg("10")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 3);
+    assert!(!stdout.contains("S288c"), "name list");
+    assert!(stdout.contains("I"), "chr list");
+    assert!(stdout.contains("13277,184906"), "trimmed");
+
+    Ok(())
+}
+
+#[test]
 fn command_concat() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
