@@ -26,7 +26,83 @@ cargo run --bin fasr help
 
 ```
 
-## SYNOPSIS
+## Concepts
+
+### Ranges
+
+An example is [`S288c.rg`](tests/spanr/S288c.rg).
+The information presented in this format is very similar to formats such as the `BED`.
+
+```text
+I:1-100
+I(+):90-150
+S288c.I(-):190-200
+II:21294-22075
+II:23537-24097
+
+```
+
+![ranges](doc/ranges.png)
+
+Simple rules:
+
+* `chromosome` and `start` are required
+* `species`, `strand` and `end` are optional
+* `.` to separate `species` and `chromosome`
+* `strand` is one of `+` and `-` and surround by round brackets
+* `:` to separate names and digits
+* `-` to separate `start` and `end`
+* For `species`:
+    * `species` should be alphanumeric with no spaces, the one exception character is `/`.
+    * A `species` is an identity that you can also think of as a strain name, an assembly, or
+      something else.
+
+```text
+species.chromosome(strand):start-end
+--------^^^^^^^^^^--------^^^^^^----
+
+```
+
+### IntSpans
+
+An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`.
+
+The following figure shows the schema of an IntSpan object. Jump lines are above the baseline; loop
+lines are below it.
+
+![intspans](doc/intspans.png)
+
+Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
+[jintspan](https://github.com/egateam/jintspan) are implements of the IntSpan objects in Perl and
+Java, respectively.
+
+### Runlist - IntSpans on chromosomes
+
+* Single: [`repeat.json`](tests/spanr/repeat.json)
+
+* Multi: [`Atha.json`](tests/spanr/Atha.json)
+
+* `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
+
+### Links of ranges
+
+Types of links:
+
+* Bilateral links
+
+        I(+):13063-17220    I(-):215091-219225
+        I(+):139501-141431  XII(+):95564-97485
+
+* Bilateral links with hit strand
+
+        I(+):13327-17227    I(+):215084-218967  -
+        I(+):139501-141431  XII(+):95564-97485  +
+
+* Multilateral links
+
+        II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
+
+## Synopsis
 
 ### `spanr`
 
@@ -154,82 +230,7 @@ Options:
 
 ```
 
-## Concepts
-
-### IntSpans
-
-An IntSpan represents sets of integers as a number of inclusive ranges, for example `1-10,19,45-48`.
-
-The following figure shows the schema of an IntSpan object. Jump lines are above the baseline; loop
-lines are below it.
-
-![intspans](doc/intspans.png)
-
-Also, [AlignDB::IntSpan](https://github.com/wang-q/AlignDB-IntSpan) and
-[jintspan](https://github.com/egateam/jintspan) are implements of the IntSpan objects in Perl and
-Java, respectively.
-
-### Runlist - IntSpans on chromosomes
-
-* Single: [`repeat.json`](tests/spanr/repeat.json)
-
-* Multi: [`Atha.json`](tests/spanr/Atha.json)
-
-* `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
-
-### Ranges
-
-An example is [`S288c.rg`](tests/spanr/S288c.rg)
-
-```text
-I:1-100
-I(+):90-150
-S288c.I(-):190-200
-II:21294-22075
-II:23537-24097
-
-```
-
-![ranges](doc/ranges.png)
-
-Simple rules:
-
-* `chromosome` and `start` are required
-* `species`, `strand` and `end` are optional
-* `.` to separate `species` and `chromosome`
-* `strand` is one of `+` and `-` and surround by round brackets
-* `:` to separate names and digits
-* `-` to separate `start` and `end`
-* For `species`:
-    * `species` should be alphanumeric with no spaces, the one exception character is `/`.
-    * A `species` is an identity that you can also think of as a strain name, an assembly, or
-      something else.
-
-```text
-species.chromosome(strand):start-end
---------^^^^^^^^^^--------^^^^^^----
-
-```
-
-### Links of ranges
-
-Types of links:
-
-* Bilateral links
-
-        I(+):13063-17220    I(-):215091-219225
-        I(+):139501-141431  XII(+):95564-97485
-
-* Bilateral links with hit strand
-
-        I(+):13327-17227    I(+):215084-218967  -
-        I(+):139501-141431  XII(+):95564-97485  +
-
-* Multilateral links
-
-        II(+):186984-190356 IX(+):12652-16010   X(+):12635-15993
-
-## EXAMPLES
+## Examples
 
 ### `spanr`
 
