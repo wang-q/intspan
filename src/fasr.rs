@@ -47,7 +47,6 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-// TODO: fasr link --best
 // TODO: replace samtools
 // TODO: add more tools
 // TODO: simple - replace, slice

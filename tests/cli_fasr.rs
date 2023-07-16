@@ -178,11 +178,7 @@ fn command_link() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 3);
     assert_eq!(stdout.lines().next().unwrap().split_whitespace().count(), 4);
 
-    Ok(())
-}
-
-#[test]
-fn command_link_pair() -> anyhow::Result<()> {
+    // --pair
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
         .arg("link")
@@ -193,6 +189,19 @@ fn command_link_pair() -> anyhow::Result<()> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 18);
+    assert_eq!(stdout.lines().next().unwrap().split_whitespace().count(), 2);
+
+    // --best
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("link")
+        .arg("tests/fasr/example.fas")
+        .arg("--best")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 9);
     assert_eq!(stdout.lines().next().unwrap().split_whitespace().count(), 2);
 
     Ok(())
@@ -394,7 +403,10 @@ fn command_join() -> anyhow::Result<()> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 5);
-    assert!(stdout.lines().next().unwrap().contains(">Spar"), "Selected name first");
+    assert!(
+        stdout.lines().next().unwrap().contains(">Spar"),
+        "Selected name first"
+    );
 
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
@@ -407,7 +419,10 @@ fn command_join() -> anyhow::Result<()> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 9);
-    assert!(stdout.lines().next().unwrap().contains(">S288c."), "First name first");
+    assert!(
+        stdout.lines().next().unwrap().contains(">S288c."),
+        "First name first"
+    );
 
     Ok(())
 }

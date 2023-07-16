@@ -528,15 +528,16 @@ fasr axt2fas tests/fasr/RM11_1a.chr.sizes tests/fasr/example.axt --qname RM11_1a
 
 fasr name tests/fasr/example.fas --count
 
-cargo run --bin fasr cover tests/fasr/example.fas
+fasr cover tests/fasr/example.fas
 
-cargo run --bin fasr cover tests/fasr/example.fas --name S288c --trim 10
+fasr cover tests/fasr/example.fas --name S288c --trim 10
 
 fasr concat tests/fasr/name.lst tests/fasr/example.fas
 
 fasr subset tests/fasr/name.lst tests/fasr/example.fas
 
 fasr link tests/fasr/example.fas --pair
+cargo run --bin fasr link tests/fasr/example.fas --best
 
 samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
 
