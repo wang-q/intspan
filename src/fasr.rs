@@ -17,6 +17,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::consensus::make_subcommand())
         .subcommand(cmd_fasr::cover::make_subcommand())
         .subcommand(cmd_fasr::create::make_subcommand())
+        .subcommand(cmd_fasr::join::make_subcommand())
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
         .subcommand(cmd_fasr::name::make_subcommand())
@@ -32,6 +33,7 @@ fn main() -> anyhow::Result<()> {
         Some(("consensus", sub_matches)) => cmd_fasr::consensus::execute(sub_matches),
         Some(("cover", sub_matches)) => cmd_fasr::cover::execute(sub_matches),
         Some(("create", sub_matches)) => cmd_fasr::create::execute(sub_matches),
+        Some(("join", sub_matches)) => cmd_fasr::join::execute(sub_matches),
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
         Some(("name", sub_matches)) => cmd_fasr::name::execute(sub_matches),
@@ -48,6 +50,6 @@ fn main() -> anyhow::Result<()> {
 // TODO: fasr link --best
 // TODO: replace samtools
 // TODO: add more tools
-// TODO: simple - replace, slice, join
+// TODO: simple - replace, slice
 // TODO: hard - refine, stat, vars, xlsx
 // TODO: fasr kb - scripts for join pairwise alignments p2m

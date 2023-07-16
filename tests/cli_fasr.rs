@@ -380,3 +380,34 @@ fn command_consensus() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_join() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("join")
+        .arg("tests/fasr/S288cvsSpar.slice.fas")
+        .arg("--name")
+        .arg("Spar")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 5);
+    assert!(stdout.lines().next().unwrap().contains(">Spar"), "Selected name first");
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("join")
+        .arg("tests/fasr/S288cvsRM11_1a.slice.fas")
+        .arg("tests/fasr/S288cvsYJM789.slice.fas")
+        .arg("tests/fasr/S288cvsSpar.slice.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 9);
+    assert!(stdout.lines().next().unwrap().contains(">S288c."), "First name first");
+
+    Ok(())
+}
