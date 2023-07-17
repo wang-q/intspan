@@ -129,12 +129,12 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
     )
 }
 
-pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
+pub fn indel_intspan(seq: &[u8]) -> IntSpan {
     let mut positions = vec![];
 
-    for (i, base) in seqs.iter().enumerate() {
+    for (i, base) in seq.iter().enumerate() {
         if *base == b'-' {
-            positions.push(i as i32);
+            positions.push(i as i32 + 1);
         }
     }
 
@@ -142,6 +142,10 @@ pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
     ints.add_vec(&positions);
 
     ints
+}
+
+pub fn seq_intspan(seq: &[u8]) -> IntSpan {
+    IntSpan::from_pair(1, seq.len() as i32).diff(&indel_intspan(seq))
 }
 
 /// ```
@@ -229,11 +233,11 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
             .arg("-quiet")
             .arg(format!(
                 "-infile={}",
-                seq_in_path.to_string_lossy().to_string()
+                seq_in_path.to_string_lossy()
             ))
             .arg(format!(
                 "-outfile={}",
-                seq_out_path.to_string_lossy().to_string()
+                seq_out_path.to_string_lossy()
             ))
             .output()?,
         "muscle" => Command::new(bin)

@@ -330,7 +330,7 @@ mod content {
         ];
 
         // spans
-        for (runlist, exp_runlist, exp_spans) in &tests {
+        for (runlist, _, exp_spans) in &tests {
             let mut ints = IntSpan::new();
             ints.add_runlist(*runlist);
 
