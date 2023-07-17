@@ -162,8 +162,8 @@ pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
 /// ```
 // scoop install clustalw
 pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> {
+    // find external aligner
     let mut bin = String::new();
-
     match aligner {
         "clustalw" => {
             for e in &["clustalw", "clustal-w", "clustalw2"] {
@@ -193,13 +193,13 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
             return Err(anyhow!("Unrecognized aligner: {}", aligner));
         }
     };
-
-    eprintln!("bin = {:#?}", bin);
+    // eprintln!("bin = {:#?}", bin);
 
     if bin.is_empty() {
         return Err(anyhow!("Can't find the external command: {}", aligner));
     }
 
+    // Create temp in/out files
     let mut seq_in = tempfile::Builder::new()
         .prefix("seq-in-")
         .suffix(".fasta")
@@ -217,8 +217,9 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
         .tempfile()?;
     let seq_out_path = seq_out.into_temp_path();
 
-    eprintln!("seq_in_path = {:#?}", seq_in_path);
+    // eprintln!("seq_in_path = {:#?}", seq_in_path);
 
+    // Run
     let output = match aligner {
         "clustalw" => Command::new(bin)
             .arg("-align")
@@ -252,12 +253,13 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
         _ => unreachable!(),
     };
 
-    eprintln!("output = {:#?}", output);
+    // eprintln!("output = {:#?}", output);
 
     if !output.status.success() {
         return Err(anyhow!("Command executed with failing error code"));
     }
 
+    // Load outputs
     let mut out_seq = vec![];
     let reader = reader(seq_out_path.to_string_lossy().as_ref());
     let fa_in = fasta::Reader::new(reader);
