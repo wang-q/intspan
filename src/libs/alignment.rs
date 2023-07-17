@@ -231,14 +231,8 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
             .arg("-output=fasta")
             .arg("-outorder=input")
             .arg("-quiet")
-            .arg(format!(
-                "-infile={}",
-                seq_in_path.to_string_lossy()
-            ))
-            .arg(format!(
-                "-outfile={}",
-                seq_out_path.to_string_lossy()
-            ))
+            .arg(format!("-infile={}", seq_in_path.to_string_lossy()))
+            .arg(format!("-outfile={}", seq_out_path.to_string_lossy()))
             .output()?,
         "muscle" => Command::new(bin)
             .arg("-quiet")
