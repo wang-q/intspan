@@ -145,7 +145,6 @@ pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
 }
 
 /// ```
-/// # // scoop install clustalw
 /// match which::which("clustalw") {
 ///     Ok(_) => {
 ///         let seqs = vec![
@@ -161,7 +160,7 @@ pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
 ///     Err(_) => {}
 /// }
 /// ```
-// cargo test --doc utils::get_consensus_poa
+// scoop install clustalw
 pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> {
     let mut bin = String::new();
 
