@@ -209,7 +209,6 @@ mod create {
             ("", "-", vec![]),
             ("-", "-", vec![]),
             ("0", "0", vec![0]),
-            ("0", "0", vec![0]),
             ("1", "1", vec![1]),
             ("-1", "-1", vec![-1]),
             ("1-2", "1-2", vec![1, 2]),
@@ -286,6 +285,55 @@ mod create {
     //    set.add_runlist("1-1--1");
     //    println!("{:?}", set.ranges());
     //}
+}
+
+//----------------------------------------------------------
+/// INTERFACE: Span contents
+//----------------------------------------------------------
+impl IntSpan {
+    /// Returns the runs in IntSpan, as a vector of Tuple(lower, upper)
+    pub fn spans(&self) -> Vec<(i32, i32)> {
+        let mut spans: Vec<(i32, i32)> = vec![];
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            spans.push((lower, upper));
+        }
+
+        spans
+    }
+}
+
+#[cfg(test)]
+mod content {
+    use super::*;
+
+    #[test]
+    fn test_content() {
+        let tests = vec![
+            ("-", "-", vec![]),
+            ("0", "0", vec![(0, 0)]),
+            ("1", "1", vec![(1, 1)]),
+            ("-1", "-1", vec![(-1, -1)]),
+            ("1-2", "1-2", vec![(1, 2)]),
+            ("-2--1", "-2--1", vec![(-2, -1)]),
+            ("-2-1", "-2-1", vec![(-2, 1)]),
+            ("1,3-4", "1,3-4", vec![(1, 1), (3, 4)]),
+            ("1-2,4-7", "1-2,4-7", vec![(1, 2), (4, 7)]),
+        ];
+
+        // spans
+        for (runlist, exp_runlist, exp_spans) in &tests {
+            let mut ints = IntSpan::new();
+            ints.add_runlist(*runlist);
+
+            let res = ints.spans();
+
+            assert_eq!(res, *exp_spans);
+        }
+    }
 }
 
 //----------------------------------------------------------
