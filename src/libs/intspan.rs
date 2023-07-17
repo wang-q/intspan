@@ -292,6 +292,11 @@ mod create {
 //----------------------------------------------------------
 impl IntSpan {
     /// Returns the runs in IntSpan, as a vector of Tuple(lower, upper)
+    ///
+    /// ```
+    /// let ints = intspan::IntSpan::from("1-2,4-7");
+    /// assert_eq!(ints.spans(), vec![(1, 2), (4, 7)]);
+    /// ```
     pub fn spans(&self) -> Vec<(i32, i32)> {
         let mut spans: Vec<(i32, i32)> = vec![];
 

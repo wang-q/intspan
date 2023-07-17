@@ -24,6 +24,9 @@ export CARGO_TARGET_DIR=/tmp
 cargo build
 cargo run --bin fasr help
 
+# local docs
+cargo doc --open
+
 ```
 
 ## Concepts
