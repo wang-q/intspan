@@ -54,3 +54,7 @@ fn main() -> anyhow::Result<()> {
 // TODO: simple - replace
 // TODO: hard - refine, slice, vars, xlsx; need find_islands()
 // TODO: fasr kb - scripts for join pairwise alignments p2m
+// TODO: lav2fas
+// TODO: paf2fas
+// TODO: vcf
+// TODO: filter
