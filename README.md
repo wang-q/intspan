@@ -561,6 +561,7 @@ cargo run --bin fasr join \
     tests/fasr/S288cvsYJM789.slice.fas \
     tests/fasr/S288cvsSpar.slice.fas
 
+cargo run --bin fasr stat tests/fasr/example.fas --outgroup
 
 ```
 

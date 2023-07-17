@@ -1,5 +1,7 @@
-use assert_cmd::prelude::*; // Add methods on commands
-use predicates::prelude::*; // Used for writing assertions
+use assert_cmd::prelude::*;
+// Add methods on commands
+use predicates::prelude::*;
+// Used for writing assertions
 use std::process::Command;
 use tempfile::TempDir;
 
@@ -423,6 +425,34 @@ fn command_join() -> anyhow::Result<()> {
         stdout.lines().next().unwrap().contains(">S288c."),
         "First name first"
     );
+
+    Ok(())
+}
+
+#[test]
+fn command_stat() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("stat")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert!(stdout.contains("0.192\t6\n"), "all together");
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("stat")
+        .arg("tests/fasr/example.fas")
+        .arg("--outgroup")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert!(stdout.contains("0.12\t3\n"), "exclude outgroup");
 
     Ok(())
 }

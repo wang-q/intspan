@@ -1,3 +1,4 @@
+use crate::IntSpan;
 use itertools::Itertools;
 use std::collections::HashSet;
 
@@ -53,24 +54,24 @@ pub fn pair_d(seq1: &[u8], seq2: &[u8]) -> f32 {
 ///     b"AAAATTTTGG".as_ref(),
 ///     b"aaaatttttg".as_ref(),
 /// ];
-/// assert_eq!(intspan::align_stat(&seqs), (10, 10, 1, 0, 0, 0.1,));
+/// assert_eq!(intspan::alignment_stat(&seqs), (10, 10, 1, 0, 0, 0.1,));
 ///
 /// let seqs = vec![
 ///     //*          * *
 ///     b"TTAGCCGCTGAGAAGCC".as_ref(),
 ///     b"GTAGCCGCTGA-AGGCC".as_ref(),
 /// ];
-/// assert_eq!(intspan::align_stat(&seqs), (17, 16, 2, 1, 0, 0.125,));
+/// assert_eq!(intspan::alignment_stat(&seqs), (17, 16, 2, 1, 0, 0.125,));
 ///
 /// let seqs = vec![
 ///     //    * **    *   ** *   *
 ///     b"GATTATCATCACCCCAGCCACATW".as_ref(),
 ///     b"GATTTT--TCACTCCATTCGCATA".as_ref(),
 /// ];
-/// assert_eq!(intspan::align_stat(&seqs), (24, 21, 5, 2, 1, 0.238,));
+/// assert_eq!(intspan::alignment_stat(&seqs), (24, 21, 5, 2, 1, 0.238,));
 ///
 /// ```
-pub fn align_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
+pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
     let seq_count = seqs.len();
     assert_ne!(seq_count, 0, "Need sequences");
 
@@ -121,4 +122,19 @@ pub fn align_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
         ambiguous,
         mean_d,
     )
+}
+
+pub fn indel_intspan(seqs: &[u8]) -> IntSpan {
+    let mut positions = vec![];
+
+    for (i, base) in seqs.iter().enumerate() {
+        if *base == b'-' {
+            positions.push(i as i32);
+        }
+    }
+
+    let mut ints = IntSpan::new();
+    ints.add_vec(&positions);
+
+    ints
 }
