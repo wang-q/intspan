@@ -167,21 +167,6 @@ impl IntSpan {
         elements
     }
 
-    pub fn ranges(&self) -> Vec<i32> {
-        let mut ranges: Vec<i32> = Vec::new();
-
-        for i in 0..self.edges.len() {
-            // odd index means upper
-            if (i & 1) == 1 {
-                ranges.push(*self.edges.get(i).unwrap() - 1);
-            } else {
-                ranges.push(*self.edges.get(i).unwrap());
-            }
-        }
-
-        ranges
-    }
-
     pub fn contains(&self, n: i32) -> bool {
         let pos = self.find_pos(n + 1, 0);
         (pos & 1) == 1
@@ -313,6 +298,26 @@ impl IntSpan {
         }
 
         spans
+    }
+
+    /// Returns the runs in IntSpan, as a vector of lower, upper
+    ///
+    /// ```
+    /// let ints = intspan::IntSpan::from("1-2,4-7");
+    /// assert_eq!(ints.ranges(), vec![1, 2, 4, 7]);
+    /// ```
+    pub fn ranges(&self) -> Vec<i32> {
+        let mut ranges: Vec<i32> = vec![];
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            ranges.push(lower);
+            ranges.push(upper);
+        }
+
+        ranges
     }
 }
 
@@ -530,8 +535,8 @@ impl IntSpan {
         self.remove_ranges(&ranges);
     }
 
-    pub fn remove_vec(&mut self, ints: &[i32]) {
-        let ranges = self.list_to_ranges(ints);
+    pub fn remove_vec(&mut self, array: &[i32]) {
+        let ranges = self.list_to_ranges(array);
 
         self.remove_ranges(&ranges);
     }
@@ -1240,8 +1245,6 @@ mod span {
 /// INTERFACE: Inter-set OPs
 //----------------------------------------------------------
 impl IntSpan {
-    /// `overlap`
-    ///
     /// Returns the size of intersection of two sets.
     ///
     /// `set.overlap(&other)` equivalent to `set.intersect(&other).cardinality()`
@@ -1338,8 +1341,83 @@ impl IntSpan {
 }
 
 //----------------------------------------------------------
-// TODO: Islands
+/// INTERFACE: Islands
 //----------------------------------------------------------
+impl IntSpan {
+    /// Returns an ints equals to the island containing the integer
+    ///
+    /// If the integer is not in the ints, an empty ints is returned
+    ///
+    /// ```
+    /// # use intspan::IntSpan;
+    /// let tests = vec![
+    ///     ("1-5", 1, "1-5"),
+    ///     ("1-5,7", 1, "1-5"),
+    ///     ("1-5,7", 6, "-"),
+    ///     ("1-5,7", 7, "7"),
+    ///     ("1-5,7-8", 7, "7-8"),
+    ///     ("1-5,8", 7, "-"),
+    /// ];
+    ///
+    /// for (runlist, val, exp_ints) in &tests {
+    ///     let ints = IntSpan::from(runlist);
+    ///
+    ///     let res = ints.find_islands_n(*val);
+    ///
+    ///     assert_eq!(res.to_string().as_str(), *exp_ints);
+    /// }
+    /// ```
+    pub fn find_islands_n(&self, val: i32) -> IntSpan {
+        let mut island = Self::new();
+
+        // if pos & 1, i.e. pos is an odd number, val is in the ints
+        // same as contains()
+        let pos = self.find_pos(val + 1, 0);
+        if (pos & 1) == 1 {
+            let ranges = self.ranges();
+            island.add_pair(ranges[pos - 1], ranges[pos]);
+        }
+
+        island
+    }
+
+    /// Returns an ints containing all islands intersecting `other`
+    ///
+    /// If `ints` and `other` don't intersect, an empty ints is returned
+    ///
+    /// ```
+    /// # use intspan::IntSpan;
+    /// let tests = vec![
+    ///     ("1-8", "7-8", "1-8"),
+    ///     ("1-5,7-8", "7-8", "7-8"),
+    ///     ("1-5,8-9", "7-8", "8-9"),
+    ///     ("1-5,8-9,11-15", "9-11", "8-9,11-15"),
+    /// ];
+    ///
+    /// for (runlist, other, exp_ints) in &tests {
+    ///     let ints = IntSpan::from(runlist);
+    ///     let other = IntSpan::from(other);
+    ///
+    ///     let res = ints.find_islands_ints(&other);
+    ///
+    ///     assert_eq!(res.to_string().as_str(), *exp_ints);
+    /// }
+    /// ```
+    pub fn find_islands_ints(&self, other: &Self) -> IntSpan {
+        let mut island = Self::new();
+
+        if !self.intersect(other).is_empty() {
+            for (lower, upper) in &self.spans() {
+                let subints = Self::from_pair(*lower, *upper);
+                if !subints.intersect(other).is_empty() {
+                    island.merge(&subints);
+                }
+            }
+        }
+
+        island
+    }
+}
 
 //----------------------------------------------------------
 /// INTERFACE: Aliases
@@ -1379,23 +1457,23 @@ impl IntSpan {
         low
     }
 
-    fn list_to_ranges(&self, ints: &[i32]) -> Vec<i32> {
+    fn list_to_ranges(&self, array: &[i32]) -> Vec<i32> {
         let mut ranges: Vec<i32> = Vec::new();
 
-        let mut ints = ints.to_owned();
-        ints.sort_unstable();
-        ints.dedup();
+        let mut vec = array.to_owned();
+        vec.sort_unstable();
+        vec.dedup();
 
-        let len = ints.len();
+        let len = vec.len();
         let mut pos: usize = 0;
 
         while pos < len {
             let mut end = pos + 1;
-            while (end < len) && (ints[end] <= ints[end - 1] + 1) {
+            while (end < len) && (vec[end] <= vec[end - 1] + 1) {
                 end += 1;
             }
-            ranges.push(ints[pos]);
-            ranges.push(ints[end - 1]);
+            ranges.push(vec[pos]);
+            ranges.push(vec[end - 1]);
             pos = end;
         }
 
