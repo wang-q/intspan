@@ -41,15 +41,15 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
-    //----------------------------
-    // Load names
-    //----------------------------
     let needed = read_first_column(args.get_one::<String>("name.lst").unwrap());
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 

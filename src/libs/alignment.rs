@@ -7,7 +7,7 @@ lazy_static! {
         .collect();
 }
 
-/// Distance (D) between two sequences
+/// Divergence (D) between two sequences
 ///
 /// ```
 /// //           * **  **
