@@ -9,7 +9,7 @@
 
 ## Install
 
-Current release: 0.7.1
+Current release: 0.7.2
 
 ```shell
 cargo install intspan

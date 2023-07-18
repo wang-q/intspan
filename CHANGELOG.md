@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.2 - 2023-07-18
+
 * New binary `fasr`, ported from `App::Fasops`
     * `fasr axt2fas`
     * `fasr check`
