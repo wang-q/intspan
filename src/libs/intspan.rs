@@ -37,7 +37,7 @@ use std::vec::Vec;
 ///
 /// # DESCRIPTION
 ///
-/// `IntSpan` represents sets of integers as a number of inclusive ranges, for example
+/// `IntSpan` (ints for abbr.) represents sets of integers as a number of inclusive ranges, for example
 /// `1-10,19-23,45-48`. Because many of its operations involve linear searches of the list of ranges its
 /// overall performance tends to be proportional to the number of distinct ranges. This is fine for
 /// small sets but suffers compared to other possible set representations (bit vectors, hash keys) when
@@ -139,6 +139,7 @@ impl IntSpan {
         *NEG_INF
     }
 
+    /// Clear all contents of ints
     pub fn clear(&mut self) {
         self.edges.clear();
     }

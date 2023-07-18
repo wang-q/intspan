@@ -73,12 +73,31 @@ impl Range {
     /// # assert_eq!(*range.end(), 100);
     /// ```
     pub fn from(chr: &str, start: i32, end: i32) -> Self {
-        let s = chr.into();
-
         Self {
             name: "".to_string(),
-            chr: s,
+            chr: chr.to_string(),
             strand: "".to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Constructed from chr, start and end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_full("S288c", "I", "-", 1, 100);
+    /// # assert_eq!(*range.name(), "I");
+    /// # assert_eq!(*range.chr(), "I");
+    /// # assert_eq!(*range.strand(), "-");
+    /// # assert_eq!(*range.start(), 1);
+    /// # assert_eq!(*range.end(), 100);
+    /// ```
+    pub fn from_full(name: &str, chr: &str, strand: &str, start: i32, end: i32) -> Self {
+        Self {
+            name: name.to_string(),
+            chr: chr.to_string(),
+            strand: strand.to_string(),
             start,
             end,
         }

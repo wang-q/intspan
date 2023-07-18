@@ -430,6 +430,27 @@ fn command_join() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_slice() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("slice")
+        .arg("tests/fasr/slice.json")
+        .arg("tests/fasr/slice.fas")
+        .arg("--name")
+        .arg("S288c")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 7);
+    assert!(stdout.contains("13301-13400"), "sliced S288c");
+    assert!(stdout.contains("2511-2636"), "sliced Spar");
+    assert!(stdout.contains("\nTAGTCATCTCAG"), "sliced S288c seq");
+
+    Ok(())
+}
+
+#[test]
 fn command_stat() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd

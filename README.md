@@ -558,6 +558,8 @@ cargo run --bin fasr consensus tests/fasr/refine.fas
 cargo run --bin fasr split tests/fasr/example.fas --simple
 cargo run --bin fasr split tests/fasr/example.fas -o . --chr --suffix .tmp
 
+cargo run --bin fasr slice tests/fasr/slice.json tests/fasr/slice.fas --name S288c
+
 cargo run --bin fasr join tests/fasr/S288cvsYJM789.slice.fas --name YJM789
 cargo run --bin fasr join \
     tests/fasr/S288cvsRM11_1a.slice.fas \

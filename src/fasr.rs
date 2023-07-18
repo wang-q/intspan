@@ -22,6 +22,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
         .subcommand(cmd_fasr::name::make_subcommand())
         .subcommand(cmd_fasr::separate::make_subcommand())
+        .subcommand(cmd_fasr::slice::make_subcommand())
         .subcommand(cmd_fasr::split::make_subcommand())
         .subcommand(cmd_fasr::stat::make_subcommand())
         .subcommand(cmd_fasr::subset::make_subcommand());
@@ -39,6 +40,7 @@ fn main() -> anyhow::Result<()> {
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
         Some(("name", sub_matches)) => cmd_fasr::name::execute(sub_matches),
         Some(("separate", sub_matches)) => cmd_fasr::separate::execute(sub_matches),
+        Some(("slice", sub_matches)) => cmd_fasr::slice::execute(sub_matches),
         Some(("split", sub_matches)) => cmd_fasr::split::execute(sub_matches),
         Some(("stat", sub_matches)) => cmd_fasr::stat::execute(sub_matches),
         Some(("subset", sub_matches)) => cmd_fasr::subset::execute(sub_matches),
@@ -52,7 +54,7 @@ fn main() -> anyhow::Result<()> {
 // TODO: replace samtools
 // TODO: add more tools
 // TODO: simple - replace
-// TODO: hard - refine, slice, vars, xlsx; need find_islands()
+// TODO: hard - refine, vars, xlsx
 // TODO: fasr kb - scripts for join pairwise alignments p2m
 // TODO: lav2fas
 // TODO: paf2fas

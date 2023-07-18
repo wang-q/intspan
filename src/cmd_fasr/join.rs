@@ -6,7 +6,7 @@ use std::io::Write;
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("join")
-        .about("Output covers on chromosomes")
+        .about("Join multiple block fasta files by a common target")
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported

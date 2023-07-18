@@ -11,6 +11,7 @@ pub mod link;
 pub mod maf2fas;
 pub mod name;
 pub mod separate;
+pub mod slice;
 pub mod split;
 pub mod stat;
 pub mod subset;
