@@ -2,16 +2,29 @@
 
 ## Unreleased - ReleaseDate
 
-* New binary `fasr`
+* New binary `fasr`, ported from `App::Fasops`
+    * `fasr axt2fas`
+    * `fasr check`
     * `fasr concat`
+    * `fasr consensus`
+    * `fasr cover`
+    * `fasr create`
+    * `fasr join`
     * `fasr link`
     * `fasr maf2fas`
     * `fasr name`
+    * `fasr separate`
+    * `fasr slice`
+    * `fasr split`
+    * `fasr stat`
     * `fasr subset`
 
-* Use json to replace yaml in `spanr`
+* Add `libs/alignment`
 
 * Add `utils::get_seq_faidx()`
+* Add `IntSpan.find_islands_n()` and `IntSpan.find_islands_ints()`
+
+* Use json to replace yaml in `spanr`
 
 * Bump versions of deps
     * clap v4
