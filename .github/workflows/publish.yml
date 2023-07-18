@@ -30,12 +30,13 @@ jobs:
         run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr target/release/fasr
         shell: bash
       - name: Upload binaries to releases
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: intspan.tar.gz
           asset_name: intspan-x86_64-unknown-linux-gnu.tar.gz
           tag: ${{ github.ref }}
+          overwrite: true
   linux-musl:
     runs-on: ubuntu-latest
     steps:
@@ -50,12 +51,13 @@ jobs:
         run: tar cvfz intspan.tar.gz target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/rgr target/x86_64-unknown-linux-musl/release/linkr target/x86_64-unknown-linux-musl/release/ovlpr target/x86_64-unknown-linux-musl/release/fasr
         shell: bash
       - name: Upload binaries to releases
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: intspan.tar.gz
           asset_name: intspan-x86_64-unknown-linux-musl.tar.gz
           tag: ${{ github.ref }}
+          overwrite: true
   macos:
     runs-on: macOS-latest
     steps:
@@ -71,12 +73,13 @@ jobs:
         run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr target/release/ovlpr target/release/fasr
         shell: bash
       - name: Upload binaries to releases
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: intspan.tar.gz
           asset_name: intspan-x86_64-apple-darwin.tar.gz
           tag: ${{ github.ref }}
+          overwrite: true
   windows:
     runs-on: windows-latest
     steps:
@@ -95,9 +98,10 @@ jobs:
         run: Compress-Archive -DestinationPath ./intspan.zip -Path ./target/release/spanr.exe,./target/release/rgr.exe,./target/release/linkr.exe,./target/release/ovlpr.exe,./target/release/fasr.exe
         shell: powershell
       - name: Upload binaries to releases
-        uses: svenstaro/upload-release-action@v1-release
+        uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: intspan.zip
           asset_name: intspan-x86_64-pc-windows-msvc.zip
           tag: ${{ github.ref }}
+          overwrite: true
