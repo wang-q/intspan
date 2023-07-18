@@ -87,7 +87,7 @@ impl Range {
     /// ```
     /// # use intspan::Range;
     /// let range = Range::from_full("S288c", "I", "-", 1, 100);
-    /// # assert_eq!(*range.name(), "I");
+    /// # assert_eq!(*range.name(), "S288c");
     /// # assert_eq!(*range.chr(), "I");
     /// # assert_eq!(*range.strand(), "-");
     /// # assert_eq!(*range.start(), 1);
