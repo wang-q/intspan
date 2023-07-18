@@ -55,7 +55,6 @@ fn main() -> anyhow::Result<()> {
 // TODO: add more tools
 // TODO: simple - replace
 // TODO: hard - refine, vars, xlsx
-// TODO: fasr kb - scripts for join pairwise alignments p2m
 // TODO: lav2fas
 // TODO: paf2fas
 // TODO: vcf

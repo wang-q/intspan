@@ -48,6 +48,7 @@ fn main() -> anyhow::Result<()> {
 }
 
 // Variable naming conventions
+// ints: an IntSpan object
 // set, runlists: single name IntSpan set or runlists
 //      set is a set of IntSpans
 //      set: BTreeMap<String, IntSpan>
