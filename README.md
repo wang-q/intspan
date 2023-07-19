@@ -548,6 +548,12 @@ fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
 
 fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name S288c
 
+# Create a fasta file containing multiple genomes
+cat tests/fasr/genome.fa | sed 's/^>/>S288c./' > tests/fasr/genomes.fa
+samtools faidx tests/fasr/genomes.fa S288c.I:1-100
+
+cargo run --bin fasr create tests/fasr/genomes.fa tests/fasr/I.name.tsv --multi
+
 fasr separate tests/fasr/example.fas -o . --suffix .tmp
 
 spoa tests/fasr/refine.fasta -r 1
