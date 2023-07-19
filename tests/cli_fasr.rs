@@ -477,3 +477,48 @@ fn command_stat() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_filter() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/fasr/example.fas")
+        .arg("--ge")
+        .arg("30")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 18);
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/fasr/example.fas")
+        .arg("--ge")
+        .arg("30")
+        .arg("--le")
+        .arg("100")
+        .arg("--name")
+        .arg("S288c")
+        .arg("--dash")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 9);
+    assert!(stdout.contains("\nGCTAAAATATGAACG"), "no dash");
+
+    Ok(())
+}

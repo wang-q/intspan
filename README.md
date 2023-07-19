@@ -568,6 +568,8 @@ cargo run --bin fasr join \
 
 cargo run --bin fasr stat tests/fasr/example.fas --outgroup
 
+cargo run --bin fasr filter tests/fasr/example.fas --ge 10
+
 ```
 
 ## License

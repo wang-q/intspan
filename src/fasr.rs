@@ -17,6 +17,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::consensus::make_subcommand())
         .subcommand(cmd_fasr::cover::make_subcommand())
         .subcommand(cmd_fasr::create::make_subcommand())
+        .subcommand(cmd_fasr::filter::make_subcommand())
         .subcommand(cmd_fasr::join::make_subcommand())
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
@@ -35,6 +36,7 @@ fn main() -> anyhow::Result<()> {
         Some(("consensus", sub_matches)) => cmd_fasr::consensus::execute(sub_matches),
         Some(("cover", sub_matches)) => cmd_fasr::cover::execute(sub_matches),
         Some(("create", sub_matches)) => cmd_fasr::create::execute(sub_matches),
+        Some(("filter", sub_matches)) => cmd_fasr::filter::execute(sub_matches),
         Some(("join", sub_matches)) => cmd_fasr::join::execute(sub_matches),
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
@@ -58,4 +60,7 @@ fn main() -> anyhow::Result<()> {
 // TODO: lav2fas
 // TODO: paf2fas
 // TODO: vcf
-// TODO: filter
+// TODO: match
+//  sparsemem -maxmatch -F -l %d -b -n -k 4 -threads 4 %s %s > %s
+//  mummer -maxmatch -F -l %d -b -n %s %s > %s
+//  $exe, $length, $genome, $query, $result

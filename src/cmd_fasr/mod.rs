@@ -6,6 +6,7 @@ pub mod concat;
 pub mod consensus;
 pub mod cover;
 pub mod create;
+pub mod filter;
 pub mod join;
 pub mod link;
 pub mod maf2fas;
