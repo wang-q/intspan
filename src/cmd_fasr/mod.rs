@@ -11,6 +11,7 @@ pub mod join;
 pub mod link;
 pub mod maf2fas;
 pub mod name;
+pub mod refine;
 pub mod separate;
 pub mod slice;
 pub mod split;

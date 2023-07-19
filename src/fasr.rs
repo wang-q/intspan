@@ -22,6 +22,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
         .subcommand(cmd_fasr::name::make_subcommand())
+        .subcommand(cmd_fasr::refine::make_subcommand())
         .subcommand(cmd_fasr::separate::make_subcommand())
         .subcommand(cmd_fasr::slice::make_subcommand())
         .subcommand(cmd_fasr::split::make_subcommand())
@@ -41,6 +42,7 @@ fn main() -> anyhow::Result<()> {
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
         Some(("name", sub_matches)) => cmd_fasr::name::execute(sub_matches),
+        Some(("refine", sub_matches)) => cmd_fasr::refine::execute(sub_matches),
         Some(("separate", sub_matches)) => cmd_fasr::separate::execute(sub_matches),
         Some(("slice", sub_matches)) => cmd_fasr::slice::execute(sub_matches),
         Some(("split", sub_matches)) => cmd_fasr::split::execute(sub_matches),
@@ -56,9 +58,10 @@ fn main() -> anyhow::Result<()> {
 // TODO: replace samtools
 // TODO: add more tools
 // TODO: simple - replace
-// TODO: hard - refine, vars, xlsx
-// TODO: lav2fas
-// TODO: paf2fas
+// TODO: hard - vars, xlsx
+// TODO: fasr refine --outgroup --quick
+// TODO: lav2link
+// TODO: paf2link
 // TODO: vcf
 // TODO: match
 //  sparsemem -maxmatch -F -l %d -b -n -k 4 -threads 4 %s %s > %s
