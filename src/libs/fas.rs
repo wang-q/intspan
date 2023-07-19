@@ -157,7 +157,10 @@ pub fn parse_fas_block(
     let mut block_names: Vec<String> = vec![];
 
     while let Some(header) = block_lines.pop_front() {
-        let range = Range::from_str(header.as_str());
+        let range = Range::from_str(match header.starts_with('>') {
+            true => &header[1..],
+            false => header.as_str(),
+        });
         let seq = block_lines.pop_front().unwrap().as_bytes().to_vec();
 
         let entry = FasEntry::from(&range, &seq);
