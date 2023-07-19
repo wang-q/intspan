@@ -2,6 +2,11 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `fasr filter`
+* Add `fasr refine`
+
+* Add --multi to `fasr create`
+
 ## 0.7.3 - 2023-07-18
 
 * New binary `fasr`, ported from `App::Fasops`
