@@ -53,7 +53,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         while let Ok(block) = next_fas_block(&mut reader) {
             let mut seqs = vec![];
             for entry in &block.entries {
-                seqs.push(std::str::from_utf8(entry.seq()).unwrap());
+                seqs.push(entry.seq().as_ref());
             }
 
             let mut cons = get_consensus_poa(&seqs).unwrap();

@@ -3,7 +3,7 @@ use anyhow::anyhow;
 use bio::io::fasta;
 use itertools::Itertools;
 use std::collections::HashSet;
-use std::io::Write;
+use std::io::{BufRead, Write};
 use std::process::Command;
 use std::str;
 
@@ -129,6 +129,24 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
     )
 }
 
+/// ```
+/// use intspan::{indel_intspan, IntSpan, seq_intspan};
+/// let tests : Vec<(&str, &str)> = vec![
+///     // seq, expected
+///     ("ATAA", "-"),
+///     ("CcGc", "-"),
+///     ("TAGggATaaC", "-"),
+///     ("C-Gc", "2"),
+///     ("C--c", "2-3"),
+///     ("---c", "1-3"),
+///     ("C---", "2-4"),
+///     ("GCaN--NN--NNNaC", "5-6,9-10"),
+/// ];
+/// for (seq, expected) in tests {
+///     let result = indel_intspan(seq.as_ref());
+///     assert_eq!(result.to_string(), expected.to_string());
+/// }
+/// ```
 pub fn indel_intspan(seq: &[u8]) -> IntSpan {
     let mut positions = vec![];
 
@@ -210,7 +228,7 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
         .rand_bytes(8)
         .tempfile()?;
     for (i, seq) in seqs.iter().enumerate() {
-        write!(seq_in, ">seq-{}\n{:?}\n", i, str::from_utf8(seq).unwrap())?;
+        write!(seq_in, ">seq-{}\n{}\n", i, str::from_utf8(seq).unwrap())?;
     }
     let seq_in_path = seq_in.into_temp_path();
 
@@ -274,11 +292,101 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
     Ok(out_seq)
 }
 
+/// ```
+/// match which::which("spoa") {
+///     Ok(_) => {
+///         let seqs = vec![
+///         //              *
+///             b"TTAGCCGCTGAGAAGC".as_ref(),
+///             b"TTAGCCGCTGAGAAGC".as_ref(),
+///             b"TTAGCCGCTGA-AAGC".as_ref(),
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "TTAGCCGCTGAGAAGC".to_string());
+///
+///         let seqs = vec![
+///         //      *   **
+///             b"AAATTTTGG".as_ref(),
+///             b"AAAATTTTT".as_ref(),
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTGG".to_string());
+///
+///         let seqs = vec![
+///         //           **
+///             b"AAAATTTTGG".as_ref(),
+///             b"AAAATTTTTG".as_ref(),
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTTG".to_string());
+///
+///         let seqs = vec![
+///         //
+///             b"AAAATTTTGG".as_ref(),
+///         ];
+///         let cons = intspan::get_consensus_poa(&seqs).unwrap();
+///         assert_eq!(cons, "AAAATTTTGG".to_string());
+///
+///     }
+///     Err(_) => {}
+/// }
+/// ```
+// cargo test --doc utils::get_consensus_poa
+pub fn get_consensus_poa(seqs: &[&[u8]]) -> anyhow::Result<String> {
+    let mut bin = String::new();
+    for e in &["spoa"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+
+    if bin.is_empty() {
+        return Err(anyhow!("Can't find the external command"));
+    }
+
+    let mut seq_in = tempfile::Builder::new()
+        .prefix("seq-in-")
+        .suffix(".fasta")
+        .rand_bytes(8)
+        .tempfile()?;
+
+    for (i, seq) in seqs.iter().enumerate() {
+        write!(seq_in, ">seq-{}\n{}\n", i, str::from_utf8(seq).unwrap())?;
+    }
+    let seq_in_path = seq_in.into_temp_path();
+
+    let mut seq = String::new();
+    let output = Command::new(bin)
+        .arg("--result")
+        .arg("0")
+        .arg(seq_in_path.to_string_lossy().to_string())
+        .output()?;
+
+    if !output.status.success() {
+        return Err(anyhow!("Command executed with failing error code"));
+    }
+
+    // closing the `TempPath` explicitly
+    seq_in_path.close()?;
+
+    for line in output.stdout.lines().map_while(Result::ok) {
+        // header
+        if line.starts_with('>') {
+            continue;
+        }
+
+        seq += line.as_str();
+    }
+
+    Ok(seq)
+}
+
 /// Coordinate transforming - from chr to align
 ///
 /// ```
 /// use intspan::{indel_intspan, IntSpan, seq_intspan};
-/// let data : Vec<(&str, i32, i32, &str, i32)> = vec![
+/// let tests : Vec<(&str, i32, i32, &str, i32)> = vec![
 ///     // seq, pos, chr_start, strand, expected
 ///     ("AAAATTTTTG", 4, 1, "+", 4),
 ///     ("AAAATTTTTG", 4, 1, "-", 7),
@@ -287,7 +395,7 @@ pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> 
 ///     ("-AA--TTTGG", 105, 101, "+", 8),
 ///     ("-AA--TTTGG", 105, 101, "-", 6),
 /// ];
-/// for (seq, pos, chr_start, strand, expected) in data {
+/// for (seq, pos, chr_start, strand, expected) in tests {
 ///     let ints = seq_intspan(seq.as_ref());
 ///     // eprintln!("ints.to_string() = {:#?}", ints.to_string());
 ///     let result = intspan::chr_to_align(&ints, pos, chr_start, strand).unwrap();
