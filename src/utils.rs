@@ -1,4 +1,5 @@
 use crate::{IntSpan, Range};
+use anyhow::anyhow;
 use flate2::read::GzDecoder;
 use serde_json::Value;
 use std::cmp::Reverse;
@@ -351,14 +352,13 @@ pub fn sort_links(lines: &[String]) -> Vec<String> {
 ///         let seq = intspan::get_seq_faidx("tests/fasr/NC_000932.fa", "NC_000932:1-10").unwrap();
 ///         assert_eq!(seq, "ATGGGCGAAC".to_string());
 ///         let res = intspan::get_seq_faidx("tests/fasr/NC_000932.fa", "FAKE:1-10");
-///         eprintln!("got error {:?}", res.as_ref().err());
-///         assert!(matches!(res.unwrap_err().kind(), std::io::ErrorKind::Other));
+///         assert_eq!(format!("{}", res.unwrap_err()), "Command executed with failing error code");
 ///     }
 ///     Err(_) => {}
 /// }
 /// ```
 // cargo test --doc utils::get_seq_faidx
-pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> {
+pub fn get_seq_faidx(file: &str, range: &str) -> anyhow::Result<String> {
     let mut bin = String::new();
     for e in &["samtools"] {
         if let Ok(pth) = which::which(e) {
@@ -368,10 +368,7 @@ pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> 
     }
 
     if bin.is_empty() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "Can't find the external command",
-        ));
+        return Err(anyhow!("Can't find the external command"));
     }
 
     let mut seq = String::new();
@@ -382,9 +379,8 @@ pub fn get_seq_faidx(file: &str, range: &str) -> Result<String, std::io::Error> 
         .output()?;
 
     if !output.status.success() {
-        return Err(io::Error::new(
-            io::ErrorKind::Other,
-            "Command executed with failing error code",
+        return Err(anyhow!(
+            "Command executed with failing error code"
         ));
     }
 
