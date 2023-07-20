@@ -4,6 +4,7 @@
 
 * Add `fasr filter`
 * Add `fasr refine`
+* Add `fasr variation`
 
 * Add --multi to `fasr create`
 
