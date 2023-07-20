@@ -50,7 +50,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // let is_outgroup = args.get_flag("outgroup");
 
     let field_names = vec![
-        "target",
+        "#target",
         "chr",
         "pos",
         "chr_pos",

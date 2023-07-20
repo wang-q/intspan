@@ -502,6 +502,21 @@ fn command_stat() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_variation() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("variation")
+        .arg("tests/fasr/example.fas")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 81);
+
+    Ok(())
+}
+
+#[test]
 fn command_filter() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
