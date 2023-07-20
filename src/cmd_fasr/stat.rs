@@ -65,7 +65,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         while let Ok(block) = next_fas_block(&mut reader) {
             let target = block.entries.first().unwrap().range().to_string();
 
-            let mut seqs = vec![];
+            let mut seqs : Vec<&[u8]> = vec![];
             for entry in &block.entries {
                 seqs.push(entry.seq().as_ref());
             }
@@ -74,7 +74,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 seqs.pop();
             }
 
-            let (length, comparable, difference, gap, ambiguous, mean_d) = alignment_stat(&seqs);
+            // let (length, comparable, difference, gap, ambiguous, mean_d) = alignment_stat(&seqs);
+            let result = alignment_stat(&seqs);
 
             let mut indel_ints = IntSpan::new();
             for seq in seqs {
@@ -85,12 +86,12 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 format!(
                     "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
                     target,
-                    length,
-                    comparable,
-                    difference,
-                    gap,
-                    ambiguous,
-                    mean_d,
+                    result.0,
+                    result.1,
+                    result.2,
+                    result.3,
+                    result.4,
+                    result.5,
                     indel_ints.span_size(),
                 )
                 .as_ref(),

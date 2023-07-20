@@ -125,21 +125,21 @@ impl IntSpan {
         new
     }
 
-    /// Get the constant of POS_INF
+    /// Returns the constant of POS_INF
     ///
     /// Typically used to construct infinite sets
     pub fn get_pos_inf(&self) -> i32 {
         *POS_INF - 1
     }
 
-    /// Get the constant of NEG_INF
+    /// Returns the constant of NEG_INF
     ///
     /// Typically used to construct infinite sets
     pub fn get_neg_inf(&self) -> i32 {
         *NEG_INF
     }
 
-    /// Clear all contents of ints
+    /// Clears all contents of ints
     pub fn clear(&mut self) {
         self.edges.clear();
     }
