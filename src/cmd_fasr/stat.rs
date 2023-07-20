@@ -17,13 +17,13 @@ pub fn make_subcommand() -> Command {
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Sets the input files to use"),
+                .help("Set the input files to use"),
         )
         .arg(
             Arg::new("outgroup")
                 .long("outgroup")
                 .action(ArgAction::SetTrue)
-                .help("Alignments have an outgroup'"),
+                .help("Alignments have an outgroup"),
         )
         .arg(
             Arg::new("outfile")

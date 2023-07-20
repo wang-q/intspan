@@ -31,7 +31,7 @@ pub fn make_subcommand() -> Command {
                 .required(true)
                 .num_args(1..)
                 .index(2)
-                .help("Sets the input files to use"),
+                .help("Set the input files to use"),
         )
         .arg(
             Arg::new("name")

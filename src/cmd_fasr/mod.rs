@@ -17,3 +17,4 @@ pub mod slice;
 pub mod split;
 pub mod stat;
 pub mod subset;
+pub mod variation;

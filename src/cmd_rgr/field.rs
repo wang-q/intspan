@@ -24,7 +24,7 @@ Example:
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Sets the input files to use"),
+                .help("Set the input files to use"),
         )
         .arg(
             Arg::new("append")
