@@ -1,11 +1,13 @@
 use crate::*;
-use anyhow::anyhow;
+use anyhow::{anyhow, bail};
 use bio::io::fasta;
 use itertools::Itertools;
-use std::collections::HashSet;
+use std::cmp::min;
+use std::collections::{BTreeMap, HashSet};
 use std::io::{BufRead, Write};
 use std::process::Command;
 use std::str;
+use std::string::String;
 
 lazy_static! {
     static ref BASES: HashSet<u8> = vec![b'a', b'g', b'c', b't', b'A', b'G', b'C', b'T',]
@@ -95,12 +97,12 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
         }
         column = column.into_iter().unique().collect();
 
-        if column.clone().into_iter().all(|e| BASES.contains(&e)) {
+        if column.iter().all(|e| BASES.contains(e)) {
             comparable += 1;
-            if column.clone().into_iter().any(|e| e != column[0]) {
+            if column.iter().any(|e| *e != column[0]) {
                 difference += 1;
             }
-        } else if column.clone().into_iter().any(|e| e == b'-') {
+        } else if column.iter().any(|e| *e == b'-') {
             gap += 1;
         } else {
             ambiguous += 1;
@@ -127,6 +129,124 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
         ambiguous,
         mean_d,
     )
+}
+
+/// pos, tbase, qbase, bases, mutant_to, freq, occured
+///
+/// ```
+/// let seqs = vec![
+///     //        *
+///     b"AAAATTTTGG".as_ref(),
+///     b"aaaatttttg".as_ref(),
+/// ];
+/// assert_eq!(intspan::get_subs(&seqs).unwrap().first().unwrap(), &(
+///     9,
+///     "G".to_string(),
+///     "T".to_string(),
+///     "GT".to_string(),
+///     "G<->T".to_string(),
+///     1,
+///     "10".to_string()
+/// ));
+///
+/// let seqs = vec![
+///     //*   **     * *
+///     b"TTAG--GCTGAGAAGC".as_ref(),
+///     b"GTAGCCGCTGA-AGGC".as_ref(),
+/// ];
+/// assert_eq!(intspan::get_subs(&seqs).unwrap().first().unwrap(), &(
+///     1,
+///     "T".to_string(),
+///     "G".to_string(),
+///     "TG".to_string(),
+///     "T<->G".to_string(),
+///     1,
+///     "10".to_string()
+/// ));
+/// assert_eq!(intspan::get_subs(&seqs).unwrap().get(1).unwrap(), &(
+///     14,
+///     "A".to_string(),
+///     "G".to_string(),
+///     "AG".to_string(),
+///     "A<->G".to_string(),
+///     1,
+///     "10".to_string()
+/// ));
+///
+/// ```
+pub fn get_subs(
+    seqs: &[&[u8]],
+) -> anyhow::Result<Vec<(i32, String, String, String, String, i32, String)>> {
+    let seq_count = seqs.len();
+    let length = seqs[0].len();
+
+    // For each position, search for polymorphic sites
+    let mut bases_of: BTreeMap<usize, Vec<u8>> = BTreeMap::new();
+    for pos in 0..length {
+        let mut column = vec![];
+        for i in 0..seq_count {
+            column.push(seqs[i][pos].to_ascii_uppercase());
+        }
+
+        if column.iter().all(|e| BASES.contains(e)) {
+            // comparable += 1;
+            if column.iter().any(|e| *e != column[0]) {
+                // difference += 1;
+                bases_of.insert(pos, column);
+            }
+        }
+    }
+
+    let mut sites = vec![];
+    for pos in bases_of.keys().sorted() {
+        let bases = bases_of.get(pos).unwrap();
+
+        let tbase = bases.get(0).unwrap();
+
+        let class: Vec<_> = bases.iter().unique().collect();
+
+        if class.len() < 2 {
+            bail!("No subs found in pos {}", pos);
+        }
+
+        let (freq, occured, qbase) = if class.len() > 2 {
+            (-1, "unknown".to_string(), "".to_string())
+        } else {
+            let mut freq: i32 = 0;
+            let mut occured = "".to_string();
+            for base in bases {
+                if tbase != base {
+                    freq += 1;
+                    occured += "0";
+                } else {
+                    occured += "1";
+                }
+            }
+            let qbase = bases.iter().find(|e| *e != tbase).unwrap();
+
+            (freq, occured, String::from_utf8(vec![*qbase]).unwrap())
+        };
+
+        let tbase = String::from_utf8(vec![*tbase]).unwrap();
+        let mutant_to = if class.len() > 2 {
+            "".to_string()
+        } else {
+            format!("{}<->{}", tbase, qbase).to_string()
+        };
+
+        // pos, tbase, qbase, bases, mutant_to, freq, occured
+        sites.push((
+            (pos + 1) as i32,
+            tbase,
+            qbase,
+            String::from_utf8(bases.clone()).unwrap(),
+            mutant_to,
+            min(freq, seq_count as i32 - freq),
+            occured.to_string(),
+        ));
+    }
+
+    Ok(sites)
 }
 
 /// ```
