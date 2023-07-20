@@ -27,7 +27,8 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::slice::make_subcommand())
         .subcommand(cmd_fasr::split::make_subcommand())
         .subcommand(cmd_fasr::stat::make_subcommand())
-        .subcommand(cmd_fasr::subset::make_subcommand());
+        .subcommand(cmd_fasr::subset::make_subcommand())
+        .subcommand(cmd_fasr::variation::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
@@ -48,6 +49,7 @@ fn main() -> anyhow::Result<()> {
         Some(("split", sub_matches)) => cmd_fasr::split::execute(sub_matches),
         Some(("stat", sub_matches)) => cmd_fasr::stat::execute(sub_matches),
         Some(("subset", sub_matches)) => cmd_fasr::subset::execute(sub_matches),
+        Some(("variation", sub_matches)) => cmd_fasr::variation::execute(sub_matches),
         _ => unreachable!(),
     }
     .unwrap();
@@ -58,8 +60,9 @@ fn main() -> anyhow::Result<()> {
 // TODO: replace samtools
 // TODO: add more tools
 // TODO: simple - replace
-// TODO: hard - vars, xlsx
+// TODO: hard - xlsx
 // TODO: fasr refine --outgroup --quick
+// TODO: fasr variation --outgroup --indel
 // TODO: lav2link
 // TODO: paf2link
 // TODO: vcf

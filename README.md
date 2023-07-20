@@ -574,9 +574,11 @@ cargo run --bin fasr join \
     tests/fasr/S288cvsYJM789.slice.fas \
     tests/fasr/S288cvsSpar.slice.fas
 
+cargo run --bin fasr filter tests/fasr/example.fas --ge 10
+
 cargo run --bin fasr stat tests/fasr/example.fas --outgroup
 
-cargo run --bin fasr filter tests/fasr/example.fas --ge 10
+cargo run --bin fasr variation tests/fasr/example.fas
 
 ```
 

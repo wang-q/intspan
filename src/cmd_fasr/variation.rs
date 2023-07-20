@@ -3,8 +3,8 @@ use intspan::*;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
-    Command::new("stat")
-        .about("Extract a subset of species")
+    Command::new("variation")
+        .about("List variations (substitutions/indels)")
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
@@ -18,6 +18,12 @@ pub fn make_subcommand() -> Command {
                 .num_args(1..)
                 .index(1)
                 .help("Set the input files to use"),
+        )
+        .arg(
+            Arg::new("indel")
+                .long("indel")
+                .action(ArgAction::SetTrue)
+                .help("List indels"),
         )
         .arg(
             Arg::new("outgroup")
@@ -41,17 +47,20 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
-    let is_outgroup = args.get_flag("outgroup");
+    // let is_outgroup = args.get_flag("outgroup");
 
     let field_names = vec![
         "target",
-        "length",
-        "comparable",
-        "difference",
-        "gap",
-        "ambiguous",
-        "D",
-        "indel",
+        "chr",
+        "pos",
+        "chr_pos",
+        "range",
+        "tbase",
+        "qbase",
+        "bases",
+        "mutant_to",
+        "freq",
+        "occured",
     ];
 
     //----------------------------
@@ -63,39 +72,44 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut reader = reader(infile);
 
         while let Ok(block) = next_fas_block(&mut reader) {
-            let target = block.entries.first().unwrap().range().to_string();
-
             let mut seqs: Vec<&[u8]> = vec![];
             for entry in &block.entries {
                 seqs.push(entry.seq().as_ref());
             }
 
-            if is_outgroup {
-                seqs.pop();
+            // target range and sequence intspan
+            let trange = block.entries.first().unwrap().range().clone();
+            let t_ints_seq = seq_intspan(block.entries.first().unwrap().seq());
+
+            // pos, tbase, qbase, bases, mutant_to, freq, occured
+            //   0,     1,     2,     3,         4,    5,       6
+            let sites = get_subs(&seqs).unwrap();
+
+            for s in sites {
+                let chr = trange.chr();
+
+                let chr_pos =
+                    align_to_chr(&t_ints_seq, s.0, trange.start, trange.strand()).unwrap();
+                let var_chr_pos = format!("{}:{}", chr, chr_pos);
+
+                writer.write_all(
+                    format!(
+                        "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                        trange.to_string(),
+                        chr,
+                        s.0,
+                        chr_pos,
+                        var_chr_pos,
+                        s.1,
+                        s.2,
+                        s.3,
+                        s.4,
+                        s.5,
+                        s.6,
+                    )
+                    .as_ref(),
+                )?;
             }
-
-            // let (length, comparable, difference, gap, ambiguous, mean_d) = alignment_stat(&seqs);
-            let result = alignment_stat(&seqs);
-
-            let mut indel_ints = IntSpan::new();
-            for seq in seqs {
-                indel_ints.merge(&indel_intspan(seq));
-            }
-
-            writer.write_all(
-                format!(
-                    "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                    target,
-                    result.0,
-                    result.1,
-                    result.2,
-                    result.3,
-                    result.4,
-                    result.5,
-                    indel_ints.span_size(),
-                )
-                .as_ref(),
-            )?;
         }
     }
 
