@@ -63,8 +63,6 @@ fn main() -> anyhow::Result<()> {
 // TODO: hard - xlsx
 // TODO: fasr refine --outgroup --quick
 // TODO: fasr variation --outgroup --indel
-// TODO: lav2link
-// TODO: paf2link
 // TODO: vcf
 // TODO: match
 //  sparsemem -maxmatch -F -l %d -b -n -k 4 -threads 4 %s %s > %s
