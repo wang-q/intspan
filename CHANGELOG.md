@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.4 - 2023-07-20
+
 * Add `fasr filter`
 * Add `fasr refine`
 * Add `fasr variation`
