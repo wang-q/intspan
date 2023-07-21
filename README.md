@@ -563,6 +563,7 @@ spoa tests/fasr/refine.fasta -r 1
 
 cargo run --bin fasr consensus tests/fasr/example.fas
 cargo run --bin fasr consensus tests/fasr/refine.fas
+cargo run --bin fasr consensus tests/fasr/refine.fas --outgroup
 
 cargo run --bin fasr refine tests/fasr/refine.fas
 

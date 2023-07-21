@@ -8,10 +8,10 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 * Need `spoa` in $PATH
-* The original `poa` was unstable and sometimes crashed
+    * The original `poa` was unstable and sometimes crashed
 
 "###,
         )
@@ -30,6 +30,12 @@ pub fn make_subcommand() -> Command {
                 .help("Consensus name"),
         )
         .arg(
+            Arg::new("has_outgroup")
+                .long("outgroup")
+                .action(ArgAction::SetTrue)
+                .help("There are outgroups at the end of each block"),
+        )
+        .arg(
             Arg::new("outfile")
                 .long("outfile")
                 .short('o')
@@ -42,16 +48,27 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let cname = args.get_one::<String>("cname").unwrap();
+    let has_outgroup = args.get_flag("has_outgroup");
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 
         while let Ok(block) = next_fas_block(&mut reader) {
             let mut seqs = vec![];
+
+            let outgroup = if has_outgroup {
+                Some(block.entries.iter().last().unwrap())
+            } else {
+                None
+            };
+
             for entry in &block.entries {
                 seqs.push(entry.seq().as_ref());
             }
@@ -69,6 +86,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 writer.write_all(format!(">{}\n{}\n", range, cons).as_ref())?;
             } else {
                 writer.write_all(format!(">{}\n{}\n", cname, cons).as_ref())?;
+            }
+            if outgroup.is_some() {
+                writer.write_all(outgroup.unwrap().to_string().as_ref())?;
             }
 
             // end of a block
