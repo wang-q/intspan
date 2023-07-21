@@ -105,6 +105,7 @@ impl fmt::Display for FasEntry {
 pub struct FasBlock {
     pub entries: Vec<FasEntry>,
     pub names: Vec<String>,
+    pub headers: Vec<String>,
 }
 
 /// Get the next FasBlock out of the input.
@@ -155,22 +156,26 @@ pub fn parse_fas_block(
     }
     let mut block_entries: Vec<FasEntry> = vec![];
     let mut block_names: Vec<String> = vec![];
+    let mut block_headers: Vec<String> = vec![];
 
-    while let Some(header) = block_lines.pop_front() {
-        let range = Range::from_str(match header.starts_with('>') {
-            true => &header[1..],
-            false => header.as_str(),
-        });
+    while let Some(h) = block_lines.pop_front() {
+        let header = match h.starts_with('>') {
+            true => &h[1..],
+            false => h.as_str(),
+        };
+        let range = Range::from_str(header);
         let seq = block_lines.pop_front().unwrap().as_bytes().to_vec();
 
         let entry = FasEntry::from(&range, &seq);
         block_entries.push(entry);
         block_names.push(range.name().to_string());
+        block_headers.push(header.to_string());
     }
 
     Ok(FasBlock {
         entries: block_entries,
         names: block_names,
+        headers: block_headers,
     })
 }
 
@@ -236,6 +241,7 @@ pub fn parse_axt_block(
     }
     let mut block_entries: Vec<FasEntry> = vec![];
     let mut block_names: Vec<String> = vec![];
+    let mut block_headers: Vec<String> = vec![];
 
     // Three lines
     // Summary line
@@ -294,14 +300,17 @@ pub fn parse_axt_block(
     let f_entry = FasEntry::from(&f_range, &f_seq);
     block_entries.push(f_entry);
     block_names.push(f_range.name().to_string());
+    block_headers.push(f_range.to_string());
 
     let g_entry = FasEntry::from(&g_range, &g_seq);
     block_entries.push(g_entry);
     block_names.push(g_range.name().to_string());
+    block_headers.push(g_range.to_string());
 
     Ok(FasBlock {
         entries: block_entries,
         names: block_names,
+        headers: block_headers,
     })
 }
 

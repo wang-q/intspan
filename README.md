@@ -540,7 +540,10 @@ fasr concat tests/fasr/name.lst tests/fasr/example.fas
 fasr subset tests/fasr/name.lst tests/fasr/example.fas
 
 fasr link tests/fasr/example.fas --pair
-cargo run --bin fasr link tests/fasr/example.fas --best
+fasr link tests/fasr/example.fas --best
+
+cargo run --bin fasr replace tests/fasr/replace.tsv tests/fasr/example.fas
+cargo run --bin fasr replace tests/fasr/replace.fail.tsv tests/fasr/example.fas
 
 samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
 
