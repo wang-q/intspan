@@ -8,7 +8,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 * List of msa:
     * mafft

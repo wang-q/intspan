@@ -9,7 +9,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 "###,
         )
@@ -47,11 +47,14 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     let trim = *args.get_one::<i32>("trim").unwrap();
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 

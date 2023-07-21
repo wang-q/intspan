@@ -8,7 +8,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to maf files, .maf.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 "###,
         )
@@ -32,10 +32,13 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 

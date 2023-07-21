@@ -8,7 +8,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 "###,
         )
@@ -26,10 +26,10 @@ pub fn make_subcommand() -> Command {
                 .help("List indels"),
         )
         .arg(
-            Arg::new("outgroup")
+            Arg::new("has_outgroup")
                 .long("outgroup")
                 .action(ArgAction::SetTrue)
-                .help("Alignments have an outgroup"),
+                .help("There are outgroups at the end of each block"),
         )
         .arg(
             Arg::new("outfile")
@@ -47,7 +47,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
-    // let is_outgroup = args.get_flag("outgroup");
+    // let has_outgroup = args.get_flag("has_outgroup");
 
     let field_names = vec![
         "#target",

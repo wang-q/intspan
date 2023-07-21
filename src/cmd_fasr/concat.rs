@@ -9,9 +9,10 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <name.lst> is a file with a list of names to keep, one per line
-* Orders in the output file will following the ones in <name.lst>
+    * Orders in the output file will following the ones in <name.lst>
+
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 "###,
         )
@@ -48,14 +49,11 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let is_phylip = args.get_flag("phylip");
 
-    //----------------------------
-    // Load names
-    //----------------------------
     let needed = read_first_column(args.get_one::<String>("name.lst").unwrap());
 
     let mut seq_of: BTreeMap<String, String> = BTreeMap::new();
@@ -64,6 +62,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         seq_of.insert(name.to_string(), "".to_string());
     }
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 

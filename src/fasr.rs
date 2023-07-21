@@ -61,9 +61,10 @@ fn main() -> anyhow::Result<()> {
 
 // TODO: replace samtools
 // TODO: add more tools - xlsx
-// TODO: fasr refine --outgroup --quick
-// TODO: fasr variation --outgroup --indel
+// TODO: fasr refine --outgroup --quick --msa none
+// TODO: fasr variation --outgroup --indel --nosingle --nocomplex
 // TODO: fasr refine --parallel 8
+// TODO: fasr consensus --parallel 8
 // TODO: vcf
 // TODO: match
 //  sparsemem -maxmatch -F -l %d -b -n -k 4 -threads 4 %s %s > %s

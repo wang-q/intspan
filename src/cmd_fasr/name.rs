@@ -40,7 +40,7 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let is_count = args.get_flag("count");
@@ -48,6 +48,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let mut names: Vec<String> = vec![];
     let mut count_of: BTreeMap<String, i32> = BTreeMap::new();
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 

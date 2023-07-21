@@ -8,9 +8,10 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <name.lst> is a file with a list of names to keep, one per line
-* Orders in the output file will following the ones in <name.lst>
+    * Orders in the output file will following the ones in <name.lst>
+
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 "###,
         )

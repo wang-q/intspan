@@ -13,9 +13,10 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 * Dashes ('-') will be removed from sequences
+
 * If the target file exists, it will be overwritten
 
 "###,

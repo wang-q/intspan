@@ -8,7 +8,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to axt files, .axt.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 * We need the chr.sizes file for the query because without it we cannot compute
   the position on the negative strand

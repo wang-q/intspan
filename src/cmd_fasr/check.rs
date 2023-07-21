@@ -10,7 +10,7 @@ pub fn make_subcommand() -> Command {
 * <genome.fa> is a multi-fasta file contains genome sequences
 
 * <infiles> are paths to block fasta files, .fas.gz is supported
-* infile == stdin means reading from STDIN
+    * infile == stdin means reading from STDIN
 
 * Need `samtools` in $PATH
 
@@ -49,11 +49,14 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
     let genome = args.get_one::<String>("genome.fa").unwrap();
 
+    //----------------------------
+    // Operating
+    //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 
