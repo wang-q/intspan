@@ -31,5 +31,11 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+// Variable naming conventions
+// range: a Range object
+// rg: String
+// rgs: Vec<String>
+// rg_of: BTreeMap<String, String>
+
 // TODO: lav2link
 // TODO: paf2link
