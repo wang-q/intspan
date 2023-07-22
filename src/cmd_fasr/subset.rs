@@ -30,6 +30,12 @@ pub fn make_subcommand() -> Command {
                 .help("Set the input files to use"),
         )
         .arg(
+            Arg::new("is_required")
+                .long("required")
+                .action(ArgAction::SetTrue)
+                .help("Skip blocks not containing all the names"),
+        )
+        .arg(
             Arg::new("outfile")
                 .long("outfile")
                 .short('o')
@@ -45,6 +51,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
+    let is_required = args.get_flag("is_required");
 
     let needed = read_first_column(args.get_one::<String>("name.lst").unwrap());
 
@@ -54,8 +61,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     for infile in args.get_many::<String>("infiles").unwrap() {
         let mut reader = reader(infile);
 
-        while let Ok(block) = next_fas_block(&mut reader) {
+        'BLOCK: while let Ok(block) = next_fas_block(&mut reader) {
             let block_names = block.names;
+
+            if is_required {
+                for name in &needed {
+                    if !block_names.contains(name) {
+                        continue 'BLOCK;
+                    }
+                }
+            }
 
             for name in &needed {
                 if block_names.contains(name) {

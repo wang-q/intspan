@@ -538,6 +538,7 @@ fasr cover tests/fasr/example.fas --name S288c --trim 10
 fasr concat tests/fasr/name.lst tests/fasr/example.fas
 
 fasr subset tests/fasr/name.lst tests/fasr/example.fas
+cargo run --bin fasr subset tests/fasr/name.lst tests/fasr/refine.fas --required
 
 fasr link tests/fasr/example.fas --pair
 fasr link tests/fasr/example.fas --best

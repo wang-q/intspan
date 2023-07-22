@@ -164,6 +164,19 @@ fn command_subset() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 15);
     assert!(stdout.lines().next().unwrap().contains("Spar")); // >Spar.
 
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("subset")
+        .arg("tests/fasr/name.lst")
+        .arg("tests/fasr/example.fas")
+        .arg("--required")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 15);
+    assert!(stdout.lines().next().unwrap().contains("Spar")); // >Spar.
+
     Ok(())
 }
 
