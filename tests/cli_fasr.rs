@@ -653,9 +653,9 @@ fn command_pl_p2m() -> anyhow::Result<()> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().count(), 14);
+    assert_eq!(stdout.lines().count(), 13);
     assert!(&tempdir.path().join("merge.json").is_file());
-    assert!(&tempdir.path().join("join.refine.fas").is_file());
+    assert!(&tempdir.path().join("join.subset.fas").is_file());
 
     tempdir.close()?;
 
