@@ -59,7 +59,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         if rgs.is_empty() {
             continue;
         } else {
-            let rg = rgs.get(0).unwrap().to_string();
+            let rg = rgs.first().unwrap().to_string();
             let replaces = rgs
                 .iter()
                 .skip(1)

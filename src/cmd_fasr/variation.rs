@@ -95,7 +95,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 writer.write_all(
                     format!(
                         "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                        trange.to_string(),
+                        trange,
                         chr,
                         s.0,
                         chr_pos,
