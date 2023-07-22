@@ -2,6 +2,15 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `fasr replace`
+* Add `fasr pl-p2m`
+
+* Add --outgroup to `fasr consensus`
+* Add --required to `fasr subset`
+
+* Implementing `--parallel` with `crossbeam`
+    * for `fasr consensus`
+
 ## 0.7.4 - 2023-07-20
 
 * Add `fasr filter`
