@@ -95,17 +95,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 writer.write_all(
                     format!(
                         "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                        trange,
-                        chr,
-                        s.0,
-                        chr_pos,
-                        var_chr_pos,
-                        s.1,
-                        s.2,
-                        s.3,
-                        s.4,
-                        s.5,
-                        s.6,
+                        trange, chr, s.0, chr_pos, var_chr_pos, s.1, s.2, s.3, s.4, s.5, s.6,
                     )
                     .as_ref(),
                 )?;

@@ -18,6 +18,8 @@ pub fn make_subcommand() -> Command {
 
 * All operations are based on the *first* species name of the *first* input file
 
+* This pipeline depends on three binaries, `fasr`, `spanr` and the `msa` you specify
+
 "###,
         )
         .arg(
@@ -28,10 +30,11 @@ pub fn make_subcommand() -> Command {
                 .help("Set the input files to use"),
         )
         .arg(
-            Arg::new("name")
-                .long("name")
+            Arg::new("msa")
+                .long("msa")
                 .num_args(1)
-                .help("According to this species. Default is the first one"),
+                .default_value("clustalw")
+                .help("Aligning program"),
         )
         .arg(
             Arg::new("outdir")
@@ -48,6 +51,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Args
     //----------------------------
+    let msa = args.get_one::<String>("msa").unwrap();
     let outdir = args.get_one::<String>("outdir").unwrap();
     fs::create_dir_all(outdir)?;
 
@@ -153,7 +157,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     run_cmd!(echo "==> fasr refine")?;
     {
         run_cmd!(
-            ${fasr} refine join.filter.fas -o join.refine.fas
+            ${fasr} refine --msa ${msa} join.filter.fas -o join.refine.fas
         )?;
     }
 
