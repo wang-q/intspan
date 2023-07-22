@@ -1,14 +1,16 @@
 use crate::{IntSpan, Range};
 use anyhow::anyhow;
 use flate2::read::GzDecoder;
+use path_clean::PathClean;
 use serde_json::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::ffi::OsStr;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, BufWriter, Read, Write};
-use std::path::Path;
+use std::io::{BufRead, BufReader, BufWriter, Read, Write};
+use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::{env, io};
 
 /// ```
 /// use std::io::BufRead;
@@ -392,6 +394,34 @@ pub fn get_seq_faidx(file: &str, range: &str) -> anyhow::Result<String> {
     }
 
     Ok(seq)
+}
+
+pub fn basename(path: impl AsRef<Path>) -> io::Result<String> {
+    let path = path.as_ref();
+
+    let basename = path
+        .file_stem()
+        .and_then(OsStr::to_str)
+        .unwrap()
+        .split('.')
+        .next()
+        .unwrap()
+        .to_string();
+
+    Ok(basename)
+}
+
+pub fn absolute_path(path: impl AsRef<Path>) -> io::Result<PathBuf> {
+    let path = path.as_ref();
+
+    let absolute_path = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        env::current_dir()?.join(path)
+    }
+    .clean();
+
+    Ok(absolute_path)
 }
 
 #[cfg(test)]

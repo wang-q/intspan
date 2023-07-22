@@ -22,6 +22,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::link::make_subcommand())
         .subcommand(cmd_fasr::maf2fas::make_subcommand())
         .subcommand(cmd_fasr::name::make_subcommand())
+        .subcommand(cmd_fasr::pl_p2m::make_subcommand())
         .subcommand(cmd_fasr::refine::make_subcommand())
         .subcommand(cmd_fasr::replace::make_subcommand())
         .subcommand(cmd_fasr::separate::make_subcommand())
@@ -44,6 +45,7 @@ fn main() -> anyhow::Result<()> {
         Some(("link", sub_matches)) => cmd_fasr::link::execute(sub_matches),
         Some(("maf2fas", sub_matches)) => cmd_fasr::maf2fas::execute(sub_matches),
         Some(("name", sub_matches)) => cmd_fasr::name::execute(sub_matches),
+        Some(("pl-p2m", sub_matches)) => cmd_fasr::pl_p2m::execute(sub_matches),
         Some(("refine", sub_matches)) => cmd_fasr::refine::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_fasr::replace::execute(sub_matches),
         Some(("separate", sub_matches)) => cmd_fasr::separate::execute(sub_matches),

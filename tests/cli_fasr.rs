@@ -630,3 +630,34 @@ fn command_filter() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_pl_p2m() -> anyhow::Result<()> {
+    match which::which("clustaw") {
+        Err(_) => return Ok(()),
+        Ok(_) => {}
+    }
+
+    let tempdir = TempDir::new().unwrap();
+    let tempdir_str = tempdir.path().to_str().unwrap();
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("pl-p2m")
+        .arg("tests/fasr/S288cvsRM11_1a.slice.fas")
+        .arg("tests/fasr/S288cvsYJM789.slice.fas")
+        .arg("tests/fasr/S288cvsSpar.slice.fas")
+        .arg("-o")
+        .arg(tempdir_str)
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 14);
+    assert!(&tempdir.path().join("merge.json").is_file());
+    assert!(&tempdir.path().join("join.refine.fas").is_file());
+
+    tempdir.close()?;
+
+    Ok(())
+}

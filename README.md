@@ -529,6 +529,8 @@ fasr maf2fas tests/fasr/example.maf
 
 fasr axt2fas tests/fasr/RM11_1a.chr.sizes tests/fasr/example.axt --qname RM11_1a
 
+cargo run --bin fasr filter tests/fasr/example.fas --ge 10
+
 fasr name tests/fasr/example.fas --count
 
 fasr cover tests/fasr/example.fas
@@ -579,11 +581,11 @@ cargo run --bin fasr join \
     tests/fasr/S288cvsYJM789.slice.fas \
     tests/fasr/S288cvsSpar.slice.fas
 
-cargo run --bin fasr filter tests/fasr/example.fas --ge 10
-
 cargo run --bin fasr stat tests/fasr/example.fas --outgroup
 
 cargo run --bin fasr variation tests/fasr/example.fas
+
+cargo run --bin fasr pl-p2m tests/fasr/S288cvsRM11_1a.slice.fas tests/fasr/S288cvsSpar.slice.fas
 
 ```
 
