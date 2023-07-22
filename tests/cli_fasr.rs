@@ -452,6 +452,8 @@ fn command_consensus() -> anyhow::Result<()> {
         .arg("consensus")
         .arg("tests/fasr/refine.fas")
         .arg("--outgroup")
+        .arg("--parallel")
+        .arg("2")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
