@@ -616,6 +616,8 @@ pub fn align_to_chr(ints: &IntSpan, pos: i32, chr_start: i32, strand: &str) -> a
     Ok(chr_pos)
 }
 
+/// Trims pure dash regions
+///
 /// ```
 /// let mut seqs = vec![
 ///     "AAAATTTTTG".to_string(),
@@ -655,9 +657,235 @@ pub fn trim_pure_dash(seqs: &mut Vec<String>) {
         }
     }
 
+    // trim all segments in trim_region
     for (lower, upper) in trim_region.spans().iter().rev() {
         for i in 0..seq_count {
             seqs[i].replace_range((*lower as usize - 1)..*upper as usize, "");
         }
     }
+}
+
+/// Trims outgroup-only regions
+///
+/// Iff. intersect is superset of union
+///     T G----C
+///     Q G----C
+///     O GAAAAC
+///
+/// ```
+/// let mut seqs = vec![
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// assert_eq!(seqs[0].len(), 10);
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// assert_eq!(seqs[0].len(), 7);
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TTTGG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// assert_eq!(seqs[0].len(), 9);
+///
+/// let mut seqs = vec![
+///     "AAA--TT-GG".to_string(),
+///     "AAAATTT-GG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// assert_eq!(seqs[0].len(), 9);
+///
+/// let mut seqs = vec![
+///     "-AA--TT-GG".to_string(),
+///     "-AAA-TT-GG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// assert_eq!(seqs[0].len(), 8);
+///
+/// ```
+pub fn trim_outgroup(seqs: &mut Vec<String>) {
+    let seq_count = seqs.len();
+
+    assert!(seq_count >= 3, "Need three or more sequences");
+
+    // Last seq is the outgroup
+    let (union_ints, intersect_ints) = align_indel_ints(seqs, seq_count - 1);
+
+    // find trim_region
+    let mut trim_region = IntSpan::new();
+    for (lower, upper) in union_ints.spans() {
+        let ints = IntSpan::from_pair(lower, upper);
+        if intersect_ints.superset(&ints) {
+            trim_region.merge(&ints);
+        }
+    }
+
+    // trim all segments in trim_region
+    for (lower, upper) in trim_region.spans().iter().rev() {
+        for i in 0..seq_count {
+            seqs[i].replace_range((*lower as usize - 1)..*upper as usize, "");
+        }
+    }
+}
+
+/// Records complex ingroup indels (ingroup-outgroup complex indels are not identified here)
+///
+/// After trim_outgroup(), All ingroup intersect ints are parts of complex indels
+/// intersect 4-5, union 2-5
+///     T GGA--C
+///     Q G----C
+///     O GGAGAC
+/// result, complex_region 2-3
+///     T GGAC
+///     Q G--C
+///     O GGAC
+///
+/// ```
+/// let mut seqs = vec![
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 10);
+/// assert_eq!(complex.to_string(), "-");
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 7);
+/// assert_eq!(complex.to_string(), "-");
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TTTGG".to_string(),
+///     "AAA--TTTGG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 8);
+/// assert_eq!(complex.to_string(), "3");
+///
+/// let mut seqs = vec![
+///     "AAA--TT-GG".to_string(),
+///     "AAAATTT-GG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 9);
+/// assert_eq!(complex.to_string(), "-");
+///
+/// let mut seqs = vec![
+///     "-AA--TT-GG".to_string(),
+///     "-AAA-TT-GG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 7);
+/// assert_eq!(complex.to_string(), "3");
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TT-GG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 8);
+/// assert_eq!(complex.to_string(), "3");
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TT-GG".to_string(),
+///     "AAA--TT--G".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 8);
+/// assert_eq!(complex.to_string(), "3");
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TT--G".to_string(),
+///     "AAA--TT-GG".to_string(),
+/// ];
+/// intspan::trim_outgroup(&mut seqs);
+/// let complex = intspan::trim_complex_indel(&mut seqs);
+/// assert_eq!(seqs[0].len(), 8);
+/// assert_eq!(complex.to_string(), "3");
+///
+/// ```
+pub fn trim_complex_indel(seqs: &mut Vec<String>) -> String {
+    let seq_count = seqs.len();
+
+    assert!(seq_count >= 3, "Need three or more sequences");
+
+    // Last seq is the outgroup
+    let (union_ints, intersect_ints) = align_indel_ints(seqs, seq_count - 1);
+
+    // find ingroup complex_region
+    let mut complex_region = IntSpan::new();
+    for (lower, upper) in intersect_ints.spans().iter().rev() {
+        let sub_intersect_ints = IntSpan::from_pair(*lower, *upper);
+
+        // trim sequences, including outgroup
+        for i in 0..seq_count {
+            seqs[i].replace_range((*lower as usize - 1)..*upper as usize, "");
+        }
+
+        // add to complex_region
+        for sub_union_ints in union_ints.intses() {
+            if sub_union_ints.superset(&sub_intersect_ints) {
+                complex_region.merge(&sub_union_ints);
+            }
+        }
+
+        // modify all related set
+        // intersect_ints is not affected
+        // union_ints is affected
+        complex_region = complex_region.banish(*lower, *upper);
+    }
+
+    return complex_region.to_string();
+}
+
+fn align_indel_ints(seqs: &mut Vec<String>, count: usize) -> (IntSpan, IntSpan) {
+    let mut union_ints = IntSpan::new();
+    let mut intersect_ints = IntSpan::new();
+
+    for i in 0..count {
+        let ints = indel_intspan(seqs[i].as_bytes().to_vec().as_ref());
+
+        if union_ints.is_empty() {
+            union_ints.merge(&ints);
+        } else {
+            union_ints = union_ints.union(&ints);
+        }
+
+        if intersect_ints.is_empty() {
+            intersect_ints.merge(&ints);
+        } else {
+            intersect_ints = intersect_ints.intersect(&ints);
+        }
+    }
+
+    (union_ints, intersect_ints)
 }
