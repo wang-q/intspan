@@ -1124,6 +1124,28 @@ impl IntSpan {
 
         new
     }
+
+    /// Removes elements inside the range, and all elements greater than this range are shifted
+    /// towards the negative direction
+    pub fn banish(&self, start: i32, end: i32) -> Self {
+        let mut new = IntSpan::new();
+        let remove_len = end - start + 1;
+
+        // No elements in the tmp ints intersect with the range
+        let ints = self.diff(&IntSpan::from_pair(start, end));
+        for (lower, upper) in ints.spans().iter().rev() {
+            if *upper < start {
+                new.add_pair(*lower, *upper);
+            }
+            else if *lower > end {
+                new.add_pair(*lower - remove_len, *upper - remove_len);
+            } else {
+                panic!("Something went wrong while banishing {}-{}", start, end);
+            }
+        }
+
+        new
+    }
 }
 
 #[cfg(test)]
@@ -1238,6 +1260,27 @@ mod span {
 
             // fill
             assert_eq!(set.fill(n).to_string(), exp_fill);
+        }
+    }
+
+    #[test]
+    fn banish() {
+        // runlist n expExcise expFill
+        let tests = vec![
+            ("-", 3 , 3, "-"),
+            ("1", 3 , 3, "1"),
+            ("5", 3 , 3, "4"),
+            ("1,3,5", 3 , 3, "1,4"),
+            ("1,3-5", 3 , 3, "1,3-4"),
+            ("1-3,5,8-11", 3 , 3, "1-2,4,7-10"),
+            ("1-3,5,8-11", 3 , 5, "1-2,5-8"),
+            ("1-3,5,8-11", -5 , -3, "-2-0,2,5-8"),
+        ];
+
+        for (runlist, start, end, expected) in tests {
+            let ints = IntSpan::from(runlist);
+
+            assert_eq!(ints.banish(start, end).to_string(), expected);
         }
     }
 }
