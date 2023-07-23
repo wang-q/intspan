@@ -430,9 +430,17 @@ fn command_split_to() -> anyhow::Result<()> {
 
 #[test]
 fn command_consensus() -> anyhow::Result<()> {
-    match which::which("spoa") {
-        Err(_) => return Ok(()),
-        Ok(_) => {}
+    let mut bin = String::new();
+    for e in &["spoa"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+    if bin.is_empty() {
+        return Ok(());
+    } else {
+        eprintln!("bin = {:#?}", bin);
     }
 
     let mut cmd = Command::cargo_bin("fasr")?;
@@ -466,9 +474,17 @@ fn command_consensus() -> anyhow::Result<()> {
 
 #[test]
 fn command_refine() -> anyhow::Result<()> {
-    match which::which("clustaw") {
-        Err(_) => return Ok(()),
-        Ok(_) => {}
+    let mut bin = String::new();
+    for e in &["clustalw", "clustal-w", "clustalw2"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+    if bin.is_empty() {
+        return Ok(());
+    } else {
+        eprintln!("bin = {:#?}", bin);
     }
 
     let mut cmd = Command::cargo_bin("fasr")?;
@@ -477,6 +493,22 @@ fn command_refine() -> anyhow::Result<()> {
         .arg("tests/fasr/refine.fas")
         .arg("--msa")
         .arg("clustalw")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 18);
+    assert!(stdout.contains("---"), "dashes added");
+
+    // --parallel
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/refine.fas")
+        .arg("--msa")
+        .arg("clustalw")
+        .arg("--parallel")
+        .arg("2")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
