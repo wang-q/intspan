@@ -46,7 +46,7 @@ pub fn make_subcommand() -> Command {
                 .value_parser(value_parser!(usize))
                 .num_args(1)
                 .default_value("1")
-                .help("Running in parallel mode"),
+                .help("Running in parallel mode, the number of threads"),
         )
         .arg(
             Arg::new("outfile")
