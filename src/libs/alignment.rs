@@ -286,6 +286,8 @@ pub fn seq_intspan(seq: &[u8]) -> IntSpan {
     IntSpan::from_pair(1, seq.len() as i32).diff(&indel_intspan(seq))
 }
 
+/// Returns Strings to avoid lifetime issues
+///
 /// ```
 /// match which::which("clustalw") {
 ///     Ok(_) => {
@@ -612,4 +614,50 @@ pub fn align_to_chr(ints: &IntSpan, pos: i32, chr_start: i32, strand: &str) -> a
     };
 
     Ok(chr_pos)
+}
+
+/// ```
+/// let mut seqs = vec![
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+///     "AAAATTTTTG".to_string(),
+/// ];
+/// intspan::trim_pure_dash(&mut seqs);
+/// assert_eq!(seqs[0].len(), 10);
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+///     "-AA--TTTGG".to_string(),
+/// ];
+/// intspan::trim_pure_dash(&mut seqs);
+/// assert_eq!(seqs[0].len(), 7);
+///
+/// let mut seqs = vec![
+///     "-AA--TTTGG".to_string(),
+///     "-AAA-TTTGG".to_string(),
+///     "AAA--TTTTG".to_string(),
+/// ];
+/// intspan::trim_pure_dash(&mut seqs);
+/// assert_eq!(seqs[0].len(), 9);
+///
+/// ```
+pub fn trim_pure_dash(seqs: &mut Vec<String>) {
+    let mut trim_region = IntSpan::new();
+    let seq_count = seqs.len();
+
+    for seq in seqs.iter() {
+        let ints = indel_intspan(seq.as_bytes().to_vec().as_ref());
+        if trim_region.is_empty() {
+            trim_region.merge(&ints);
+        } else {
+            trim_region = trim_region.intersect(&ints);
+        }
+    }
+
+    for (lower, upper) in trim_region.spans().iter().rev() {
+        for i in 0..seq_count {
+            seqs[i].replace_range((*lower as usize - 1)..*upper as usize, "");
+        }
+    }
 }
