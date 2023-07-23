@@ -231,13 +231,22 @@ Commands:
   check      Check genome locations in block fasta headers
   concat     Concatenate sequence pieces of the same species
   consensus  Generate consensus sequences by POA
+  cover      Output covers on chromosomes
   create     Create block fasta files from links of ranges
+  filter     Filter blocks, and can also be used as a formatter
+  join       Join multiple block fasta files by a common target
   link       Output bi/multi-lateral range links
   maf2fas    Convert maf to block fasta
   name       Output all species names
+  pl-p2m     Pipeline - pairwise alignments to multiple alignments
+  refine     Realign files with external programs and trim unwanted regions
+  replace    Concatenate sequence pieces of the same species
   separate   Separate block fasta files by species
+  slice      Extract alignment slices
   split      Split block fasta files to per-alignment/chromosome fasta files
+  stat       Extract a subset of species
   subset     Extract a subset of species
+  variation  List variations (substitutions/indels)
   help       Print this message or the help of the given subcommand(s)
 
 Options:

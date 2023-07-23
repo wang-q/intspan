@@ -10,6 +10,7 @@
 
 * Implementing `--parallel` with `crossbeam`
     * for `fasr consensus`
+    * for `fasr refine`
 
 ## 0.7.4 - 2023-07-20
 
