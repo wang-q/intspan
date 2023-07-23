@@ -320,6 +320,45 @@ impl IntSpan {
 
         ranges
     }
+
+    /// Returns the runs in IntSpan, as a vector of String
+    ///
+    /// ```
+    /// let ints = intspan::IntSpan::from("1-2,4-7");
+    /// assert_eq!(ints.runs(), vec!["1-2".to_string(), "4-7".to_string()]);
+    /// ```
+    pub fn runs(&self) -> Vec<String> {
+        let mut runs: Vec<String> = vec![];
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            runs.push(Self::from_pair(lower, upper).to_string());
+        }
+
+        runs
+    }
+
+    /// Returns the runs in IntSpan, as a vector of IntSpan
+    ///
+    /// ```
+    /// let ints = intspan::IntSpan::from("1-2,4-7");
+    /// assert_eq!(ints.intses().iter().map(|e| e.to_string()).collect::<Vec<String>>(),
+    ///     vec!["1-2".to_string(), "4-7".to_string()]);
+    /// ```
+    pub fn intses(&self) -> Vec<IntSpan> {
+        let mut intses: Vec<IntSpan> = vec![];
+
+        for i in 0..self.span_size() {
+            let lower = *self.edges.get(i * 2).unwrap();
+            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
+
+            intses.push(Self::from_pair(lower, upper));
+        }
+
+        intses
+    }
 }
 
 #[cfg(test)]
@@ -1136,8 +1175,7 @@ impl IntSpan {
         for (lower, upper) in ints.spans().iter().rev() {
             if *upper < start {
                 new.add_pair(*lower, *upper);
-            }
-            else if *lower > end {
+            } else if *lower > end {
                 new.add_pair(*lower - remove_len, *upper - remove_len);
             } else {
                 panic!("Something went wrong while banishing {}-{}", start, end);
@@ -1267,14 +1305,14 @@ mod span {
     fn banish() {
         // runlist n expExcise expFill
         let tests = vec![
-            ("-", 3 , 3, "-"),
-            ("1", 3 , 3, "1"),
-            ("5", 3 , 3, "4"),
-            ("1,3,5", 3 , 3, "1,4"),
-            ("1,3-5", 3 , 3, "1,3-4"),
-            ("1-3,5,8-11", 3 , 3, "1-2,4,7-10"),
-            ("1-3,5,8-11", 3 , 5, "1-2,5-8"),
-            ("1-3,5,8-11", -5 , -3, "-2-0,2,5-8"),
+            ("-", 3, 3, "-"),
+            ("1", 3, 3, "1"),
+            ("5", 3, 3, "4"),
+            ("1,3,5", 3, 3, "1,4"),
+            ("1,3-5", 3, 3, "1,3-4"),
+            ("1-3,5,8-11", 3, 3, "1-2,4,7-10"),
+            ("1-3,5,8-11", 3, 5, "1-2,5-8"),
+            ("1-3,5,8-11", -5, -3, "-2-0,2,5-8"),
         ];
 
         for (runlist, start, end, expected) in tests {
