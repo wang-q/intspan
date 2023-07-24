@@ -648,14 +648,16 @@ pub fn trim_pure_dash(seqs: &mut Vec<String>) {
     let mut trim_region = IntSpan::new();
     let seq_count = seqs.len();
 
-    for seq in seqs.iter() {
+    for (i, seq) in seqs.iter().enumerate() {
         let ints = indel_intspan(seq.as_bytes().to_vec().as_ref());
-        if trim_region.is_empty() {
+        if i == 0 {
             trim_region.merge(&ints);
         } else {
             trim_region = trim_region.intersect(&ints);
         }
     }
+
+    // eprintln!("trim_region = {:#?}", trim_region.to_string());
 
     // trim all segments in trim_region
     for (lower, upper) in trim_region.spans().iter().rev() {
@@ -663,6 +665,25 @@ pub fn trim_pure_dash(seqs: &mut Vec<String>) {
             seqs[i].replace_range((*lower as usize - 1)..*upper as usize, "");
         }
     }
+}
+
+fn align_indel_ints(seqs: &mut Vec<String>, count: usize) -> (IntSpan, IntSpan) {
+    let mut union_ints = IntSpan::new();
+    let mut intersect_ints = IntSpan::new();
+
+    for i in 0..count {
+        let ints = indel_intspan(seqs[i].as_bytes().to_vec().as_ref());
+
+        if i == 0 {
+            union_ints.merge(&ints);
+            intersect_ints.merge(&ints);
+        } else {
+            union_ints = union_ints.union(&ints);
+            intersect_ints = intersect_ints.intersect(&ints);
+        }
+    }
+
+    (union_ints, intersect_ints)
 }
 
 /// Trims outgroup-only regions
@@ -867,25 +888,129 @@ pub fn trim_complex_indel(seqs: &mut Vec<String>) -> String {
     return complex_region.to_string();
 }
 
-fn align_indel_ints(seqs: &mut Vec<String>, count: usize) -> (IntSpan, IntSpan) {
-    let mut union_ints = IntSpan::new();
-    let mut intersect_ints = IntSpan::new();
+/// Trims head and tail indels.
+/// Returns a Vecter of Tuple(head, tail) corresponding to the bases deleted from each sequence
+///
+/// If chop length set to 1, the first indel will be trimmed.
+/// Length set to 5 and the second indel will also be trimmed.
+/// GAAA--C...
+/// --AAAGC...
+/// GAAAAGC...
+///
+/// ```
+/// let seqs = vec![
+///     "-AA--TTTGGCGCGCGCGCGCGCGCGC".to_string(),
+///     "-AAAATT--GCGCGCGCGCGCGCGC-C".to_string(),
+///     "AAA--TT-GGCGCGCGCGCGCGCGCGC".to_string(),
+/// ];
+/// let ranges = vec![
+///     intspan::Range::from_str("I(+):101-124"),
+///     intspan::Range::from_str("1:1-23"),
+///     intspan::Range::from_str("a(-):101-124"),
+/// ];
+///
+/// let mut seqc = seqs.clone();
+/// let mut rangec = ranges.clone();
+/// intspan::trim_head_tail(&mut seqc, &mut rangec, 0);
+/// assert_eq!(seqc[0].len(), 27);
+/// assert_eq!(rangec[0].start, 101);
+/// assert_eq!(rangec[1].start, 1);
+///
+/// let mut seqc = seqs.clone();
+/// let mut rangec = ranges.clone();
+/// intspan::trim_head_tail(&mut seqc, &mut rangec, 1); // head 1
+/// assert_eq!(seqc[0].len(), 26);
+/// assert_eq!(rangec[0].start, 101);
+/// assert_eq!(rangec[1].start, 1);
+/// assert_eq!(rangec[2].start, 101);
+/// assert_eq!(rangec[2].end, 123);
+///
+/// let mut seqc = seqs.clone();
+/// let mut rangec = ranges.clone();
+/// intspan::trim_head_tail(&mut seqc, &mut rangec, 2); // head 1, tail 2
+/// assert_eq!(seqc[0].len(), 24);
+/// assert_eq!(rangec[0].start, 101);
+/// assert_eq!(rangec[0].end, 122);
+/// assert_eq!(rangec[1].start, 1);
+/// assert_eq!(rangec[1].end, 22);
+/// assert_eq!(rangec[2].start, 103);
+/// assert_eq!(rangec[2].end, 123);
+///
+/// let mut seqc = seqs.clone();
+/// let mut rangec = ranges.clone();
+/// intspan::trim_head_tail(&mut seqc, &mut rangec, 4); // head 5, tail 2
+/// assert_eq!(seqc[0].len(), 20);
+/// assert_eq!(rangec[0].start, 103);
+/// assert_eq!(rangec[0].end, 122);
+/// assert_eq!(rangec[1].start, 5);
+/// assert_eq!(rangec[1].end, 22);
+/// assert_eq!(rangec[2].start, 103);
+/// assert_eq!(rangec[2].end, 121);
+///
+/// ```
+pub fn trim_head_tail(seqs: &mut Vec<String>, ranges: &mut Vec<Range>, chop: usize) {
+    let seq_count = seqs.len();
 
-    for i in 0..count {
-        let ints = indel_intspan(seqs[i].as_bytes().to_vec().as_ref());
+    if chop == 0 {
+        return;
+    }
 
-        if union_ints.is_empty() {
-            union_ints.merge(&ints);
-        } else {
-            union_ints = union_ints.union(&ints);
-        }
+    // chop region covers all
+    let align_len = seqs.first().unwrap().len();
+    if chop * 2 >= align_len {
+        return;
+    }
 
-        if intersect_ints.is_empty() {
-            intersect_ints.merge(&ints);
-        } else {
-            intersect_ints = intersect_ints.intersect(&ints);
+    // include all seqs
+    let (indel_ints, _) = align_indel_ints(seqs, seq_count);
+
+    // There're no indels at all
+    if indel_ints.is_empty() {
+        return;
+    }
+
+    // head indels to be trimmed
+    {
+        let head_ints = IntSpan::from_pair(1, chop as i32);
+        let head_indel_ints = indel_ints.find_islands_ints(&head_ints);
+
+        if !head_indel_ints.is_empty() {
+            for _ in 1..=(head_indel_ints.max() as usize) {
+                for i in 0..seq_count {
+                    let base = seqs[i].remove(0);
+                    if base != '-' {
+                        if ranges[i].strand == "+".to_string() || ranges[i].strand.is_empty() {
+                            ranges[i].start += 1;
+                        } else {
+                            ranges[i].end -= 1;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    (union_ints, intersect_ints)
+    // tail indels to be trimmed
+    {
+        let tail_ints = IntSpan::from_pair((align_len - chop + 1) as i32, align_len as i32);
+        let tail_indel_ints = indel_ints.find_islands_ints(&tail_ints);
+
+        if !tail_indel_ints.is_empty() {
+            for _ in (tail_indel_ints.min() as usize)..=align_len {
+                // record current length
+                let mut cur_len = seqs.first().unwrap().len();
+                for i in 0..seq_count {
+                    let base = seqs[i].remove(cur_len - 1);
+                    if base != '-' {
+                        if ranges[i].strand == "+".to_string() || ranges[i].strand.is_empty() {
+                            ranges[i].end -= 1;
+                        } else {
+                            ranges[i].start += 1;
+                        }
+                    }
+                    cur_len -= 1;
+                }
+            }
+        }
+    }
 }
