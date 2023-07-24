@@ -946,6 +946,38 @@ pub fn trim_complex_indel(seqs: &mut Vec<String>) -> String {
 /// assert_eq!(rangec[1].end, 22);
 /// assert_eq!(rangec[2].start, 103);
 /// assert_eq!(rangec[2].end, 121);
+/// ```
+///
+/// ```
+/// let seqs = vec![
+///     "-AA--TTTGGCATGCATG123456789".to_string(),
+///     "-AAAATT--GCATGCATG1234567-9".to_string(),
+///     "AAA--TT-GGCATGCATG123456789".to_string(),
+///     "AAA--TT-GGCATGCATG1234567--".to_string(),
+/// ];
+/// let ranges = vec![
+///     intspan::Range::from_str("I(+):101-124"),
+///     intspan::Range::from_str("1:1-23"),
+///     intspan::Range::from_str("a(-):101-124"),
+///     intspan::Range::from_str("b(-):1-22"),
+/// ];
+///
+/// let mut seqc = seqs.clone();
+/// let mut rangec = ranges.clone();
+/// intspan::trim_head_tail(&mut seqc, &mut rangec, 4); // head 5, tail 2
+/// assert_eq!(seqc[0].len(), 20);
+/// assert_eq!(seqc[0], "TTTGGCATGCATG1234567".to_string());
+/// assert_eq!(rangec[0].start, 103);
+/// assert_eq!(rangec[0].end, 122);
+/// assert_eq!(seqc[1], "TT--GCATGCATG1234567".to_string());
+/// assert_eq!(rangec[1].start, 5);
+/// assert_eq!(rangec[1].end, 22);
+/// assert_eq!(seqc[2], "TT-GGCATGCATG1234567".to_string());
+/// assert_eq!(rangec[2].start, 103);
+/// assert_eq!(rangec[2].end, 121);
+/// assert_eq!(seqc[3], "TT-GGCATGCATG1234567".to_string());
+/// assert_eq!(rangec[3].start, 1, "negative strand");
+/// assert_eq!(rangec[3].end, 19);
 ///
 /// ```
 pub fn trim_head_tail(seqs: &mut Vec<String>, ranges: &mut Vec<Range>, chop: usize) {
@@ -998,7 +1030,7 @@ pub fn trim_head_tail(seqs: &mut Vec<String>, ranges: &mut Vec<Range>, chop: usi
         if !tail_indel_ints.is_empty() {
             for _ in (tail_indel_ints.min() as usize)..=align_len {
                 // record current length
-                let mut cur_len = seqs.first().unwrap().len();
+                let cur_len = seqs.first().unwrap().len();
                 for i in 0..seq_count {
                     let base = seqs[i].remove(cur_len - 1);
                     if base != '-' {
@@ -1008,7 +1040,6 @@ pub fn trim_head_tail(seqs: &mut Vec<String>, ranges: &mut Vec<Range>, chop: usi
                             ranges[i].start += 1;
                         }
                     }
-                    cur_len -= 1;
                 }
             }
         }
