@@ -1,6 +1,7 @@
 use clap::*;
 use crossbeam::channel::bounded;
 use intspan::*;
+use std::string::String;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
@@ -15,12 +16,13 @@ pub fn make_subcommand() -> Command {
     * mafft
     * muscle
     * clustalw
+    * none: means skip realigning
 
 * For aligned files converted from .axt or .maf, we can use the `--quick` option
   to align only indel-adjacent regions
 
 * Running in parallel mode with 1 reader, 1 writer and the corresponding number of workers
-    * The order of output may be different from the original
+    * The order of blocks in output may be different from the original
 
 "###,
         )
@@ -37,6 +39,20 @@ pub fn make_subcommand() -> Command {
                 .num_args(1)
                 .default_value("clustalw")
                 .help("Aligning program"),
+        )
+        .arg(
+            Arg::new("has_outgroup")
+                .long("outgroup")
+                .action(ArgAction::SetTrue)
+                .help("There are outgroups at the end of each block"),
+        )
+        .arg(
+            Arg::new("chop")
+                .long("chop")
+                .value_parser(value_parser!(usize))
+                .num_args(1)
+                .default_value("0")
+                .help("Chop head and tail indels"),
         )
         .arg(
             Arg::new("parallel")
@@ -89,18 +105,42 @@ fn proc_block(block: &FasBlock, args: &ArgMatches) -> anyhow::Result<String> {
     // Args
     //----------------------------
     let msa = args.get_one::<String>("msa").unwrap();
+    let has_outgroup = args.get_flag("has_outgroup");
+    let chop = *args.get_one::<usize>("chop").unwrap();
 
     //----------------------------
-    // Operating
+    // Realigning
     //----------------------------
-    let mut seqs = vec![];
+    let mut seqs: Vec<&[u8]> = vec![];
     let mut ranges = vec![];
     for entry in &block.entries {
         seqs.push(entry.seq().as_ref());
         ranges.push(entry.range().clone());
     }
 
-    let aligned = align_seqs(&seqs, msa)?;
+    let mut aligned = vec![];
+    if *msa == "none".to_string() {
+        for seq in seqs {
+            aligned.push(String::from_utf8(seq.to_vec()).unwrap());
+        }
+    } else {
+        aligned = align_seqs(&seqs, msa)?;
+    };
+
+    // String::from_utf8(record.seq().to_vec()).unwrap()
+
+    //----------------------------
+    // Trimming
+    //----------------------------
+    trim_pure_dash(&mut aligned);
+    if has_outgroup {
+        trim_outgroup(&mut aligned);
+        let _ = trim_complex_indel(&mut aligned);
+    }
+
+    if chop > 0 {
+        trim_head_tail(&mut aligned, &mut ranges, chop);
+    }
 
     //----------------------------
     // Output

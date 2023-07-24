@@ -474,6 +474,72 @@ fn command_consensus() -> anyhow::Result<()> {
 
 #[test]
 fn command_refine() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/example.fas")
+        .arg("--msa")
+        .arg("none")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+
+    // --parallel 2
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/example.fas")
+        .arg("--msa")
+        .arg("none")
+        .arg("-p")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+
+    // --parallel 2
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/refine2.fas")
+        .arg("--msa")
+        .arg("none")
+        .arg("-p")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 7);
+
+    // --chop 10
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/example.fas")
+        .arg("--msa")
+        .arg("none")
+        .arg("--chop")
+        .arg("10")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+    assert!(stdout.contains("185276-185332"), "new header"); // 185273-185334
+    assert!(stdout.contains("156668-156724"), "new header"); // 156665-156726
+    assert!(stdout.contains("3670-3727"), "new header"); // (-):3668-3730
+    assert!(stdout.contains("2102-2159"), "new header"); // (-):2102-2161
+
+    Ok(())
+}
+
+#[test]
+fn command_refine_msa() -> anyhow::Result<()> {
     let mut bin = String::new();
     for e in &["clustalw", "clustal-w", "clustalw2"] {
         if let Ok(pth) = which::which(e) {
@@ -500,21 +566,33 @@ fn command_refine() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 18);
     assert!(stdout.contains("---"), "dashes added");
 
-    // --parallel
+    // --outgroup
     let mut cmd = Command::cargo_bin("fasr")?;
     let output = cmd
         .arg("refine")
-        .arg("tests/fasr/refine.fas")
+        .arg("tests/fasr/refine2.fas")
         .arg("--msa")
         .arg("clustalw")
-        .arg("--parallel")
-        .arg("2")
+        .arg("--outgroup")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().count(), 18);
-    assert!(stdout.contains("---"), "dashes added");
+    assert_eq!(stdout.lines().count(), 7);
+    assert!(stdout.contains("CA-GT"), "outgroup trimmed");
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/refine2.fas")
+        .arg("--msa")
+        .arg("clustalw")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 7);
+    assert!(stdout.contains("CA--GT"), "outgroup not trimmed");
 
     Ok(())
 }
