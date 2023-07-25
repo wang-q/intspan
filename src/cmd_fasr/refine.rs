@@ -19,7 +19,7 @@ pub fn make_subcommand() -> Command {
     * none: means skip realigning
 
 * For aligned files converted from .axt or .maf, we can use the `--quick` option
-  to align only indel-adjacent regions
+  to align only indel adjacent regions
 
 * Running in parallel mode with 1 reader, 1 writer and the corresponding number of workers
     * The order of blocks in output may be different from the original
@@ -53,6 +53,28 @@ pub fn make_subcommand() -> Command {
                 .num_args(1)
                 .default_value("0")
                 .help("Chop head and tail indels"),
+        )
+        .arg(
+            Arg::new("is_quick")
+                .long("quick")
+                .action(ArgAction::SetTrue)
+                .help("Quick mode, only aligns indel adjacent regions"),
+        )
+        .arg(
+            Arg::new("pad")
+                .long("pad")
+                .value_parser(value_parser!(usize))
+                .num_args(1)
+                .default_value("50")
+                .help("In quick mode, enlarge indel regions"),
+        )
+        .arg(
+            Arg::new("fill")
+                .long("fill")
+                .value_parser(value_parser!(usize))
+                .num_args(1)
+                .default_value("50")
+                .help("In quick mode, fill holes between indel"),
         )
         .arg(
             Arg::new("parallel")
@@ -107,27 +129,32 @@ fn proc_block(block: &FasBlock, args: &ArgMatches) -> anyhow::Result<String> {
     let msa = args.get_one::<String>("msa").unwrap();
     let has_outgroup = args.get_flag("has_outgroup");
     let chop = *args.get_one::<usize>("chop").unwrap();
+    let is_quick = args.get_flag("is_quick");
+    let pad = *args.get_one::<usize>("pad").unwrap();
+    let fill = *args.get_one::<usize>("fill").unwrap();
 
     //----------------------------
     // Realigning
     //----------------------------
-    let mut seqs: Vec<&[u8]> = vec![];
+    let mut seqs: Vec<String> = vec![];
     let mut ranges = vec![];
     for entry in &block.entries {
-        seqs.push(entry.seq().as_ref());
+        seqs.push(String::from_utf8(entry.seq().to_vec()).unwrap());
         ranges.push(entry.range().clone());
     }
 
     let mut aligned = vec![];
     if *msa == "none".to_string() {
         for seq in seqs {
-            aligned.push(String::from_utf8(seq.to_vec()).unwrap());
+            aligned.push(seq.clone());
         }
     } else {
-        aligned = align_seqs(&seqs, msa)?;
+        if is_quick {
+            aligned = align_seqs_quick(&seqs, msa, pad as i32, fill as i32)?;
+        } else {
+            aligned = align_seqs(&seqs, msa)?;
+        }
     };
-
-    // String::from_utf8(record.seq().to_vec()).unwrap()
 
     //----------------------------
     // Trimming

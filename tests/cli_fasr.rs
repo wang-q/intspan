@@ -594,6 +594,21 @@ fn command_refine_msa() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 7);
     assert!(stdout.contains("CA--GT"), "outgroup not trimmed");
 
+    // quick
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("refine")
+        .arg("tests/fasr/refine2.fas")
+        .arg("--msa")
+        .arg("clustalw")
+        .arg("--quick")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 7);
+    assert!(stdout.contains("CA--GT"), "outgroup not trimmed");
+
     Ok(())
 }
 

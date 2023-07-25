@@ -286,134 +286,6 @@ pub fn seq_intspan(seq: &[u8]) -> IntSpan {
     IntSpan::from_pair(1, seq.len() as i32).diff(&indel_intspan(seq))
 }
 
-/// Returns Strings to avoid lifetime issues
-///
-/// ```
-/// match which::which("clustalw") {
-///     Ok(_) => {
-///         let seqs = vec![
-///             //           *
-///             b"TTAGCCGCTGAGAAGC".as_ref(),
-///             b"TTAGCCGCTGAGAAGC".as_ref(),
-///             b"TTAGCCGCTGAAAGC".as_ref(),
-///         ];
-///         let alns = intspan::align_seqs(&seqs, "clustalw").unwrap();
-///         assert_eq!(alns[2], "TTAGCCGCTGA-AAGC".to_string());
-///
-///     }
-///     Err(_) => {}
-/// }
-/// ```
-// scoop install clustalw
-pub fn align_seqs(seqs: &[&[u8]], aligner: &str) -> anyhow::Result<Vec<String>> {
-    // find external aligner
-    let mut bin = String::new();
-    match aligner {
-        "clustalw" => {
-            for e in &["clustalw", "clustal-w", "clustalw2"] {
-                if let Ok(pth) = which::which(e) {
-                    bin = pth.to_string_lossy().to_string();
-                    break;
-                }
-            }
-        }
-        "muscle" => {
-            for e in &["muscle"] {
-                if let Ok(pth) = which::which(e) {
-                    bin = pth.to_string_lossy().to_string();
-                    break;
-                }
-            }
-        }
-        "mafft" => {
-            for e in &["mafft"] {
-                if let Ok(pth) = which::which(e) {
-                    bin = pth.to_string_lossy().to_string();
-                    break;
-                }
-            }
-        }
-        _ => {
-            return Err(anyhow!("Unrecognized aligner: {}", aligner));
-        }
-    };
-    // eprintln!("bin = {:#?}", bin);
-
-    if bin.is_empty() {
-        return Err(anyhow!("Can't find the external command: {}", aligner));
-    }
-
-    // Create temp in/out files
-    let mut seq_in = tempfile::Builder::new()
-        .prefix("seq-in-")
-        .suffix(".fasta")
-        .rand_bytes(8)
-        .tempfile()?;
-    for (i, seq) in seqs.iter().enumerate() {
-        write!(seq_in, ">seq-{}\n{}\n", i, str::from_utf8(seq).unwrap())?;
-    }
-    let seq_in_path = seq_in.into_temp_path();
-
-    let seq_out = tempfile::Builder::new()
-        .prefix("seq-out-")
-        .suffix(".fasta")
-        .rand_bytes(8)
-        .tempfile()?;
-    let seq_out_path = seq_out.into_temp_path();
-
-    // eprintln!("seq_in_path = {:#?}", seq_in_path);
-
-    // Run
-    let output = match aligner {
-        "clustalw" => Command::new(bin)
-            .arg("-align")
-            .arg("-type=dna")
-            .arg("-output=fasta")
-            .arg("-outorder=input")
-            .arg("-quiet")
-            .arg(format!("-infile={}", seq_in_path.to_string_lossy()))
-            .arg(format!("-outfile={}", seq_out_path.to_string_lossy()))
-            .output()?,
-        "muscle" => Command::new(bin)
-            .arg("-quiet")
-            .arg("-in")
-            .arg(seq_in_path.to_string_lossy().to_string())
-            .arg("-out")
-            .arg(seq_out_path.to_string_lossy().to_string())
-            .output()?,
-        "mafft" => Command::new(bin)
-            .arg("-quiet")
-            .arg("-auto")
-            .arg(seq_in_path.to_string_lossy().to_string())
-            .arg(">")
-            .arg(seq_out_path.to_string_lossy().to_string())
-            .output()?,
-        _ => unreachable!(),
-    };
-
-    // eprintln!("output = {:#?}", output);
-
-    if !output.status.success() {
-        return Err(anyhow!("Command executed with failing error code"));
-    }
-
-    // Load outputs
-    let mut out_seq = vec![];
-    let reader = reader(seq_out_path.to_string_lossy().as_ref());
-    let fa_in = fasta::Reader::new(reader);
-    for result in fa_in.records() {
-        // obtain record or fail with error
-        let record = result.unwrap();
-        out_seq.push(String::from_utf8(record.seq().to_vec()).unwrap());
-    }
-
-    // closing the `TempPath` explicitly
-    seq_in_path.close()?;
-    seq_out_path.close()?;
-
-    Ok(out_seq)
-}
-
 /// ```
 /// match which::which("spoa") {
 ///     Ok(_) => {
@@ -614,6 +486,184 @@ pub fn align_to_chr(ints: &IntSpan, pos: i32, chr_start: i32, strand: &str) -> a
     };
 
     Ok(chr_pos)
+}
+
+/// Returns Strings to avoid lifetime issues
+///
+/// ```
+/// match which::which("clustalw") {
+///     Ok(_) => {
+///         let seqs = vec![
+///            //           *
+///             "TTAGCCGCTGAGAAGC".to_string(),
+///             "TTAGCCGCTGAGAAGC".to_string(),
+///             "TTAGCCGCTGAAAGC".to_string(),
+///         ];
+///         let alns = intspan::align_seqs(&seqs, "clustalw").unwrap();
+///         assert_eq!(alns[2], "TTAGCCGCTGA-AAGC".to_string());
+///
+///     }
+///     Err(_) => {}
+/// }
+/// ```
+// scoop install clustalw
+pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>> {
+    // find external aligner
+    let mut bin = String::new();
+    match aligner {
+        "clustalw" => {
+            for e in &["clustalw", "clustal-w", "clustalw2"] {
+                if let Ok(pth) = which::which(e) {
+                    bin = pth.to_string_lossy().to_string();
+                    break;
+                }
+            }
+        }
+        "muscle" => {
+            for e in &["muscle"] {
+                if let Ok(pth) = which::which(e) {
+                    bin = pth.to_string_lossy().to_string();
+                    break;
+                }
+            }
+        }
+        "mafft" => {
+            for e in &["mafft"] {
+                if let Ok(pth) = which::which(e) {
+                    bin = pth.to_string_lossy().to_string();
+                    break;
+                }
+            }
+        }
+        _ => {
+            return Err(anyhow!("Unrecognized aligner: {}", aligner));
+        }
+    };
+    // eprintln!("bin = {:#?}", bin);
+
+    if bin.is_empty() {
+        return Err(anyhow!("Can't find the external command: {}", aligner));
+    }
+
+    // Create temp in/out files
+    let mut seq_in = tempfile::Builder::new()
+        .prefix("seq-in-")
+        .suffix(".fasta")
+        .rand_bytes(8)
+        .tempfile()?;
+    for (i, seq) in seqs.iter().enumerate() {
+        write!(seq_in, ">seq-{}\n{}\n", i, seq)?;
+    }
+    let seq_in_path = seq_in.into_temp_path();
+
+    let seq_out = tempfile::Builder::new()
+        .prefix("seq-out-")
+        .suffix(".fasta")
+        .rand_bytes(8)
+        .tempfile()?;
+    let seq_out_path = seq_out.into_temp_path();
+
+    // eprintln!("seq_in_path = {:#?}", seq_in_path);
+
+    // Run
+    let output = match aligner {
+        "clustalw" => Command::new(bin)
+            .arg("-align")
+            .arg("-type=dna")
+            .arg("-output=fasta")
+            .arg("-outorder=input")
+            .arg("-quiet")
+            .arg(format!("-infile={}", seq_in_path.to_string_lossy()))
+            .arg(format!("-outfile={}", seq_out_path.to_string_lossy()))
+            .output()?,
+        "muscle" => Command::new(bin)
+            .arg("-quiet")
+            .arg("-in")
+            .arg(seq_in_path.to_string_lossy().to_string())
+            .arg("-out")
+            .arg(seq_out_path.to_string_lossy().to_string())
+            .output()?,
+        "mafft" => Command::new(bin)
+            .arg("-quiet")
+            .arg("-auto")
+            .arg(seq_in_path.to_string_lossy().to_string())
+            .arg(">")
+            .arg(seq_out_path.to_string_lossy().to_string())
+            .output()?,
+        _ => unreachable!(),
+    };
+
+    // eprintln!("output = {:#?}", output);
+
+    if !output.status.success() {
+        return Err(anyhow!("Command executed with failing error code"));
+    }
+
+    // Load outputs
+    let mut out_seqs = vec![];
+    let reader = reader(seq_out_path.to_string_lossy().as_ref());
+    let fa_in = fasta::Reader::new(reader);
+    for result in fa_in.records() {
+        // obtain record or fail with error
+        let record = result.unwrap();
+        out_seqs.push(String::from_utf8(record.seq().to_vec()).unwrap());
+    }
+
+    // closing the `TempPath` explicitly
+    seq_in_path.close()?;
+    seq_out_path.close()?;
+
+    Ok(out_seqs)
+}
+
+pub fn align_seqs_quick(
+    seqs: &Vec<String>,
+    aligner: &str,
+    pad: i32,
+    fill: i32,
+) -> anyhow::Result<Vec<String>> {
+    let count = seqs.len();
+    let align_len = seqs.first().unwrap().len() as i32;
+
+    // realign regions
+    let mut realign_ints = IntSpan::new();
+    // Add head and tail
+    realign_ints.add_pair(1, pad);
+    realign_ints.add_pair(align_len - pad, align_len);
+
+    for i in 0..count {
+        let mut ints = indel_intspan(seqs[i].as_bytes().to_vec().as_ref());
+        ints = ints.pad(pad);
+        realign_ints.merge(&ints);
+    }
+    // join adjacent realign regions
+    realign_ints = realign_ints.fill(fill);
+    realign_ints = realign_ints.intersect(&IntSpan::from_pair(1, align_len ));
+
+    // all segments
+    let mut aligned: Vec<String> = seqs.clone();
+    for (lower, upper) in realign_ints.spans().iter().rev() {
+        let mut subseqs = vec![];
+        let start = *lower as usize - 1;
+        let end = *upper as usize;
+
+        // extract subseqs
+        for i in 0..count {
+            let subseq = &aligned[i][start..end];
+            subseqs.push(subseq.to_string());
+        }
+        let subseqs = align_seqs(&subseqs, aligner)?;
+
+        // put aligned subseqs back
+        for i in 0..count {
+            aligned
+                .get_mut(i)
+                .unwrap()
+                .replace_range(start..end, subseqs[i].as_str());
+        }
+    }
+
+    Ok(aligned)
 }
 
 /// Trims pure dash regions
