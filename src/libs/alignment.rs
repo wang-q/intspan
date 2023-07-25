@@ -638,7 +638,7 @@ pub fn align_seqs_quick(
     }
     // join adjacent realign regions
     realign_ints = realign_ints.fill(fill);
-    realign_ints = realign_ints.intersect(&IntSpan::from_pair(1, align_len ));
+    realign_ints = realign_ints.intersect(&IntSpan::from_pair(1, align_len));
 
     // all segments
     let mut aligned: Vec<String> = seqs.clone();
