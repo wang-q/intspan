@@ -10,6 +10,12 @@ pub fn make_subcommand() -> Command {
 * <infiles> are paths to block fasta files, .fas.gz is supported
     * infile == stdin means reading from STDIN
 
+* Filter out complex variations
+    * tsv-filter -H --ne freq:-1
+
+* Filter out singletons
+    * tsv-filter -H --ne freq:1
+
 "###,
         )
         .arg(
@@ -52,9 +58,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let field_names = vec![
         "#target",
         "chr",
-        "pos",
         "chr_pos",
         "range",
+        "pos",
         "tbase",
         "qbase",
         "bases",
@@ -101,22 +107,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 let var_rg = format!("{}:{}", chr, chr_pos);
 
                 writer.write_all(
-                    format!(
-                        "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                        trange,
-                        chr,
-                        s.pos,
-                        chr_pos,
-                        var_rg,
-                        s.tbase,
-                        s.qbase,
-                        s.bases,
-                        s.mutant_to,
-                        s.freq,
-                        s.pattern,
-                        s.obase,
-                    )
-                    .as_ref(),
+                    format!("{}\t{}\t{}\t{}\t{}\n", trange, chr, chr_pos, var_rg, s,).as_ref(),
                 )?;
             }
         }

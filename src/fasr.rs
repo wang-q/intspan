@@ -64,7 +64,7 @@ fn main() -> anyhow::Result<()> {
 // TODO: replace samtools
 // TODO: port more tools - xlsx
 // TODO: add more tools - vcf, match
-// TODO: fasr variation --outgroup --indel --nosingle --nocomplex
+// TODO: fasr variation --indel
 //  sparsemem -maxmatch -F -l %d -b -n -k 4 -threads 4 %s %s > %s
 //  mummer -maxmatch -F -l %d -b -n %s %s > %s
 //  $exe, $length, $genome, $query, $result

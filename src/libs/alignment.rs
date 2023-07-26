@@ -6,8 +6,8 @@ use std::cmp::min;
 use std::collections::{BTreeMap, HashSet};
 use std::io::{BufRead, Write};
 use std::process::Command;
-use std::str;
 use std::string::String;
+use std::{fmt, str};
 
 lazy_static! {
     static ref BASES: HashSet<u8> = vec![b'a', b'g', b'c', b't', b'A', b'G', b'C', b'T',]
@@ -141,6 +141,25 @@ pub struct Substitution {
     pub freq: i32,
     pub pattern: String,
     pub obase: String,
+}
+
+/// To string
+impl fmt::Display for Substitution {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+            self.pos,
+            self.tbase,
+            self.qbase,
+            self.bases,
+            self.mutant_to,
+            self.freq,
+            self.pattern,
+            self.obase,
+        )?;
+        Ok(())
+    }
 }
 
 /// Returns unpolarized substitutions
