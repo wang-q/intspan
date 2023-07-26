@@ -131,7 +131,19 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
     )
 }
 
-/// pos, tbase, qbase, bases, mutant_to, freq, occured
+#[derive(Default, Clone)]
+pub struct Substitution {
+    pub pos: i32,
+    pub tbase: String,
+    pub qbase: String,
+    pub bases: String,
+    pub mutant_to: String,
+    pub freq: i32,
+    pub pattern: String,
+    pub obase: String,
+}
+
+/// Returns unpolarized substitutions
 ///
 /// ```
 /// let seqs = vec![
@@ -139,44 +151,45 @@ pub fn alignment_stat(seqs: &[&[u8]]) -> (i32, i32, i32, i32, i32, f32) {
 ///     b"AAAATTTTGG".as_ref(),
 ///     b"aaaatttttg".as_ref(),
 /// ];
-/// assert_eq!(intspan::get_subs(&seqs).unwrap().first().unwrap(), &(
-///     9,
-///     "G".to_string(),
-///     "T".to_string(),
-///     "GT".to_string(),
-///     "G<->T".to_string(),
-///     1,
-///     "10".to_string()
-/// ));
+/// let subs = intspan::get_subs(&seqs).unwrap();
+/// let sub = subs.first().unwrap();
+/// assert_eq!(sub.pos, 9);
+/// assert_eq!(sub.tbase, "G".to_string());
+/// assert_eq!(sub.qbase, "T".to_string());
+/// assert_eq!(sub.bases, "GT".to_string());
+/// assert_eq!(sub.mutant_to, "G<->T".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "10".to_string());
+/// assert_eq!(sub.obase, "".to_string());
 ///
 /// let seqs = vec![
 ///     //*   **     * *
 ///     b"TTAG--GCTGAGAAGC".as_ref(),
 ///     b"GTAGCCGCTGA-AGGC".as_ref(),
 /// ];
-/// assert_eq!(intspan::get_subs(&seqs).unwrap().first().unwrap(), &(
-///     1,
-///     "T".to_string(),
-///     "G".to_string(),
-///     "TG".to_string(),
-///     "T<->G".to_string(),
-///     1,
-///     "10".to_string()
-/// ));
-/// assert_eq!(intspan::get_subs(&seqs).unwrap().get(1).unwrap(), &(
-///     14,
-///     "A".to_string(),
-///     "G".to_string(),
-///     "AG".to_string(),
-///     "A<->G".to_string(),
-///     1,
-///     "10".to_string()
-/// ));
+/// let subs = intspan::get_subs(&seqs).unwrap();
+/// let sub = subs.first().unwrap();
+/// assert_eq!(sub.pos, 1);
+/// assert_eq!(sub.tbase, "T".to_string());
+/// assert_eq!(sub.qbase, "G".to_string());
+/// assert_eq!(sub.bases, "TG".to_string());
+/// assert_eq!(sub.mutant_to, "T<->G".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "10".to_string());
+/// assert_eq!(sub.obase, "".to_string());
+///
+/// let sub = subs.get(1).unwrap();
+/// assert_eq!(sub.pos, 14);
+/// assert_eq!(sub.tbase, "A".to_string());
+/// assert_eq!(sub.qbase, "G".to_string());
+/// assert_eq!(sub.bases, "AG".to_string());
+/// assert_eq!(sub.mutant_to, "A<->G".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "10".to_string());
+/// assert_eq!(sub.obase, "".to_string());
 ///
 /// ```
-pub fn get_subs(
-    seqs: &[&[u8]],
-) -> anyhow::Result<Vec<(i32, String, String, String, String, i32, String)>> {
+pub fn get_subs(seqs: &[&[u8]]) -> anyhow::Result<Vec<Substitution>> {
     let seq_count = seqs.len();
     let length = seqs[0].len();
 
@@ -209,22 +222,22 @@ pub fn get_subs(
             bail!("No subs found in pos {}", pos);
         }
 
-        let (freq, occured, qbase) = if class.len() > 2 {
+        let (freq, pattern, qbase) = if class.len() > 2 {
             (-1, "unknown".to_string(), "".to_string())
         } else {
             let mut freq: i32 = 0;
-            let mut occured = "".to_string();
+            let mut pattern = "".to_string();
             for base in bases {
                 if tbase != base {
                     freq += 1;
-                    occured += "0";
+                    pattern += "0";
                 } else {
-                    occured += "1";
+                    pattern += "1";
                 }
             }
             let qbase = bases.iter().find(|e| *e != tbase).unwrap();
 
-            (freq, occured, String::from_utf8(vec![*qbase]).unwrap())
+            (freq, pattern, String::from_utf8(vec![*qbase]).unwrap())
         };
 
         let tbase = String::from_utf8(vec![*tbase]).unwrap();
@@ -234,20 +247,26 @@ pub fn get_subs(
             format!("{}<->{}", tbase, qbase).to_string()
         };
 
-        // pos, tbase, qbase, bases, mutant_to, freq, occured
-        sites.push((
-            (pos + 1) as i32,
+        // mask previous variables
+        let bases = String::from_utf8(bases.clone()).unwrap();
+        let obase = "".to_string();
+        let sub = Substitution {
+            pos: (pos + 1) as i32,
             tbase,
             qbase,
-            String::from_utf8(bases.clone()).unwrap(),
+            bases,
             mutant_to,
-            min(freq, seq_count as i32 - freq),
-            occured.to_string(),
-        ));
+            freq: min(freq, seq_count as i32 - freq),
+            pattern,
+            obase,
+        };
+        sites.push(sub);
     }
 
     Ok(sites)
 }
+
+pub fn polarize_subs() {}
 
 /// ```
 /// use intspan::{indel_intspan, IntSpan, seq_intspan};

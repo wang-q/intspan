@@ -60,7 +60,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         "bases",
         "mutant_to",
         "freq",
-        "occured",
+        "pattern",
+        "obase",
     ];
 
     //----------------------------
@@ -81,21 +82,32 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             let trange = block.entries.first().unwrap().range().clone();
             let t_ints_seq = seq_intspan(block.entries.first().unwrap().seq());
 
-            // pos, tbase, qbase, bases, mutant_to, freq, occured
-            //   0,     1,     2,     3,         4,    5,       6
-            let sites = get_subs(&seqs).unwrap();
+            // pos, tbase, qbase, bases, mutant_to, freq, pattern, obase
+            //   0,     1,     2,     3,         4,    5,       6,     7
+            let subs = get_subs(&seqs).unwrap();
 
-            for s in sites {
+            for s in subs {
                 let chr = trange.chr();
 
                 let chr_pos =
-                    align_to_chr(&t_ints_seq, s.0, trange.start, trange.strand()).unwrap();
-                let var_chr_pos = format!("{}:{}", chr, chr_pos);
+                    align_to_chr(&t_ints_seq, s.pos, trange.start, trange.strand()).unwrap();
+                let var_rg = format!("{}:{}", chr, chr_pos);
 
                 writer.write_all(
                     format!(
-                        "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
-                        trange, chr, s.0, chr_pos, var_chr_pos, s.1, s.2, s.3, s.4, s.5, s.6,
+                        "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                        trange,
+                        chr,
+                        s.pos,
+                        chr_pos,
+                        var_rg,
+                        s.tbase,
+                        s.qbase,
+                        s.bases,
+                        s.mutant_to,
+                        s.freq,
+                        s.pattern,
+                        s.obase,
                     )
                     .as_ref(),
                 )?;

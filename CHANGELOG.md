@@ -7,6 +7,7 @@
 
 * Add --outgroup to `fasr consensus`
 * Add --required to `fasr subset`
+* Add --outgroup, --chop, and --quick to `fasr refine`
 
 * Implementing `--parallel` with `crossbeam`
     * for `fasr consensus`
