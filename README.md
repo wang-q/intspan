@@ -596,6 +596,7 @@ cargo run --bin fasr join \
 cargo run --bin fasr stat tests/fasr/example.fas --outgroup
 
 cargo run --bin fasr variation tests/fasr/example.fas
+cargo run --bin fasr variation tests/fasr/example.fas --outgroup
 
 cargo run --bin fasr pl-p2m tests/fasr/S288cvsRM11_1a.slice.fas tests/fasr/S288cvsSpar.slice.fas
 

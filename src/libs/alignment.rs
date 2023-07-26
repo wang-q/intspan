@@ -150,8 +150,9 @@ pub struct Substitution {
 ///     //        *
 ///     b"AAAATTTTGG".as_ref(),
 ///     b"aaaatttttg".as_ref(),
+///     b"AAAATTTTAG".as_ref(),
 /// ];
-/// let subs = intspan::get_subs(&seqs).unwrap();
+/// let subs = intspan::get_subs(&seqs[..2]).unwrap();
 /// let sub = subs.first().unwrap();
 /// assert_eq!(sub.pos, 9);
 /// assert_eq!(sub.tbase, "G".to_string());
@@ -242,7 +243,7 @@ pub fn get_subs(seqs: &[&[u8]]) -> anyhow::Result<Vec<Substitution>> {
 
         let tbase = String::from_utf8(vec![*tbase]).unwrap();
         let mutant_to = if class.len() > 2 {
-            "".to_string()
+            "Complex".to_string()
         } else {
             format!("{}<->{}", tbase, qbase).to_string()
         };
@@ -266,7 +267,103 @@ pub fn get_subs(seqs: &[&[u8]]) -> anyhow::Result<Vec<Substitution>> {
     Ok(sites)
 }
 
-pub fn polarize_subs() {}
+/// Polarize substitutions
+///
+/// ```
+/// let seqs = vec![
+///     //        *
+///     b"AAAATTTTGG".as_ref(),
+///     b"AAAATTTTAG".as_ref(),
+///     b"AAAATTTTAG".as_ref(),
+/// ];
+/// let mut subs = intspan::get_subs(&seqs[0..2]).unwrap();
+/// intspan::polarize_subs(&mut subs, &seqs[2]);
+/// let sub = subs.first().unwrap();
+/// assert_eq!(sub.pos, 9);
+/// assert_eq!(sub.tbase, "G".to_string());
+/// assert_eq!(sub.qbase, "A".to_string());
+/// assert_eq!(sub.bases, "GA".to_string());
+/// assert_eq!(sub.mutant_to, "A->G".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "10".to_string());
+/// assert_eq!(sub.obase, "A".to_string());
+///
+/// let seqs = vec![
+///     //*   **     * *
+///     b"TTAG--GCTGAGAAGC".as_ref(),
+///     b"GTAGCCGCTGA-AGGC".as_ref(),
+///     b"TTAGCCGCTGAGAGGC".as_ref(),
+/// ];
+/// let mut subs = intspan::get_subs(&seqs[0..2]).unwrap();
+/// intspan::polarize_subs(&mut subs, &seqs[2]);
+/// let sub = subs.first().unwrap();
+/// assert_eq!(sub.pos, 1);
+/// assert_eq!(sub.tbase, "T".to_string());
+/// assert_eq!(sub.qbase, "G".to_string());
+/// assert_eq!(sub.bases, "TG".to_string());
+/// assert_eq!(sub.mutant_to, "T->G".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "01".to_string());
+/// assert_eq!(sub.obase, "T".to_string());
+///
+/// let sub = subs.get(1).unwrap();
+/// assert_eq!(sub.pos, 14);
+/// assert_eq!(sub.tbase, "A".to_string());
+/// assert_eq!(sub.qbase, "G".to_string());
+/// assert_eq!(sub.bases, "AG".to_string());
+/// assert_eq!(sub.mutant_to, "G->A".to_string());
+/// assert_eq!(sub.freq, 1);
+/// assert_eq!(sub.pattern, "10".to_string());
+/// assert_eq!(sub.obase, "G".to_string());
+///
+/// ```
+pub fn polarize_subs(subs: &mut Vec<Substitution>, og: &[u8]) {
+    for sub in subs {
+        let pos = sub.pos;
+        let obase_u8 = og[(pos - 1) as usize].to_ascii_uppercase();
+        let obase = String::from_utf8(vec![obase_u8]).unwrap();
+
+        if sub.qbase == "".to_string() {
+            // complex ingroup bases
+            sub.obase = obase.clone();
+        } else if BASES.contains(&obase_u8) {
+            if sub.bases.contains(&obase) {
+                // can polarize subs
+                // ingroup bases have 2 classes
+                let mut mutant_to = "".to_string();
+                let mut freq = 0;
+                let mut pattern = "".to_string();
+                for base in sub.bases.as_bytes() {
+                    if *base == obase_u8 {
+                        pattern += "0";
+                    } else {
+                        pattern += "1";
+                        freq += 1;
+                        mutant_to =
+                            format!("{}->{}", obase, String::from_utf8(vec![*base]).unwrap())
+                                .to_string();
+                    }
+                }
+                sub.mutant_to = mutant_to;
+                sub.freq = freq;
+                sub.pattern = pattern;
+                sub.obase = obase.clone();
+            } else {
+                // outgroup base is not equal to any nts
+                sub.mutant_to = "Complex".to_string();
+                sub.freq = -1;
+                sub.pattern = "unknown".to_string();
+                sub.obase = obase.clone();
+            }
+        } else {
+            // outgroup base is N
+            sub.mutant_to = "Complex".to_string();
+            sub.freq = -1;
+            sub.pattern = "unknown".to_string();
+            sub.obase = obase.clone();
+        }
+    }
+}
 
 /// ```
 /// use intspan::{indel_intspan, IntSpan, seq_intspan};

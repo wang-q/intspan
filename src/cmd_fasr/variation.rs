@@ -47,7 +47,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Args
     //----------------------------
     let mut writer = writer(args.get_one::<String>("outfile").unwrap());
-    // let has_outgroup = args.get_flag("has_outgroup");
+    let has_outgroup = args.get_flag("has_outgroup");
 
     let field_names = vec![
         "#target",
@@ -84,7 +84,14 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
             // pos, tbase, qbase, bases, mutant_to, freq, pattern, obase
             //   0,     1,     2,     3,         4,    5,       6,     7
-            let subs = get_subs(&seqs).unwrap();
+            let seq_count = seqs.len();
+            let subs = if has_outgroup {
+                let mut unpolarized = get_subs(&seqs[..(seq_count - 1)]).unwrap();
+                polarize_subs(&mut unpolarized, seqs[seq_count - 1]);
+                unpolarized
+            } else {
+                get_subs(&seqs).unwrap()
+            };
 
             for s in subs {
                 let chr = trange.chr();
