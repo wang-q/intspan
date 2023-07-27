@@ -30,7 +30,8 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_fasr::split::make_subcommand())
         .subcommand(cmd_fasr::stat::make_subcommand())
         .subcommand(cmd_fasr::subset::make_subcommand())
-        .subcommand(cmd_fasr::variation::make_subcommand());
+        .subcommand(cmd_fasr::variation::make_subcommand())
+        .subcommand(cmd_fasr::xlsx::make_subcommand());
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
@@ -54,6 +55,7 @@ fn main() -> anyhow::Result<()> {
         Some(("stat", sub_matches)) => cmd_fasr::stat::execute(sub_matches),
         Some(("subset", sub_matches)) => cmd_fasr::subset::execute(sub_matches),
         Some(("variation", sub_matches)) => cmd_fasr::variation::execute(sub_matches),
+        Some(("xlsx", sub_matches)) => cmd_fasr::xlsx::execute(sub_matches),
         _ => unreachable!(),
     }
     .unwrap();

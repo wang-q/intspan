@@ -131,4 +131,5 @@ Cargo.lock
 tests/S288c/
 tests/Atha/
 *.sizes
+*.xlsx
 PL-*/

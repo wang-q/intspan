@@ -58,6 +58,7 @@ indexmap = "2.0.0"
 rust-lapper = "1.1.0"
 bio = "0.30.1"
 crossbeam = "0.8.2"
+rust_xlsxwriter = "0.43.0"
 
 which = "4.4.0"
 cmd_lib = "1.3.0"
