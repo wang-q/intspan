@@ -1,6 +1,6 @@
 use clap::*;
 use intspan::*;
-use rust_xlsxwriter::{Color, Format, FormatAlign, FormatBorder, Workbook, XlsxError};
+use rust_xlsxwriter::*;
 use std::cmp::max;
 use std::collections::BTreeMap;
 
@@ -21,6 +21,14 @@ pub fn make_subcommand() -> Command {
                 .num_args(1..)
                 .index(1)
                 .help("Set the input files to use"),
+        )
+        .arg(
+            Arg::new("wrap")
+                .long("wrap")
+                .value_parser(value_parser!(usize))
+                .num_args(1)
+                .default_value("50")
+                .help("Wrap length"),
         )
         .arg(
             Arg::new("indel")
@@ -62,9 +70,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     let format_of: BTreeMap<String, Format> = create_formats();
     let mut max_name_len = 1;
-    let mut section_cursor = 1;
+    let mut sec_cursor = 1;
     let color_loop = 15;
-    let wrap = 50;
+    let wrap = args.get_one::<usize>("wrap").unwrap();
 
     // eprintln!("format_of = {:#?}", format_of.keys());
 
@@ -79,7 +87,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
             // pos, tbase, qbase, bases, mutant_to, freq, pattern, obase
             //   0,     1,     2,     3,         4,    5,       6,     7
-            let seq_count = seqs.len();
+            let mut seq_count = seqs.len();
             let subs = if has_outgroup {
                 let mut unpolarized = get_subs(&seqs[..(seq_count - 1)]).unwrap();
                 polarize_subs(&mut unpolarized, seqs[seq_count - 1]);
@@ -88,12 +96,13 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 get_subs(&seqs).unwrap()
             };
 
-            let sec_height = seq_count + 2;
+            let sec_height = seq_count + 2; // 1 for pos, 1 for spacing
             let mut col_cursor = 1;
 
+            // each section
             // write names
             for i in 1..=block.entries.len() {
-                let pos_row = sec_height * (section_cursor - 1);
+                let pos_row = sec_height * (sec_cursor - 1);
 
                 let rg = block.entries[i - 1].range().to_string();
                 worksheet.write_with_format(
@@ -107,9 +116,13 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 max_name_len = max(rg.len(), max_name_len);
             }
 
+            if has_outgroup {
+                seq_count -= 1;
+            }
+
             for s in subs.iter() {
                 // eprintln!("s = {:#?}", s.to_string());
-                let pos_row = sec_height * (section_cursor - 1);
+                let pos_row = sec_height * (sec_cursor - 1);
 
                 // write position
                 worksheet.write_with_format(
@@ -142,23 +155,35 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                     )?;
                 }
 
+                // outgroup bases with no bg colors
+                if has_outgroup {
+                    let base_color = format!("sub_{}_unknown", s.obase);
+                    let format = format_of.get(&base_color).unwrap();
+                    worksheet.write_with_format(
+                        (pos_row + seq_count + 1) as u32,
+                        col_cursor,
+                        s.obase.clone(),
+                        format,
+                    )?;
+                }
+
                 // increase column cursor
                 col_cursor += 1;
 
                 // wrap
-                if col_cursor > wrap {
+                if col_cursor > *wrap as u16 {
                     col_cursor = 1;
-                    section_cursor += 1;
+                    sec_cursor += 1;
                 }
             } // vars
 
-            section_cursor += 1;
+            sec_cursor += 1;
         } // block
     }
 
     worksheet.set_column_width(0, max_name_len as f64)?;
-    for i in 1..=(wrap + 3) {
-        worksheet.set_column_width(i, 1.6)?;
+    for i in 1..=(*wrap + 3) {
+        worksheet.set_column_width(i as u16, 1.6)?;
     }
 
     // Save the file to disk.

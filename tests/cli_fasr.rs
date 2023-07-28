@@ -3,7 +3,7 @@ use assert_cmd::prelude::*;
 use predicates::prelude::*;
 // Used for writing assertions
 use std::process::Command;
-use tempfile::TempDir;
+use tempfile::{NamedTempFile, TempDir};
 
 #[test]
 fn command_invalid() -> anyhow::Result<()> {
@@ -720,6 +720,27 @@ fn command_variation() -> anyhow::Result<()> {
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 49);
+
+    Ok(())
+}
+
+#[test]
+fn command_xlsx() -> anyhow::Result<()> {
+    let tempfile = NamedTempFile::new().unwrap().into_temp_path();
+
+    let mut cmd = Command::cargo_bin("fasr")?;
+    let output = cmd
+        .arg("xlsx")
+        .arg("tests/fasr/example.fas")
+        .arg("--outgroup")
+        .arg(tempfile.to_str().unwrap())
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+
+    assert_eq!(stdout.lines().count(), 0);
+    assert!(tempfile.is_file());
 
     Ok(())
 }
