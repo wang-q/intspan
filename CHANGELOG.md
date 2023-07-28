@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.5 - 2023-07-28
+
 * Add `fasr replace`
 * Add `fasr pl-p2m`
 * Add `fasr xlsx`
