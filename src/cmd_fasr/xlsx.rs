@@ -1,7 +1,7 @@
 use clap::*;
 use intspan::*;
-use rust_xlsxwriter::ChartType::Bar;
 use rust_xlsxwriter::{Color, Format, FormatAlign, FormatBorder, Workbook, XlsxError};
+use std::cmp::max;
 use std::collections::BTreeMap;
 
 // Create clap subcommand arguments
@@ -12,12 +12,6 @@ pub fn make_subcommand() -> Command {
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
     * infile == stdin means reading from STDIN
-
-* Filter out complex variations
-    * tsv-filter -H --ne freq:-1
-
-* Filter out singletons
-    * tsv-filter -H --ne freq:1
 
 "###,
         )
@@ -68,8 +62,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
     let format_of: BTreeMap<String, Format> = create_formats();
     let mut max_name_len = 1;
-    let mut section = 1;
-    let mut color_loop = 15;
+    let mut section_cursor = 1;
+    let color_loop = 15;
+    let wrap = 50;
 
     // eprintln!("format_of = {:#?}", format_of.keys());
 
@@ -93,17 +88,28 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 get_subs(&seqs).unwrap()
             };
 
-            let sec_height = if has_outgroup {
-                seq_count + 1
-            } else {
-                seq_count + 2
-            };
+            let sec_height = seq_count + 2;
             let mut col_cursor = 1;
 
-            let mut pos_row = sec_height * (section - 1);
+            // write names
+            for i in 1..=block.entries.len() {
+                let pos_row = sec_height * (section_cursor - 1);
+
+                let rg = block.entries[i - 1].range().to_string();
+                worksheet.write_with_format(
+                    (pos_row + i) as u32,
+                    0,
+                    rg.clone(),
+                    format_of.get("name").unwrap(),
+                )?;
+
+                // record max length
+                max_name_len = max(rg.len(), max_name_len);
+            }
 
             for s in subs.iter() {
                 // eprintln!("s = {:#?}", s.to_string());
+                let pos_row = sec_height * (section_cursor - 1);
 
                 // write position
                 worksheet.write_with_format(
@@ -138,12 +144,20 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
                 // increase column cursor
                 col_cursor += 1;
-            }
-        }
+
+                // wrap
+                if col_cursor > wrap {
+                    col_cursor = 1;
+                    section_cursor += 1;
+                }
+            } // vars
+
+            section_cursor += 1;
+        } // block
     }
 
-    worksheet.set_column_width(0, max_name_len)?;
-    for i in 1..=50 {
+    worksheet.set_column_width(0, max_name_len as f64)?;
+    for i in 1..=(wrap + 3) {
         worksheet.set_column_width(i, 1.6)?;
     }
 
