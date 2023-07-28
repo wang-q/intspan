@@ -4,8 +4,9 @@
 
 * Add `fasr replace`
 * Add `fasr pl-p2m`
+* Add `fasr xlsx`
 
-* Add --outgroup to `fasr consensus`
+* Add --outgroup to `fasr consensus` and `fasr variation`
 * Add --required to `fasr subset`
 * Add --outgroup, --chop, and --quick to `fasr refine`
 
