@@ -1,6 +1,7 @@
 use assert_cmd::prelude::*; // Add methods on commands
 use predicates::prelude::*; // Used for writing assertions
-use std::process::Command; // Run programs
+use std::process::Command;
+use tempfile::TempDir; // Run programs
 
 #[test]
 fn command_invalid() -> anyhow::Result<()> {
@@ -418,6 +419,29 @@ fn command_prop() -> anyhow::Result<()> {
     );
     assert!(stdout.contains("range\tintergenicProp\tintergenicLength\tintergenicSize"));
     assert!(stdout.contains("I:1-100000\t0.1301\t100000\t13011"));
+
+    Ok(())
+}
+
+#[test]
+fn command_pl_2rmp() -> anyhow::Result<()> {
+    let tempdir = TempDir::new().unwrap();
+    let tempdir_str = tempdir.path().to_str().unwrap();
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("pl-2rmp")
+        .arg("tests/rgr/II.links.tsv")
+        .arg("-o")
+        .arg(tempdir_str.to_owned() + "/replaced.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 16);
+    assert!(&tempdir.path().join("replaced.tsv").is_file());
+
+    tempdir.close()?;
 
     Ok(())
 }

@@ -738,7 +738,6 @@ fn command_xlsx() -> anyhow::Result<()> {
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-
     assert_eq!(stdout.lines().count(), 0);
     assert!(tempfile.is_file());
 

@@ -10,7 +10,7 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 * <infiles> are paths to block fasta files, .fas.gz is supported
-    * infile == stdin means reading from STDIN
+    * infile can't be stdin
 
 * The pl-* subcommands
     * The default --outdir is `PL-*`, not `.`
