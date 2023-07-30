@@ -100,7 +100,8 @@ fn check_seq(entry: &FasEntry, genome: &str) -> anyhow::Result<String> {
     let seq = std::str::from_utf8(&seq)
         .unwrap()
         .to_string()
-        .to_ascii_uppercase();
+        .to_ascii_uppercase()
+        .replace('-', "");
 
     let pos = format!("{}:{}-{}", range.chr(), range.start(), range.end());
     let gseq = get_seq_faidx(genome, &pos)?.to_ascii_uppercase();
