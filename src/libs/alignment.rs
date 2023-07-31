@@ -686,6 +686,9 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
         .suffix(".fasta")
         .rand_bytes(8)
         .tempfile()?;
+
+    // muscle may alter the sequence positions in alignments
+    // clustalw wouldn't do this
     for (i, seq) in seqs.iter().enumerate() {
         write!(seq_in, ">seq-{}\n{}\n", i, seq)?;
     }
@@ -735,13 +738,22 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
     }
 
     // Load outputs
-    let mut out_seqs = vec![];
+    let mut out_seqs = Vec::with_capacity(seqs.len());
+    // init elements in the vector
+    for _ in 0..seqs.len() {
+        out_seqs.push("".to_string());
+    }
     let reader = reader(seq_out_path.to_string_lossy().as_ref());
     let fa_in = fasta::Reader::new(reader);
     for result in fa_in.records() {
         // obtain record or fail with error
         let record = result.unwrap();
-        out_seqs.push(String::from_utf8(record.seq().to_vec()).unwrap());
+
+        let idx = record.id().to_string();
+        let idx = idx.replace("seq-", "");
+        let idx = idx.parse::<usize>().unwrap();
+
+        out_seqs[idx] = String::from_utf8(record.seq().to_vec()).unwrap();
     }
 
     // closing the `TempPath` explicitly
