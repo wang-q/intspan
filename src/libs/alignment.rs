@@ -4,10 +4,11 @@ use bio::io::fasta;
 use itertools::Itertools;
 use std::cmp::min;
 use std::collections::{BTreeMap, HashSet};
+use std::fs::File;
 use std::io::{BufRead, Write};
 use std::process::Command;
 use std::string::String;
-use std::{fmt, str};
+use std::{fmt, fs, str};
 
 lazy_static! {
     static ref BASES: HashSet<u8> = vec![b'a', b'g', b'c', b't', b'A', b'G', b'C', b'T',]
@@ -683,7 +684,7 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
     // Create temp in/out files
     let mut seq_in = tempfile::Builder::new()
         .prefix("seq-in-")
-        .suffix(".fasta")
+        .suffix("")
         .rand_bytes(8)
         .tempfile()?;
 
@@ -696,7 +697,7 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
 
     let seq_out = tempfile::Builder::new()
         .prefix("seq-out-")
-        .suffix(".fasta")
+        .suffix("")
         .rand_bytes(8)
         .tempfile()?;
     let seq_out_path = seq_out.into_temp_path();
@@ -722,11 +723,9 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
             .arg(seq_out_path.to_string_lossy().to_string())
             .output()?,
         "mafft" => Command::new(bin)
-            .arg("-quiet")
-            .arg("-auto")
+            .arg("--quiet")
+            .arg("--auto")
             .arg(seq_in_path.to_string_lossy().to_string())
-            .arg(">")
-            .arg(seq_out_path.to_string_lossy().to_string())
             .output()?,
         _ => unreachable!(),
     };
@@ -735,6 +734,16 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
 
     if !output.status.success() {
         return Err(anyhow!("Command executed with failing error code"));
+    }
+    // can't use redirect in Command
+    if aligner == "mafft" {
+        let mut f = File::create(seq_out_path.to_string_lossy().to_string())?;
+        f.write_all(&output.stdout)?;
+    }
+    // delete .dnd files created by clustalw
+    if aligner == "clustalw" {
+        let dnd = seq_in_path.to_string_lossy().to_string() + ".dnd";
+        fs::remove_file(dnd)?;
     }
 
     // Load outputs
@@ -753,7 +762,7 @@ pub fn align_seqs(seqs: &[String], aligner: &str) -> anyhow::Result<Vec<String>>
         let idx = idx.replace("seq-", "");
         let idx = idx.parse::<usize>().unwrap();
 
-        out_seqs[idx] = String::from_utf8(record.seq().to_vec()).unwrap();
+        out_seqs[idx] = String::from_utf8(record.seq().to_vec().to_ascii_uppercase()).unwrap();
     }
 
     // closing the `TempPath` explicitly
