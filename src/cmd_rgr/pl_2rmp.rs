@@ -54,7 +54,7 @@ pub fn make_subcommand() -> Command {
         .arg(
             Arg::new("outfile")
                 .short('o')
-                .long("outdir")
+                .long("outfile")
                 .num_args(1)
                 .default_value("PL-2rmp")
                 .help("Output location"),
