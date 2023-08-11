@@ -101,9 +101,10 @@ lazy_static! {
     static ref EMPTY_STRING: String = "-".to_string();
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Set creation and contents
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn new() -> Self {
         IntSpan {
@@ -278,9 +279,10 @@ mod create {
     //}
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Span contents
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     /// Returns the runs in IntSpan, as a vector of Tuple(lower, upper)
     ///
@@ -391,9 +393,10 @@ mod content {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Set cardinality
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn cardinality(&self) -> i32 {
         let mut cardinality: i32 = 0;
@@ -437,9 +440,10 @@ impl IntSpan {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Member operations (mutate original set)
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn add_pair(&mut self, mut lower: i32, mut upper: i32) {
         if lower > upper {
@@ -649,9 +653,10 @@ mod mutate {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Set binary operations (create new set)
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn copy(&self) -> Self {
         IntSpan {
@@ -749,9 +754,10 @@ mod binary {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Set relations
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn equals(&self, other: &Self) -> bool {
         let edges = &self.edges;
@@ -832,9 +838,10 @@ mod relation {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Indexing
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     fn at_pos(&self, index: i32) -> i32 {
         let mut element = self.min();
@@ -1065,9 +1072,10 @@ mod index {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Spans Ops
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn cover(&self) -> Self {
         let mut new = IntSpan::new();
@@ -1323,9 +1331,10 @@ mod span {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Inter-set OPs
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     /// Returns the size of intersection of two sets.
     ///
@@ -1422,9 +1431,10 @@ impl IntSpan {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Islands
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     /// Returns an ints equals to the island containing the integer
     ///
@@ -1501,9 +1511,10 @@ impl IntSpan {
     }
 }
 
-//----------------------------------------------------------
 /// INTERFACE: Aliases
-//----------------------------------------------------------
+///
+/// ----
+/// ----
 impl IntSpan {
     pub fn size(&self) -> i32 {
         self.cardinality()
@@ -1518,10 +1529,10 @@ impl IntSpan {
     }
 }
 
-//----------------------------------------------------------
-// Private methods
-//----------------------------------------------------------
-
+/// Private methods
+///
+/// ----
+/// ----
 impl IntSpan {
     fn find_pos(&self, val: i32, mut low: usize) -> usize {
         let mut high = self.edge_size();
