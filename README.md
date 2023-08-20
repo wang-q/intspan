@@ -390,8 +390,9 @@ rgr merge tests/rgr/II.links.tsv -c 0.95
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
-cargo run --bin rgr pl-2rmp tests/rgr/ctg_2_1_.gc.tsv
-cargo run --bin rgr pl-2rmp tests/rgr/II.links.tsv
+# ctg_2_1_.gc.tsv isn't sorted,
+cat tests/rgr/ctg_2_1_.gc.tsv | rgr sort stdin | cargo run --bin rgr pl-2rmp stdin > /dev/null
+cat tests/rgr/II.links.tsv | cargo run --bin rgr pl-2rmp stdin
 
 ```
 
