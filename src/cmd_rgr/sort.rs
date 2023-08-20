@@ -1,5 +1,6 @@
 use clap::*;
 use intspan::*;
+use itertools::Itertools;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 
@@ -9,7 +10,10 @@ pub fn make_subcommand() -> Command {
         .about("Sort .rg and .tsv files by a range field")
         .after_help(
             r###"
-* If no part is a valid range, the line will be written to the last
+* If no part of the line is a valid range, the line will be written to the final
+
+* Setting `--group` will improve the speed on huge dataset
+    * It can be chr_id, ctg_id, etc.
 
 Example:
 
@@ -44,6 +48,14 @@ Example:
                 .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
+            Arg::new("group")
+                .long("group")
+                .short('g')
+                .num_args(1)
+                .value_parser(value_parser!(usize))
+                .help("Group the rows by this field and then sort them within the group"),
+        )
+        .arg(
             Arg::new("outfile")
                 .long("outfile")
                 .short('o')
@@ -68,10 +80,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         0
     };
 
+    let idx_group = if args.contains_id("group") {
+        *args.get_one::<usize>("group").unwrap()
+    } else {
+        0
+    };
+
     //----------------------------
     // Loading
     //----------------------------
-    let mut line_map: BTreeMap<String, Range> = BTreeMap::new();
+    let mut line_to_rg: BTreeMap<String, Range> = BTreeMap::new();
     let mut invalids: Vec<String> = vec![];
 
     for infile in args.get_many::<String>("infiles").unwrap() {
@@ -88,14 +106,14 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 for part in parts {
                     let range = Range::from_str(part);
                     if range.is_valid() {
-                        line_map.insert(line.clone(), range);
+                        line_to_rg.insert(line.clone(), range);
                         continue 'LINE;
                     }
                 }
             } else {
                 let range = Range::from_str(parts.get(idx_range - 1).unwrap());
                 if range.is_valid() {
-                    line_map.insert(line.clone(), range);
+                    line_to_rg.insert(line.clone(), range);
                     continue 'LINE;
                 }
             }
@@ -104,22 +122,47 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         }
     }
 
-    let mut valids: Vec<String> = line_map.keys().map(|e| e.to_string()).collect();
-    {
+    // results
+    let mut sorted: Vec<String> = vec![];
+
+    // for groups
+    if idx_group == 0 {
+        sorted = line_to_rg.keys().map(|e| e.to_string()).collect();
+
         // by chromosome strand
-        valids.sort_by_cached_key(|k| line_map.get(k).unwrap().strand());
-
+        sorted.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().strand());
         // by start point on chromosomes
-        valids.sort_by_cached_key(|k| line_map.get(k).unwrap().start());
-
+        sorted.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().start());
         // by chromosome name
-        valids.sort_by_cached_key(|k| line_map.get(k).unwrap().chr());
+        sorted.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().chr());
+    } else {
+        let mut lines_of: BTreeMap<String, Vec<String>> = BTreeMap::new();
+
+        for line in line_to_rg.keys() {
+            let parts: Vec<&str> = line.split('\t').collect();
+
+            let part = parts.get(idx_group - 1).unwrap();
+            lines_of
+                .entry(part.to_string())
+                .and_modify(|v| v.push(line.clone()))
+                .or_insert(Vec::new());
+        }
+
+        for g in lines_of.keys().sorted() {
+            let mut lines = lines_of.get(g).unwrap().clone();
+
+            lines.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().strand());
+            lines.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().start());
+            lines.sort_by_cached_key(|k| line_to_rg.get(k).unwrap().chr());
+
+            sorted.extend(lines);
+        }
     }
 
     //----------------------------
     // Output
     //----------------------------
-    for line in &valids {
+    for line in &sorted {
         writer.write_fmt(format_args!("{}\n", line))?;
     }
     for line in &invalids {
