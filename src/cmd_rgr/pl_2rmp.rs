@@ -2,9 +2,10 @@ use clap::*;
 use cmd_lib::*;
 use intspan::*;
 use std::collections::BTreeSet;
-use std::io::BufRead;
+use std::io::{BufRead, Write};
 use std::path::Path;
 use std::{env, fs};
+use std::fs::File;
 use tempfile::TempDir;
 
 // Create clap subcommand arguments
@@ -17,11 +18,8 @@ pub fn make_subcommand() -> Command {
   rounds will greatly reduce the computation time
 
 * <infiles> are paths to .rg or .tsv files, .gz is supported
-    * infile can't be stdin
+    * infile == stdin means reading from STDIN
 
-* The pl-* subcommands
-    * The default --outfile is `PL-*`, not `stdout`
-    * There is no option to output to the screen
 
 * This pipeline depends on the binary, `rgr`
 
@@ -56,8 +54,8 @@ pub fn make_subcommand() -> Command {
                 .short('o')
                 .long("outfile")
                 .num_args(1)
-                .default_value("PL-2rmp")
-                .help("Output location"),
+                .default_value("stdout")
+                .help("Output filename. [stdout] for screen"),
         )
 }
 
@@ -75,75 +73,86 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let tempdir = TempDir::new().unwrap();
     let tempdir_str = tempdir.path().to_str().unwrap();
 
-    use_builtin_cmd!(echo, cat);
-    run_cmd!(echo "==> Paths")?;
-    run_cmd!(echo "    \"rgr\"   = ${rgr}")?;
-    run_cmd!(echo "    \"curdir\" = ${curdir}")?;
-    run_cmd!(echo "    \"tempdir\" = ${tempdir_str}")?;
+    init_builtin_logger();
+    use_builtin_cmd!(echo, info, cat);
+    run_cmd!(info "==> Paths")?;
+    run_cmd!(info "    \"rgr\"   = ${rgr}")?;
+    run_cmd!(info "    \"curdir\" = ${curdir}")?;
+    run_cmd!(info "    \"tempdir\" = ${tempdir_str}")?;
 
     //----------------------------
     // Operating
     //----------------------------
-    run_cmd!(echo "==> Basenames and absolute paths")?;
+    run_cmd!(info "==> Basenames and absolute paths")?;
     // basename => abs_path
     let mut abs_infiles = vec![];
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let absolute = intspan::absolute_path(infile)
-            .unwrap()
-            .display()
-            .to_string();
+        if infile == "stdin" {
+            abs_infiles.push("stdin".to_string());
+        } else {
+            let absolute = intspan::absolute_path(infile)
+                .unwrap()
+                .display()
+                .to_string();
 
-        abs_infiles.push(absolute.to_string());
+            abs_infiles.push(absolute.to_string());
+        }
     }
 
-    run_cmd!(echo "==> Switch to tempdir")?;
+    run_cmd!(info "==> Switch to tempdir")?;
     env::set_current_dir(tempdir_str)?;
 
-    run_cmd!(echo "==> Splitting")?;
+    run_cmd!(info "==> Splitting")?;
     let mut serial = 1;
-    let mut out_lines = vec![];
+    let mut out_ranges = vec![];
+    // save inputs, so we can resue stdin latter
+    let mut round1 = File::create("r1.lines")?;
     for infile in abs_infiles.iter() {
         let reader = reader(infile);
         for line in reader.lines().map_while(Result::ok) {
+            round1.write_fmt(format_args!("{}\n", &line))?;
+
             for part in line.split('\t') {
                 let range = Range::from_str(part);
                 if !range.is_valid() {
                     continue;
                 }
-                out_lines.push(part.to_string());
+                out_ranges.push(part.to_string());
 
-                if out_lines.len() >= line_limit {
+                if out_ranges.len() >= line_limit {
                     let outfile = format!("split.{}", serial);
                     write_lines(
                         outfile.as_str(),
-                        &out_lines.iter().map(AsRef::as_ref).collect(),
+                        &out_ranges.iter().map(AsRef::as_ref).collect(),
                     )?;
 
                     // clear caches
-                    out_lines = vec![];
+                    out_ranges = vec![];
                     // bump serial
                     serial += 1;
                 }
             }
         }
     }
+    round1.flush()?;
+
     // last part
-    if !out_lines.is_empty() {
+    if !out_ranges.is_empty() {
         let outfile = format!("split.{}", serial);
         write_lines(
             outfile.as_str(),
-            &out_lines.iter().map(AsRef::as_ref).collect(),
+            &out_ranges.iter().map(AsRef::as_ref).collect(),
         )?;
     } else {
         serial -= 1;
     }
-    run_cmd!(echo "    Total" ${serial} "splits")?;
+    run_cmd!(info "    Total" ${serial} "splits")?;
 
-    run_cmd!(echo "==> 1st round of merging")?;
+    run_cmd!(info "==> 1st round of merging")?;
     for i in 1..=serial {
         let infile = format!("split.{}", i);
         if Path::new(infile.as_str()).is_file() {
-            run_cmd!(echo "   " ${infile})?;
+            run_cmd!(info "   " ${infile})?;
             run_cmd!(
                 rgr merge ${infile} -c ${coverage} -o replace.${i}
             )?;
@@ -153,7 +162,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         }
     }
 
-    run_cmd!(echo "==> Results of 1st round")?;
+    run_cmd!(info "==> Results of 1st round")?;
     {
         let mut merged_1st: BTreeSet<String> = BTreeSet::new();
         for i in 1..=serial {
@@ -170,7 +179,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             &merged_1st.iter().map(AsRef::as_ref).collect(),
         )?;
         let count_1st = merged_1st.len();
-        run_cmd!(echo "   " ${count_1st})?;
+        run_cmd!(info "   " ${count_1st})?;
 
         let mut writer_1st_replace = writer("1st.replace.tsv");
         for i in 1..=serial {
@@ -187,23 +196,23 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         }
     }
 
-    run_cmd!(echo "==> 2nd round of merging")?;
+    run_cmd!(info "==> 2nd round of merging")?;
     run_cmd!(
         rgr merge 1st.replace -c ${coverage} -o 2nd.replace.tsv
     )?;
 
-    run_cmd!(echo "==> 1st round of replacing")?;
+    run_cmd!(info "==> 1st round of replacing")?;
     run_cmd!(
-        cat $[abs_infiles] |
+        cat r1.lines |
             rgr replace stdin 1st.replace.tsv -o replaced.1st
     )?;
 
-    run_cmd!(echo "==> 2nd round of replacing")?;
+    run_cmd!(info "==> 2nd round of replacing")?;
     run_cmd!(
         rgr replace replaced.1st 2nd.replace.tsv -o replaced.2st
     )?;
 
-    run_cmd!(echo "==> Remove temp files")?;
+    run_cmd!(info "==> Remove temp files")?;
     for i in 1..=serial {
         let infile = format!("split.{}", i);
         if Path::new(infile.as_str()).is_file() {
@@ -224,11 +233,15 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Done
     //----------------------------
-    env::set_current_dir(&curdir)?;
-    fs::copy(
-        tempdir.path().join("replaced.2st").to_str().unwrap(),
-        outfile,
-    )?;
+    if outfile == "stdout" {
+        run_cmd!(cat replaced.2st)?;
+    } else {
+        env::set_current_dir(&curdir)?;
+        fs::copy(
+            tempdir.path().join("replaced.2st").to_str().unwrap(),
+            outfile,
+        )?;
+    }
 
     Ok(())
 }
