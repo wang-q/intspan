@@ -7,13 +7,38 @@ fn main() -> anyhow::Result<()> {
     let app = Command::new("ovlpr")
         .version(crate_version!())
         .author(crate_authors!())
-        .about("`ovlpr` operates overlaps between sequences")
+        .about("`ovlpr` - UniTig manipulation tools")
         .propagate_version(true)
         .arg_required_else_help(true)
         .color(ColorChoice::Auto)
         .subcommand(cmd_ovlpr::covered::make_subcommand())
         .subcommand(cmd_ovlpr::paf2ovlp::make_subcommand())
-        .subcommand(cmd_ovlpr::restrict::make_subcommand());
+        .subcommand(cmd_ovlpr::restrict::make_subcommand())
+        .after_help(
+            r###"
+`ovlpr` is primarily a wrapper around Gene Myers' `daligner` and contains several accessory tools.
+It's designed to manipulate UniTigs when assembling genomes.
+
+Subcommand groups:
+
+* Standalone
+    * paf2ovlp
+    * show2ovlp
+    * covered
+    * restrict
+    * dazzname
+
+* Pipeline
+    * overlap
+    * contained
+    * merge
+    * orient
+    * group
+    * layout
+    * overlap2
+
+"###,
+        );
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
@@ -26,3 +51,17 @@ fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+// TODO:
+//  Standalone
+//  show2ovlp
+//  dazzname
+// TODO:
+//  Pipeline
+//  overlap
+//  contained
+//  merge
+//  orient
+//  group
+//  layout
+//  overlap2
