@@ -2,10 +2,10 @@ use clap::*;
 use cmd_lib::*;
 use intspan::*;
 use std::collections::BTreeSet;
+use std::fs::File;
 use std::io::{BufRead, Write};
 use std::path::Path;
 use std::{env, fs};
-use std::fs::File;
 use tempfile::TempDir;
 
 // Create clap subcommand arguments
@@ -20,8 +20,7 @@ pub fn make_subcommand() -> Command {
 * <infiles> are paths to .rg or .tsv files, .gz is supported
     * infile == stdin means reading from STDIN
 
-
-* This pipeline depends on the binary, `rgr`
+* This pipeline depends on the binary `rgr` itself
 
 "###,
         )
