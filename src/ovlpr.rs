@@ -16,8 +16,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_ovlpr::restrict::make_subcommand())
         .after_help(
             r###"
-`ovlpr` is primarily a wrapper around Gene Myers' `daligner` and contains several accessory tools.
-It's designed to manipulate UniTigs when assembling genomes.
+`ovlpr` is designed to manipulate UniTigs when assembling genomes.
 
 Subcommand groups:
 
