@@ -276,25 +276,6 @@ Options:
 
 ```
 
-### `ovlpr help`
-
-```text
-`ovlpr` operates overlaps between sequences
-
-Usage: ovlpr [COMMAND]
-
-Commands:
-  covered   Covered regions from .ovlp.tsv files
-  paf2ovlp  Convert minimap .paf to overlaps
-  restrict  Restrict overlaps to known pairs
-  help      Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-
-```
-
 ## Examples
 
 ### `spanr`
@@ -504,34 +485,6 @@ cat tests/Atha/filter.tsv |
     spanr cover stdin -o tests/Atha/cover.json
 
 spanr stat tests/Atha/chr.sizes tests/Atha/cover.json -o stdout
-
-```
-
-### `ovlpr`
-
-```shell
-echo "tests/ovlpr/1_4.anchor.fasta;tests/ovlpr/1_4.pac.fasta" |
-    parallel --colsep ";" -j 1 "
-        minimap2 -cx asm20 {1} {2} |
-            ovlpr paf2ovlp stdin |
-            tsv-sort
-        minimap2 -cx asm20 {2} {1} |
-            ovlpr paf2ovlp stdin |
-            tsv-sort
-    " |
-    ovlpr covered stdin --mean
-
-ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv
-
-ovlpr covered tests/ovlpr/11_2.long.paf --paf
-
-ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --base
-
-ovlpr covered tests/ovlpr/1_4.pac.paf.ovlp.tsv --mean
-
-ovlpr paf2ovlp tests/ovlpr/1_4.pac.paf
-
-ovlpr restrict tests/ovlpr/1_4.ovlp.tsv tests/ovlpr/1_4.restrict.tsv
 
 ```
 
