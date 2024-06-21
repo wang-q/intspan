@@ -266,3 +266,43 @@ fn paf_line() {
         assert_eq!(ovlp.contained(), expected.12);
     }
 }
+
+#[test]
+fn show_line() {
+    let tests = vec![(
+                         "  1    5 n   [   797.. 9,124> x <     0.. 8,581]  ~  11.0%   (   926 diffs, 10 trace pts)",
+                         (
+                             "1",
+                             "5",
+                             8739,
+                             0.163,
+                             0,
+                             6401,
+                             14739,
+                             25030,
+                             0,
+                             189,
+                             8928,
+                             8928,
+                             "overlap"
+                         ),
+                     ),
+    ];
+    for (line, expected) in tests {
+        let ovlp = Overlap::from_paf(line);
+        //        assert_eq!(ovlp.to_string(), line);
+        assert_eq!(ovlp.f_id(), expected.0);
+        assert_eq!(ovlp.g_id(), expected.1);
+        assert_eq!(*ovlp.len(), expected.2);
+        assert!((*ovlp.idt() - expected.3).abs() < 0.001);
+        assert_eq!(*ovlp.f_strand(), expected.4);
+        assert_eq!(*ovlp.f_begin(), expected.5);
+        assert_eq!(*ovlp.f_end(), expected.6);
+        assert_eq!(*ovlp.f_len(), expected.7);
+        assert_eq!(*ovlp.g_strand(), expected.8);
+        assert_eq!(*ovlp.g_begin(), expected.9);
+        assert_eq!(*ovlp.g_end(), expected.10);
+        assert_eq!(*ovlp.g_len(), expected.11);
+        assert_eq!(ovlp.contained(), expected.12);
+    }
+}
