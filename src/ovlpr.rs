@@ -51,12 +51,10 @@ Subcommand groups:
     Ok(())
 }
 
-// TODO:
-//  Standalone
+// TODO: Standalone
 //  show2ovlp
 //  dazzname
-// TODO:
-//  Pipeline
+// TODO: Pipeline
 //  overlap
 //  contained
 //  merge
