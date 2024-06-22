@@ -2,6 +2,10 @@
 
 ## Unreleased - ReleaseDate
 
+* Move `ovlpr` to `anchr`
+* Add `rgr pl-2rmp`
+* Add `--group` to `rgr sort`
+
 ## 0.7.5 - 2023-07-28
 
 * Add `fasr replace`
