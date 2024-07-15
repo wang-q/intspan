@@ -1,6 +1,6 @@
 use crate::{IntSpan, Range};
 use anyhow::anyhow;
-use flate2::read::GzDecoder;
+use flate2;
 use path_clean::PathClean;
 use serde_json::Value;
 use std::cmp::Reverse;
@@ -35,7 +35,7 @@ pub fn reader(input: &str) -> Box<dyn BufRead> {
         };
 
         if path.extension() == Some(OsStr::new("gz")) {
-            Box::new(BufReader::new(GzDecoder::new(file)))
+            Box::new(BufReader::new(flate2::read::MultiGzDecoder::new(file)))
         } else {
             Box::new(BufReader::new(file))
         }

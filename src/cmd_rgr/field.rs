@@ -80,8 +80,8 @@ Example:
         .arg(
             Arg::new("end")
                 .long("end")
-                .value_parser(value_parser!(usize))
                 .num_args(1)
+                .value_parser(value_parser!(usize))
                 .help("Optional field idx of end"),
         )
         .arg(

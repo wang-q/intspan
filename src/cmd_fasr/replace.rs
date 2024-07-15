@@ -26,7 +26,7 @@ pub fn make_subcommand() -> Command {
                 .required(true)
                 .num_args(1)
                 .index(1)
-                .help("Path to name.lst"),
+                .help("Path to replace.tsv"),
         )
         .arg(
             Arg::new("infiles")
