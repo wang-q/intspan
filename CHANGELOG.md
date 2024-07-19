@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.6 - 2024-07-19
+
 * Move `ovlpr` to `anchr`
 * Add `rgr pl-2rmp`
 * Add `--group` to `rgr sort`
