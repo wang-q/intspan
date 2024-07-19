@@ -5,6 +5,10 @@ on:
     tags:
       - '*'
 
+# We need this to be able to create releases.
+permissions:
+  contents: write
+
 jobs:
   linux-gnu:
     runs-on: ubuntu-latest
