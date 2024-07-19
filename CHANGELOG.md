@@ -5,6 +5,7 @@
 * Move `ovlpr` to `anchr`
 * Add `rgr pl-2rmp`
 * Add `--group` to `rgr sort`
+* Use `MultiGzDecoder` in intspan::reader()
 
 ## 0.7.5 - 2023-07-28
 
