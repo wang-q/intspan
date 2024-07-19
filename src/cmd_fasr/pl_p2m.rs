@@ -50,7 +50,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let curdir = env::current_dir()?;
     let fasr = env::current_exe().unwrap().display().to_string();
 
-    use_builtin_cmd!(echo, cat);
     run_cmd!(echo "==> Paths")?;
     run_cmd!(echo "    \"fasr\"   = ${fasr}")?;
     run_cmd!(echo "    \"curdir\" = ${curdir}")?;
@@ -107,12 +106,14 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             .iter()
             .map(|e| e.1.get(1).unwrap().to_string())
             .collect();
+        let files = infiles.clone();
         run_cmd!(
-            spanr compare --op intersect $[infiles] |
+            spanr compare --op intersect $[files] |
                 spanr span stdin --op excise -n 10 -o intersect.json
         )?;
+        let files = infiles.clone();
         run_cmd!(
-            spanr merge $[infiles] intersect.json -o merge.json
+            spanr merge $[files] intersect.json -o merge.json
         )?;
     }
 

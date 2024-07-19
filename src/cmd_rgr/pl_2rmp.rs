@@ -72,8 +72,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let tempdir = TempDir::new().unwrap();
     let tempdir_str = tempdir.path().to_str().unwrap();
 
-    init_builtin_logger();
-    use_builtin_cmd!(echo, info, cat);
     run_cmd!(info "==> Paths")?;
     run_cmd!(info "    \"rgr\"   = ${rgr}")?;
     run_cmd!(info "    \"curdir\" = ${curdir}")?;
