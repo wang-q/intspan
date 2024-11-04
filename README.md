@@ -379,10 +379,10 @@ rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
 # ctg_2_1_.gc.tsv isn't sorted,
-cat tests/rgr/ctg_2_1_.gc.tsv | rgr sort stdin | cargo run --bin rgr pl-2rmp stdin > /dev/null
-cat tests/rgr/II.links.tsv | cargo run --bin rgr pl-2rmp stdin
+cat tests/rgr/ctg_2_1_.gc.tsv | rgr sort stdin | rgr pl-2rmp stdin > /dev/null
+cat tests/rgr/II.links.tsv | rgr pl-2rmp stdin
 
-cargo run --bin rgr md tests/rgr/ctg.range.tsv --num -c 2
+rgr md tests/rgr/ctg.range.tsv --num -c 2
 
 ```
 
