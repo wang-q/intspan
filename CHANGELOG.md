@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.7.8 - 2024-11-04
+
 * Add `rgr md`
 
 ## 0.7.7 - 2024-07-19
