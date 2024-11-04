@@ -50,6 +50,26 @@ fn command_replace() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_md() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("md")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("--num")
+        .arg("-c")
+        .arg("2")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 5);
+    assert!(stdout.contains("| ---: | :---: | --- |"), "separator");
+    assert!(stdout.contains("| 130218 | ctg:I:2 | I:100001-230218 |"));
+
+    Ok(())
+}
+
+#[test]
 fn command_replace_reverse() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd

@@ -382,6 +382,8 @@ rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 cat tests/rgr/ctg_2_1_.gc.tsv | rgr sort stdin | cargo run --bin rgr pl-2rmp stdin > /dev/null
 cat tests/rgr/II.links.tsv | cargo run --bin rgr pl-2rmp stdin
 
+cargo run --bin rgr md tests/rgr/ctg.range.tsv --num -c 2
+
 ```
 
 ### `linkr`
