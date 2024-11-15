@@ -1,5 +1,4 @@
 use clap::*;
-use intspan::*;
 use std::collections::BTreeMap;
 use std::io::BufRead;
 
@@ -109,7 +108,7 @@ Example:
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Options
+    // Args
     //----------------------------
     let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
@@ -133,18 +132,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let fields: Vec<usize> = if args.contains_id("fields") {
         is_append = true;
 
-        let mut ints: Vec<i32> = vec![];
-        let parts: Vec<&str> = args
-            .get_one::<String>("fields")
-            .unwrap()
-            .split(',')
-            .collect();
-        for p in parts {
-            let intspan = IntSpan::from(p);
-            intspan.elements().iter().for_each(|e| ints.push(*e));
-        }
-
-        ints.iter().map(|e| *e as usize).collect()
+        intspan::fields_to_idx(args.get_one::<String>("fields").unwrap())
     } else {
         vec![]
     };
@@ -184,7 +172,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // Loading
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let reader = reader(infile);
+        let reader = intspan::reader(infile);
         'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();
 
@@ -246,7 +234,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 parts.get(idx_end - 1).unwrap().parse::<i32>().unwrap()
             };
 
-            let rg = Range {
+            let rg = intspan::Range {
                 name: "".to_string(),
                 chr: chr.to_string(),
                 strand: strand.to_string(),

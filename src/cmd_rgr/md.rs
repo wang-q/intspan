@@ -73,12 +73,12 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let reader = intspan::reader(args.get_one::<String>("infile").unwrap());
 
     let mut opt_center: intspan::IntSpan = if args.contains_id("center") {
-        to_ints(args.get_one::<String>("center").unwrap())
+        intspan::fields_to_ints(args.get_one::<String>("center").unwrap())
     } else {
         intspan::IntSpan::new()
     };
     let mut opt_right: intspan::IntSpan = if args.contains_id("right") {
-        to_ints(args.get_one::<String>("right").unwrap())
+        intspan::fields_to_ints(args.get_one::<String>("right").unwrap())
     } else {
         intspan::IntSpan::new()
     };
@@ -130,11 +130,11 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 .enumerate()
                 .map(|(j, value)| {
                     // Don't touch first row
-                    if i == 0  {
+                    if i == 0 {
                         format!("{}", value)
                     } else if is_fmt && is_numeric_column[j] {
                         let num = value.parse::<f64>().unwrap();
-                        let v = format_number(num, opt_digits);
+                        let v = intspan::format_number(num, opt_digits);
                         format!("{}", v)
                     } else {
                         format!("{}", value)
@@ -164,90 +164,4 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     }
 
     Ok(())
-}
-
-fn to_ints(str: &str) -> intspan::IntSpan {
-    let mut ints = intspan::IntSpan::new();
-    let parts: Vec<&str> = str.split(',').collect();
-    for p in parts {
-        ints.add_runlist(p);
-    }
-    ints
-}
-
-// rewrite from https://metacpan.org/dist/Number-Format/source/Format.pm
-fn format_number(number: f64, decimal_digits: usize) -> String {
-    // Handle negative numbers
-    let sign = if number < 0.0 { -1 } else { 1 };
-    let mut number = number.abs();
-    number = round(number, decimal_digits); // Round off number
-
-    // Split integer and decimal parts of the number
-    let integer_part = number.trunc() as i64;
-    let decimal_part = number.fract();
-
-    // Add the commas (fixed as `,`)
-    let integer_str = integer_part.to_string();
-    let formatted_integer = integer_str
-        .chars()
-        .rev()
-        .collect::<Vec<_>>()
-        .chunks(3)
-        .map(|chunk| chunk.iter().collect::<String>())
-        .collect::<Vec<_>>()
-        .join(",")
-        .chars()
-        .rev()
-        .collect::<String>();
-
-    let decimal_str = format!("{:.1$}", decimal_part, decimal_digits)
-        .trim_start_matches('0')
-        .to_string();
-
-    let result = if !decimal_str.is_empty() {
-        format!("{}{}", formatted_integer, decimal_str)
-    } else {
-        formatted_integer
-    };
-
-    if sign < 0 {
-        format!("-{}", result)
-    } else {
-        result
-    }
-}
-
-fn round(number: f64, precision: usize) -> f64 {
-    // Implement rounding logic
-    (number * 10f64.powi(precision as i32)).round() / 10f64.powi(precision as i32)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_format_number() {
-        // Test positive numbers
-        assert_eq!(format_number(1234567.89, 2), "1,234,567.89");
-        assert_eq!(format_number(1000.0, 0), "1,000");
-        assert_eq!(format_number(0.12345, 3), "0.123");
-
-        // Test negative numbers
-        assert_eq!(format_number(-9876543.21, 3), "-9,876,543.210");
-        assert_eq!(format_number(-1000.0, 0), "-1,000");
-        assert_eq!(format_number(-0.98765, 4), "-0.9877");
-
-        // Test zero
-        assert_eq!(format_number(0.0, 2), "0.00");
-        assert_eq!(format_number(-0.0, 2), "0.00");
-
-        // Test large numbers
-        assert_eq!(format_number(1e10, 2), "10,000,000,000.00");
-        assert_eq!(format_number(-1e10, 2), "-10,000,000,000.00");
-
-        // Test decimal places
-        assert_eq!(format_number(1234.56789, 3), "1,234.568");
-        assert_eq!(format_number(1234.0, 5), "1,234.00000");
-    }
 }
