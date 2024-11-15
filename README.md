@@ -385,6 +385,9 @@ cat tests/rgr/II.links.tsv | rgr pl-2rmp stdin
 cargo run --bin rgr md tests/rgr/ctg.range.tsv --num -c 2
 cargo run --bin rgr md tests/rgr/ctg.range.tsv --fmt --digits 2
 
+cargo run --bin rgr dedup tests/rgr/ctg.tsv tests/rgr/ctg.tsv
+cargo run --bin rgr dedup tests/rgr/ctg.tsv -f 2
+
 ```
 
 ### `linkr`

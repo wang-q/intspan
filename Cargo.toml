@@ -56,6 +56,9 @@ bio = "0.30.1"
 crossbeam = "0.8.2"
 rust_xlsxwriter = "0.43.0"
 
+csv = "1.3.1"
+xxhash-rust = { version = "0.8.12", features = ["xxh3"] }
+
 which = "4.4.0"
 cmd_lib = "1.9.4"
 tempfile = "3.6.0"

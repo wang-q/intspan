@@ -2,6 +2,10 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `rgr dedup`
+
+* Add --fmt to `rgr md`
+
 ## 0.7.8 - 2024-11-04
 
 * Add `rgr md`

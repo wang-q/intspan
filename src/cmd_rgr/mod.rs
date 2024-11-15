@@ -1,6 +1,7 @@
 //! Subcommand modules for the `rgr` binary.
 
 pub mod count;
+pub mod dedup;
 pub mod field;
 pub mod md;
 pub mod merge;
