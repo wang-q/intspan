@@ -28,7 +28,7 @@ In general, .rg files are single-column .tsv
 
 Subcommand groups:
 
-* .tsv: dedup / md
+* Generic .tsv: dedup / md / replace
 
 * Field numbers in the TSV file start at 1
 
