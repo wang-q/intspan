@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Move `fasr` out
+
 ## 0.7.9 - 2024-11-15
 
 * Add `rgr dedup`
@@ -19,48 +21,7 @@
 * Add `--group` to `rgr sort`
 * Use `MultiGzDecoder` in intspan::reader()
 
-## 0.7.5 - 2023-07-28
-
-* Add `fasr replace`
-* Add `fasr pl-p2m`
-* Add `fasr xlsx`
-
-* Add --outgroup to `fasr consensus` and `fasr variation`
-* Add --required to `fasr subset`
-* Add --outgroup, --chop, and --quick to `fasr refine`
-
-* Implementing `--parallel` with `crossbeam`
-    * for `fasr consensus`
-    * for `fasr refine`
-
-## 0.7.4 - 2023-07-20
-
-* Add `fasr filter`
-* Add `fasr refine`
-* Add `fasr variation`
-
-* Add --multi to `fasr create`
-
 ## 0.7.3 - 2023-07-18
-
-* New binary `fasr`, ported from `App::Fasops`
-    * `fasr axt2fas`
-    * `fasr check`
-    * `fasr concat`
-    * `fasr consensus`
-    * `fasr cover`
-    * `fasr create`
-    * `fasr join`
-    * `fasr link`
-    * `fasr maf2fas`
-    * `fasr name`
-    * `fasr separate`
-    * `fasr slice`
-    * `fasr split`
-    * `fasr stat`
-    * `fasr subset`
-
-* Add `libs/alignment`
 
 * Add `utils::get_seq_faidx()`
 * Add `IntSpan.find_islands_n()` and `IntSpan.find_islands_ints()`
@@ -123,20 +84,9 @@
 
 * Move `nwr` out
 
-## 0.4.17 - 2022-02-21
-
-* Add `nwr download`
-* Add `nwr txdb`
-* Add `nwr info`
-* Add `nwr lineage`
-* Add `nwr restrict`
-* Add `nwr member`
-* Add `nwr append`
-
 ## 0.4.16 - 2022-02-12
 
 * Switch to `clap` v3
-* New binary `nwr`
 
 ## 0.4.15 - 2021-08-19
 

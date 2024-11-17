@@ -26,7 +26,7 @@ cargo doc --open
 mkdir -p /tmp/cargo
 export CARGO_TARGET_DIR=/tmp/cargo
 cargo build
-cargo run --bin fasr help
+cargo run --bin spanr help
 
 # build for CentOS 7
 # rustup target add x86_64-unknown-linux-gnu
@@ -219,42 +219,6 @@ Commands:
   gff       Convert gff3 to covers on chromosomes
   convert   Convert runlist file to ranges file
   help      Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-
-```
-
-### `fasr help`
-
-```text
-`fasr` operates block fasta files
-
-Usage: fasr [COMMAND]
-
-Commands:
-  axt2fas    Convert axt to block fasta
-  check      Check genome locations in block fasta headers
-  concat     Concatenate sequence pieces of the same species
-  consensus  Generate consensus sequences by POA
-  cover      Output covers on chromosomes
-  create     Create block fasta files from links of ranges
-  filter     Filter blocks, and can also be used as a formatter
-  join       Join multiple block fasta files by a common target
-  link       Output bi/multi-lateral range links
-  maf2fas    Convert maf to block fasta
-  name       Output all species names
-  pl-p2m     Pipeline - pairwise alignments to multiple alignments
-  refine     Realign files with external programs and trim unwanted regions
-  replace    Concatenate sequence pieces of the same species
-  separate   Separate block fasta files by species
-  slice      Extract alignment slices
-  split      Split block fasta files to per-alignment/chromosome fasta files
-  stat       Extract a subset of species
-  subset     Extract a subset of species
-  variation  List variations (substitutions/indels)
-  help       Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
@@ -498,80 +462,6 @@ cat tests/Atha/filter.tsv |
     spanr cover stdin -o tests/Atha/cover.json
 
 spanr stat tests/Atha/chr.sizes tests/Atha/cover.json -o stdout
-
-```
-
-### `fasr`
-
-```shell
-fasr maf2fas tests/fasr/example.maf
-
-fasr axt2fas tests/fasr/RM11_1a.chr.sizes tests/fasr/example.axt --qname RM11_1a
-
-cargo run --bin fasr filter tests/fasr/example.fas --ge 10
-
-fasr name tests/fasr/example.fas --count
-
-fasr cover tests/fasr/example.fas
-
-fasr cover tests/fasr/example.fas --name S288c --trim 10
-
-fasr concat tests/fasr/name.lst tests/fasr/example.fas
-
-fasr subset tests/fasr/name.lst tests/fasr/example.fas
-cargo run --bin fasr subset tests/fasr/name.lst tests/fasr/refine.fas --required
-
-fasr link tests/fasr/example.fas --pair
-fasr link tests/fasr/example.fas --best
-
-cargo run --bin fasr replace tests/fasr/replace.tsv tests/fasr/example.fas
-cargo run --bin fasr replace tests/fasr/replace.fail.tsv tests/fasr/example.fas
-
-samtools faidx tests/fasr/NC_000932.fa NC_000932:1-10
-
-fasr check tests/fasr/NC_000932.fa tests/fasr/A_tha.pair.fas
-
-fasr create tests/fasr/genome.fa tests/fasr/I.connect.tsv --name S288c
-
-# Create a fasta file containing multiple genomes
-cat tests/fasr/genome.fa | sed 's/^>/>S288c./' > tests/fasr/genomes.fa
-samtools faidx tests/fasr/genomes.fa S288c.I:1-100
-
-cargo run --bin fasr create tests/fasr/genomes.fa tests/fasr/I.name.tsv --multi
-
-fasr separate tests/fasr/example.fas -o . --suffix .tmp
-
-spoa tests/fasr/refine.fasta -r 1
-
-cargo run --bin fasr consensus tests/fasr/example.fas
-cargo run --bin fasr consensus tests/fasr/refine.fas
-cargo run --bin fasr consensus tests/fasr/refine.fas --outgroup -p 2
-
-cargo run --bin fasr refine tests/fasr/example.fas
-cargo run --bin fasr refine tests/fasr/example.fas --msa none --chop 10
-cargo run --bin fasr refine tests/fasr/refine2.fas --msa clustalw --outgroup
-cargo run --bin fasr refine tests/fasr/example.fas --quick
-
-cargo run --bin fasr split tests/fasr/example.fas --simple
-cargo run --bin fasr split tests/fasr/example.fas -o . --chr --suffix .tmp
-
-cargo run --bin fasr slice tests/fasr/slice.json tests/fasr/slice.fas --name S288c
-
-cargo run --bin fasr join tests/fasr/S288cvsYJM789.slice.fas --name YJM789
-cargo run --bin fasr join \
-    tests/fasr/S288cvsRM11_1a.slice.fas \
-    tests/fasr/S288cvsYJM789.slice.fas \
-    tests/fasr/S288cvsSpar.slice.fas
-
-cargo run --bin fasr stat tests/fasr/example.fas --outgroup
-
-cargo run --bin fasr variation tests/fasr/example.fas
-cargo run --bin fasr variation tests/fasr/example.fas --outgroup
-
-cargo run --bin fasr xlsx tests/fasr/example.fas
-cargo run --bin fasr xlsx tests/fasr/example.fas --outgroup
-
-cargo run --bin fasr pl-p2m tests/fasr/S288cvsRM11_1a.slice.fas tests/fasr/S288cvsSpar.slice.fas
 
 ```
 
