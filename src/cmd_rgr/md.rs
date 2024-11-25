@@ -100,6 +100,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         data.push(fields);
     }
 
+    let mut table = String::new();
     if !data.is_empty() {
         let num_columns = data[0].len();
         if is_num {
@@ -141,7 +142,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                     }
                 })
                 .collect();
-            writer.write_fmt(format_args!("| {} |\n", formatted_row.join(" | ")))?;
+            table += format!("| {} |\n", formatted_row.join(" | ")).as_str();
 
             // Print the header separator
             if i == 0 {
@@ -158,9 +159,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                         }
                     })
                     .collect();
-                writer.write_fmt(format_args!("| {} |\n", separator.join(" | ")))?;
+                table += format!("| {} |\n", separator.join(" | ")).as_str();
             }
         }
+    }
+
+    if !table.is_empty() {
+        writer.write_fmt(format_args!(
+            "{}",
+            markdown_table_formatter::format_tables(table)
+        ))?;
     }
 
     Ok(())

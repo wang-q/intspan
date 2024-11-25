@@ -19,6 +19,9 @@ cargo install --force --path .
 # or
 brew install intspan
 
+# test
+cargo test -- --test-threads=1
+
 # local docs
 cargo doc --open
 
