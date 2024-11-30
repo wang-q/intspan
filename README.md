@@ -7,6 +7,27 @@
 [![license](https://img.shields.io/github/license/wang-q/intspan)](https://github.com//wang-q/intspan)
 [![Lines of code](https://tokei.rs/b1/github/wang-q/intspan?category=code)](https://github.com//wang-q/intspan)
 
+<!-- TOC -->
+* [intspan](#intspan)
+  * [Install](#install)
+  * [Concepts](#concepts)
+    * [IntSpans](#intspans)
+    * [Runlists - IntSpans on chromosomes stored in JSON](#runlists---intspans-on-chromosomes-stored-in-json)
+    * [Ranges](#ranges)
+    * [Links of ranges](#links-of-ranges)
+  * [Synopsis](#synopsis)
+    * [`spanr help`](#spanr-help)
+    * [`rgr help`](#rgr-help)
+    * [`linkr help`](#linkr-help)
+  * [Examples](#examples)
+    * [`spanr`](#spanr)
+    * [`rgr`](#rgr)
+    * [`linkr`](#linkr)
+      * [S288c](#s288c)
+      * [Atha](#atha)
+  * [License](#license)
+<!-- TOC -->
+
 ## Install
 
 Current release: 0.8.0
@@ -40,48 +61,6 @@ ll $CARGO_TARGET_DIR/x86_64-unknown-linux-gnu/release/
 ```
 
 ## Concepts
-
-### Ranges
-
-An example is [`S288c.rg`](tests/spanr/S288c.rg).
-The information presented in this format is very similar to formats such as the `BED`.
-
-I chose this format because of its compactness, readability, and embeddability into other
-tab-separated files.
-
-```text
-I:1-100
-I(+):90-150
-S288c.I(-):190-200
-II:21294-22075
-II:23537-24097
-
-```
-
-The schema of an `Range` object is shown below.
-
-![ranges](doc/ranges.png)
-
-Simple rules:
-
-* `chromosome` and `start` are required
-* `species`, `strand` and `end` are optional
-* `.` to separate `species` and `chromosome`
-* `strand` is one of `+` and `-` and surround by round brackets
-* `:` to separate names and digits
-* `-` to separate `start` and `end`
-* For `species`:
-    * `species` should be alphanumeric with no spaces, the one exception character is `/`.
-    * A `species` is an identity that you can also think of as a strain name, an assembly, or
-      something else.
-
-```text
-species.chromosome(strand):start-end
---------^^^^^^^^^^--------^^^^^^----
-
-```
-
-In this toolset, [`rgr`](#rgr-help) is used to operate ranges in `.rg` and `.tsv` files.
 
 ### IntSpans
 
@@ -154,6 +133,48 @@ handles this job.
 ```
 
 * `chr.sizes`: [`S288c.chr.sizes`](tests/spanr/S288c.chr.sizes)
+
+### Ranges
+
+An example is [`S288c.rg`](tests/spanr/S288c.rg).
+The information presented in this format is very similar to formats such as the `BED`.
+
+I chose this format because of its compactness, readability, and embeddability into other
+tab-separated files.
+
+```text
+I:1-100
+I(+):90-150
+S288c.I(-):190-200
+II:21294-22075
+II:23537-24097
+
+```
+
+The schema of an `Range` object is shown below.
+
+![ranges](doc/ranges.png)
+
+Simple rules:
+
+* `chromosome` and `start` are required
+* `species`, `strand` and `end` are optional
+* `.` to separate `species` and `chromosome`
+* `strand` is one of `+` and `-` and surround by round brackets
+* `:` to separate names and digits
+* `-` to separate `start` and `end`
+* For `species`:
+    * `species` should be alphanumeric with no spaces, the one exception character is `/`.
+    * A `species` is an identity that you can also think of as a strain name, an assembly, or
+      something else.
+
+```text
+species.chromosome(strand):start-end
+--------^^^^^^^^^^--------^^^^^^----
+
+```
+
+In this toolset, [`rgr`](#rgr-help) is used to operate ranges in `.rg` and `.tsv` files.
 
 ### Links of ranges
 

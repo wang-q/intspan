@@ -4,8 +4,6 @@
 
 ## 0.8.0 - 2024-11-30
 
-## 0.7.10 - 2024-11-30
-
 * Move `fasr` to `hnsm`
 
 * Add `--longest` to `spanr convert`
