@@ -5,6 +5,7 @@
 * Move `fasr` to `hnsm`
 
 * Add `--longest` to `spanr convert`
+* Format Markdown tables in `rgr md`
 
 ## 0.7.9 - 2024-11-15
 
