@@ -2,7 +2,9 @@
 
 ## Unreleased - ReleaseDate
 
-* Move `fasr` out
+* Move `fasr` to `hnsm`
+
+* Add `--longest` to `spanr convert`
 
 ## 0.7.9 - 2024-11-15
 
@@ -17,6 +19,7 @@
 ## 0.7.7 - 2024-07-19
 
 * Move `ovlpr` to `anchr`
+
 * Add `rgr pl-2rmp`
 * Add `--group` to `rgr sort`
 * Use `MultiGzDecoder` in intspan::reader()

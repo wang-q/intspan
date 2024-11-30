@@ -1,5 +1,4 @@
 use clap::*;
-use intspan::*;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
@@ -11,6 +10,12 @@ pub fn make_subcommand() -> Command {
                 .num_args(1..)
                 .index(1)
                 .help("Set the input files to use"),
+        )
+        .arg(
+            Arg::new("longest")
+                .long("longest")
+                .action(ArgAction::SetTrue)
+                .help("Only keep the longest range"),
         )
         .arg(
             Arg::new("outfile")
@@ -25,33 +30,36 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
-    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
+    let is_longest = args.get_flag("longest");
+    let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
     //----------------------------
-    // Operating
+    // Ops
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let json = read_json(infile);
-        let set_of = json2set_m(&json);
+        let json = intspan::read_json(infile);
+        let set_of = intspan::json2set_m(&json);
 
         for set in set_of.values() {
             for chr in set.keys() {
-                let intspan = set.get(chr).unwrap();
-                let span_size = intspan.span_size();
-                let ranges = intspan.ranges();
-                for i in 0..span_size {
-                    let lower = *ranges.get(i * 2).unwrap();
-                    let upper = *ranges.get(i * 2 + 1).unwrap();
+                let ints = set.get(chr).unwrap();
+                let mut intses = ints.intses();
 
-                    //----------------------------
-                    // Output
-                    //----------------------------
-                    if lower == upper {
-                        writer.write_all(format!("{}:{}\n", chr, lower).as_ref())?;
-                    } else {
-                        writer.write_all(format!("{}:{}-{}\n", chr, lower, upper).as_ref())?;
+                //----------------------------
+                // Output
+                //----------------------------
+                if is_longest {
+                    if !intses.is_empty() {
+                        // Negate the value for descending order
+                        intses.sort_by_cached_key(|e| -e.size());
+                        let longest = intses.first().unwrap();
+                        writer.write_all(format!("{}:{}\n", chr, longest.to_string()).as_ref())?;
+                    }
+                } else {
+                    for sub in &intses {
+                        writer.write_all(format!("{}:{}\n", chr, sub.to_string()).as_ref())?;
                     }
                 }
             }

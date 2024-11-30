@@ -638,5 +638,18 @@ fn command_convert() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 28);
     assert!(stdout.contains("II:327069-327703"), "first range");
 
+    let mut cmd = Command::cargo_bin("spanr")?;
+    let output = cmd
+        .arg("convert")
+        .arg("tests/spanr/repeat.json")
+        .arg("--longest")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 11);
+    assert!(stdout.contains("IV:981142-987119"), "longest");
+    assert!(!stdout.contains("IV:757572-759779"), "not longest");
+
     Ok(())
 }

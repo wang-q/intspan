@@ -175,31 +175,6 @@ Types of links:
 
 ## Synopsis
 
-### `rgr help`
-
-```text
-`rgr` operates ranges in .rg and .tsv files
-
-Usage: rgr [COMMAND]
-
-Commands:
-  count    Count each range overlapping with other range files
-  field    Create/append ranges from fields
-  merge    Merge overlapped ranges via overlapping graph
-  prop     Proportion of the ranges intersecting a runlist file
-  replace  Replace fields in .tsv file
-  runlist  Filter .rg and .tsv files by comparison with a runlist file
-  sort     Sort .rg and .tsv files by a range field
-  help     Print this message or the help of the given subcommand(s)
-
-Options:
-  -h, --help     Print help
-  -V, --version  Print version
-
-* Field numbers in the TSV file start at 1
-
-```
-
 ### `spanr help`
 
 ```text
@@ -226,6 +201,31 @@ Commands:
 Options:
   -h, --help     Print help
   -V, --version  Print version
+
+```
+
+### `rgr help`
+
+```text
+`rgr` operates ranges in .rg and .tsv files
+
+Usage: rgr [COMMAND]
+
+Commands:
+  count    Count each range overlapping with other range files
+  field    Create/append ranges from fields
+  merge    Merge overlapped ranges via overlapping graph
+  prop     Proportion of the ranges intersecting a runlist file
+  replace  Replace fields in .tsv file
+  runlist  Filter .rg and .tsv files by comparison with a runlist file
+  sort     Sort .rg and .tsv files by a range field
+  help     Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+* Field numbers in the TSV file start at 1
 
 ```
 
@@ -312,6 +312,8 @@ spanr statop \
 spanr convert tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr cover stdin |
     spanr stat tests/spanr/S288c.chr.sizes stdin --all
+
+cargo run --bin spanr convert --longest tests/spanr/repeat.json
 
 spanr merge tests/spanr/repeat.json tests/spanr/intergenic.json |
     spanr combine stdin |
