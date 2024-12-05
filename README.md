@@ -50,13 +50,6 @@ cargo doc --open
 mkdir -p /tmp/cargo
 export CARGO_TARGET_DIR=/tmp/cargo
 cargo build
-cargo run --bin spanr help
-
-# build for CentOS 7
-# rustup target add x86_64-unknown-linux-gnu
-# pip3 install cargo-zigbuild
-cargo zigbuild --target x86_64-unknown-linux-gnu.2.17 --release
-ll $CARGO_TARGET_DIR/x86_64-unknown-linux-gnu/release/
 
 ```
 
