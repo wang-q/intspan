@@ -5,21 +5,22 @@ on:
     tags:
       - '*'
 
-# We need this to be able to create releases.
-permissions:
-  contents: write
+
+permissions: {}
 
 jobs:
   linux-gnu:
     runs-on: ubuntu-latest
-    # Use a container with GLIBC 2.17
-    # container: quay.io/pypa/manylinux2014_x86_64
+    # We need this to be able to create releases.
+    permissions:
+      contents: write
     steps:
       - name: Show GLIBC
         run: ldd --version
 
-      - name: Checkout sources
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -43,12 +44,16 @@ jobs:
           overwrite: true
   linux-musl:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: stable
           targets: x86_64-unknown-linux-musl
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Build
         run: cargo build --verbose --release --target x86_64-unknown-linux-musl
       - name: Create tarball
@@ -63,12 +68,16 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
   macos:
+    permissions:
+      contents: write
     runs-on: macOS-latest
     steps:
       - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: stable
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Build
         env:
           MACOSX_DEPLOYMENT_TARGET: 10.12
@@ -86,11 +95,15 @@ jobs:
           overwrite: true
   windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: hecrj/setup-rust-action@v1
         with:
           rust-version: stable
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Enable static CRT linkage
         run: |
           mkdir .cargo
