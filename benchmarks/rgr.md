@@ -89,14 +89,29 @@ cd ~/Scripts/intspan/
 hyperfine --warmup 1 \
     -n 'rgr filter' \
     '
-    rgr select tests/rgr/ctg_2_1_.gc.tsv -H -f 1,3 > /dev/null
+    rgr select tests/rgr/ctg_2_1_.gc.tsv -f 1,3 > /dev/null
     ' \
     -n 'tsv-filter' \
     '
-    tsv-select tests/rgr/ctg_2_1_.gc.tsv -f 1 > /dev/null
+    tsv-select tests/rgr/ctg_2_1_.gc.tsv -f 1,3 > /dev/null
+    ' \
+    -n 'rgr filter -H' \
+    '
+    rgr select tests/rgr/ctg_2_1_.gc.tsv -H -f "#range,signal" > /dev/null
+    ' \
+    -n 'tsv-filter -H' \
+    '
+    tsv-select tests/rgr/ctg_2_1_.gc.tsv -H -f "#range,signal" > /dev/null
     ' \
     --export-markdown rgr.select.md.tmp
 
 cat rgr.select.md.tmp
 
 ```
+
+| Command         |  Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:----------------|-----------:|---------:|---------:|------------:|
+| `rgr filter`    | 13.9 ± 0.7 |     12.9 |     17.8 | 2.54 ± 0.86 |
+| `tsv-filter`    |  5.6 ± 1.9 |      3.7 |     10.1 | 1.01 ± 0.49 |
+| `rgr filter -H` | 13.9 ± 0.8 |     12.9 |     17.5 | 2.53 ± 0.86 |
+| `tsv-filter -H` |  5.5 ± 1.8 |      3.6 |     10.1 |        1.00 |
