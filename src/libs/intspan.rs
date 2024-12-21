@@ -1,8 +1,8 @@
+use anyhow::anyhow;
 use std::cmp::{min, Ordering};
 use std::collections::VecDeque;
 use std::fmt;
 use std::vec::Vec;
-use anyhow::anyhow;
 
 /// `IntSpan` handles of sets containing integer spans.
 ///

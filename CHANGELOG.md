@@ -2,7 +2,10 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `IntSpan::valid()`
+
 * Add `rgr filter`
+* Add `rgr select`
 
 ## 0.8.0 - 2024-11-30
 

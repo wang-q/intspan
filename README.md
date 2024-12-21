@@ -339,7 +339,7 @@ spanr merge tests/spanr/repeat.json tests/spanr/intergenic.json |
 
 ```shell
 rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
-rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
+rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7
 rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.range.tsv
 
 rgr sort tests/rgr/S288c.rg
@@ -373,6 +373,9 @@ cargo run --bin rgr dedup tests/rgr/ctg.tsv -f 2
 
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H -c --str-eq 3:trna --str-ne '7:+'
+
+cargo run --bin rgr select tests/rgr/ctg.tsv -H -f 6,1
+cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1
 
 ```
 

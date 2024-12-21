@@ -474,6 +474,26 @@ pub fn fields_to_idx(str: &str) -> Vec<usize> {
     ints.iter().map(|e| *e as usize).collect()
 }
 
+pub fn named_field_to_idx(
+    str: &str,
+    idx_of: &HashMap<String, usize>,
+) -> anyhow::Result<Vec<usize>> {
+    let mut ints: Vec<i32> = vec![];
+    let parts: Vec<&str> = str.split(',').collect();
+    for p in parts {
+        if IntSpan::valid(p) {
+            let intspan = IntSpan::from(p);
+            intspan.elements().iter().for_each(|e| ints.push(*e));
+        } else if idx_of.contains_key(p) {
+            ints.push(*idx_of.get(p).unwrap() as i32)
+        } else {
+            return Err(anyhow!("Field not found in file header: `{}`", p));
+        }
+    }
+
+    Ok(ints.iter().map(|e| *e as usize).collect())
+}
+
 pub fn fields_to_ints(str: &str) -> IntSpan {
     let mut ints = IntSpan::new();
     let parts: Vec<&str> = str.split(',').collect();

@@ -200,35 +200,6 @@ fn command_field() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("field")
-        .arg("tests/spanr/NC_007942.gff")
-        .arg("-H")
-        .arg("--chr")
-        .arg("1")
-        .arg("--start")
-        .arg("4")
-        .arg("--end")
-        .arg("5")
-        .arg("--strand")
-        .arg("7")
-        .arg("--eq")
-        .arg("3:tRNA")
-        .arg("--ne")
-        .arg("7:+")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 27);
-    assert_eq!(
-        stdout.lines().next().unwrap().split('\t').count(),
-        1,
-        "field count"
-    );
-    assert!(stdout.contains("NC_007942(-):13066-13138"));
-
-    let mut cmd = Command::cargo_bin("rgr")?;
-    let output = cmd
-        .arg("field")
         .arg("tests/rgr/ctg.tsv")
         .arg("-H")
         .arg("-f")

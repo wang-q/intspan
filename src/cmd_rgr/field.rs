@@ -1,5 +1,4 @@
 use clap::*;
-use std::collections::BTreeMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
@@ -8,7 +7,7 @@ pub fn make_subcommand() -> Command {
         .about("Create/append ranges from fields")
         .after_help(
             r###"
-Example:
+Examples:
 
     rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
 
@@ -84,18 +83,6 @@ Example:
                 .help("Optional field idx of end"),
         )
         .arg(
-            Arg::new("eq")
-                .long("eq")
-                .action(ArgAction::Append)
-                .help("Filter lines by field:STR, FIELD == STR"),
-        )
-        .arg(
-            Arg::new("ne")
-                .long("ne")
-                .action(ArgAction::Append)
-                .help("Filter lines by field:STR, FIELD != STR"),
-        )
-        .arg(
             Arg::new("outfile")
                 .long("outfile")
                 .short('o')
@@ -137,37 +124,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         vec![]
     };
 
-    let mut eq_of: BTreeMap<usize, String> = BTreeMap::new();
-    if args.contains_id("eq") {
-        for s in args.get_many::<String>("eq").unwrap() {
-            let parts: Vec<&str> = s.splitn(2, ':').collect();
-
-            if parts.len() != 2 {
-                eprintln!("Need a valid value for --eq {}", s);
-                std::process::exit(1)
-            }
-
-            let idx = parts.first().unwrap().parse::<usize>().unwrap();
-
-            eq_of.insert(idx, parts.get(1).unwrap().to_string());
-        }
-    }
-    let mut ne_of: BTreeMap<usize, String> = BTreeMap::new();
-    if args.contains_id("ne") {
-        for s in args.get_many::<String>("ne").unwrap() {
-            let parts: Vec<&str> = s.splitn(2, ':').collect();
-
-            if parts.len() != 2 {
-                eprintln!("Need a valid value for --ne {}", s);
-                std::process::exit(1)
-            }
-
-            let idx = parts.first().unwrap().parse::<usize>().unwrap();
-
-            ne_of.insert(idx, parts.get(1).unwrap().to_string());
-        }
-    }
-
     //----------------------------
     // Loading
     //----------------------------
@@ -200,24 +156,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                     writer.write_fmt(format_args!("{}\n", line))?;
                 }
                 continue 'LINE;
-            }
-
-            // --eq and --ne
-            if !eq_of.is_empty() {
-                for (k, v) in &eq_of {
-                    let val = parts.get(k - 1).unwrap();
-                    if *val != *v {
-                        continue 'LINE;
-                    }
-                }
-            }
-            if !ne_of.is_empty() {
-                for (k, v) in &ne_of {
-                    let val = parts.get(k - 1).unwrap();
-                    if *val == *v {
-                        continue 'LINE;
-                    }
-                }
             }
 
             // build ranges

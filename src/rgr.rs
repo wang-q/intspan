@@ -22,6 +22,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_rgr::prop::make_subcommand())
         .subcommand(cmd_rgr::replace::make_subcommand())
         .subcommand(cmd_rgr::runlist::make_subcommand())
+        .subcommand(cmd_rgr::select::make_subcommand())
         .subcommand(cmd_rgr::sort::make_subcommand())
         .after_help(
             r###"
@@ -29,7 +30,7 @@ In general, .rg files are single-column .tsv
 
 Subcommand groups:
 
-* Generic .tsv: dedup / md / replace / filter
+* Generic .tsv: dedup / md / replace / filter / select
 
 * Field numbers in the TSV file start at 1
 
@@ -48,6 +49,7 @@ Subcommand groups:
         Some(("prop", sub_matches)) => cmd_rgr::prop::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
         Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
+        Some(("select", sub_matches)) => cmd_rgr::select::execute(sub_matches),
         Some(("sort", sub_matches)) => cmd_rgr::sort::execute(sub_matches),
         _ => unreachable!(),
     }
