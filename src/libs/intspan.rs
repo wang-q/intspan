@@ -2,6 +2,7 @@ use std::cmp::{min, Ordering};
 use std::collections::VecDeque;
 use std::fmt;
 use std::vec::Vec;
+use anyhow::anyhow;
 
 /// `IntSpan` handles of sets containing integer spans.
 ///
@@ -117,6 +118,11 @@ impl IntSpan {
         new.add_runlist(runlist);
 
         new
+    }
+
+    pub fn valid(runlist: &str) -> bool {
+        let new = Self::new();
+        new.runlist_to_ranges(runlist).is_ok()
     }
 
     pub fn from_pair(lower: i32, upper: i32) -> Self {
@@ -242,6 +248,24 @@ mod create {
             assert_eq!(intspan.cardinality(), exp_elements.len() as i32);
             assert_eq!(intspan.to_string(), *exp_runlist);
             assert_eq!(intspan.to_vec(), *exp_elements);
+        }
+    }
+
+    #[test]
+    fn test_valid() {
+        let tests = vec![
+            ("", true),
+            ("-", true),
+            ("-2--1", true),
+            ("1-3,4,5-7", true),
+            ("abc", false),
+            ("abc-def", false),
+            ("abc,def", false),
+        ];
+
+        // create new
+        for (runlist, exp) in &tests {
+            assert_eq!(IntSpan::valid(*runlist), *exp);
         }
     }
 
@@ -525,7 +549,7 @@ impl IntSpan {
     pub fn add_runlist(&mut self, runlist: &str) {
         // skip empty runlist
         if !runlist.is_empty() && !runlist.eq(&*EMPTY_STRING) {
-            let ranges = self.runlist_to_ranges(runlist);
+            let ranges = self.runlist_to_ranges(runlist).unwrap();
             self.add_ranges(&ranges);
         }
     }
@@ -588,7 +612,7 @@ impl IntSpan {
     pub fn remove_runlist(&mut self, runlist: &str) {
         // skip empty runlist
         if !runlist.is_empty() && !runlist.eq(&*EMPTY_STRING) {
-            let ranges = self.runlist_to_ranges(runlist);
+            let ranges = self.runlist_to_ranges(runlist).unwrap();
             self.remove_ranges(&ranges);
         }
     }
@@ -1573,7 +1597,7 @@ impl IntSpan {
         ranges
     }
 
-    fn runlist_to_ranges(&self, runlist: &str) -> Vec<i32> {
+    fn runlist_to_ranges(&self, runlist: &str) -> anyhow::Result<Vec<i32>> {
         let mut ranges: Vec<i32> = Vec::new();
 
         let bytes = runlist.as_bytes();
@@ -1618,12 +1642,12 @@ impl IntSpan {
                     i += 1;
                     break; // end of run
                 } else {
-                    panic!(
+                    return Err(anyhow!(
                         "Number format error: {} at {} of {}",
                         ch as char,
                         idx + i,
                         runlist
-                    );
+                    ));
                 }
 
                 i += 1;
@@ -1646,7 +1670,7 @@ impl IntSpan {
             idx += i;
         }
 
-        ranges
+        Ok(ranges)
     }
 }
 
