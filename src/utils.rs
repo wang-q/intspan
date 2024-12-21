@@ -1,6 +1,5 @@
 use crate::{IntSpan, Range};
 use anyhow::anyhow;
-use flate2;
 use path_clean::PathClean;
 use serde_json::Value;
 use std::cmp::Reverse;

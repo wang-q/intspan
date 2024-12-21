@@ -116,17 +116,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             //----------------------------
             // Output
             //----------------------------
-            let new_line: String;
-            if fields.is_empty() {
-                new_line = format!("{}", parts.join("\t"));
+            let new_line: String = if fields.is_empty() {
+                parts.join("\t").to_string()
             } else {
                 let selected: Vec<String> = fields
                     .iter()
                     .map(|e| parts.get(*e - 1).unwrap().to_string())
                     .collect();
 
-                new_line = format!("{}", selected.join("\t"));
-            }
+                selected.join("\t")
+            };
 
             writer.write_fmt(format_args!("{}\n", new_line))?;
         }

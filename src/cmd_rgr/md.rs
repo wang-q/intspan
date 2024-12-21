@@ -116,8 +116,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 }
             }
 
-            for i in 0..num_columns {
-                if is_numeric_column[i] {
+            for (i, &flag) in is_numeric_column.iter().enumerate().take(num_columns) {
+                if flag {
                     opt_center.remove_n((i + 1) as i32);
                     opt_right.add_n((i + 1) as i32);
                 }
@@ -132,13 +132,13 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 .map(|(j, value)| {
                     // Don't touch first row
                     if i == 0 {
-                        format!("{}", value)
+                        value.to_string()
                     } else if is_fmt && is_numeric_column[j] {
                         let num = value.parse::<f64>().unwrap();
                         let v = intspan::format_number(num, opt_digits);
-                        format!("{}", v)
+                        v.to_string()
                     } else {
-                        format!("{}", value)
+                        value.to_string()
                     }
                 })
                 .collect();

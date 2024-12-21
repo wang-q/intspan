@@ -145,7 +145,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             lines_of
                 .entry(part.to_string())
                 .and_modify(|v| v.push(line.clone()))
-                .or_insert(Vec::new());
+                .or_default();
         }
 
         for g in lines_of.keys().sorted() {

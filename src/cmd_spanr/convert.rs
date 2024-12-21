@@ -55,11 +55,11 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                         // Negate the value for descending order
                         intses.sort_by_cached_key(|e| -e.size());
                         let longest = intses.first().unwrap();
-                        writer.write_all(format!("{}:{}\n", chr, longest.to_string()).as_ref())?;
+                        writer.write_all(format!("{}:{}\n", chr, longest).as_ref())?;
                     }
                 } else {
                     for sub in &intses {
-                        writer.write_all(format!("{}:{}\n", chr, sub.to_string()).as_ref())?;
+                        writer.write_all(format!("{}:{}\n", chr, sub).as_ref())?;
                     }
                 }
             }

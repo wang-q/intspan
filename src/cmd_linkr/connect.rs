@@ -255,7 +255,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             let part_i = ranges[i].to_string();
             let part_j = ranges[j].to_string();
 
-            for part in &vec![part_i.to_string(), part_j.to_string()] {
+            for part in &[part_i.to_string(), part_j.to_string()] {
                 if !new_idx_of_part.contains_key(part) {
                     let idx = new_graph.add_node(part.to_string());
                     new_idx_of_part.insert(part.to_string(), idx);
