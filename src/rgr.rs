@@ -15,6 +15,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_rgr::count::make_subcommand())
         .subcommand(cmd_rgr::dedup::make_subcommand())
         .subcommand(cmd_rgr::field::make_subcommand())
+        .subcommand(cmd_rgr::filter::make_subcommand())
         .subcommand(cmd_rgr::md::make_subcommand())
         .subcommand(cmd_rgr::merge::make_subcommand())
         .subcommand(cmd_rgr::pl_2rmp::make_subcommand())
@@ -28,7 +29,7 @@ In general, .rg files are single-column .tsv
 
 Subcommand groups:
 
-* Generic .tsv: dedup / md / replace
+* Generic .tsv: dedup / md / replace / filter
 
 * Field numbers in the TSV file start at 1
 
@@ -40,6 +41,7 @@ Subcommand groups:
         Some(("count", sub_matches)) => cmd_rgr::count::execute(sub_matches),
         Some(("dedup", sub_matches)) => cmd_rgr::dedup::execute(sub_matches),
         Some(("field", sub_matches)) => cmd_rgr::field::execute(sub_matches),
+        Some(("filter", sub_matches)) => cmd_rgr::filter::execute(sub_matches),
         Some(("md", sub_matches)) => cmd_rgr::md::execute(sub_matches),
         Some(("merge", sub_matches)) => cmd_rgr::merge::execute(sub_matches),
         Some(("pl-2rmp", sub_matches)) => cmd_rgr::pl_2rmp::execute(sub_matches),

@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `rgr filter`
+
 ## 0.8.0 - 2024-11-30
 
 * Move `fasr` to `hnsm`

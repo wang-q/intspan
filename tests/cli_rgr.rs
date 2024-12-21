@@ -374,6 +374,32 @@ fn command_field() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_filter() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/spanr/NC_007942.gff")
+        .arg("-H")
+        .arg("--str-eq")
+        .arg("3:tRNA")
+        .arg("--str-ne")
+        .arg("7:+")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 27);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        1,
+        "field count"
+    );
+    assert!(stdout.contains("13066\t13138"));
+
+    Ok(())
+}
+
+#[test]
 fn command_sort() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd.arg("sort").arg("tests/rgr/S288c.rg").output().unwrap();

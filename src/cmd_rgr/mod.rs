@@ -3,6 +3,7 @@
 pub mod count;
 pub mod dedup;
 pub mod field;
+pub mod filter;
 pub mod md;
 pub mod merge;
 pub mod pl_2rmp;
