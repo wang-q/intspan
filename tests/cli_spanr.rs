@@ -483,7 +483,7 @@ fn command_span_invalid() -> anyhow::Result<()> {
         .arg("invalid");
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("Invalid IntSpan Op"));
+        .stderr(predicate::str::contains("error: invalid value"));
 
     Ok(())
 }

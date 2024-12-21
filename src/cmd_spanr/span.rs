@@ -30,9 +30,17 @@ List of operations
             Arg::new("op")
                 .long("op")
                 .num_args(1)
+                .action(ArgAction::Set)
+                .value_parser([
+                    builder::PossibleValue::new("cover"),
+                    builder::PossibleValue::new("holes"),
+                    builder::PossibleValue::new("trim"),
+                    builder::PossibleValue::new("pad"),
+                    builder::PossibleValue::new("excise"),
+                    builder::PossibleValue::new("fill"),
+                ])
                 .default_value("cover")
-                .value_parser(clap::builder::NonEmptyStringValueParser::new())
-                .help("operations: cover, holes, trim, pad, excise or fill"),
+                .help("Operations"),
         )
         .arg(
             Arg::new("number")
@@ -55,30 +63,30 @@ List of operations
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
     let json: BTreeMap<String, Value> = read_json(args.get_one::<String>("infile").unwrap());
     let is_multi: bool = json.values().next().unwrap().is_object();
     let set_of = json2set_m(&json);
 
-    let op = args.get_one::<String>("op").unwrap().as_str();
-    let number = *args.get_one::<i32>("number").unwrap();
+    let opt_op = args.get_one::<String>("op").unwrap().as_str();
+    let opt_number = *args.get_one::<i32>("number").unwrap();
 
     //----------------------------
-    // Operating
+    // Ops
     //----------------------------
     let mut res_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     for (name, set) in &set_of {
         let mut res: BTreeMap<String, IntSpan> = BTreeMap::new();
         for chr in set.keys() {
-            let intspan = match op {
+            let intspan = match opt_op {
                 "cover" => set.get(chr).unwrap().cover(),
                 "holes" => set.get(chr).unwrap().holes(),
-                "trim" => set.get(chr).unwrap().trim(number),
-                "pad" => set.get(chr).unwrap().pad(number),
-                "excise" => set.get(chr).unwrap().excise(number),
-                "fill" => set.get(chr).unwrap().fill(number),
-                _ => panic!("Invalid IntSpan Op"),
+                "trim" => set.get(chr).unwrap().trim(opt_number),
+                "pad" => set.get(chr).unwrap().pad(opt_number),
+                "excise" => set.get(chr).unwrap().excise(opt_number),
+                "fill" => set.get(chr).unwrap().fill(opt_number),
+                _ => unreachable!("Invalid IntSpan Op"),
             };
             //            println!("Op {}: {}", op, op_intspan.to_string());
             res.insert(chr.into(), intspan);
