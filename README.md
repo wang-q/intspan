@@ -374,7 +374,7 @@ cargo run --bin rgr dedup tests/rgr/ctg.tsv -f 2
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H -c --str-eq 3:trna --str-ne '7:+'
 
-cargo run --bin rgr select tests/rgr/ctg.tsv -H -f 6,1
+cargo run --bin rgr select tests/rgr/ctg.tsv -f 6,1
 cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1
 
 ```

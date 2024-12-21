@@ -79,19 +79,25 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             let parts: Vec<&str> = line.split('\t').collect();
 
             // the header line
-            if is_header && i == 0 {
-                let mut idx_of: HashMap<String, usize> = HashMap::new();
-                for (i, field) in parts.iter().enumerate() {
-                    idx_of.insert(field.to_string(), i + 1);
-                }
+            if i == 0 {
+                if is_header {
+                    let mut idx_of: HashMap<String, usize> = HashMap::new();
+                    for (i, field) in parts.iter().enumerate() {
+                        idx_of.insert(field.to_string(), i + 1);
+                    }
 
-                if args.contains_id("fields") {
-                    fields = intspan::named_field_to_idx(
-                        args.get_one::<String>("fields").unwrap(),
-                        &idx_of,
-                    )
-                    .unwrap()
-                };
+                    if args.contains_id("fields") {
+                        fields = intspan::named_field_to_idx(
+                            args.get_one::<String>("fields").unwrap(),
+                            &idx_of,
+                        )
+                        .unwrap()
+                    };
+                } else {
+                    if args.contains_id("fields") {
+                        fields = intspan::fields_to_idx(args.get_one::<String>("fields").unwrap());
+                    };
+                }
 
                 if fields.is_empty() {
                     writer.write_fmt(format_args!("{}\n", line))?;

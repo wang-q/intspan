@@ -31,7 +31,7 @@ mv ranges.tsv.gz ~/Scripts/intspan/tests/rgr/
 ```shell
 cd ~/Scripts/intspan/
 
-hyperfine --warmup 1 --export-markdown rgr.sort.md.tmp \
+hyperfine --warmup 1  \
     -n 'sort' \
     '
     rgr sort -H tests/rgr/ranges.tsv.gz tests/rgr/ranges.tsv.gz tests/rgr/ranges.tsv.gz
@@ -43,8 +43,60 @@ hyperfine --warmup 1 --export-markdown rgr.sort.md.tmp \
     -n 'sort -g' \
     '
     rgr sort -H -f 5 -g 6 tests/rgr/ranges.tsv.gz tests/rgr/ranges.tsv.gz tests/rgr/ranges.tsv.gz
-    '
+    ' \
+    --export-markdown rgr.sort.md.tmp
 
 cat rgr.sort.md.tmp
+
+```
+
+| Command   |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:----------|-------------:|---------:|---------:|------------:|
+| `sort`    |  621.0 ± 3.3 |    617.1 |    626.3 | 1.01 ± 0.08 |
+| `sort -f` |  629.4 ± 3.0 |    625.3 |    635.0 | 1.02 ± 0.08 |
+| `sort -g` | 615.0 ± 50.4 |    471.9 |    636.2 |        1.00 |
+
+## `rgr filter`
+
+```shell
+cd ~/Scripts/intspan/
+
+hyperfine --warmup 1 \
+    -n 'rgr filter' \
+    '
+    rgr filter tests/rgr/ctg_2_1_.gc.tsv --str-eq 3:1 > /dev/null
+    ' \
+    -n 'tsv-filter' \
+    '
+    tsv-filter tests/rgr/ctg_2_1_.gc.tsv --str-eq 3:1 > /dev/null
+    ' \
+    --export-markdown rgr.filter.md.tmp
+
+cat rgr.filter.md.tmp
+
+```
+
+| Command      |  Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-------------|-----------:|---------:|---------:|------------:|
+| `rgr filter` | 10.5 ± 1.1 |      9.3 |     14.6 | 2.25 ± 0.91 |
+| `tsv-filter` |  4.7 ± 1.8 |      2.3 |      7.9 |        1.00 |
+
+## `rgr select`
+
+```shell
+cd ~/Scripts/intspan/
+
+hyperfine --warmup 1 \
+    -n 'rgr filter' \
+    '
+    rgr select tests/rgr/ctg_2_1_.gc.tsv -H -f 1,3 > /dev/null
+    ' \
+    -n 'tsv-filter' \
+    '
+    tsv-select tests/rgr/ctg_2_1_.gc.tsv -f 1 > /dev/null
+    ' \
+    --export-markdown rgr.select.md.tmp
+
+cat rgr.select.md.tmp
 
 ```

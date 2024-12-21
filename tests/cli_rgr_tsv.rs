@@ -152,7 +152,6 @@ fn command_select() -> anyhow::Result<()> {
     let output = cmd
         .arg("select")
         .arg("tests/rgr/ctg.tsv")
-        .arg("-H")
         .arg("-f")
         .arg("6,1")
         .output()
