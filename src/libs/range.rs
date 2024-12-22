@@ -291,17 +291,18 @@ impl Range {
         self.shift_5p(-n)
     }
 
-    /// Flanking region of 5p end
+    /// Flanking region of the 5p end.
+    /// A negative value for 'n' indicates positions within the range.
     ///
     /// ```
     /// # use intspan::Range;
     /// let range = Range::from_str("I(+):100-200");
     /// assert_eq!(range.flank_5p(30).to_string(), "I(+):70-99");
-    /// assert_eq!(range.flank_5p(-30).to_string(), "I(+):101-130");
+    /// assert_eq!(range.flank_5p(-30).to_string(), "I(+):100-129");
     /// assert_eq!(range.flank_5p(0).is_valid(), false);
     /// let range = Range::from_str("I(-):100-200");
     /// assert_eq!(range.flank_5p(30).to_string(), "I(-):201-230");
-    /// assert_eq!(range.flank_5p(-30).to_string(), "I(-):170-199");
+    /// assert_eq!(range.flank_5p(-30).to_string(), "I(-):171-200");
     /// assert_eq!(range.flank_5p(0).is_valid(), false);
     /// ```
     pub fn flank_5p(&self, n: i32) -> Self {
@@ -313,9 +314,9 @@ impl Range {
             }
         } else {
             if self.strand == "-" {
-                self.end + n
+                self.end + n + 1
             } else {
-                self.start + 1
+                self.start
             }
         };
         let mut end = if n > 0 {
@@ -326,9 +327,60 @@ impl Range {
             }
         } else {
             if self.strand == "-" {
-                self.end - 1
+                self.end
             } else {
+                self.start - n - 1
+            }
+        };
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Flanking region of the 3p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.flank_3p(30).to_string(), "I(+):201-230");
+    /// assert_eq!(range.flank_3p(-30).to_string(), "I(+):171-200");
+    /// assert_eq!(range.flank_3p(0).is_valid(), false);
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.flank_3p(30).to_string(), "I(-):70-99");
+    /// assert_eq!(range.flank_3p(-30).to_string(), "I(-):100-129");
+    /// assert_eq!(range.flank_3p(0).is_valid(), false);
+    /// ```
+    pub fn flank_3p(&self, n: i32) -> Self {
+        let mut start = if n > 0 {
+            if self.strand == "-" {
                 self.start - n
+            } else {
+                self.end + 1
+            }
+        } else {
+            if self.strand == "-" {
+                self.start
+            } else {
+                self.end + n + 1
+            }
+        };
+        let mut end = if n > 0 {
+            if self.strand == "-" {
+                self.start - 1
+            } else {
+                self.end + n
+            }
+        } else {
+            if self.strand == "-" {
+                self.start - n - 1
+            } else {
+                self.end
             }
         };
         Self::check(&mut start, &mut end);

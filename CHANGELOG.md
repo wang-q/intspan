@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `rgr span`
+
 ## 0.8.2 - 2024-12-21
 
 * Add `IntSpan::valid()`

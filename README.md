@@ -377,6 +377,12 @@ cargo run --bin rgr filter tests/spanr/NC_007942.gff -H -c --str-eq 3:trna --str
 cargo run --bin rgr select tests/rgr/ctg.tsv -f 6,1
 cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1
 
+cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 0
+cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 10
+cargo run --bin rgr span tests/rgr/S288c.rg --op shift --mode 3p -n 10
+cargo run --bin rgr span tests/rgr/S288c.rg --op flank --mode 3p -n 10
+cargo run --bin rgr span tests/rgr/S288c.rg --op excise -n 20
+
 ```
 
 ### `linkr`

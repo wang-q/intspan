@@ -12,3 +12,4 @@ pub mod replace;
 pub mod runlist;
 pub mod select;
 pub mod sort;
+pub mod span;
