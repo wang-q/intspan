@@ -157,6 +157,191 @@ impl Range {
         IntSpan::from_pair(self.start, self.end)
     }
 
+    /// Trim both ends
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I:100-200");
+    /// assert_eq!(range.trim(30).to_string(), "I:130-170");
+    /// assert_eq!(range.trim(70).is_valid(), false);
+    /// assert_eq!(range.trim(-30).to_string(), "I:70-230");
+    /// ```
+    pub fn trim(&self, n: i32) -> Self {
+        let mut start = self.start + n;
+        let mut end = self.end - n;
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Trim 5p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.trim_5p(30).to_string(), "I(+):130-200");
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.trim_5p(30).to_string(), "I(-):100-170");
+    /// assert_eq!(range.trim_5p(-30).to_string(), "I(-):100-230");
+    /// assert_eq!(range.trim_5p(120).is_valid(), false);
+    /// ```
+    pub fn trim_5p(&self, n: i32) -> Self {
+        let mut start = if self.strand == "-" {
+            self.start
+        } else {
+            self.start + n
+        };
+        let mut end = if self.strand == "-" {
+            self.end - n
+        } else {
+            self.end
+        };
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Trim 3p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.trim_3p(30).to_string(), "I(+):100-170");
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.trim_3p(30).to_string(), "I(-):130-200");
+    /// assert_eq!(range.trim_3p(120).is_valid(), false);
+    /// ```
+    pub fn trim_3p(&self, n: i32) -> Self {
+        let mut start = if self.strand == "-" {
+            self.start + n
+        } else {
+            self.start
+        };
+        let mut end = if self.strand == "-" {
+            self.end
+        } else {
+            self.end - n
+        };
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Shift to 5p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.shift_5p(30).to_string(), "I(+):70-170");
+    /// assert_eq!(range.shift_5p(-30).to_string(), "I(+):130-230");
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.shift_5p(30).to_string(), "I(-):130-230");
+    /// ```
+    pub fn shift_5p(&self, n: i32) -> Self {
+        let mut start = if self.strand == "-" {
+            self.start + n
+        } else {
+            self.start - n
+        };
+        let mut end = if self.strand == "-" {
+            self.end + n
+        } else {
+            self.end - n
+        };
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
+    /// Shift to 3p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.shift_3p(30).to_string(), "I(+):130-230");
+    /// assert_eq!(range.shift_3p(-30).to_string(), "I(+):70-170");
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.shift_3p(30).to_string(), "I(-):70-170");
+    /// ```
+    pub fn shift_3p(&self, n: i32) -> Self {
+        self.shift_5p(-n)
+    }
+
+    /// Flanking region of 5p end
+    ///
+    /// ```
+    /// # use intspan::Range;
+    /// let range = Range::from_str("I(+):100-200");
+    /// assert_eq!(range.flank_5p(30).to_string(), "I(+):70-99");
+    /// assert_eq!(range.flank_5p(-30).to_string(), "I(+):101-130");
+    /// assert_eq!(range.flank_5p(0).is_valid(), false);
+    /// let range = Range::from_str("I(-):100-200");
+    /// assert_eq!(range.flank_5p(30).to_string(), "I(-):201-230");
+    /// assert_eq!(range.flank_5p(-30).to_string(), "I(-):170-199");
+    /// assert_eq!(range.flank_5p(0).is_valid(), false);
+    /// ```
+    pub fn flank_5p(&self, n: i32) -> Self {
+        let mut start = if n > 0 {
+            if self.strand == "-" {
+                self.end + 1
+            } else {
+                self.start - n
+            }
+        } else {
+            if self.strand == "-" {
+                self.end + n
+            } else {
+                self.start + 1
+            }
+        };
+        let mut end = if n > 0 {
+            if self.strand == "-" {
+                self.end + n
+            } else {
+                self.start - 1
+            }
+        } else {
+            if self.strand == "-" {
+                self.end - 1
+            } else {
+                self.start - n
+            }
+        };
+        Self::check(&mut start, &mut end);
+
+        Self {
+            name: self.name.to_string(),
+            chr: self.chr.to_string(),
+            strand: self.strand.to_string(),
+            start,
+            end,
+        }
+    }
+
     fn decode(&mut self, header: &str) {
         let caps = match RE.captures(header) {
             Some(x) => x,
@@ -184,8 +369,6 @@ impl Range {
         if self.start != 0 && self.end == 0 {
             self.end = self.start;
         }
-
-        //        eprintln!("{:#?}", &dict);
     }
 
     fn encode(&self) -> String {
@@ -217,6 +400,19 @@ impl Range {
         }
 
         header
+    }
+
+    fn check(start: &mut i32, end: &mut i32) {
+        if *start < 0 {
+            *start = 0;
+        }
+        if *end < 0 {
+            *end = 0;
+        }
+        if *start > *end {
+            *start = 0;
+            *end = 0;
+        }
     }
 }
 
