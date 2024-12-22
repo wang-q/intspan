@@ -312,12 +312,10 @@ impl Range {
             } else {
                 self.start - n
             }
+        } else if self.strand == "-" {
+            self.end + n + 1
         } else {
-            if self.strand == "-" {
-                self.end + n + 1
-            } else {
-                self.start
-            }
+            self.start
         };
         let mut end = if n > 0 {
             if self.strand == "-" {
@@ -325,12 +323,10 @@ impl Range {
             } else {
                 self.start - 1
             }
+        } else if self.strand == "-" {
+            self.end
         } else {
-            if self.strand == "-" {
-                self.end
-            } else {
-                self.start - n - 1
-            }
+            self.start - n - 1
         };
         Self::check(&mut start, &mut end);
 
@@ -363,12 +359,10 @@ impl Range {
             } else {
                 self.end + 1
             }
+        } else if self.strand == "-" {
+            self.start
         } else {
-            if self.strand == "-" {
-                self.start
-            } else {
-                self.end + n + 1
-            }
+            self.end + n + 1
         };
         let mut end = if n > 0 {
             if self.strand == "-" {
@@ -376,12 +370,10 @@ impl Range {
             } else {
                 self.end + n
             }
+        } else if self.strand == "-" {
+            self.start - n - 1
         } else {
-            if self.strand == "-" {
-                self.start - n - 1
-            } else {
-                self.end
-            }
+            self.end
         };
         Self::check(&mut start, &mut end);
 
