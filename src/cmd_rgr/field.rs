@@ -11,9 +11,9 @@ Examples:
 
     rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
 
-    rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7 --eq 3:tRNA --ne '7:+'
+    rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7
 
-    rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1
+    rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H
 
 "###,
         )
@@ -44,13 +44,6 @@ Examples:
                 .short('s')
                 .action(ArgAction::SetTrue)
                 .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
-        )
-        .arg(
-            Arg::new("fields")
-                .long("fields")
-                .short('f')
-                .num_args(1)
-                .help("Writes selected fields and the generated range field, in the order listed"),
         )
         .arg(
             Arg::new("chr")
@@ -99,7 +92,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
-    let mut is_append = args.get_flag("append");
+    let is_append = args.get_flag("append");
     let is_header = args.get_flag("header");
     let is_sharp = args.get_flag("sharp");
 
@@ -116,14 +109,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         0
     };
 
-    let fields: Vec<usize> = if args.contains_id("fields") {
-        is_append = true;
-
-        intspan::fields_to_idx(args.get_one::<String>("fields").unwrap())
-    } else {
-        vec![]
-    };
-
     //----------------------------
     // Loading
     //----------------------------
@@ -135,16 +120,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             // the header line
             if is_header && i == 0 {
                 if is_append {
-                    if fields.is_empty() {
-                        writer.write_fmt(format_args!("{}\t{}\n", line, "range"))?;
-                    } else {
-                        let selected: Vec<String> = fields
-                            .iter()
-                            .map(|e| parts.get(*e - 1).unwrap().to_string())
-                            .collect();
-
-                        writer.write_fmt(format_args!("{}\t{}\n", selected.join("\t"), "range"))?;
-                    }
+                    writer.write_fmt(format_args!("{}\t{}\n", line, "range"))?;
                 } else {
                     writer.write_fmt(format_args!("{}\n", "range"))?;
                 }
@@ -183,21 +159,11 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             //----------------------------
             // Output
             //----------------------------
-            let new_line: String;
-            if is_append {
-                if fields.is_empty() {
-                    new_line = format!("{}\t{}", parts.join("\t"), rg);
-                } else {
-                    let selected: Vec<String> = fields
-                        .iter()
-                        .map(|e| parts.get(*e - 1).unwrap().to_string())
-                        .collect();
-
-                    new_line = format!("{}\t{}", selected.join("\t"), rg);
-                }
+            let new_line: String = if is_append {
+                format!("{}\t{}", parts.join("\t"), rg)
             } else {
-                new_line = rg.to_string();
-            }
+                rg.to_string()
+            };
 
             writer.write_fmt(format_args!("{}\n", new_line))?;
         }
