@@ -3,6 +3,7 @@
 ## Unreleased - ReleaseDate
 
 * Add `rgr span`
+* Add `rgr keep`
 
 ## 0.8.2 - 2024-12-21
 

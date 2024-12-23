@@ -16,6 +16,7 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_rgr::dedup::make_subcommand())
         .subcommand(cmd_rgr::field::make_subcommand())
         .subcommand(cmd_rgr::filter::make_subcommand())
+        .subcommand(cmd_rgr::keep::make_subcommand())
         .subcommand(cmd_rgr::md::make_subcommand())
         .subcommand(cmd_rgr::merge::make_subcommand())
         .subcommand(cmd_rgr::pl_2rmp::make_subcommand())
@@ -35,7 +36,7 @@ File formats
 Subcommand groups:
 
 * Generic .tsv
-    * dedup / md / replace / filter / select
+    * dedup / keep / md / replace / filter / select
 * Single range field
     * field / sort / count / prop / span / runlist
 * Multiple range fields
@@ -48,6 +49,7 @@ Subcommand groups:
     match app.get_matches().subcommand() {
         // Generic .tsv
         Some(("dedup", sub_matches)) => cmd_rgr::dedup::execute(sub_matches),
+        Some(("keep", sub_matches)) => cmd_rgr::keep::execute(sub_matches),
         Some(("md", sub_matches)) => cmd_rgr::md::execute(sub_matches),
         Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
         Some(("filter", sub_matches)) => cmd_rgr::filter::execute(sub_matches),

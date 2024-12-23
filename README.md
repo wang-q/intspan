@@ -385,6 +385,13 @@ cargo run --bin rgr span tests/rgr/S288c.rg --op excise -f 1 -n 20
 
 cargo run --bin rgr span tests/rgr/ctg.range.tsv -H -f 3 -a --op trim -n 100 -m 5p
 
+cat tests/rgr/ctg.range.tsv | sort -k1,1nr
+keep-header tests/rgr/ctg.range.tsv tests/rgr/ctg.range.tsv -- sort -k1,1nr
+
+cargo run --bin rgr keep tests/rgr/ctg.range.tsv -- sort -k1,1nr
+cargo run --bin rgr keep tests/rgr/ctg.range.tsv tests/rgr/ctg.range.tsv -- wc -l
+cat tests/rgr/ctg.range.tsv | cargo run --bin rgr keep tests/rgr/ctg.range.tsv stdin -- wc -l
+
 ```
 
 ### `linkr`

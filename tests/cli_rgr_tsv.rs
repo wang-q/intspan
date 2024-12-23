@@ -189,3 +189,64 @@ fn command_select() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+#[test]
+fn command_keep() -> anyhow::Result<()> {
+    let mut bin = String::new();
+    for e in &["wc"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+    if bin.is_empty() {
+        return Ok(());
+    } else {
+        eprintln!("bin = {:#?}", bin);
+    }
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("keep")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("--")
+        .arg("wc")
+        .arg("-l")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 2);
+    assert!(stdout.contains("\n6\n"));
+
+    let mut bin = String::new();
+    for e in &["sort"] {
+        if let Ok(pth) = which::which(e) {
+            bin = pth.to_string_lossy().to_string();
+            break;
+        }
+    }
+    if bin.is_empty() {
+        return Ok(());
+    } else {
+        eprintln!("bin = {:#?}", bin);
+    }
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("keep")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("--")
+        .arg("sort")
+        .arg("-k1,1nr")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 7);
+    assert!(stdout.contains("range\n130218\t"));
+
+    Ok(())
+}
