@@ -4,20 +4,21 @@ use std::io::{BufRead, Write};
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("span")
-        .about("Operate spans in a range file")
+        .about("Operate spans in a .tsv/.rg file")
         .after_help(
             r###"
-* Like command `spanr span`, but <infiles> are chromosome ranges
+This command is similar to `spanr span`, but the <infiles> represent chromosome ranges.
 
 List of Operations
 
-* both, 5p, or 3p
+* General Ops (both, 5p, or 3p)
     * trim: Remove `N` integers from the ends of the range.
     * pad: Add `N` integers to the ends of the range.
-* 5p or 3p
-    * shift: Shift a range by N toward 5p or 3p
+* Directional Ops (5p or 3p)
+    * shift: Shift a range by N toward the 5p or 3p end.
     * flank: Retrieve flank regions of size `N` from the range.
-* excise: Remove any ranges that are smaller than `N`.
+* Size-baed Ops
+    * excise: Remove any ranges that are smaller than `N`.
 
 "###,
         )
@@ -27,6 +28,28 @@ List of Operations
                 .num_args(1..)
                 .index(1)
                 .help("Set the input files to use"),
+        )
+        .arg(
+            Arg::new("header")
+                .long("header")
+                .short('H')
+                .action(ArgAction::SetTrue)
+                .help("Treat the first line of each file as a header"),
+        )
+        .arg(
+            Arg::new("sharp")
+                .long("sharp")
+                .short('s')
+                .action(ArgAction::SetTrue)
+                .help("Include lines starting with `#` without changes (default: ignore them)"),
+        )
+        .arg(
+            Arg::new("field")
+                .long("field")
+                .short('f')
+                .value_parser(value_parser!(usize))
+                .num_args(1)
+                .help("Set the index of the range field. When not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("op")
@@ -41,7 +64,7 @@ List of Operations
                     builder::PossibleValue::new("excise"),
                 ])
                 .default_value("trim")
-                .help("Operations"),
+                .help("Select the operation to perform"),
         )
         .arg(
             Arg::new("mode")
@@ -55,7 +78,7 @@ List of Operations
                     builder::PossibleValue::new("3p"),
                 ])
                 .default_value("both")
-                .help("Operation mode"),
+                .help("Specify the operation mode"),
         )
         .arg(
             Arg::new("number")
@@ -63,7 +86,17 @@ List of Operations
                 .short('n')
                 .num_args(1)
                 .value_parser(value_parser!(i32))
-                .default_value("0"),
+                .default_value("0")
+                .help("Specify the number of integers to trim, pad, shift, or flank"),
+        )
+        .arg(
+            Arg::new("append")
+                .long("append")
+                .short('a')
+                .action(ArgAction::SetTrue)
+                .help(
+                    "Append a field for the new range (default: only write the new range)",
+                ),
         )
         .arg(
             Arg::new("outfile")
@@ -82,19 +115,62 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
+    let is_header = args.get_flag("header");
+    let is_sharp = args.get_flag("sharp");
+
+    let idx_range = if args.contains_id("field") {
+        *args.get_one::<usize>("field").unwrap()
+    } else {
+        0
+    };
+
     let opt_op = args.get_one::<String>("op").unwrap().as_str();
     let opt_mode = args.get_one::<String>("mode").unwrap().as_str();
     let opt_number = *args.get_one::<i32>("number").unwrap();
+
+    let is_append = args.get_flag("append");
 
     //----------------------------
     // Ops
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = intspan::reader(infile);
-        for line in reader.lines().map_while(Result::ok) {
-            let rg = intspan::Range::from_str(&line);
+        'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
+            // the header line
+            if is_header && i == 0 {
+                if is_append {
+                    writer.write_fmt(format_args!("{}\t{}\n", line, "rg"))?;
+                } else {
+                    writer.write_fmt(format_args!("{}\n", "rg"))?;
+                }
+                continue 'LINE;
+            }
+
+            if line.starts_with('#') {
+                if is_sharp {
+                    writer.write_fmt(format_args!("{}\n", line))?;
+                }
+                continue 'LINE;
+            }
+
+            let mut rg = intspan::Range::new();
+            {
+                let parts: Vec<&str> = line.split('\t').collect();
+                if idx_range == 0 {
+                    for part in &parts {
+                        let r = intspan::Range::from_str(part);
+                        if r.is_valid() {
+                            rg = r;
+                            break;
+                        }
+                    }
+                } else {
+                    rg = intspan::Range::from_str(parts.get(idx_range - 1).unwrap());
+                }
+            }
+
             if !rg.is_valid() {
-                continue;
+                continue 'LINE;
             }
 
             let new = match opt_op {
@@ -145,8 +221,16 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 _ => unreachable!("Invalid Op"),
             };
 
-            writer.write_fmt(format_args!("{}\n", new))?;
-            if new.is_valid() {}
+            //----------------------------
+            // Output
+            //----------------------------
+            let new_line: String = if is_append {
+                format!("{}\t{}", line, new)
+            } else {
+                new.to_string()
+            };
+
+            writer.write_fmt(format_args!("{}\n", new_line))?;
         }
     }
 

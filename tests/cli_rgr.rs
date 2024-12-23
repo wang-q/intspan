@@ -21,6 +21,59 @@ fn command_merge() -> anyhow::Result<()> {
 }
 
 #[test]
+fn command_sort() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd.arg("sort").arg("tests/rgr/S288c.rg").output().unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        1,
+        "field count"
+    );
+    assert!(stdout.contains("S288c.I(-):190-200\nS288c"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/rgr/ctg.range.tsv")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("Mito:1-85779\nlength"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("sort")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("range\n100000"));
+    assert!(stdout.contains("I:1-100000\n130218"));
+
+    Ok(())
+}
+
+#[test]
 fn command_runlist() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
@@ -109,46 +162,6 @@ fn command_runlist_invalid() -> anyhow::Result<()> {
 }
 
 #[test]
-fn command_count() -> anyhow::Result<()> {
-    let mut cmd = Command::cargo_bin("rgr")?;
-    let output = cmd
-        .arg("count")
-        .arg("tests/rgr/S288c.rg")
-        .arg("tests/rgr/S288c.rg")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 6);
-    assert!(stdout.contains("I:1-100\t2"));
-    assert!(stdout.contains("21294-22075\t1"));
-
-    let mut cmd = Command::cargo_bin("rgr")?;
-    let output = cmd
-        .arg("count")
-        .arg("tests/rgr/ctg.range.tsv")
-        .arg("tests/rgr/S288c.rg")
-        .arg("-H")
-        .arg("-f")
-        .arg("3")
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 4);
-    assert_eq!(
-        stdout.lines().next().unwrap().split('\t').count(),
-        4,
-        "field count"
-    );
-    assert!(stdout.contains("range\tcount"));
-    assert!(stdout.contains("I:1-100000\t4"));
-    assert!(stdout.contains("Mito:1-85779\t0"));
-
-    Ok(())
-}
-
-#[test]
 fn command_field() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
@@ -201,39 +214,25 @@ fn command_field() -> anyhow::Result<()> {
 }
 
 #[test]
-fn command_sort() -> anyhow::Result<()> {
-    let mut cmd = Command::cargo_bin("rgr")?;
-    let output = cmd.arg("sort").arg("tests/rgr/S288c.rg").output().unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-
-    assert_eq!(stdout.lines().count(), 6);
-    assert_eq!(
-        stdout.lines().next().unwrap().split('\t').count(),
-        1,
-        "field count"
-    );
-    assert!(stdout.contains("S288c.I(-):190-200\nS288c"));
-
+fn command_count() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
-        .arg("sort")
-        .arg("tests/rgr/ctg.range.tsv")
+        .arg("count")
+        .arg("tests/rgr/S288c.rg")
+        .arg("tests/rgr/S288c.rg")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
-    assert_eq!(stdout.lines().count(), 4);
-    assert_eq!(
-        stdout.lines().next().unwrap().split('\t').count(),
-        3,
-        "field count"
-    );
-    assert!(stdout.contains("Mito:1-85779\nlength"));
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains("I:1-100\t2"));
+    assert!(stdout.contains("21294-22075\t1"));
 
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
-        .arg("sort")
+        .arg("count")
         .arg("tests/rgr/ctg.range.tsv")
+        .arg("tests/rgr/S288c.rg")
         .arg("-H")
         .arg("-f")
         .arg("3")
@@ -244,11 +243,123 @@ fn command_sort() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 4);
     assert_eq!(
         stdout.lines().next().unwrap().split('\t').count(),
-        3,
+        4,
         "field count"
     );
-    assert!(stdout.contains("range\n100000"));
-    assert!(stdout.contains("I:1-100000\n130218"));
+    assert!(stdout.contains("range\tcount"));
+    assert!(stdout.contains("I:1-100000\t4"));
+    assert!(stdout.contains("Mito:1-85779\t0"));
+
+    Ok(())
+}
+
+#[test]
+fn command_span() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/rgr/S288c.rg")
+        .arg("--op")
+        .arg("trim")
+        .arg("-n")
+        .arg("10")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains("I:11-90"));
+    assert!(stdout.contains("II:21304-22065"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/rgr/S288c.rg")
+        .arg("--op")
+        .arg("shift")
+        .arg("-m")
+        .arg("3p")
+        .arg("-n")
+        .arg("10")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains("I:11-110"));
+    assert!(stdout.contains("S288c.I(-):180-190"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/rgr/S288c.rg")
+        .arg("--op")
+        .arg("flank")
+        .arg("-m")
+        .arg("3p")
+        .arg("-n")
+        .arg("10")
+        .arg("-a")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert!(stdout.contains("I:1-100\tI:101-110"));
+    assert!(stdout.contains("S288c.I(-):190-200|Species=Yeast\tS288c.I(-):180-189"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/rgr/S288c.rg")
+        .arg("--op")
+        .arg("excise")
+        .arg("-f")
+        .arg("1")
+        .arg("-n")
+        .arg("20")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 6);
+    assert_eq!(
+        stdout
+            .lines()
+            .filter(|e| e.is_empty())
+            .collect::<Vec<_>>()
+            .len(),
+        2,
+        "empty lines"
+    );
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("span")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-H")
+        .arg("-f")
+        .arg("3")
+        .arg("--op")
+        .arg("trim")
+        .arg("-n")
+        .arg("100")
+        .arg("-m")
+        .arg("5p")
+        .arg("-a")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 4);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        4,
+        "field count"
+    );
+    assert!(stdout.contains("range\trg"));
+    assert!(stdout.contains("I:1-100000\tI:101-100000"));
+    assert!(stdout.contains("I:100001-230218\tI:100101-230218"));
 
     Ok(())
 }
