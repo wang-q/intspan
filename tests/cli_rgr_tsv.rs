@@ -192,17 +192,8 @@ fn command_select() -> anyhow::Result<()> {
 
 #[test]
 fn command_keep() -> anyhow::Result<()> {
-    let mut bin = String::new();
-    for e in &["wc"] {
-        if let Ok(pth) = which::which(e) {
-            bin = pth.to_string_lossy().to_string();
-            break;
-        }
-    }
-    if bin.is_empty() {
+    if std::env::consts::OS != "linux" {
         return Ok(());
-    } else {
-        eprintln!("bin = {:#?}", bin);
     }
 
     let mut cmd = Command::cargo_bin("rgr")?;
@@ -219,19 +210,6 @@ fn command_keep() -> anyhow::Result<()> {
 
     assert_eq!(stdout.lines().count(), 2);
     assert!(stdout.contains("\n6\n"));
-
-    let mut bin = String::new();
-    for e in &["sort"] {
-        if let Ok(pth) = which::which(e) {
-            bin = pth.to_string_lossy().to_string();
-            break;
-        }
-    }
-    if bin.is_empty() {
-        return Ok(());
-    } else {
-        eprintln!("bin = {:#?}", bin);
-    }
 
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
