@@ -9,10 +9,13 @@ pub fn make_subcommand() -> Command {
             r###"
 Examples:
 
+1. Create ranges from a chromosome size file:
     rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
 
+2. Create ranges from a GFF file:
     rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7
 
+3. Create ranges from a TSV file:
     rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H
 
 "###,
@@ -23,13 +26,6 @@ Examples:
                 .num_args(1..)
                 .index(1)
                 .help("Set the input files to use"),
-        )
-        .arg(
-            Arg::new("append")
-                .long("append")
-                .short('a')
-                .action(ArgAction::SetTrue)
-                .help("Append a field of range. The default is to write only the range"),
         )
         .arg(
             Arg::new("header")
@@ -43,7 +39,7 @@ Examples:
                 .long("sharp")
                 .short('s')
                 .action(ArgAction::SetTrue)
-                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+                .help("Include lines starting with `#` without changes (default: ignore them)"),
         )
         .arg(
             Arg::new("chr")
@@ -51,14 +47,14 @@ Examples:
                 .num_args(1)
                 .required(true)
                 .value_parser(value_parser!(usize))
-                .help("Field idx of chr"),
+                .help("Field idx for chr"),
         )
         .arg(
             Arg::new("strand")
                 .long("strand")
                 .num_args(1)
                 .value_parser(value_parser!(usize))
-                .help("Optional field idx of strand"),
+                .help("Optional field idx for strand"),
         )
         .arg(
             Arg::new("start")
@@ -66,14 +62,21 @@ Examples:
                 .num_args(1)
                 .required(true)
                 .value_parser(value_parser!(usize))
-                .help("Field idx of start"),
+                .help("Field idx for start"),
         )
         .arg(
             Arg::new("end")
                 .long("end")
                 .num_args(1)
                 .value_parser(value_parser!(usize))
-                .help("Optional field idx of end"),
+                .help("Optional field idx for end"),
+        )
+        .arg(
+            Arg::new("append")
+                .long("append")
+                .short('a')
+                .action(ArgAction::SetTrue)
+                .help("Append a field for the range (default: only write the range)"),
         )
         .arg(
             Arg::new("outfile")
@@ -92,7 +95,6 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
-    let is_append = args.get_flag("append");
     let is_header = args.get_flag("header");
     let is_sharp = args.get_flag("sharp");
 
@@ -109,8 +111,10 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         0
     };
 
+    let is_append = args.get_flag("append");
+
     //----------------------------
-    // Loading
+    // Ops
     //----------------------------
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = intspan::reader(infile);

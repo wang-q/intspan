@@ -50,7 +50,7 @@ Example:
                 .long("sharp")
                 .short('s')
                 .action(ArgAction::SetTrue)
-                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+                .help("Include lines starting with `#` without changes (default: ignore them)"),
         )
         .arg(
             Arg::new("field")
