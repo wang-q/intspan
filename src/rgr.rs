@@ -27,32 +27,41 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_rgr::sort::make_subcommand())
         .after_help(
             r###"
-In general, .rg files are single-column .tsv
+File formats
+
+* .rg files are single-column .tsv
+* Field numbers in the TSV file start at 1
 
 Subcommand groups:
 
-* Generic .tsv: dedup / md / replace / filter / select
-
-* Field numbers in the TSV file start at 1
+* Generic .tsv
+    * dedup / md / replace / filter / select
+* Single range field
+    * field / sort / count / prop / span / runlist
+* Multiple range fields
+    * merge / pl-2rmp
 
 "###,
         );
 
     // Check which subcomamnd the user ran...
     match app.get_matches().subcommand() {
-        Some(("count", sub_matches)) => cmd_rgr::count::execute(sub_matches),
+        // Generic .tsv
         Some(("dedup", sub_matches)) => cmd_rgr::dedup::execute(sub_matches),
-        Some(("field", sub_matches)) => cmd_rgr::field::execute(sub_matches),
-        Some(("filter", sub_matches)) => cmd_rgr::filter::execute(sub_matches),
         Some(("md", sub_matches)) => cmd_rgr::md::execute(sub_matches),
+        Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
+        Some(("filter", sub_matches)) => cmd_rgr::filter::execute(sub_matches),
+        Some(("select", sub_matches)) => cmd_rgr::select::execute(sub_matches),
+        // Single range field
+        Some(("field", sub_matches)) => cmd_rgr::field::execute(sub_matches),
+        Some(("sort", sub_matches)) => cmd_rgr::sort::execute(sub_matches),
+        Some(("count", sub_matches)) => cmd_rgr::count::execute(sub_matches),
+        Some(("prop", sub_matches)) => cmd_rgr::prop::execute(sub_matches),
+        Some(("span", sub_matches)) => cmd_rgr::span::execute(sub_matches),
+        Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
+        // Multiple range fields
         Some(("merge", sub_matches)) => cmd_rgr::merge::execute(sub_matches),
         Some(("pl-2rmp", sub_matches)) => cmd_rgr::pl_2rmp::execute(sub_matches),
-        Some(("prop", sub_matches)) => cmd_rgr::prop::execute(sub_matches),
-        Some(("replace", sub_matches)) => cmd_rgr::replace::execute(sub_matches),
-        Some(("runlist", sub_matches)) => cmd_rgr::runlist::execute(sub_matches),
-        Some(("select", sub_matches)) => cmd_rgr::select::execute(sub_matches),
-        Some(("span", sub_matches)) => cmd_rgr::span::execute(sub_matches),
-        Some(("sort", sub_matches)) => cmd_rgr::sort::execute(sub_matches),
         _ => unreachable!(),
     }
     .unwrap();
@@ -60,5 +69,4 @@ Subcommand groups:
     Ok(())
 }
 
-// TODO: `rgr span` 5p and 3p
 // TODO: --bed for `rgr field`
