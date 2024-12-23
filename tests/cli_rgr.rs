@@ -297,16 +297,15 @@ fn command_span() -> anyhow::Result<()> {
         .arg("flank")
         .arg("-m")
         .arg("3p")
-        .arg("-n")
-        .arg("10")
+        .arg("-n=-1")
         .arg("-a")
         .output()
         .unwrap();
     let stdout = String::from_utf8(output.stdout).unwrap();
 
     assert_eq!(stdout.lines().count(), 6);
-    assert!(stdout.contains("I:1-100\tI:101-110"));
-    assert!(stdout.contains("S288c.I(-):190-200|Species=Yeast\tS288c.I(-):180-189"));
+    assert!(stdout.contains("I:1-100\tI:100"));
+    assert!(stdout.contains("S288c.I(-):190-200|Species=Yeast\tS288c.I(-):190"));
 
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd

@@ -380,7 +380,7 @@ cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1
 cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 0
 cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 10
 cargo run --bin rgr span tests/rgr/S288c.rg --op shift --mode 3p -n 10
-cargo run --bin rgr span tests/rgr/S288c.rg --op flank --mode 3p -n 10 -a
+cargo run --bin rgr span tests/rgr/S288c.rg --op flank --mode 3p -n=-1 -a
 cargo run --bin rgr span tests/rgr/S288c.rg --op excise -f 1 -n 20
 
 cargo run --bin rgr span tests/rgr/ctg.range.tsv -H -f 3 -a --op trim -n 100 -m 5p

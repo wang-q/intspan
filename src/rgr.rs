@@ -23,8 +23,8 @@ fn main() -> anyhow::Result<()> {
         .subcommand(cmd_rgr::replace::make_subcommand())
         .subcommand(cmd_rgr::runlist::make_subcommand())
         .subcommand(cmd_rgr::select::make_subcommand())
-        .subcommand(cmd_rgr::span::make_subcommand())
         .subcommand(cmd_rgr::sort::make_subcommand())
+        .subcommand(cmd_rgr::span::make_subcommand())
         .after_help(
             r###"
 File formats
