@@ -115,3 +115,29 @@ cat rgr.select.md.tmp
 | `tsv-filter`    |  5.6 ± 1.9 |      3.7 |     10.1 | 1.01 ± 0.49 |
 | `rgr filter -H` | 13.9 ± 0.8 |     12.9 |     17.5 | 2.53 ± 0.86 |
 | `tsv-filter -H` |  5.5 ± 1.8 |      3.6 |     10.1 |        1.00 |
+
+## Sampling
+
+```shell
+cd ~/Scripts/intspan/
+
+hyperfine --warmup 1 \
+    -n 'tsv-sample' \
+    '
+    tsv-sample tests/rgr/ctg_2_1_.gc.tsv --prob 0.4 > /dev/null
+    ' \
+    -n 'qsv sample' \
+    '
+    qsv sample 0.4 tests/rgr/ctg_2_1_.gc.tsv > /dev/null
+    ' \
+    --export-markdown rgr.sample.md.tmp
+
+cat rgr.sample.md.tmp
+
+
+```
+
+| Command      |    Mean [ms] | Min [ms] | Max [ms] |    Relative |
+|:-------------|-------------:|---------:|---------:|------------:|
+| `tsv-sample` |   14.0 ± 1.4 |     10.8 |     19.8 |        1.00 |
+| `qsv sample` | 127.4 ± 14.5 |    111.5 |    165.6 | 9.13 ± 1.38 |
