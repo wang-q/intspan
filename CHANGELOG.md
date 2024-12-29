@@ -6,6 +6,8 @@
 * Add `rgr keep`
 
 * Add numeric comparisons to `rgr filter`
+* Add operations to `Range`
+* Remove --fields from `rgr field`
 
 ## 0.8.2 - 2024-12-21
 
