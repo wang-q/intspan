@@ -375,6 +375,7 @@ cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --case --str-eq 3:trna --str-ne '7:+'
 
 cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2:0.8
+cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2,2,2:0.8
 cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --le 2:0.6 --gt 2:0.45 --eq 3:-1
 
 cargo run --bin rgr select tests/rgr/ctg.tsv -f 6,1
