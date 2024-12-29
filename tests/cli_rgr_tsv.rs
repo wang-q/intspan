@@ -121,7 +121,7 @@ fn command_dedup() -> anyhow::Result<()> {
 }
 
 #[test]
-fn command_filter() -> anyhow::Result<()> {
+fn command_filter_str() -> anyhow::Result<()> {
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("filter")
@@ -142,6 +142,48 @@ fn command_filter() -> anyhow::Result<()> {
         "field count"
     );
     assert!(stdout.contains("13066\t13138"));
+
+    Ok(())
+}
+
+#[test]
+fn command_filter_num() -> anyhow::Result<()> {
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/rgr/ctg_2_1_.gc.tsv")
+        .arg("-H")
+        .arg("--ge")
+        .arg("2:0.8")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 26);
+    assert_eq!(
+        stdout.lines().next().unwrap().split('\t').count(),
+        3,
+        "field count"
+    );
+    assert!(stdout.contains("2:4348651-4348750\t0.8\t1"));
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("filter")
+        .arg("tests/rgr/ctg_2_1_.gc.tsv")
+        .arg("-H")
+        .arg("--le")
+        .arg("2:0.6")
+        .arg("--gt")
+        .arg("2:0.45")
+        .arg("--eq")
+        .arg("3:-1")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 13);
+    assert!(stdout.contains("2:4564682-4564781\t0.47\t-1"));
 
     Ok(())
 }

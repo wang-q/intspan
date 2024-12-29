@@ -368,11 +368,14 @@ cat tests/rgr/II.links.tsv | rgr pl-2rmp stdin
 rgr md tests/rgr/ctg.range.tsv --num -c 2
 rgr md tests/rgr/ctg.range.tsv --fmt --digits 2
 
-cargo run --bin rgr dedup tests/rgr/ctg.tsv tests/rgr/ctg.tsv
-cargo run --bin rgr dedup tests/rgr/ctg.tsv -f 2
+rgr dedup tests/rgr/ctg.tsv tests/rgr/ctg.tsv
+rgr dedup tests/rgr/ctg.tsv -f 2
 
 cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
-cargo run --bin rgr filter tests/spanr/NC_007942.gff -H -c --str-eq 3:trna --str-ne '7:+'
+cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --case --str-eq 3:trna --str-ne '7:+'
+
+cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2:0.8
+cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --le 2:0.6 --gt 2:0.45 --eq 3:-1
 
 cargo run --bin rgr select tests/rgr/ctg.tsv -f 6,1
 cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1

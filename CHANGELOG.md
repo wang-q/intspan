@@ -5,6 +5,8 @@
 * Add `rgr span`
 * Add `rgr keep`
 
+* Add numeric comparisons to `rgr filter`
+
 ## 0.8.2 - 2024-12-21
 
 * Add `IntSpan::valid()`
