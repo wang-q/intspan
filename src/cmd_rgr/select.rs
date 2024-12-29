@@ -94,7 +94,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                         .unwrap()
                     };
                 } else if args.contains_id("fields") {
-                    fields = intspan::fields_to_idx(args.get_one::<String>("fields").unwrap());
+                    fields = intspan::ints_to_idx(args.get_one::<String>("fields").unwrap());
                 }
 
                 if fields.is_empty() {

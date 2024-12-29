@@ -462,7 +462,7 @@ mod read_write {
     }
 }
 
-pub fn fields_to_idx(str: &str) -> Vec<usize> {
+pub fn ints_to_idx(str: &str) -> Vec<usize> {
     let mut ints: Vec<i32> = vec![];
     let parts: Vec<&str> = str.split(',').collect();
     for p in parts {

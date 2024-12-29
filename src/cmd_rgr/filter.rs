@@ -261,7 +261,7 @@ fn opt_fields_str(args: &ArgMatches, id: &str, is_insensitive: bool) -> Vec<(usi
                 std::process::exit(1)
             }
 
-            let fields = intspan::fields_to_idx(parts.first().unwrap());
+            let fields = intspan::ints_to_idx(parts.first().unwrap());
 
             for idx in &fields {
                 if is_insensitive {
@@ -287,7 +287,7 @@ fn opt_fields_num(args: &ArgMatches, id: &str) -> Vec<(usize, f64)> {
                 std::process::exit(1)
             }
 
-            let fields = intspan::fields_to_idx(parts.first().unwrap());
+            let fields = intspan::ints_to_idx(parts.first().unwrap());
 
             for idx in &fields {
                 num_cmp_tpl.push((*idx, parts.get(1).unwrap().parse::<f64>().unwrap()));
