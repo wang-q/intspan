@@ -8,8 +8,10 @@ pub fn make_subcommand() -> Command {
         .after_help(
             r###"
 Examples:
-
+    # Filter lines where field 3 equals "tRNA" and field 7 does not equal "+"
     rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
+
+    # Case-insensitive filtering where field 3 equals "trna" and field 7 does not equal "+"
     rgr filter tests/spanr/NC_007942.gff -H -c --str-eq 3:trna --str-ne '7:+'
 
 "###,
@@ -19,7 +21,7 @@ Examples:
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input file(s) to process"),
         )
         .arg(
             Arg::new("header")
@@ -33,27 +35,27 @@ Examples:
                 .long("sharp")
                 .short('s')
                 .action(ArgAction::SetTrue)
-                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+                .help("Preserve lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("or")
                 .long("or")
                 .action(ArgAction::SetTrue)
-                .help("Evaluate tests as an OR rather than an AND clause"),
+                .help("Evaluate filter conditions as an OR rather than an AND clause"),
         )
         .arg(
             Arg::new("invert")
                 .long("invert")
                 .short('i')
                 .action(ArgAction::SetTrue)
-                .help("Invert the filter"),
+                .help("Invert the filter results"),
         )
         .arg(
             Arg::new("case")
                 .long("case")
                 .short('c')
                 .action(ArgAction::SetTrue)
-                .help("Case insensitive"),
+                .help("Case-insensitive string comparisons"),
         )
         .arg(
             Arg::new("str-eq")
@@ -161,71 +163,49 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             let mut pass_ary = vec![];
 
             // --str-eq and --str-ne
-            if !str_eq_tpl.is_empty() {
-                for (k, v) in &str_eq_tpl {
-                    let val = parts.get(k - 1).unwrap();
-                    let pass = if is_insensitive {
-                        *val.to_ascii_uppercase() == *v
-                    } else {
-                        *val == *v
-                    };
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &str_eq_tpl {
+                let val = parts.get(k - 1).unwrap();
+                let pass = if is_insensitive {
+                    *val.to_ascii_uppercase() == *v
+                } else {
+                    *val == *v
+                };
+                pass_ary.push(pass);
             }
-            if !str_ne_tpl.is_empty() {
-                for (k, v) in &str_ne_tpl {
-                    let val = parts.get(k - 1).unwrap();
-                    let pass = if is_insensitive {
-                        *val.to_ascii_uppercase() != *v
-                    } else {
-                        *val != *v
-                    };
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &str_ne_tpl {
+                let val = parts.get(k - 1).unwrap();
+                let pass = if is_insensitive {
+                    *val.to_ascii_uppercase() != *v
+                } else {
+                    *val != *v
+                };
+                pass_ary.push(pass);
             }
 
             // --eq, --ne, --gt and --ge
-            if !num_eq_tpl.is_empty() {
-                for (k, v) in &num_eq_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val == *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_eq_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val == *v);
             }
-            if !num_ne_tpl.is_empty() {
-                for (k, v) in &num_ne_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val != *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_ne_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val != *v);
             }
-            if !num_lt_tpl.is_empty() {
-                for (k, v) in &num_lt_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val < *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_lt_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val < *v);
             }
-            if !num_le_tpl.is_empty() {
-                for (k, v) in &num_le_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val <= *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_le_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val <= *v);
             }
-            if !num_gt_tpl.is_empty() {
-                for (k, v) in &num_gt_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val > *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_gt_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val > *v);
             }
-            if !num_ge_tpl.is_empty() {
-                for (k, v) in &num_ge_tpl {
-                    let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
-                    let pass = val >= *v;
-                    pass_ary.push(pass);
-                }
+            for (k, v) in &num_ge_tpl {
+                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                pass_ary.push(val >= *v);
             }
 
             // combine bools
@@ -264,12 +244,12 @@ fn opt_fields_str(args: &ArgMatches, id: &str, is_insensitive: bool) -> Vec<(usi
             let fields = intspan::ints_to_idx(parts.first().unwrap());
 
             for idx in &fields {
-                if is_insensitive {
-                    str_cmp_tpl
-                        .push((*idx, parts.get(1).unwrap().to_string().to_ascii_uppercase()));
+                let val = if is_insensitive {
+                    parts.get(1).unwrap().to_ascii_uppercase()
                 } else {
-                    str_cmp_tpl.push((*idx, parts.get(1).unwrap().to_string()));
-                }
+                    parts.get(1).unwrap().to_string()
+                };
+                str_cmp_tpl.push((*idx, val));
             }
         }
     }

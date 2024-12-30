@@ -4,14 +4,21 @@ use std::io::{BufRead, Write};
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("keep")
-        .about("Keep the the initial header line")
+        .about("Keep the the initial header line(s)")
         .after_help(
             r###"
 The first N lines of each file is treated as a header and the one of first file is output unchanged.
-Subsequent lines are sent to the specified command via stdin, excluding headers of other files.
+Subsequent lines are sent to the specified command via stdin, excluding headers from other files.
 The output from the command is appended to the initial header.
 
 * Use a double hyphen (--) to separate the command from the file arguments.
+
+Examples:
+    # Keeps the first 2 lines of file1.txt as headers, processes the rest with `wc -l`
+    rgr keep -l 2 file1.txt file2.txt -- wc -l
+
+    # Skips headers and processes all lines with `sort`
+    rgr keep --delete file1.txt file2.txt -- sort
 
 "###,
         )
@@ -19,7 +26,7 @@ The output from the command is appended to the initial header.
             Arg::new("infiles")
                 .required(true)
                 .num_args(1..)
-                .help("Sets the input file(s) to use"),
+                .help("Input file(s) to process"),
         )
         .arg(
             Arg::new("lines")
@@ -35,14 +42,15 @@ The output from the command is appended to the initial header.
                 .long("delete")
                 .short('d')
                 .action(ArgAction::SetTrue)
-                .help("Don't write headers"),
+                .help("Skip writing headers"),
         )
         .arg(
             Arg::new("commands")
                 .required(true)
                 .num_args(1..)
                 .last(true)
-                .value_parser(value_parser!(String)),
+                .value_parser(value_parser!(String))
+                .help("Command to process subsequent lines"),
         )
 }
 
@@ -73,6 +81,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
         .spawn()?;
+    let stdin = child.stdin.as_mut().expect("Failed to open child stdin");
 
     let mut first_file = true; // Track if we are processing the first file
     for infile in infiles {
@@ -80,8 +89,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut header_written = 0;
         let mut lines = reader.lines();
 
-        while let Some(line) = lines.next() {
-            let line = line?;
+        while let Some(Ok(line)) = lines.next() {
             if header_written < opt_lines {
                 if first_file && !is_delete {
                     // Only print headers from the first file
@@ -90,9 +98,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 header_written += 1;
             } else {
                 // Send subsequent lines to the command
-                if let Some(ref mut stdin) = child.stdin {
-                    writeln!(stdin, "{}", line)?;
-                }
+                writeln!(stdin, "{}", line)?;
             }
         }
 
@@ -100,10 +106,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         first_file = false;
     }
 
-    if let Some(ref mut stdin) = child.stdin {
-        stdin.flush()?;
-    }
-
-    let _ = child.wait()?;
+    stdin.flush()?;
+    child.wait()?;
     Ok(())
 }

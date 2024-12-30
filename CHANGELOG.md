@@ -4,6 +4,8 @@
 
 * Add `--lines` and `--delete` to `rgr keep`
 
+* Refactor the code in `rgr` to make it cleaner and more maintainable
+
 ## 0.8.3 - 2024-12-29
 
 * Add `rgr span`

@@ -13,9 +13,10 @@ pub fn make_subcommand() -> Command {
   For example, avoid using formats like `1`, `2-6`, or `-`.
 
 Examples:
-
+    # Selects fields 6 and 1 from the input file, treating the first line as a header
     rgr select tests/rgr/ctg.tsv -H -f 6,1
 
+    # Selects fields `ID` and `length` by names
     rgr select tests/rgr/ctg.tsv -H -f ID,length
 
 "###,
@@ -25,7 +26,7 @@ Examples:
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input file to process"),
         )
         .arg(
             Arg::new("header")
@@ -39,7 +40,7 @@ Examples:
                 .long("sharp")
                 .short('s')
                 .action(ArgAction::SetTrue)
-                .help("Write the lines starting with a `#` without changes. The default is to ignore them"),
+                .help("Preserve lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("fields")
@@ -78,13 +79,14 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();
 
-            // the header line
+            // Handle the header line
             if i == 0 {
                 if is_header {
-                    let mut idx_of: HashMap<String, usize> = HashMap::new();
-                    for (i, field) in parts.iter().enumerate() {
-                        idx_of.insert(field.to_string(), i + 1);
-                    }
+                    let idx_of: HashMap<String, usize> = parts
+                        .iter()
+                        .enumerate()
+                        .map(|(i, field)| (field.to_string(), i + 1))
+                        .collect();
 
                     if args.contains_id("fields") {
                         fields = intspan::named_field_to_idx(

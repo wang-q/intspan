@@ -4,12 +4,17 @@ use std::io::{BufRead, Write};
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("md")
-        .about("Convert .tsv file to markdown table")
+        .about("Convert a .tsv file to a Markdown table")
         .after_help(
             r###"
-* --right 1,3-5
+You can customize the alignment of columns and format numeric values.
 
-* Using `--fmt --digits 2` will produce the output in the format `1,234.00`.
+Examples:
+    # right-align numeric columns, and center-align the 2nd column
+    rgr md tests/rgr/ctg.range.tsv --num --center 2
+
+    # right-align numeric columns and format them to 2 decimal places
+    rgr md input.tsv --right 2 --fmt --digits 2
 
 "###,
         )
@@ -18,27 +23,27 @@ pub fn make_subcommand() -> Command {
                 .required(true)
                 .num_args(1)
                 .index(1)
-                .help("Sets the input file to use"),
+                .help("Input file to process"),
         )
         .arg(
             Arg::new("center")
                 .long("center")
                 .short('c')
                 .num_args(1)
-                .help("Center-aligned columns"),
+                .help("List of columns to center-align (e.g., `1,3-5`)"),
         )
         .arg(
             Arg::new("right")
                 .long("right")
                 .short('r')
                 .num_args(1)
-                .help("Right-aligned columns"),
+                .help("Columns to right-align"),
         )
         .arg(
             Arg::new("num")
                 .long("num")
                 .action(ArgAction::SetTrue)
-                .help("Right-aligning numeric columns"),
+                .help("Automatically right-align numeric columns"),
         )
         .arg(
             Arg::new("fmt")
@@ -52,7 +57,7 @@ pub fn make_subcommand() -> Command {
                 .num_args(1)
                 .default_value("0")
                 .value_parser(value_parser!(usize))
-                .help("Decimal digits"),
+                .help("Number of decimal digits"),
         )
         .arg(
             Arg::new("outfile")

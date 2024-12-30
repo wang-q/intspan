@@ -29,7 +29,7 @@ pub fn make_subcommand() -> Command {
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input files to process. Multiple files can be specified"),
         )
         .arg(
             Arg::new("coverage")
@@ -38,7 +38,7 @@ pub fn make_subcommand() -> Command {
                 .num_args(1)
                 .default_value("0.95")
                 .value_parser(value_parser!(f32))
-                .help("When larger than this ratio, merge ranges"),
+                .help("Ranges with coverage larger than this value will be merged"),
         )
         .arg(
             Arg::new("line_limit")

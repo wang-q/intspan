@@ -503,6 +503,31 @@ pub fn fields_to_ints(str: &str) -> IntSpan {
     ints
 }
 
+pub fn extract_rg(line: &str, opt_idx_range: usize) -> Option<Range> {
+    let parts: Vec<&str> = line.split('\t').collect();
+
+    let range = if opt_idx_range == 0 {
+        parts.iter().find_map(|part| {
+            let rg = Range::from_str(part);
+            if rg.is_valid() {
+                Some(rg)
+            } else {
+                None
+            }
+        })
+    } else {
+        let part = parts.get(opt_idx_range - 1).unwrap();
+        let rg = Range::from_str(part);
+        if rg.is_valid() {
+            Some(rg)
+        } else {
+            None
+        }
+    };
+
+    range
+}
+
 // rewrite from https://metacpan.org/dist/Number-Format/source/Format.pm
 pub fn format_number(number: f64, decimal_digits: usize) -> String {
     // Handle negative numbers

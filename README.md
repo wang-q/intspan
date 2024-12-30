@@ -227,19 +227,39 @@ Usage: rgr [COMMAND]
 
 Commands:
   count    Count each range overlapping with other range files
+  dedup    Deduplicate lines in .tsv file(s) based on specified fields or the entire line
   field    Create/append ranges from fields
+  filter   Filter lines in .tsv files via tests against individual fields
+  keep     Keep the the initial header line(s)
+  md       Convert a .tsv file to a Markdown table
   merge    Merge overlapped ranges via overlapping graph
+  pl-2rmp  Pipeline - Two Rounds of Merging and Replacing
   prop     Proportion of the ranges intersecting a runlist file
-  replace  Replace fields in .tsv file
-  runlist  Filter .rg and .tsv files by comparison with a runlist file
+  replace  Replace fields in a .tsv file using a replacement map
+  runlist  Filter .rg and .tsv files by comparing with a runlist file
+  select   Select fields in the order listed
   sort     Sort .rg and .tsv files by a range field
+  span     Operate spans in .tsv/.rg file
   help     Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
   -V, --version  Print version
 
+
+File formats
+
+* .rg files are single-column .tsv
 * Field numbers in the TSV file start at 1
+
+Subcommand groups:
+
+* Generic .tsv
+    * dedup / keep / md / replace / filter / select
+* Single range field
+    * field / sort / count / prop / span / runlist
+* Multiple range fields
+    * merge / pl-2rmp
 
 ```
 
@@ -340,7 +360,8 @@ spanr merge tests/spanr/repeat.json tests/spanr/intergenic.json |
 ```shell
 rgr field tests/Atha/chr.sizes --chr 1 --start 2 -a -s
 rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7
-rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -f 6,1 > tests/rgr/ctg.range.tsv
+rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H -a |
+    rgr select stdin -H -f length,ID,range > tests/rgr/ctg.range.tsv
 
 rgr sort tests/rgr/S288c.rg
 rgr sort tests/rgr/ctg.range.tsv -H -f 3
@@ -361,7 +382,7 @@ rgr merge tests/rgr/II.links.tsv -c 0.95
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
 rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
 
-# ctg_2_1_.gc.tsv isn't sorted,
+# ctg_2_1_.gc.tsv isn't sorted
 cat tests/rgr/ctg_2_1_.gc.tsv | rgr sort stdin | rgr pl-2rmp stdin > /dev/null
 cat tests/rgr/II.links.tsv | rgr pl-2rmp stdin
 
@@ -371,23 +392,21 @@ rgr md tests/rgr/ctg.range.tsv --fmt --digits 2
 rgr dedup tests/rgr/ctg.tsv tests/rgr/ctg.tsv
 rgr dedup tests/rgr/ctg.tsv -f 2
 
-cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
-cargo run --bin rgr filter tests/spanr/NC_007942.gff -H --case --str-eq 3:trna --str-ne '7:+'
+rgr filter tests/spanr/NC_007942.gff -H --str-eq 3:tRNA --str-ne '7:+'
+rgr filter tests/spanr/NC_007942.gff -H --case --str-eq 3:trna --str-ne '7:+'
+rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2:0.8
+rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2,2,2:0.8
+rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --le 2:0.6 --gt 2:0.45 --eq 3:-1
 
-cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2:0.8
-cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2,2,2:0.8
-cargo run --bin rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --le 2:0.6 --gt 2:0.45 --eq 3:-1
+rgr select tests/rgr/ctg.tsv -f 6,1
+rgr select tests/rgr/ctg.tsv -H -f ID,1
 
-cargo run --bin rgr select tests/rgr/ctg.tsv -f 6,1
-cargo run --bin rgr select tests/rgr/ctg.tsv -H -f ID,1
-
-cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 0
-cargo run --bin rgr span tests/rgr/S288c.rg --op trim -n 10
-cargo run --bin rgr span tests/rgr/S288c.rg --op shift --mode 3p -n 10
-cargo run --bin rgr span tests/rgr/S288c.rg --op flank --mode 3p -n=-1 -a
-cargo run --bin rgr span tests/rgr/S288c.rg --op excise -f 1 -n 20
-
-cargo run --bin rgr span tests/rgr/ctg.range.tsv -H -f 3 -a --op trim -n 100 -m 5p
+rgr span tests/rgr/S288c.rg --op trim -n 0
+rgr span tests/rgr/S288c.rg --op trim -n 10
+rgr span tests/rgr/S288c.rg --op shift --mode 3p -n 10
+rgr span tests/rgr/S288c.rg --op flank --mode 3p -n=-1 -a
+rgr span tests/rgr/S288c.rg --op excise -f 1 -n 20
+rgr span tests/rgr/ctg.range.tsv -H -f 3 -a --op trim -n 100 -m 5p
 
 cat tests/rgr/ctg.range.tsv | sort -k1,1nr
 keep-header tests/rgr/ctg.range.tsv tests/rgr/ctg.range.tsv -- sort -k1,1nr

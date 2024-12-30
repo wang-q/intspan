@@ -4,7 +4,7 @@ use std::io::{BufRead, Write};
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("span")
-        .about("Operate spans in a .tsv/.rg file")
+        .about("Operate spans in .tsv/.rg file")
         .after_help(
             r###"
 This command is similar to `spanr span`, but the <infiles> represent chromosome ranges.
@@ -17,7 +17,7 @@ List of Operations
 * Directional Ops (5p or 3p)
     * shift: Shift a range by N toward the 5p or 3p end.
     * flank: Retrieve flank regions of size `N` from the range.
-* Size-baed Ops
+* Size-based Ops
     * excise: Remove any ranges that are smaller than `N`.
 
 "###,
@@ -27,7 +27,7 @@ List of Operations
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input files to process. Multiple files can be specified."),
         )
         .arg(
             Arg::new("header")
@@ -49,7 +49,7 @@ List of Operations
                 .short('f')
                 .value_parser(value_parser!(usize))
                 .num_args(1)
-                .help("Set the index of the range field. When not set, the first valid range will be used"),
+                .help("Index of the range field. If not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("op")
@@ -78,7 +78,7 @@ List of Operations
                     builder::PossibleValue::new("3p"),
                 ])
                 .default_value("both")
-                .help("Specify the operation mode"),
+                .help("Mode of the operation"),
         )
         .arg(
             Arg::new("number")
@@ -87,16 +87,14 @@ List of Operations
                 .num_args(1)
                 .value_parser(value_parser!(i32))
                 .default_value("0")
-                .help("Specify the number of integers to trim, pad, shift, or flank"),
+                .help("Number of integers to trim, pad, shift, or flank"),
         )
         .arg(
             Arg::new("append")
                 .long("append")
                 .short('a')
                 .action(ArgAction::SetTrue)
-                .help(
-                    "Append a field for the new range (default: only write the new range)",
-                ),
+                .help("Append a field for the new range (default: only write the new range)"),
         )
         .arg(
             Arg::new("outfile")
@@ -118,11 +116,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let is_header = args.get_flag("header");
     let is_sharp = args.get_flag("sharp");
 
-    let idx_range = if args.contains_id("field") {
-        *args.get_one::<usize>("field").unwrap()
-    } else {
-        0
-    };
+    let opt_idx_range = args.get_one::<usize>("field").copied().unwrap_or(0);
 
     let opt_op = args.get_one::<String>("op").unwrap().as_str();
     let opt_mode = args.get_one::<String>("mode").unwrap().as_str();
@@ -136,7 +130,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = intspan::reader(infile);
         'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
-            // the header line
+            // Handle the header line
             if is_header && i == 0 {
                 if is_append {
                     writer.write_fmt(format_args!("{}\t{}\n", line, "rg"))?;
@@ -146,6 +140,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 continue 'LINE;
             }
 
+            // Handle lines starting with '#'
             if line.starts_with('#') {
                 if is_sharp {
                     writer.write_fmt(format_args!("{}\n", line))?;
@@ -153,66 +148,36 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 continue 'LINE;
             }
 
-            let mut rg = intspan::Range::new();
-            {
-                let parts: Vec<&str> = line.split('\t').collect();
-                if idx_range == 0 {
-                    for part in &parts {
-                        let r = intspan::Range::from_str(part);
-                        if r.is_valid() {
-                            rg = r;
-                            break;
-                        }
-                    }
-                } else {
-                    rg = intspan::Range::from_str(parts.get(idx_range - 1).unwrap());
-                }
-            }
-
-            if !rg.is_valid() {
-                continue 'LINE;
-            }
+            let rg = match intspan::extract_rg(&line, opt_idx_range) {
+                // Extract the range
+                Some(range) => range,
+                // Skip lines without a valid range
+                None => continue 'LINE,
+            };
 
             let new = match opt_op {
-                "trim" => {
-                    if opt_mode == "5p" {
-                        rg.trim_5p(opt_number)
-                    } else if opt_mode == "3p" {
-                        rg.trim_3p(opt_number)
-                    } else {
-                        rg.trim(opt_number)
-                    }
-                }
-                "pad" => {
-                    if opt_mode == "5p" {
-                        rg.trim_5p(-opt_number)
-                    } else if opt_mode == "3p" {
-                        rg.trim_3p(-opt_number)
-                    } else {
-                        rg.trim(-opt_number)
-                    }
-                }
-                "shift" => {
-                    if opt_mode == "5p" {
-                        rg.shift_5p(opt_number)
-                    } else if opt_mode == "3p" {
-                        rg.shift_3p(opt_number)
-                    } else {
-                        unreachable!("Invalid mode")
-                    }
-                }
-                "flank" => {
-                    if opt_mode == "5p" {
-                        rg.flank_5p(opt_number)
-                    } else if opt_mode == "3p" {
-                        rg.flank_3p(opt_number)
-                    } else {
-                        unreachable!("Invalid mode")
-                    }
-                }
+                "trim" => match opt_mode {
+                    "5p" => rg.trim_5p(opt_number),
+                    "3p" => rg.trim_3p(opt_number),
+                    _ => rg.trim(opt_number),
+                },
+                "pad" => match opt_mode {
+                    "5p" => rg.trim_5p(-opt_number),
+                    "3p" => rg.trim_3p(-opt_number),
+                    _ => rg.trim(-opt_number),
+                },
+                "shift" => match opt_mode {
+                    "5p" => rg.shift_5p(opt_number),
+                    "3p" => rg.shift_3p(opt_number),
+                    _ => unreachable!("Invalid mode for shift operation"),
+                },
+                "flank" => match opt_mode {
+                    "5p" => rg.flank_5p(opt_number),
+                    "3p" => rg.flank_3p(opt_number),
+                    _ => unreachable!("Invalid mode for flank operation"),
+                },
                 "excise" => {
-                    let size = rg.intspan().size();
-                    if size >= opt_number {
+                    if rg.intspan().size() >= opt_number {
                         rg.clone()
                     } else {
                         intspan::Range::new()

@@ -9,12 +9,27 @@ use std::io::BufRead;
 pub fn make_subcommand() -> Command {
     Command::new("merge")
         .about("Merge overlapped ranges via overlapping graph")
+        .after_help(
+            r###"
+This command merges overlapping ranges from input files based on a specified coverage threshold.
+It builds an overlapping graph for each chromosome and merges ranges that meet the coverage criteria.
+
+Examples:
+
+    # Merge all ranges in the .tsv file with a coverage threshold of 0.98
+    rgr merge tests/rgr/II.links.tsv --coverage 0.98
+
+    # Enable verbose mode to see detailed processing information
+    rgr merge input1.rg input2.rg --coverage 0.95 --verbose
+
+"###,
+        )
         .arg(
             Arg::new("infiles")
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input files to process. Multiple files can be specified"),
         )
         .arg(
             Arg::new("coverage")
@@ -23,14 +38,14 @@ pub fn make_subcommand() -> Command {
                 .num_args(1)
                 .default_value("0.95")
                 .value_parser(value_parser!(f32))
-                .help("When larger than this ratio, merge ranges"),
+                .help("Ranges with coverage larger than this value will be merged"),
         )
         .arg(
             Arg::new("verbose")
                 .long("verbose")
                 .short('v')
                 .action(ArgAction::SetTrue)
-                .help("Verbose mode"),
+                .help("Enable verbose mode"),
         )
         .arg(
             Arg::new("outfile")
@@ -47,7 +62,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Loading
     //----------------------------
-    let coverage = *args.get_one::<f32>("coverage").unwrap();
+    let opt_coverage = *args.get_one::<f32>("coverage").unwrap();
     let is_verbose = args.get_flag("verbose");
 
     // store graph separately by chromosomes
@@ -62,6 +77,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // all chromosomes
     let mut chrs: HashSet<String> = HashSet::new();
 
+    // Load ranges from input files
     for infile in args.get_many::<String>("infiles").unwrap() {
         let reader = reader(infile);
         for line in reader.lines().map_while(Result::ok) {
@@ -76,10 +92,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 }
 
                 let chr = range.chr();
-                if !graph_of_chr.contains_key(chr) {
-                    graph_of_chr.insert(chr.to_string(), Graph::new_undirected());
-                }
-
+                graph_of_chr
+                    .entry(chr.to_string())
+                    .or_insert_with(Graph::new_undirected);
                 chrs.insert(chr.to_string());
 
                 let idx = graph_of_chr
@@ -124,7 +139,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                     let coverage_j =
                         intersect.cardinality() as f32 / intspan_j.cardinality() as f32;
 
-                    if coverage_i >= coverage && coverage_j >= coverage {
+                    if coverage_i >= opt_coverage && coverage_j >= opt_coverage {
                         if is_verbose {
                             eprintln!(
                                 "        Merge with Range {}/{}\t{}",

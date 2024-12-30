@@ -1,32 +1,43 @@
 use clap::*;
-use intspan::*;
 use std::collections::HashMap;
 use std::io::BufRead;
 
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("replace")
-        .about("Replace fields in .tsv file")
+        .about("Replace fields in a .tsv file using a replacement map")
+        .after_help(
+            r###"
+Examples:
+
+    # Replace fields
+    rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv
+
+    # Reverse the replacement map (To--From instead of From--To)
+    rgr replace tests/rgr/1_4.ovlp.tsv tests/rgr/1_4.replace.tsv -r
+
+"###,
+        )
         .arg(
             Arg::new("infile")
                 .required(true)
                 .num_args(1)
                 .index(1)
-                .help("Sets the input file to use"),
+                .help("Input file to process"),
         )
         .arg(
             Arg::new("replace")
                 .required(true)
                 .num_args(1)
                 .index(2)
-                .help("A two-column tsv file, From--To"),
+                .help("Replacement map file with two columns: From and To"),
         )
         .arg(
             Arg::new("reverse")
                 .long("reverse")
                 .short('r')
                 .action(ArgAction::SetTrue)
-                .help("To--From instead in .replace.tsv"),
+                .help("Use the replacement map in reverse order (To--From instead of From--To)"),
         )
         .arg(
             Arg::new("outfile")
@@ -41,16 +52,16 @@ pub fn make_subcommand() -> Command {
 // command implementation
 pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
-    // Loading
+    // Args
     //----------------------------
-    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
-    let reader = reader(args.get_one::<String>("infile").unwrap());
+    let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
+    let reader = intspan::reader(args.get_one::<String>("infile").unwrap());
 
     //----------------------------
-    // Load replaces
+    // Load replacements
     //----------------------------
     let mut replaces: HashMap<String, String> = HashMap::new();
-    for line in read_lines(args.get_one::<String>("replace").unwrap()) {
+    for line in intspan::read_lines(args.get_one::<String>("replace").unwrap()) {
         let parts: Vec<&str> = line.split('\t').collect();
         if parts.len() == 2 {
             if args.get_flag("reverse") {
@@ -69,8 +80,8 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         let mut out: Vec<&str> = vec![];
 
         for f in fields {
-            if replaces.contains_key(f) {
-                out.push(replaces.get(f).unwrap());
+            if let Some(replacement) = replaces.get(f) {
+                out.push(replacement);
             } else {
                 out.push(f);
             }

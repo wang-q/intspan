@@ -15,7 +15,7 @@ Examples:
 2. Create ranges from a GFF file:
     rgr field tests/spanr/NC_007942.gff -H --chr 1 --start 4 --end 5 --strand 7
 
-3. Create ranges from a TSV file:
+3. Create ranges from a .tsv file:
     rgr field tests/rgr/ctg.tsv --chr 2 --start 3 --end 4 -H
 
 "###,
@@ -25,7 +25,7 @@ Examples:
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Set the input files to use"),
+                .help("Input files to process"),
         )
         .arg(
             Arg::new("header")
@@ -39,7 +39,7 @@ Examples:
                 .long("sharp")
                 .short('s')
                 .action(ArgAction::SetTrue)
-                .help("Include lines starting with `#` without changes (default: ignore them)"),
+                .help("Preserve lines starting with a `#` without changes. The default is to ignore them"),
         )
         .arg(
             Arg::new("chr")
@@ -47,14 +47,14 @@ Examples:
                 .num_args(1)
                 .required(true)
                 .value_parser(value_parser!(usize))
-                .help("Field idx for chr"),
+                .help("Field index for chr"),
         )
         .arg(
             Arg::new("strand")
                 .long("strand")
                 .num_args(1)
                 .value_parser(value_parser!(usize))
-                .help("Optional field idx for strand"),
+                .help("Optional field index for strand"),
         )
         .arg(
             Arg::new("start")
@@ -62,14 +62,14 @@ Examples:
                 .num_args(1)
                 .required(true)
                 .value_parser(value_parser!(usize))
-                .help("Field idx for start"),
+                .help("Field index for start"),
         )
         .arg(
             Arg::new("end")
                 .long("end")
                 .num_args(1)
                 .value_parser(value_parser!(usize))
-                .help("Optional field idx for end"),
+                .help("Optional field index for end"),
         )
         .arg(
             Arg::new("append")
@@ -98,18 +98,10 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let is_header = args.get_flag("header");
     let is_sharp = args.get_flag("sharp");
 
-    let idx_chr = *args.get_one::<usize>("chr").unwrap();
-    let idx_strand = if args.contains_id("strand") {
-        *args.get_one::<usize>("strand").unwrap()
-    } else {
-        0
-    };
-    let idx_start = *args.get_one::<usize>("start").unwrap();
-    let idx_end = if args.contains_id("end") {
-        *args.get_one::<usize>("end").unwrap()
-    } else {
-        0
-    };
+    let opt_idx_chr = *args.get_one::<usize>("chr").unwrap();
+    let opt_idx_strand = args.get_one::<usize>("strand").copied().unwrap_or(0);
+    let opt_idx_start = *args.get_one::<usize>("start").unwrap();
+    let opt_idx_end = args.get_one::<usize>("end").copied().unwrap_or(0);
 
     let is_append = args.get_flag("append");
 
@@ -121,7 +113,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
             let parts: Vec<&str> = line.split('\t').collect();
 
-            // the header line
+            // Handle the header line
             if is_header && i == 0 {
                 if is_append {
                     writer.write_fmt(format_args!("{}\t{}\n", line, "range"))?;
@@ -131,6 +123,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 continue 'LINE;
             }
 
+            // Handle lines starting with '#'
             if line.starts_with('#') {
                 if is_sharp {
                     writer.write_fmt(format_args!("{}\n", line))?;
@@ -138,18 +131,22 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 continue 'LINE;
             }
 
-            // build ranges
-            let chr = parts.get(idx_chr - 1).unwrap();
-            let strand = if idx_strand == 0 {
+            // Build ranges
+            let chr = parts.get(opt_idx_chr - 1).unwrap();
+            let strand = if opt_idx_strand == 0 {
                 ""
             } else {
-                parts.get(idx_strand - 1).unwrap()
+                parts.get(opt_idx_strand - 1).unwrap()
             };
-            let start = parts.get(idx_start - 1).unwrap().parse::<i32>().unwrap();
-            let end = if idx_end == 0 {
+            let start = parts
+                .get(opt_idx_start - 1)
+                .unwrap()
+                .parse::<i32>()
+                .unwrap();
+            let end = if opt_idx_end == 0 {
                 start
             } else {
-                parts.get(idx_end - 1).unwrap().parse::<i32>().unwrap()
+                parts.get(opt_idx_end - 1).unwrap().parse::<i32>().unwrap()
             };
 
             let rg = intspan::Range {

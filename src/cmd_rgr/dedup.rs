@@ -5,11 +5,22 @@ use std::io::{BufRead, Write};
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("dedup")
-        .about("Deduplicate lines in .tsv file(s)")
+        .about("Deduplicate lines in .tsv file(s) based on specified fields or the entire line")
         .after_help(
             r###"
-The file requires a single pass without sorting, with each line consuming 8 bytes (u64) of memory.
-As a trade-off, this program cannot count the occurrences.
+This command removes duplicate lines from .tsv file(s) in a single pass without sorting.
+Each line consumes 8 bytes (u64) of memory for hashing, making it memory-efficient.
+As a trade-off, this program cannot count the occurrences of duplicates.
+
+* If no fields are specified, the entire line is used as the key for deduplication.
+* If fields are specified, only the selected fields are used as the key.
+
+Examples:
+    # Deduplicates lines in file1.tsv and file2.tsv, writing the result to output.tsv
+    rgr dedup file1.tsv file2.tsv -o output.tsv
+
+    # Deduplicates lines in file1.tsv based on the 1st and 3rd fields, printing the result to stdout
+    rgr dedup file1.tsv -f 1,3
 
 "###,
         )
@@ -18,7 +29,7 @@ As a trade-off, this program cannot count the occurrences.
                 .required(true)
                 .num_args(1..)
                 .index(1)
-                .help("Sets the input file(s) to use"),
+                .help("Input file(s) to process"),
         )
         .arg(
             Arg::new("fields")

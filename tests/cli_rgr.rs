@@ -156,7 +156,7 @@ fn command_runlist_invalid() -> anyhow::Result<()> {
         .arg("invalid");
     cmd.assert()
         .failure()
-        .stderr(predicate::str::contains("Invalid Op"));
+        .stderr(predicate::str::contains("invalid value 'invalid'"));
 
     Ok(())
 }

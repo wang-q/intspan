@@ -1,5 +1,4 @@
 use clap::*;
-use intspan::*;
 use rust_lapper::{Interval, Lapper};
 use std::collections::BTreeMap;
 use std::io::BufRead;
@@ -10,36 +9,37 @@ type Iv = Interval<u32, u32>; // the first type should be Unsigned
 // Create clap subcommand arguments
 pub fn make_subcommand() -> Command {
     Command::new("count")
-        .about("Count each range overlapping with other range files")
+        .about("Count overlaps between ranges in a target file and other range files")
         .after_help(
             r###"
 * Lines without a valid range will not be output
 
 Example:
 
+    # Count overlaps between two .rg files
     rgr count tests/rgr/S288c.rg tests/rgr/S288c.rg
 
+    # Count overlaps in a .tsv file with headers
     rgr count tests/rgr/ctg.range.tsv tests/rgr/S288c.rg -H -f 3
 
-For large range files, pre-sorting may improve perfermonce.
-
+    # For large .rg files, pre-sorting may improve perfermonce.
     cat *.rg | rgr sort stdin | rgr count target.rg stdin
 
 "###,
         )
         .arg(
-            Arg::new("range")
+            Arg::new("target")
                 .required(true)
                 .index(1)
                 .num_args(1)
-                .help("Sets the input file to use")
+                .help("Target .rg/.tsv file"),
         )
         .arg(
             Arg::new("infiles")
                 .required(true)
                 .index(2)
                 .num_args(1..)
-                .help("Sets the range files to use")
+                .help("Input .rg files to count overlaps with"),
         )
         .arg(
             Arg::new("header")
@@ -61,7 +61,7 @@ For large range files, pre-sorting may improve perfermonce.
                 .short('f')
                 .value_parser(value_parser!(usize))
                 .num_args(1)
-                .help("Set the index of the range field. When not set, the first valid range will be used"),
+                .help("Index of the range field. If not set, the first valid range will be used"),
         )
         .arg(
             Arg::new("outfile")
@@ -78,16 +78,12 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Options
     //----------------------------
-    let mut writer = writer(args.get_one::<String>("outfile").unwrap());
+    let mut writer = intspan::writer(args.get_one::<String>("outfile").unwrap());
 
     let is_sharp = args.get_flag("sharp");
     let is_header = args.get_flag("header");
 
-    let idx_range = if args.contains_id("field") {
-        *args.get_one::<usize>("field").unwrap()
-    } else {
-        0
-    };
+    let opt_idx_range = args.get_one::<usize>("field").copied().unwrap_or(0);
 
     //----------------------------
     // Loading
@@ -96,20 +92,15 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let mut iv_of: BTreeMap<String, Vec<Iv>> = BTreeMap::new();
 
     for infile in args.get_many::<String>("infiles").unwrap() {
-        let reader = reader(infile);
+        let reader = intspan::reader(infile);
         for line in reader.lines().map_while(Result::ok) {
             if line.starts_with('#') {
                 continue;
             }
 
-            let range = Range::from_str(&line);
+            let range = intspan::Range::from_str(&line);
             if !range.is_valid() {
                 continue;
-            }
-            let chr = range.chr();
-            if !iv_of.contains_key(chr.as_str()) {
-                let ivs: Vec<Iv> = vec![];
-                iv_of.insert(chr.clone(), ivs);
             }
 
             let iv = Iv {
@@ -117,29 +108,30 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 stop: *range.end() as u32 + 1,
                 val: 0,
             };
-
-            iv_of.entry(chr.to_string()).and_modify(|e| e.push(iv));
+            let chr = range.chr();
+            iv_of.entry(chr.to_string()).or_default().push(iv);
         }
     }
 
     // seq_name => Lapper
     let mut lapper_of = BTreeMap::new();
-
-    for chr in iv_of.keys() {
-        let lapper = Lapper::new(iv_of.get(chr).unwrap().to_owned());
-        lapper_of.insert(chr.clone(), lapper);
+    for (chr, ivs) in iv_of {
+        let lapper = Lapper::new(ivs);
+        lapper_of.insert(chr, lapper);
     }
 
     //----------------------------
     // Operating
     //----------------------------
-    let reader = reader(args.get_one::<String>("range").unwrap());
+    let reader = intspan::reader(args.get_one::<String>("target").unwrap());
     'LINE: for (i, line) in reader.lines().map_while(Result::ok).enumerate() {
+        // Handle the header line
         if is_header && i == 0 {
             writer.write_fmt(format_args!("{}\t{}\n", line, "count"))?;
             continue 'LINE;
         }
 
+        // Handle lines starting with '#'
         if line.starts_with('#') {
             if is_sharp {
                 writer.write_fmt(format_args!("{}\n", line))?;
@@ -147,29 +139,17 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             continue 'LINE;
         }
 
-        let parts: Vec<&str> = line.split('\t').collect();
-
-        let mut range = Range::new();
-        if idx_range == 0 {
-            for part in parts {
-                let r = Range::from_str(part);
-                if r.is_valid() {
-                    range = r;
-                    break;
-                }
-            }
-        } else {
-            range = Range::from_str(parts.get(idx_range - 1).unwrap());
-        }
-
-        if !range.is_valid() {
-            continue 'LINE;
-        }
+        let rg = match intspan::extract_rg(&line, opt_idx_range) {
+            // Extract the range
+            Some(range) => range,
+            // Skip lines without a valid range
+            None => continue 'LINE,
+        };
 
         let mut count = 0;
-        if lapper_of.contains_key(range.chr()) {
-            let lapper = lapper_of.get(range.chr()).unwrap();
-            count = lapper.count(*range.start() as u32, *range.end() as u32 + 1);
+        if lapper_of.contains_key(rg.chr()) {
+            let lapper = lapper_of.get(rg.chr()).unwrap();
+            count = lapper.count(*rg.start() as u32, *rg.end() as u32 + 1);
         }
 
         //----------------------------

@@ -95,32 +95,12 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
             }
 
             // Extract the range
-            let parts: Vec<&str> = line.split('\t').collect();
-
-            let range = if opt_idx_range == 0 {
-                parts.iter().find_map(|part| {
-                    let rg = intspan::Range::from_str(part);
-                    if rg.is_valid() {
-                        Some(rg)
-                    } else {
-                        None
-                    }
-                })
-            } else {
-                let part = parts.get(opt_idx_range - 1).unwrap();
-                let rg = intspan::Range::from_str(part);
-                if rg.is_valid() {
-                    Some(rg)
-                } else {
-                    None
-                }
-            };
-
-            // Store the line and its range
-            if let Some(range) = range {
+            if let Some(range) = intspan::extract_rg(&line, opt_idx_range) {
+                // Store the line and its range
                 line_to_rg.insert(line.clone(), range);
             } else {
-                invalids.push(line.clone()); // No valid range found
+                // No valid range found
+                invalids.push(line.clone());
             }
         }
     }

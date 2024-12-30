@@ -268,7 +268,6 @@ fn command_keep() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 7);
     assert!(stdout.contains("range\n130218\t"));
 
-
     let mut cmd = Command::cargo_bin("rgr")?;
     let output = cmd
         .arg("keep")
