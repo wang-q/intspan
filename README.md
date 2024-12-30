@@ -35,7 +35,7 @@ Current release: 0.8.3
 ```shell
 cargo install intspan
 
-cargo install --force --path .
+cargo install --path . --force #--offline
 
 # or
 brew install intspan
