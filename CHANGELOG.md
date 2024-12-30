@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.8.4 - 2024-12-30
+
 * Add `--lines` and `--delete` to `rgr keep`
 
 * Refactor the code in `rgr` to make it cleaner and more maintainable
