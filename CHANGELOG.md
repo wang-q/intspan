@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `--lines` and `--delete` to `rgr keep`
+
 ## 0.8.3 - 2024-12-29
 
 * Add `rgr span`

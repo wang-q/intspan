@@ -7,11 +7,11 @@ pub fn make_subcommand() -> Command {
         .about("Keep the the initial header line")
         .after_help(
             r###"
-The first line of each file is treated as a header and the one of first file is output unchanged.
-Subsequent lines are sent to the specified command via standard input, excluding headers of other files.
+The first N lines of each file is treated as a header and the one of first file is output unchanged.
+Subsequent lines are sent to the specified command via stdin, excluding headers of other files.
 The output from the command is appended to the initial header.
 
-Use a double hyphen (--) to separate the command from the file arguments.
+* Use a double hyphen (--) to separate the command from the file arguments.
 
 "###,
         )
@@ -20,6 +20,22 @@ Use a double hyphen (--) to separate the command from the file arguments.
                 .required(true)
                 .num_args(1..)
                 .help("Sets the input file(s) to use"),
+        )
+        .arg(
+            Arg::new("lines")
+                .long("lines")
+                .short('l')
+                .num_args(1)
+                .default_value("1")
+                .value_parser(value_parser!(usize))
+                .help("Number of header lines to keep"),
+        )
+        .arg(
+            Arg::new("delete")
+                .long("delete")
+                .short('d')
+                .action(ArgAction::SetTrue)
+                .help("Don't write headers"),
         )
         .arg(
             Arg::new("commands")
@@ -40,6 +56,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         .map(|vals| vals.collect::<Vec<_>>())
         .unwrap_or_default();
 
+    let opt_lines = *args.get_one::<usize>("lines").unwrap();
+    let is_delete = args.get_flag("delete");
+
     let commands = args
         .get_many::<String>("commands")
         .map(|vals| vals.collect::<Vec<_>>())
@@ -54,27 +73,33 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
         .spawn()?;
-    let mut header_written = false;
 
+    let mut first_file = true; // Track if we are processing the first file
     for infile in infiles {
         let reader = intspan::reader(infile);
-
+        let mut header_written = 0;
         let mut lines = reader.lines();
-        if let Some(first_line) = lines.next() {
-            let first_line = first_line?;
-            if !header_written {
-                println!("{}", first_line);
-                header_written = true;
-            }
 
-            for line in lines {
-                let line = line?;
+        while let Some(line) = lines.next() {
+            let line = line?;
+            if header_written < opt_lines {
+                if first_file && !is_delete {
+                    // Only print headers from the first file
+                    println!("{}", line);
+                }
+                header_written += 1;
+            } else {
+                // Send subsequent lines to the command
                 if let Some(ref mut stdin) = child.stdin {
                     writeln!(stdin, "{}", line)?;
                 }
             }
         }
+
+        // After processing the first file, set first_file to false
+        first_file = false;
     }
+
     if let Some(ref mut stdin) = child.stdin {
         stdin.flush()?;
     }

@@ -268,5 +268,23 @@ fn command_keep() -> anyhow::Result<()> {
     assert_eq!(stdout.lines().count(), 7);
     assert!(stdout.contains("range\n130218\t"));
 
+
+    let mut cmd = Command::cargo_bin("rgr")?;
+    let output = cmd
+        .arg("keep")
+        .arg("tests/rgr/ctg.range.tsv")
+        .arg("-l")
+        .arg("2")
+        .arg("-d")
+        .arg("--")
+        .arg("wc")
+        .arg("-l")
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+
+    assert_eq!(stdout.lines().count(), 1);
+    assert!(stdout.contains("2\n"));
+
     Ok(())
 }
