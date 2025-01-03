@@ -118,10 +118,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
 
                 if out_ranges.len() >= line_limit {
                     let outfile = format!("split.{}", serial);
-                    write_lines(
-                        outfile.as_str(),
-                        &out_ranges.iter().map(AsRef::as_ref).collect(),
-                    )?;
+                    write_lines(outfile.as_str(), &out_ranges)?;
 
                     // clear caches
                     out_ranges = vec![];
@@ -136,10 +133,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     // last part
     if !out_ranges.is_empty() {
         let outfile = format!("split.{}", serial);
-        write_lines(
-            outfile.as_str(),
-            &out_ranges.iter().map(AsRef::as_ref).collect(),
-        )?;
+        write_lines(outfile.as_str(), &out_ranges)?;
     } else {
         serial -= 1;
     }
@@ -173,7 +167,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         }
         write_lines(
             "1st.replace",
-            &merged_1st.iter().map(AsRef::as_ref).collect(),
+            &merged_1st.iter().map(String::to_string).collect(),
         )?;
         let count_1st = merged_1st.len();
         run_cmd!(info "   " ${count_1st})?;

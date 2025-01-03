@@ -63,7 +63,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
         // Output
         //----------------------------
         if outdir == "stdout" {
-            write_lines("stdout", &vec![string.as_str()])?;
+            write_lines("stdout", &vec![string])?;
         } else {
             let path = Path::new(outdir).join(key.to_owned() + suffix);
             fs::write(path, string + "\n")?;

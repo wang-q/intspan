@@ -291,10 +291,7 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     //----------------------------
     // Output
     //----------------------------
-    write_lines(
-        args.get_one::<String>("outfile").unwrap(),
-        &out_lines.iter().map(AsRef::as_ref).collect(),
-    )?;
+    write_lines(args.get_one::<String>("outfile").unwrap(), &out_lines)?;
 
     Ok(())
 }

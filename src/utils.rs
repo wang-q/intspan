@@ -1,15 +1,9 @@
 use crate::{IntSpan, Range};
 use anyhow::anyhow;
 use path_clean::PathClean;
-use serde_json::Value;
 use std::cmp::Reverse;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::ffi::OsStr;
-use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
-use std::path::{Path, PathBuf};
-use std::process::Command;
-use std::{env, io};
 
 /// ```
 /// use std::io::BufRead;
@@ -25,15 +19,15 @@ use std::{env, io};
 /// ```
 pub fn reader(input: &str) -> Box<dyn BufRead> {
     let reader: Box<dyn BufRead> = if input == "stdin" {
-        Box::new(BufReader::new(io::stdin()))
+        Box::new(BufReader::new(std::io::stdin()))
     } else {
-        let path = Path::new(input);
-        let file = match File::open(path) {
+        let path = std::path::Path::new(input);
+        let file = match std::fs::File::open(path) {
             Err(why) => panic!("could not open {}: {}", path.display(), why),
             Ok(file) => file,
         };
 
-        if path.extension() == Some(OsStr::new("gz")) {
+        if path.extension() == Some(std::ffi::OsStr::new("gz")) {
             Box::new(BufReader::new(flate2::read::MultiGzDecoder::new(file)))
         } else {
             Box::new(BufReader::new(file))
@@ -112,7 +106,7 @@ pub fn read_replaces(input: &str) -> BTreeMap<String, Vec<String>> {
     replaces
 }
 
-pub fn read_json(input: &str) -> BTreeMap<String, Value> {
+pub fn read_json(input: &str) -> BTreeMap<String, serde_json::Value> {
     let mut reader = reader(input);
     let mut s = String::new();
     reader.read_to_string(&mut s).expect("Read error");
@@ -122,15 +116,15 @@ pub fn read_json(input: &str) -> BTreeMap<String, Value> {
 
 pub fn writer(output: &str) -> Box<dyn Write> {
     let writer: Box<dyn Write> = if output == "stdout" {
-        Box::new(BufWriter::new(io::stdout()))
+        Box::new(BufWriter::new(std::io::stdout()))
     } else {
-        Box::new(BufWriter::new(File::create(output).unwrap()))
+        Box::new(BufWriter::new(std::fs::File::create(output).unwrap()))
     };
 
     writer
 }
 
-pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error> {
+pub fn write_lines(output: &str, lines: &Vec<String>) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
 
     for line in lines {
@@ -140,7 +134,10 @@ pub fn write_lines(output: &str, lines: &Vec<&str>) -> Result<(), std::io::Error
     Ok(())
 }
 
-pub fn write_json(output: &str, json: &BTreeMap<String, Value>) -> Result<(), std::io::Error> {
+pub fn write_json(
+    output: &str,
+    json: &BTreeMap<String, serde_json::Value>,
+) -> Result<(), std::io::Error> {
     let mut writer = writer(output);
     let mut s = serde_json::to_string_pretty(json).unwrap();
     s.push('\n');
@@ -159,7 +156,7 @@ pub fn write_json(output: &str, json: &BTreeMap<String, Value>) -> Result<(), st
 /// let sets = intspan::json2set(&runlists);
 /// assert!(sets.values().next().unwrap().contains(28550));
 /// ```
-pub fn json2set(json: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
+pub fn json2set(json: &BTreeMap<String, serde_json::Value>) -> BTreeMap<String, IntSpan> {
     let mut set: BTreeMap<String, IntSpan> = BTreeMap::new();
 
     for (chr, value) in json {
@@ -185,8 +182,8 @@ pub fn json2set(json: &BTreeMap<String, Value>) -> BTreeMap<String, IntSpan> {
 ///     &Value::String("28547-29194".into())
 /// );
 /// ```
-pub fn set2json(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
-    let mut json: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2json(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, serde_json::Value> {
+    let mut json: BTreeMap<String, serde_json::Value> = BTreeMap::new();
 
     for (chr, value) in set {
         let runlist = value.to_string();
@@ -196,8 +193,10 @@ pub fn set2json(set: &BTreeMap<String, IntSpan>) -> BTreeMap<String, Value> {
     json
 }
 
-pub fn set2json_m(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTreeMap<String, Value> {
-    let mut out_json: BTreeMap<String, Value> = BTreeMap::new();
+pub fn set2json_m(
+    set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>,
+) -> BTreeMap<String, serde_json::Value> {
+    let mut out_json: BTreeMap<String, serde_json::Value> = BTreeMap::new();
 
     for (name, set) in set_of {
         let json = set2json(set);
@@ -207,14 +206,16 @@ pub fn set2json_m(set_of: &BTreeMap<String, BTreeMap<String, IntSpan>>) -> BTree
     out_json
 }
 
-pub fn json2set_m(json: &BTreeMap<String, Value>) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
+pub fn json2set_m(
+    json: &BTreeMap<String, serde_json::Value>,
+) -> BTreeMap<String, BTreeMap<String, IntSpan>> {
     let is_multi: bool = json.values().next().unwrap().is_object();
 
     let mut s_of: BTreeMap<String, BTreeMap<String, IntSpan>> = BTreeMap::new();
     if is_multi {
         for (key, value) in json {
             let string = serde_json::to_string(value).unwrap();
-            let runlist_one: BTreeMap<String, Value> =
+            let runlist_one: BTreeMap<String, serde_json::Value> =
                 serde_json::from_str(string.as_str()).unwrap();
             let set_one = json2set(&runlist_one);
             s_of.insert(key.to_string(), set_one);
@@ -373,7 +374,7 @@ pub fn get_seq_faidx(file: &str, range: &str) -> anyhow::Result<String> {
     }
 
     let mut seq = String::new();
-    let output = Command::new(bin)
+    let output = std::process::Command::new(bin)
         .arg("faidx")
         .arg(file)
         .arg(range)
@@ -395,12 +396,12 @@ pub fn get_seq_faidx(file: &str, range: &str) -> anyhow::Result<String> {
     Ok(seq)
 }
 
-pub fn basename(path: impl AsRef<Path>) -> io::Result<String> {
+pub fn basename(path: impl AsRef<std::path::Path>) -> std::io::Result<String> {
     let path = path.as_ref();
 
     let basename = path
         .file_stem()
-        .and_then(OsStr::to_str)
+        .and_then(std::ffi::OsStr::to_str)
         .unwrap()
         .split('.')
         .next()
@@ -410,13 +411,13 @@ pub fn basename(path: impl AsRef<Path>) -> io::Result<String> {
     Ok(basename)
 }
 
-pub fn absolute_path(path: impl AsRef<Path>) -> io::Result<PathBuf> {
+pub fn absolute_path(path: impl AsRef<std::path::Path>) -> std::io::Result<std::path::PathBuf> {
     let path = path.as_ref();
 
     let absolute_path = if path.is_absolute() {
         path.to_path_buf()
     } else {
-        env::current_dir()?.join(path)
+        std::env::current_dir()?.join(path)
     }
     .clean();
 
@@ -437,7 +438,11 @@ mod read_write {
             .into_os_string()
             .into_string()
             .unwrap();
-        write_lines(&filename, &vec!["This", "is", "a\ntest"]).expect("Write error");
+        write_lines(
+            &filename,
+            &vec!["This".to_string(), "is".to_string(), "a\ntest".to_string()],
+        )
+        .expect("Write error");
 
         let lines = read_lines(&filename);
         assert_eq!(lines.len(), 4);
