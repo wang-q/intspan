@@ -70,6 +70,18 @@ Examples:
                 .help("Filter lines by field:STR, FIELD != STR"),
         )
         .arg(
+            Arg::new("ff-eq")
+                .long("ff-eq")
+                .action(ArgAction::Append)
+                .help("Filter lines by FIELD1:FIELD2, FIELD1 == FIELD2"),
+        )
+        .arg(
+            Arg::new("ff-ne")
+                .long("ff-ne")
+                .action(ArgAction::Append)
+                .help("Filter lines by FIELD1:FIELD2, FIELD1 != FIELD2"),
+        )
+        .arg(
             Arg::new("eq")
                 .long("eq")
                 .action(ArgAction::Append)
@@ -131,6 +143,9 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
     let str_eq_tpl = opt_fields_str(args, "str-eq", is_insensitive);
     let str_ne_tpl = opt_fields_str(args, "str-ne", is_insensitive);
 
+    let ff_eq_tpl = opt_fields_ff(args, "ff-eq");
+    let ff_ne_tpl = opt_fields_ff(args, "ff-ne");
+
     let num_eq_tpl = opt_fields_num(args, "eq");
     let num_ne_tpl = opt_fields_num(args, "ne");
     let num_lt_tpl = opt_fields_num(args, "lt");
@@ -182,29 +197,51 @@ pub fn execute(args: &ArgMatches) -> anyhow::Result<()> {
                 pass_ary.push(pass);
             }
 
+            // --ff-eq and --ff-ne
+            for (k, v) in &ff_eq_tpl {
+                let val1 = parts.get(k - 1).unwrap();
+                let val2 = parts.get(v - 1).unwrap();
+                let pass = if is_insensitive {
+                    *val1.to_ascii_uppercase() == *val2.to_ascii_uppercase()
+                } else {
+                    *val1 == *val2
+                };
+                pass_ary.push(pass);
+            }
+            for (k, v) in &ff_ne_tpl {
+                let val1 = parts.get(k - 1).unwrap();
+                let val2 = parts.get(v - 1).unwrap();
+                let pass = if is_insensitive {
+                    *val1.to_ascii_uppercase() != *val2.to_ascii_uppercase()
+                } else {
+                    *val1 != *val2
+                };
+                pass_ary.push(pass);
+            }
+
             // --eq, --ne, --gt and --ge
             for (k, v) in &num_eq_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val == *v);
             }
             for (k, v) in &num_ne_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val != *v);
             }
             for (k, v) in &num_lt_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val < *v);
             }
             for (k, v) in &num_le_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val <= *v);
             }
             for (k, v) in &num_gt_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val > *v);
             }
             for (k, v) in &num_ge_tpl {
-                let val = parts.get(k - 1).unwrap().parse::<f64>().unwrap();
+                let val = parts.get(k - 1).unwrap().parse::<f64>()?;
                 pass_ary.push(val >= *v);
             }
 
@@ -254,6 +291,30 @@ fn opt_fields_str(args: &ArgMatches, id: &str, is_insensitive: bool) -> Vec<(usi
         }
     }
     str_cmp_tpl
+}
+
+fn opt_fields_ff(args: &ArgMatches, id: &str) -> Vec<(usize, usize)> {
+    let mut ff_cmp_tpl: Vec<(usize, usize)> = Vec::new();
+    if args.contains_id(id) {
+        for s in args.get_many::<String>(id).unwrap() {
+            let parts: Vec<&str> = s.splitn(2, ':').collect();
+
+            if parts.len() != 2 {
+                eprintln!("Need a valid value for --{} {}", id, s);
+                std::process::exit(1)
+            }
+
+            let fields1 = intspan::ints_to_idx(parts.get(0).unwrap());
+            let fields2 = intspan::ints_to_idx(parts.get(1).unwrap());
+
+            for i in &fields1 {
+                for j in &fields2 {
+                    ff_cmp_tpl.push((*i, *j));
+                }
+            }
+        }
+    }
+    ff_cmp_tpl
 }
 
 fn opt_fields_num(args: &ArgMatches, id: &str) -> Vec<(usize, f64)> {

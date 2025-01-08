@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+* Add `--ff-eq` and `--ff-ne` to `rgr filter`
+
 ## 0.8.4 - 2024-12-30
 
 * Add `--lines` and `--delete` to `rgr keep`

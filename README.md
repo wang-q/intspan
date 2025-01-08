@@ -397,6 +397,7 @@ rgr filter tests/spanr/NC_007942.gff -H --case --str-eq 3:trna --str-ne '7:+'
 rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2:0.8
 rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --ge 2,2,2:0.8
 rgr filter tests/rgr/ctg_2_1_.gc.tsv -H --le 2:0.6 --gt 2:0.45 --eq 3:-1
+rgr filter tests/rgr/tn.tsv --ff-eq 1:2
 
 rgr select tests/rgr/ctg.tsv -f 6,1
 rgr select tests/rgr/ctg.tsv -H -f ID,1
