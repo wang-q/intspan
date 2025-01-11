@@ -1,7 +1,7 @@
 use anyhow::anyhow;
+use std::borrow::Cow;
 use std::cmp::{min, Ordering};
 use std::collections::VecDeque;
-use std::fmt;
 use std::vec::Vec;
 
 /// `IntSpan` handles of sets containing integer spans.
@@ -91,7 +91,7 @@ use std::vec::Vec;
 /// This Rust crate is ported from the Java class `jintspan` and the Perl module `AlignDB::IntSpan`,
 /// which contains many codes from `Set::IntSpan`, `Set::IntSpan::Fast` and `Set::IntSpan::Island`.
 ///
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct IntSpan {
     edges: VecDeque<i32>,
 }
@@ -107,6 +107,7 @@ lazy_static! {
 /// ----
 /// ----
 impl IntSpan {
+    #[inline]
     pub fn new() -> Self {
         IntSpan {
             edges: VecDeque::new(),
@@ -135,6 +136,7 @@ impl IntSpan {
     /// Returns the constant of POS_INF
     ///
     /// Typically used to construct infinite sets
+    #[inline]
     pub fn get_pos_inf(&self) -> i32 {
         *POS_INF - 1
     }
@@ -142,44 +144,41 @@ impl IntSpan {
     /// Returns the constant of NEG_INF
     ///
     /// Typically used to construct infinite sets
+    #[inline]
     pub fn get_neg_inf(&self) -> i32 {
         *NEG_INF
     }
 
     /// Clears all contents of ints
+    #[inline]
     pub fn clear(&mut self) {
         self.edges.clear();
     }
 
+    #[inline]
     pub fn edge_size(&self) -> usize {
         self.edges.len()
     }
 
+    #[inline]
     pub fn span_size(&self) -> usize {
         self.edge_size() / 2
     }
 
     pub fn to_vec(&self) -> Vec<i32> {
-        let mut elements: Vec<i32> = Vec::new();
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            let span_len = upper - lower + 1;
-            for j in 0..span_len {
-                elements.push(lower + j);
-            }
-        }
-
-        elements
+        self.spans()
+            .into_iter()
+            .flat_map(|(lower, upper)| (lower..=upper).collect::<Vec<_>>())
+            .collect()
     }
 
+    #[inline]
     pub fn contains(&self, n: i32) -> bool {
         let pos = self.find_pos(n + 1, 0);
         (pos & 1) == 1
     }
 
+    #[inline]
     pub fn min(&self) -> i32 {
         if self.is_empty() {
             panic!("Can't get extrema for empty IntSpan");
@@ -188,6 +187,7 @@ impl IntSpan {
         *self.edges.front().unwrap()
     }
 
+    #[inline]
     pub fn max(&self) -> i32 {
         if self.is_empty() {
             panic!("Can't get extrema for empty IntSpan");
@@ -315,16 +315,13 @@ impl IntSpan {
     /// assert_eq!(ints.spans(), vec![(1, 2), (4, 7)]);
     /// ```
     pub fn spans(&self) -> Vec<(i32, i32)> {
-        let mut spans: Vec<(i32, i32)> = vec![];
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            spans.push((lower, upper));
-        }
-
-        spans
+        (0..self.span_size())
+            .map(|i| {
+                let lower = self.edges[i * 2];
+                let upper = self.edges[i * 2 + 1] - 1;
+                (lower, upper)
+            })
+            .collect()
     }
 
     /// Returns the runs in IntSpan, as a vector of lower, upper
@@ -334,17 +331,10 @@ impl IntSpan {
     /// assert_eq!(ints.ranges(), vec![1, 2, 4, 7]);
     /// ```
     pub fn ranges(&self) -> Vec<i32> {
-        let mut ranges: Vec<i32> = vec![];
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            ranges.push(lower);
-            ranges.push(upper);
-        }
-
-        ranges
+        self.spans()
+            .into_iter()
+            .flat_map(|(lower, upper)| vec![lower, upper])
+            .collect()
     }
 
     /// Returns the runs in IntSpan, as a vector of String
@@ -354,16 +344,10 @@ impl IntSpan {
     /// assert_eq!(ints.runs(), vec!["1-2".to_string(), "4-7".to_string()]);
     /// ```
     pub fn runs(&self) -> Vec<String> {
-        let mut runs: Vec<String> = vec![];
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            runs.push(Self::from_pair(lower, upper).to_string());
-        }
-
-        runs
+        self.spans()
+            .into_iter()
+            .map(|(lower, upper)| Self::from_pair(lower, upper).to_string())
+            .collect()
     }
 
     /// Returns the runs in IntSpan, as a vector of IntSpan
@@ -374,16 +358,10 @@ impl IntSpan {
     ///     vec!["1-2".to_string(), "4-7".to_string()]);
     /// ```
     pub fn intses(&self) -> Vec<IntSpan> {
-        let mut intses: Vec<IntSpan> = vec![];
-
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            intses.push(Self::from_pair(lower, upper));
-        }
-
-        intses
+        self.spans()
+            .into_iter()
+            .map(|(lower, upper)| Self::from_pair(lower, upper))
+            .collect()
     }
 }
 
@@ -423,42 +401,42 @@ mod content {
 /// ----
 impl IntSpan {
     pub fn cardinality(&self) -> i32 {
-        let mut cardinality: i32 = 0;
-
         if self.is_empty() {
-            return cardinality;
+            return 0;
         }
 
-        for i in 0..self.span_size() {
-            let lower = *self.edges.get(i * 2).unwrap();
-            let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-            cardinality += upper - lower + 1;
-        }
-
-        cardinality
+        self.spans()
+            .into_iter()
+            .map(|(lower, upper)| upper - lower + 1)
+            .sum()
     }
 
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.edges.is_empty()
     }
 
+    #[inline]
     pub fn is_neg_inf(&self) -> bool {
         *self.edges.front().unwrap() == *NEG_INF
     }
 
+    #[inline]
     pub fn is_pos_inf(&self) -> bool {
         *self.edges.back().unwrap() == *POS_INF
     }
 
+    #[inline]
     pub fn is_infinite(&self) -> bool {
         self.is_neg_inf() || self.is_pos_inf()
     }
 
+    #[inline]
     pub fn is_finite(&self) -> bool {
         !self.is_infinite()
     }
 
+    #[inline]
     pub fn is_universal(&self) -> bool {
         self.edge_size() == 2 && self.is_pos_inf() && self.is_neg_inf()
     }
@@ -682,6 +660,7 @@ mod mutate {
 /// ----
 /// ----
 impl IntSpan {
+    #[inline]
     pub fn copy(&self) -> Self {
         IntSpan {
             edges: self.edges.clone(),
@@ -1540,14 +1519,17 @@ impl IntSpan {
 /// ----
 /// ----
 impl IntSpan {
+    #[inline]
     pub fn size(&self) -> i32 {
         self.cardinality()
     }
 
+    #[inline]
     pub fn runlist(&self) -> String {
         self.to_string()
     }
 
+    #[inline]
     pub fn elements(&self) -> Vec<i32> {
         self.to_vec()
     }
@@ -1558,6 +1540,7 @@ impl IntSpan {
 /// ----
 /// ----
 impl IntSpan {
+    #[inline]
     fn find_pos(&self, val: i32, mut low: usize) -> usize {
         let mut high = self.edge_size();
 
@@ -1674,34 +1657,39 @@ impl IntSpan {
     }
 }
 
-impl fmt::Display for IntSpan {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl std::fmt::Display for IntSpan {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if self.is_empty() {
-            write!(f, "{}", *EMPTY_STRING)?;
-        } else {
-            let mut runlist = "".to_string();
-
-            for i in 0..self.span_size() {
-                let lower = *self.edges.get(i * 2).unwrap();
-                let upper = *self.edges.get(i * 2 + 1).unwrap() - 1;
-
-                let mut buf = "".to_string();
-                if i != 0 {
-                    buf.push(',');
-                }
-
-                if lower == upper {
-                    buf.push_str(lower.to_string().as_str());
-                } else {
-                    buf.push_str(format!("{}-{}", lower, upper).as_str());
-                }
-
-                runlist.push_str(buf.as_str());
-            }
-
-            write!(f, "{}", runlist)?;
+            return write!(f, "{}", *EMPTY_STRING);
         }
 
-        Ok(())
+        let runlist = self
+            .spans()
+            .into_iter()
+            .map(|(lower, upper)| {
+                if lower == upper {
+                    Cow::from(lower.to_string())
+                } else {
+                    Cow::from(format!("{}-{}", lower, upper))
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(",");
+
+        write!(f, "{}", runlist)
+    }
+}
+
+#[cfg(test)]
+mod display {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let ints = IntSpan::from("1-3,5,7,9,100-999,1001-10000");
+        assert_eq!(ints.to_string(), "1-3,5,7,9,100-999,1001-10000");
+
+        let empty = IntSpan::new();
+        assert_eq!(empty.to_string(), "-");
     }
 }
