@@ -3,7 +3,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::fmt;
 
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct Range {
     pub name: String,
     pub chr: String,
