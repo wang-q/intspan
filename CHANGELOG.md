@@ -3,6 +3,12 @@
 ## Unreleased - ReleaseDate
 
 * Add `--ff-eq` and `--ff-ne` to `rgr filter`
+* Improve code quality
+    * Use `into_iter()` and `collect()` to simplify code
+    * Refactor `IntSpan::to_vec()`, `spans()`, `ranges()`, `runs()` and `intses()`
+* Improve CI/CD
+    * Use `cargo-zigbuild` to build linux-gnu binary with GLIBC 2.17
+    * Simplify tar archives by removing path prefixes
 
 ## 0.8.4 - 2024-12-30
 
