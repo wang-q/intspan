@@ -5,34 +5,28 @@ on:
     tags:
       - '*'
 
-
-permissions: {}
+# We need this to be able to create releases.
+permissions:
+  contents: write
 
 jobs:
   linux-gnu:
     runs-on: ubuntu-latest
-    # We need this to be able to create releases.
-    permissions:
-      contents: write
     steps:
-      - name: Show GLIBC
-        run: ldd --version
-
+      - uses: hecrj/setup-rust-action@v1
+        with:
+          rust-version: stable
+          targets: x86_64-unknown-linux-gnu
+      - uses: goto-bus-stop/setup-zig@v2
+      - name: Install cargo-zigbuild
+        run: cargo install cargo-zigbuild
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
       - name: Build
-        run: cargo build --verbose --release
+        run: cargo zigbuild --verbose --release --target x86_64-unknown-linux-gnu.2.17
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr
+        run: tar cvfz intspan.tar.gz --transform 's|.*/||' target/x86_64-unknown-linux-gnu/release/spanr target/x86_64-unknown-linux-gnu/release/rgr target/x86_64-unknown-linux-gnu/release/linkr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v2
@@ -44,8 +38,6 @@ jobs:
           overwrite: true
   linux-musl:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: hecrj/setup-rust-action@v1
         with:
@@ -57,7 +49,7 @@ jobs:
       - name: Build
         run: cargo build --verbose --release --target x86_64-unknown-linux-musl
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/rgr target/x86_64-unknown-linux-musl/release/linkr
+        run: tar cvfz intspan.tar.gz --transform 's|.*/||' target/x86_64-unknown-linux-musl/release/spanr target/x86_64-unknown-linux-musl/release/rgr target/x86_64-unknown-linux-musl/release/linkr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v2
@@ -68,8 +60,6 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
   macos:
-    permissions:
-      contents: write
     runs-on: macOS-latest
     steps:
       - uses: hecrj/setup-rust-action@v1
@@ -83,7 +73,7 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: 10.12
         run: cargo build --verbose --release
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz target/release/spanr target/release/rgr target/release/linkr
+        run: tar cvfz intspan.tar.gz --transform 's|.*/||' target/release/spanr target/release/rgr target/release/linkr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v2
@@ -95,8 +85,6 @@ jobs:
           overwrite: true
   windows:
     runs-on: windows-latest
-    permissions:
-      contents: write
     steps:
       - uses: hecrj/setup-rust-action@v1
         with:
