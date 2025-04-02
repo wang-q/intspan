@@ -73,7 +73,9 @@ jobs:
           MACOSX_DEPLOYMENT_TARGET: 10.12
         run: cargo build --verbose --release
       - name: Create tarball
-        run: tar cvfz intspan.tar.gz --transform 's|.*/||' target/release/spanr target/release/rgr target/release/linkr
+        run: |
+          cd target/release
+          tar cvfz ../../intspan.tar.gz spanr rgr linkr
         shell: bash
       - name: Upload binaries to releases
         uses: svenstaro/upload-release-action@v2
