@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.8.6 - 2025-04-02
+
 * Add `--ff-eq` and `--ff-ne` to `rgr filter`
 * Improve code quality
     * Use `into_iter()` and `collect()` to simplify code
