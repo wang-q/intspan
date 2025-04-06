@@ -19,7 +19,7 @@ jobs:
 
       - name: Generate code coverage
         run: |
-          cargo +nightly tarpaulin --bins --tests --follow-exec --engine llvm --out xml -- --test-threads 1
+          cargo +nightly tarpaulin --bins --tests --doc --follow-exec --engine llvm --out xml -- --test-threads 1
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v4
