@@ -2,6 +2,8 @@
 
 ## Unreleased - ReleaseDate
 
+## 0.8.7 - 2025-04-06
+
 * Add linear algebra functions
 * Add matrix operations
     * Add `ScoringMatrix` for pairwise scores with missing values
