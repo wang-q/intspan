@@ -2,6 +2,13 @@
 
 ## Unreleased - ReleaseDate
 
+* Add linear algebra functions
+* Add matrix operations
+    * Add `ScoringMatrix` for pairwise scores with missing values
+    * Add `NamedMatrix` for complete distance matrices in PHYLIP format
+    * Support PHYLIP format input
+* Remove AppVeyor CI
+
 ## 0.8.6 - 2025-04-02
 
 * Add `--ff-eq` and `--ff-ne` to `rgr filter`
