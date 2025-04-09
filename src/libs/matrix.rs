@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 use std::io::BufRead;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ScoringMatrix<T> {
     size: Option<usize>,
     same: Option<T>,
@@ -200,7 +200,7 @@ impl ScoringMatrix<f32> {
 /// assert_eq!(matrix.get(0, 1), 0.5);
 /// assert_eq!(matrix.get(1, 0), 0.5);  // Symmetric matrix
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NamedMatrix {
     size: usize,
     names: indexmap::IndexMap<String, usize>,
